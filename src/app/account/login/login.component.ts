@@ -3,19 +3,19 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ActivatedRoute, Router } from '@angular/router';
 
 // Login Auth
-
+import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../core/services/auth.service';
 import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { first } from 'rxjs/operators';
 import { ToastService } from './toast-service';
 import { Store } from '@ngrx/store';
-
+import { login } from 'src/app/store/Authentication/authentication.actions';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  standalone: false
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 
 /**
@@ -35,29 +35,28 @@ export class LoginComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
-    private authFackservice: AuthfakeauthenticationService, 
-    private route: ActivatedRoute, public toastService: ToastService,
+  constructor(private formBuilder: UntypedFormBuilder,private authenticationService: AuthenticationService,private router: Router,
+    private authFackservice: AuthfakeauthenticationService, private route: ActivatedRoute, public toastService: ToastService,
     private store: Store) {
-    // redirect to home if already logged in
-    if (this.authenticationService.currentUserValue) {
-      this.router.navigate(['/']);
-    }
-  }
+      // redirect to home if already logged in
+      if (this.authenticationService.currentUserValue) {
+        this.router.navigate(['/']);
+      }
+     }
 
   ngOnInit(): void {
-    if (sessionStorage.getItem('currentUser')) {
+    if(sessionStorage.getItem('currentUser')) {
       this.router.navigate(['/']);
     }
     /**
      * Form Validatyion
      */
-    this.loginForm = this.formBuilder.group({
-      userName: ['', [Validators.required]],
-      password: ['', [Validators.required]],//123456
+     this.loginForm = this.formBuilder.group({
+      email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
+      password: ['123456', [Validators.required]],
     });
     // get return url from route parameters or default to '/'
-    //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   // convenience getter for easy access to form fields
@@ -66,11 +65,11 @@ export class LoginComponent implements OnInit {
   /**
    * Form submit
    */
-  onSubmit() {
-    
+   onSubmit() {
+    this.submitted = true;
 
-    // Login Api
-    //this.store.dispatch(login({ email: this.f['email'].value, password: this.f['password'].value }));
+     // Login Api
+     this.store.dispatch(login({ email: this.f['email'].value, password: this.f['password'].value }));
     // this.authenticationService.login(this.f['email'].value, this.f['password'].value).subscribe((data:any) => { 
     //   if(data.status == 'success'){
     //     sessionStorage.setItem('toast', 'true');
@@ -82,43 +81,32 @@ export class LoginComponent implements OnInit {
     //   }
     // });
 
-    //stop here if form is invalid
-    if (this.loginForm.invalid) {
-      
-      return;
-    } else {
-      // if (environment.defaultauth === 'firebase') {
-      //   this.authenticationService.login(this.f['email'].value, this.f['password'].value).then((res: any) => {
-      //     this.router.navigate(['/']);
-      //   })
-      //     .catch(error => {
-      //       this.error = error ? error : '';
-      //     });
-      // } else {
-
-        this.submitted = true;
-      this.authFackservice.login(
-        this.f['userName'].value,
-         this.f['password'].value)
-         .pipe(first())
-      .subscribe(data => {
-        this.submitted = false;
-        this.router.navigate(['/']);
-      },
-        error => {
-          this.submitted = false;
-          this.error = error ? error : '';
-          this.toastService.show('invalid user name or password !', { classname: 'bg-danger text-white', delay: 5000 });
-          console.log("error",this.error);
-        });
-    }
-
+    // stop here if form is invalid
+    // if (this.loginForm.invalid) {
+    //   return;
+    // } else {
+    //   if (environment.defaultauth === 'firebase') {
+    //     this.authenticationService.login(this.f['email'].value, this.f['password'].value).then((res: any) => {
+    //       this.router.navigate(['/']);
+    //     })
+    //       .catch(error => {
+    //         this.error = error ? error : '';
+    //       });
+    //   } else {
+    //     this.authFackservice.login(this.f['email'].value, this.f['password'].value).pipe(first()).subscribe(data => {
+    //           this.router.navigate(['/']);
+    //         },
+    //         error => {
+    //           this.error = error ? error : '';
+    //         });
+    //   }
+    // }
   }
 
   /**
    * Password Hide/Show
    */
-  toggleFieldTextType() {
+   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
   }
 
