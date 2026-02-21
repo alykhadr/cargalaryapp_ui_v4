@@ -4,16 +4,16 @@ import { Observable } from 'rxjs';
 import { GlobalComponent } from "../../global-component";
 
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('token')}` })
-};
+  const httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('token')}` })
+  };
 
 
-@Injectable({
-  providedIn: 'root'
-})
-export class restApiService {
-  constructor(private http: HttpClient) { }
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class restApiService {
+    constructor(private http: HttpClient) { }
 
   /**
   * Product Rest Api

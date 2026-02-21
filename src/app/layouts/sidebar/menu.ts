@@ -1462,6 +1462,12 @@ export const MENU: MenuItem[] = [
         link: '/admin/users',
         parentId: 180
       },
+      {
+        id: 182,
+        label: 'MENUITEMS.ADMIN.LIST.ROLE',
+        link: '/admin/roles',
+        parentId: 180
+      },
       
     ]
   }

@@ -43,7 +43,7 @@ export class MyAuthService {
         //     return user;
         // });
 
-        return this.http.post(AUTH_API + 'login', {
+        return this.http.post(AUTH_API + '/login', {
             userName,
             password
         }, httpOptions).pipe(

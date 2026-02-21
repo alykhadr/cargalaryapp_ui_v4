@@ -5,11 +5,11 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class PaginationService {
-    pageSize: any = 8;
+    pageSize: any = 10;
     page: any = 1;
     direction: any = 'asc';
     startIndex: number = 1;
-    endIndex: number = 9;
+    endIndex: number = 10;
 
     // Pagination
     changePage(alldata: any[]) {
