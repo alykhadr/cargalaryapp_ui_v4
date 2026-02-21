@@ -55,7 +55,7 @@ export class AuthenticationService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = 'Login failed'; // Customize the error message as needed
+                const errorMessage = 'invalid user name or password !'; // Customize the error message as needed
                 this.store.dispatch(loginFailure({ error: errorMessage }));
                 return throwError(errorMessage);
             })

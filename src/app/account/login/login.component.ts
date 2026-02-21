@@ -10,12 +10,15 @@ import { first } from 'rxjs/operators';
 import { ToastService } from './toast-service';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/Authentication/authentication.actions';
+import { MyAuthService } from 'src/app/core/services/my-auth.service';
+import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { User } from 'src/app/store/Authentication/auth.models';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    standalone: false
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  standalone: false
 })
 
 /**
@@ -35,28 +38,31 @@ export class LoginComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder,private authenticationService: AuthenticationService,private router: Router,
-    private authFackservice: AuthfakeauthenticationService, private route: ActivatedRoute, public toastService: ToastService,
+  constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
+    private authFackservice: AuthfakeauthenticationService,
+    private route: ActivatedRoute, public toastService: ToastService,
+    private myAuthService: MyAuthService,
+    private tokenStorageService: TokenStorageService,
     private store: Store) {
-      // redirect to home if already logged in
-      if (this.authenticationService.currentUserValue) {
-        this.router.navigate(['/']);
-      }
-     }
+    // redirect to home if already logged in
+    if (this.myAuthService.currentUserValue) {
+      this.router.navigate(['/']);
+    }
+  }
 
   ngOnInit(): void {
-    if(sessionStorage.getItem('currentUser')) {
+    if (this.tokenStorageService.getUser()) {
       this.router.navigate(['/']);
     }
     /**
      * Form Validatyion
      */
-     this.loginForm = this.formBuilder.group({
-      email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
-      password: ['123456', [Validators.required]],
+    this.loginForm = this.formBuilder.group({
+      userName: ['', [Validators.required]],
+      password: ['', [Validators.required]],
     });
     // get return url from route parameters or default to '/'
-    // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   // convenience getter for easy access to form fields
@@ -65,49 +71,48 @@ export class LoginComponent implements OnInit {
   /**
    * Form submit
    */
-   onSubmit() {
-    this.submitted = true;
-
-     // Login Api
-     this.store.dispatch(login({ email: this.f['email'].value, password: this.f['password'].value }));
-    // this.authenticationService.login(this.f['email'].value, this.f['password'].value).subscribe((data:any) => { 
-    //   if(data.status == 'success'){
-    //     sessionStorage.setItem('toast', 'true');
-    //     sessionStorage.setItem('currentUser', JSON.stringify(data.data));
-    //     sessionStorage.setItem('token', data.token);
-    //     this.router.navigate(['/']);
-    //   } else {
-    //     this.toastService.show(data.data, { classname: 'bg-danger text-white', delay: 15000 });
-    //   }
-    // });
-
+  onSubmit() {
     // stop here if form is invalid
-    // if (this.loginForm.invalid) {
-    //   return;
-    // } else {
-    //   if (environment.defaultauth === 'firebase') {
-    //     this.authenticationService.login(this.f['email'].value, this.f['password'].value).then((res: any) => {
-    //       this.router.navigate(['/']);
-    //     })
-    //       .catch(error => {
-    //         this.error = error ? error : '';
-    //       });
-    //   } else {
-    //     this.authFackservice.login(this.f['email'].value, this.f['password'].value).pipe(first()).subscribe(data => {
-    //           this.router.navigate(['/']);
-    //         },
-    //         error => {
-    //           this.error = error ? error : '';
-    //         });
-    //   }
-    // }
+    if (this.loginForm.invalid) {
+      return;
+    } else {
+      this.submitted = true;
+      this.store.dispatch(login({ userName: this.f['userName'].value, password: this.f['password'].value }));
+      this.submitted = true;
+
+      this.myAuthService
+        .login(this.f['userName'].value, this.f['password'].value)
+        .pipe(first())
+        .subscribe({
+          next: (user: User) => {
+            this.submitted = false;
+
+            sessionStorage.setItem('toast', 'true');
+
+            this.tokenStorageService.saveUser(user);
+            this.tokenStorageService.saveToken(user?.token ?? '');
+
+            this.router.navigate(['/']);
+          },
+          error: (error) => {
+            this.submitted = false;
+
+            this.error = error ? error : 'Invalid user name or password';
+
+            this.toastService.show(this.error, {
+              classname: 'bg-danger text-white',
+              delay: 5000
+            });
+          }
+        });
+    }
   }
 
-  /**
-   * Password Hide/Show
-   */
-   toggleFieldTextType() {
-    this.fieldTextType = !this.fieldTextType;
-  }
+    /**
+     * Password Hide/Show
+     */
+    toggleFieldTextType() {
+      this.fieldTextType = !this.fieldTextType;
+    }
 
-}
+  }

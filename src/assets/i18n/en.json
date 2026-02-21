@@ -291,6 +291,13 @@
           }
         }
       }
+    },
+     "ADMIN":{
+      "TEXT": "Admin",
+      "LIST": {
+         "USER": "User"
+      
+      }
     }
   }
 }

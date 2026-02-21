@@ -30,6 +30,7 @@ import { ToastsContainer } from './dashboards/dashboard/toasts-container.compone
 import { DashboardsModule } from "./dashboards/dashboards.module";
 import { AppsModule } from "./apps/apps.module";
 import { EcommerceModule } from "./ecommerce/ecommerce.module";
+import { AdminModule } from './admin/admin.module';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import { EcommerceModule } from "./ecommerce/ecommerce.module";
     LightboxModule,
     DashboardsModule,
     AppsModule,
-    EcommerceModule
+    EcommerceModule,
+    AdminModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

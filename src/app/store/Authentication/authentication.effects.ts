@@ -28,9 +28,9 @@ export class AuthenticationEffects {
   login$ = createEffect(() =>
   this.actions$.pipe(
     ofType(login),
-    exhaustMap(({ email, password }) => {
+    exhaustMap(({ userName, password }) => {
       if (environment.defaultauth === "fakebackend") {
-        return this.AuthenticationService.login(email, password).pipe(
+        return this.AuthenticationService.login(userName, password).pipe(
           map((user) => {
             if (user.status === 'success') {
               sessionStorage.setItem('toast', 'true');

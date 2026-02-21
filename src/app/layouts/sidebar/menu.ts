@@ -1449,6 +1449,21 @@ export const MENU: MenuItem[] = [
         ]
       },
     ]
+  },
+  {
+    id: 180,
+    label: 'MENUITEMS.ADMIN.TEXT',
+    icon: 'ri-account-circle-line',
+    isCollapsed: true,
+    subItems: [
+      {
+        id: 181,
+        label: 'MENUITEMS.ADMIN.LIST.USER',
+        link: '/admin/users',
+        parentId: 180
+      },
+      
+    ]
   }
 
 ];
