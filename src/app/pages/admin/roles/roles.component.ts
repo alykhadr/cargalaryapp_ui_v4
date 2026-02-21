@@ -70,7 +70,8 @@ export class RolesComponent {
   initForm() {
     this.roleForm = this.formBuilder.group({
       _id: [''],
-      roleName: ['', [Validators.required]]
+      roleName: ['', [Validators.required]],
+      isActive: [true]
     });
   }
   getRoles() {
@@ -137,7 +138,7 @@ export class RolesComponent {
 
     const request: CreateRoleRequest = {
       name: this.form['roleName'].value,
-      isActive: true
+      isActive: this.form['isActive'].value
     };
 
     this.roleService.createRole(request)
@@ -147,12 +148,12 @@ export class RolesComponent {
           this.isLoading = false;
           // document.getElementById('elmLoader')?.classList.add('d-none');
           this.role = role
-         
+
 
           this.modalService.dismissAll();
 
-           this.openSuccessModal('created');
-           
+          this.openSuccessModal('created');
+
         },
         error: (error) => {
           this.isLoading = false;
@@ -165,7 +166,7 @@ export class RolesComponent {
   }
 
   updateRole() {
-   
+
     const updateRequest: UpdateRoleRequest = {
       name: this.form['roleName'].value,
       isActive: true,
@@ -179,11 +180,11 @@ export class RolesComponent {
           this.isLoading = false;
           // document.getElementById('elmLoader')?.classList.add('d-none');
           //success alert
-        
+
 
           this.modalService.dismissAll();
           this.openSuccessModal('updated');
-          
+
         },
         error: (error) => {
           console.log(error);
@@ -274,12 +275,12 @@ export class RolesComponent {
         .subscribe({
           next: () => {
             this.isLoading = false;
-           
+
 
             this.modalService.dismissAll();
             this.openSuccessModal('deleted');
 
-           
+
           },
           error: (error) => {
             console.log(error);
@@ -292,7 +293,7 @@ export class RolesComponent {
         });
 
     }
-    else{
+    else {
       this.sendSelectedRolesToDelete();
     }
     this.deleteId = ''
@@ -311,7 +312,7 @@ export class RolesComponent {
         clearInterval(timerInterval);
       },
     }).then((result) => {
-       this.getRoles();
+      this.getRoles();
       /* Read more about handling dismissals below */
       if (result.dismiss === Swal.DismissReason.timer) {
       }
@@ -396,38 +397,38 @@ export class RolesComponent {
 
   sendSelectedRolesToDelete() {
 
-  if (this.checkedValGet.length === 0) {
-    return;
-  }
-  this.isLoading = true;
-   const roleIds = this.checkedValGet;
-  this.roleService.deleteRoles(roleIds)
-    .pipe(first())
-    .subscribe({
-      next: () => {
-        this.isLoading = false;
-         this.modalService.dismissAll();
-        this.openSuccessModal( 'deleted');
-       
-      },
-      error: (error) => {
-        
-        this.isLoading = false;
-        this.toastService.show(error, {
-          classname: 'bg-danger text-white',
-          delay: 3000
-        });
-      }
-    });
-}
+    if (this.checkedValGet.length === 0) {
+      return;
+    }
+    this.isLoading = true;
+    const roleIds = this.checkedValGet;
+    this.roleService.deleteRoles(roleIds)
+      .pipe(first())
+      .subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.modalService.dismissAll();
+          this.openSuccessModal('deleted');
 
-updateCheckedRoles() {
-  this.checkedValGet = this.roles.filter(r => r.state);
-  const removeActions = document.getElementById("remove-actions");
-  if (removeActions) {
-    removeActions.style.display = this.checkedValGet.length > 0 ? "block" : "none";
+        },
+        error: (error) => {
+
+          this.isLoading = false;
+          this.toastService.show(error, {
+            classname: 'bg-danger text-white',
+            delay: 3000
+          });
+        }
+      });
   }
-}
+
+  updateCheckedRoles() {
+    this.checkedValGet = this.roles.filter(r => r.state);
+    const removeActions = document.getElementById("remove-actions");
+    if (removeActions) {
+      removeActions.style.display = this.checkedValGet.length > 0 ? "block" : "none";
+    }
+  }
   /**
    * Open Edit modal
    * @param content modal content
@@ -444,6 +445,7 @@ updateCheckedRoles() {
     this.role = this.rolesList[id];
     this.roleForm.controls['roleName'].setValue(this.role.name);
     this.roleForm.controls['_id'].setValue(this.role.id);
+    this.roleForm.controls['isActive'].setValue(this.role.isActive);
 
   }
 

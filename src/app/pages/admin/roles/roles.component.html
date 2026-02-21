@@ -122,6 +122,7 @@
                                         </span>
                                     </td>
                                     <td>
+
                                         <ul class="list-inline hstack gap-2 mb-0">
                                             <li class="list-inline-item edit" ngbTooltip="Edit" placement="top">
                                                 <a href="javascript:void(0);" data-bs-toggle="modal"
@@ -131,7 +132,8 @@
                                                 </a>
                                             </li>
                                             <li class="list-inline-item me-0" ngbTooltip="Remove" placement="top">
-                                                <a href="javascript:void(0);"class="text-danger d-inline-block remove-item-btn"
+                                                <a href="javascript:void(0);"
+                                                    class="text-danger d-inline-block remove-item-btn"
                                                     data-bs-toggle="modal" data-bs-target="#deleteRecordModal"
                                                     (click)="confirm(deleteModel,role.id)">
                                                     <i class="ri-delete-bin-5-fill fs-16"></i>
@@ -183,12 +185,15 @@
                                 <div class="invalid-feedback">Please enter a role name.</div>
 
                             </div>
+                            <div class="mb-3">
+                                <label for="status-field" class="form-label">Is Active</label>
+                                <div class="form-check form-switch form-switch-lg" dir="ltr">
 
+                                    <input type="checkbox" class="form-check-input" id="Switchsizelg" 
+                                    formControlName="isActive">
 
-
-
-
-
+                                </div>
+                            </div>
 
                             <!-- <div>
                                 <label for="status-field" class="form-label">Status</label>
@@ -206,6 +211,7 @@
                                 }
                             </div> -->
                         </div>
+
                         <div class="modal-footer">
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal"
