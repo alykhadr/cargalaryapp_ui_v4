@@ -27,6 +27,7 @@ export class RolesComponent {
   masterSelected!: boolean;
   checkedList: any;
   content?: any;
+  active: boolean = true;
 
   deleteId: string = '';
 
@@ -71,7 +72,7 @@ export class RolesComponent {
     this.roleForm = this.formBuilder.group({
       _id: [''],
       roleName: ['', [Validators.required]],
-      isActive: [true]
+      isActive: [this.active]
     });
   }
   getRoles() {
@@ -130,7 +131,7 @@ export class RolesComponent {
       this.roleForm.reset();
     }, 2000);
 
-    this.submitted = true;
+    //this.submitted = true;
 
   }
 
@@ -138,7 +139,7 @@ export class RolesComponent {
 
     const request: CreateRoleRequest = {
       name: this.form['roleName'].value,
-      isActive: this.form['isActive'].value
+      isActive: !!this.form['isActive'].value
     };
 
     this.roleService.createRole(request)
@@ -156,6 +157,7 @@ export class RolesComponent {
 
         },
         error: (error) => {
+          debugger;
           this.isLoading = false;
           this.toastService.show(error, {
             classname: 'bg-danger text-white',
@@ -169,7 +171,7 @@ export class RolesComponent {
 
     const updateRequest: UpdateRoleRequest = {
       name: this.form['roleName'].value,
-      isActive: true,
+      isActive: !!this.form['isActive'].value,
 
     };
     const roleId = this.roleForm.get('_id')?.value;
@@ -178,9 +180,6 @@ export class RolesComponent {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          // document.getElementById('elmLoader')?.classList.add('d-none');
-          //success alert
-
 
           this.modalService.dismissAll();
           this.openSuccessModal('updated');
@@ -445,7 +444,7 @@ export class RolesComponent {
     this.role = this.rolesList[id];
     this.roleForm.controls['roleName'].setValue(this.role.name);
     this.roleForm.controls['_id'].setValue(this.role.id);
-    this.roleForm.controls['isActive'].setValue(this.role.isActive);
+    this.roleForm.controls['isActive'].setValue(!!this.role.isActive);
 
   }
 

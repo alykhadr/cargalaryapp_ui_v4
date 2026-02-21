@@ -189,8 +189,9 @@
                                 <label for="status-field" class="form-label">Is Active</label>
                                 <div class="form-check form-switch form-switch-lg" dir="ltr">
 
-                                    <input type="checkbox" class="form-check-input" id="Switchsizelg" 
-                                    formControlName="isActive">
+                                  <input type="checkbox" class="form-check-input" id="Switchsizelg" 
+                                    [checked]="roleForm.get('isActive')?.value" 
+                                    (change)="roleForm.get('isActive')?.setValue($event.target.checked)">
 
                                 </div>
                             </div>
