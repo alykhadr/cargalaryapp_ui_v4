@@ -127,9 +127,7 @@ export class RolesComponent {
 
     }
 
-    setTimeout(() => {
-      this.roleForm.reset();
-    }, 2000);
+
 
     //this.submitted = true;
 
@@ -154,12 +152,16 @@ export class RolesComponent {
           this.modalService.dismissAll();
 
           this.openSuccessModal('created');
+          setTimeout(() => {
+            this.roleForm.reset();
+          }, 2000);
 
         },
         error: (error) => {
-          debugger;
+
           this.isLoading = false;
-          this.toastService.show(error, {
+          const message = error?.error?.message || error?.message || 'Something went wrong';
+          this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
           });
@@ -183,6 +185,10 @@ export class RolesComponent {
 
           this.modalService.dismissAll();
           this.openSuccessModal('updated');
+
+          setTimeout(() => {
+            this.roleForm.reset();
+          }, 2000);
 
         },
         error: (error) => {
