@@ -35,10 +35,14 @@ export class UserComponent implements OnInit {
   showNewPassword = false;
 
   users: AdminUser[] = [];
+  filteredUsers: AdminUser[] = [];
   pagedUsers: AdminUser[] = [];
   roles: Role[] = [];
   selectedRoles: string[] = [];
   editSelectedRoles: string[] = [];
+  userNameFilter = '';
+  emailFilter = '';
+  statusFilter: '' | 'active' | 'locked' = '';
 
   selectedUser?: AdminUser;
   selectedUserPermissions: string[] = [];
@@ -115,9 +119,8 @@ export class UserComponent implements OnInit {
     }).subscribe({
       next: ({ users, roles }) => {
         this.users = users;
-        this.service.page = 1;
-        this.pagedUsers = this.service.changePage(this.users);
         this.roles = roles;
+        this.applyFilters(true);
         this.isLoading = false;
       },
       error: () => {
@@ -139,7 +142,18 @@ export class UserComponent implements OnInit {
 
   onPageChange(page: number) {
     this.service.page = page;
-    this.pagedUsers = this.service.changePage(this.users);
+    this.pagedUsers = this.service.changePage(this.filteredUsers);
+  }
+
+  onFiltersChanged() {
+    this.applyFilters(true);
+  }
+
+  clearFilters() {
+    this.userNameFilter = '';
+    this.emailFilter = '';
+    this.statusFilter = '';
+    this.applyFilters(true);
   }
 
   togglePasswordVisibility() {
@@ -395,5 +409,30 @@ export class UserComponent implements OnInit {
       delay: 3000
     });
 
+  }
+
+  private applyFilters(resetPage = false) {
+    let data = [...this.users];
+    const userNameTerm = this.userNameFilter.trim().toLowerCase();
+    const emailTerm = this.emailFilter.trim().toLowerCase();
+
+    if (userNameTerm) {
+      data = data.filter(user => (user.userName || '').toLowerCase().includes(userNameTerm));
+    }
+
+    if (emailTerm) {
+      data = data.filter(user => (user.email || '').toLowerCase().includes(emailTerm));
+    }
+
+    if (this.statusFilter) {
+      const isLocked = this.statusFilter === 'locked';
+      data = data.filter(user => user.isLocked === isLocked);
+    }
+
+    this.filteredUsers = data;
+    if (resetPage) {
+      this.service.page = 1;
+    }
+    this.pagedUsers = this.service.changePage(this.filteredUsers);
   }
 }

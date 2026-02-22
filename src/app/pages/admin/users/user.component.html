@@ -77,6 +77,43 @@
         <h5 class="card-title mb-0">Users</h5>
       </div>
       <div class="card-body">
+        <div class="mb-3 p-3 border border-dashed rounded-3 bg-light-subtle">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by username"
+                [(ngModel)]="userNameFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+            <div class="col-md-4">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by email"
+                [(ngModel)]="emailFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+            <div class="col-md-2">
+              <select
+                class="form-select"
+                [(ngModel)]="statusFilter"
+                (ngModelChange)="onFiltersChanged()">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="locked">Locked</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex justify-content-md-end">
+              <button class="btn btn-soft-secondary" type="button" (click)="clearFilters()">
+                <i class="ri-restart-line"></i>
+                Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div *ngIf="isLoading" class="text-center py-4">
           <div class="spinner-border text-primary" role="status"></div>
         </div>
@@ -120,22 +157,26 @@
           </table>
         </div>
 
-        <div class="row align-items-center mt-2" *ngIf="!isLoading && users.length > 0">
+        <div class="row align-items-center mt-2" *ngIf="!isLoading && filteredUsers.length > 0">
           <div class="col-sm-6">
             <div class="text-muted small">
-              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ users.length }} entries
+              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredUsers.length }} entries
             </div>
           </div>
           <div class="col-sm-6">
             <div class="d-flex justify-content-sm-end mt-2 mt-sm-0">
               <ngb-pagination
-                [collectionSize]="users.length"
+                [collectionSize]="filteredUsers.length"
                 [(page)]="service.page"
                 [pageSize]="service.pageSize"
                 (pageChange)="onPageChange($event)">
               </ngb-pagination>
             </div>
           </div>
+        </div>
+
+        <div class="text-center text-muted py-3" *ngIf="!isLoading && filteredUsers.length === 0">
+          No users found for selected filters.
         </div>
       </div>
     </div>
