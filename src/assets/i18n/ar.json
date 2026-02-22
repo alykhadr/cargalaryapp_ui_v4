@@ -297,7 +297,8 @@
       "LIST": {
         "USER": "المستخدمين",
         "ROLE":"الصلاحيات",
-        "PERMISSION":"الأذونات"
+        "PERMISSION":"الأذونات",
+        "BRANCH":"Branches"
       }
     }
   }

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { UserComponent } from './users/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
+import { BranchesComponent } from './branches/branches.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -26,6 +27,12 @@ const routes: Routes = [
     component: PermissionsComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'permissions.view' }
+  },
+  {
+    path: "branches",
+    component: BranchesComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'branches.view' }
   }
   
 ];

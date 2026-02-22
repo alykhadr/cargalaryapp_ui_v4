@@ -297,7 +297,8 @@
       "LIST": {
          "USER": "Users",
           "ROLE":"Roles",
-          "PERMISSION":"Permissions"
+          "PERMISSION":"Permissions",
+          "BRANCH":"Branches"
       
       }
     }
