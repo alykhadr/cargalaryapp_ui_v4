@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       userName: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      rememberMe: [false],
     });
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -71,17 +72,13 @@ export class LoginComponent implements OnInit {
       this.submitted = true;
 
       this.myAuthService
-        .login(this.f['userName'].value, this.f['password'].value)
+        .login(this.f['userName'].value, this.f['password'].value, !!this.f['rememberMe'].value)
         .pipe(first())
         .subscribe({
           next: (user: User) => {
             this.submitted = false;
 
             sessionStorage.setItem('toast', 'true');
-
-            this.tokenStorageService.saveUser(user);
-            this.tokenStorageService.saveToken(user?.token ?? '');
-
             this.router.navigate(['/']);
           },
           error: (error) => {

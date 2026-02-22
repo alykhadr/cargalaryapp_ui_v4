@@ -37,7 +37,7 @@ export class MyAuthService {
         * @param userName userName of user
         * @param password password of user
         */
-    login(userName: string, password: string) {
+    login(userName: string, password: string, rememberMe = false) {
         // return getFirebaseBackend()!.loginUser(email, password).then((response: any) => {
         //     const user = response;
         //     return user;
@@ -45,15 +45,15 @@ export class MyAuthService {
 
         return this.http.post(AUTH_API + '/login', {
             userName,
-            password
+            password,
+            rememberMe
         }, httpOptions).pipe(
             map((response: User) => {
                 const user = response;
                 if (user && user.token) {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     sessionStorage.setItem('toast', 'true');
-                    this.tokenStorageService.saveUser( user);
-                     this.tokenStorageService.saveToken( user.token);
+                    this.tokenStorageService.saveAuth(user, user.token, rememberMe);
                     this.currentUserSubject.next(user);
                 }
                 return user;
