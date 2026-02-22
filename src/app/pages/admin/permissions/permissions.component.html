@@ -33,8 +33,11 @@
 
   <div class="col-lg-8">
     <div class="card" *ngIf="selectedRole; else selectRoleHint">
-      <div class="card-header">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h5 class="card-title mb-0">Role Permissions: {{ selectedRole?.name }}</h5>
+        <span class="badge bg-primary-subtle text-primary">
+          {{ rolePermissions.length }} assigned
+        </span>
       </div>
       <div class="card-body">
         <div class="input-group mb-3">
@@ -44,35 +47,80 @@
             placeholder="e.g. cars.read"
             [(ngModel)]="permissionInput"
             (keyup.enter)="addPermission()">
-          <button class="btn btn-primary" type="button" [disabled]="isSaving" (click)="addPermission()">
-            <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            {{ isSaving ? 'Adding...' : 'Add Permission' }}
+          <button class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
+            <span *ngIf="isAddingPermission" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isAddingPermission ? 'Adding...' : 'Add Permission' }}
           </button>
         </div>
         <div class="invalid-feedback d-block mb-3" *ngIf="permissionSubmitted && !permissionInput.trim()">
           Permission is required.
         </div>
 
-        <div class="d-flex flex-wrap gap-2 mb-4" *ngIf="rolePermissions.length > 0">
-          @for (permission of rolePermissions; track permission) {
-          <span class="badge bg-info-subtle text-info permission-chip">
-            {{ permission }}
-            <button class="btn btn-sm btn-link text-danger p-0 ms-1" (click)="removePermission(permission)">
-              <i class="ri-close-line"></i>
-            </button>
-          </span>
-          }
-        </div>
-        <div *ngIf="rolePermissions.length === 0" class="text-muted mb-4">No permissions assigned.</div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="permission-panel">
+              <div class="permission-panel-header">
+                <h6 class="mb-0">Assigned Permissions</h6>
+                <span class="badge bg-light text-dark">{{ filteredRolePermissions.length }}</span>
+              </div>
+              <input
+                type="text"
+                class="form-control form-control-sm mb-2"
+                placeholder="Search assigned permissions"
+                [(ngModel)]="permissionSearch">
+              <div class="permission-list">
+                <div *ngIf="filteredRolePermissions.length === 0" class="text-muted small p-2">
+                  No permissions assigned.
+                </div>
+                <div class="list-group list-group-flush" *ngIf="filteredRolePermissions.length > 0">
+                  @for (permission of filteredRolePermissions; track permission) {
+                  <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="permission-text">{{ permission }}</span>
+                    <button
+                      class="btn btn-sm btn-soft-danger"
+                      type="button"
+                      [disabled]="deletingPermission === permission"
+                      (click)="removePermission(permission)">
+                      <span *ngIf="deletingPermission === permission" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                      <i *ngIf="deletingPermission !== permission" class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <h6 class="mb-2">Existing Permissions</h6>
-        <div class="d-flex flex-wrap gap-2">
-          @for (permission of allPermissions; track permission) {
-          <button class="btn btn-sm btn-soft-secondary" type="button" (click)="useSuggestedPermission(permission)">
-            {{ permission }}
-          </button>
-          }
-          <div *ngIf="allPermissions.length === 0" class="text-muted">No existing permissions yet.</div>
+          <div class="col-md-6">
+            <div class="permission-panel">
+              <div class="permission-panel-header">
+                <h6 class="mb-0">Available Permissions</h6>
+                <span class="badge bg-light text-dark">{{ filteredAvailablePermissions.length }}</span>
+              </div>
+              <input
+                type="text"
+                class="form-control form-control-sm mb-2"
+                placeholder="Search available permissions"
+                [(ngModel)]="availableSearch">
+              <div class="permission-list">
+                <div *ngIf="filteredAvailablePermissions.length === 0" class="text-muted small p-2">
+                  No available permissions.
+                </div>
+                <div class="list-group list-group-flush" *ngIf="filteredAvailablePermissions.length > 0">
+                  @for (permission of filteredAvailablePermissions; track permission) {
+                  <button
+                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                    type="button"
+                    (click)="useSuggestedPermission(permission)">
+                    <span class="permission-text">{{ permission }}</span>
+                    <i class="ri-arrow-left-up-line text-muted"></i>
+                  </button>
+                  }
+                </div>
+              </div>
+              <div class="small text-muted mt-2">Click an available permission to populate the input above.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

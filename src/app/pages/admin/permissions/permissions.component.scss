@@ -1,5 +1,32 @@
-.permission-chip {
-  display: inline-flex;
+.permission-panel {
+  border: 1px solid var(--vz-border-color);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--vz-card-bg-custom);
+}
+
+.permission-panel-header {
+  display: flex;
   align-items: center;
-  font-size: 12px;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.permission-list {
+  border: 1px solid var(--vz-border-color);
+  border-radius: 0.5rem;
+  max-height: 340px;
+  overflow-y: auto;
+  background-color: var(--vz-secondary-bg);
+}
+
+.permission-list .list-group-item {
+  background-color: transparent;
+}
+
+.permission-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

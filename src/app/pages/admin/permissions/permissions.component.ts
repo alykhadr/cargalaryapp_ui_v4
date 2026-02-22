@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 import { Role } from '../interfaces/role.interface';
 import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
@@ -17,9 +18,12 @@ export class PermissionsComponent implements OnInit {
   roles: Role[] = [];
   selectedRole?: Role;
   isLoading = false;
-  isSaving = false;
+  isAddingPermission = false;
+  deletingPermission: string | null = null;
   permissionSubmitted = false;
   permissionInput = '';
+  permissionSearch = '';
+  availableSearch = '';
   rolePermissions: string[] = [];
   allPermissions: string[] = [];
 
@@ -91,36 +95,61 @@ export class PermissionsComponent implements OnInit {
     if (!permission) {
       return;
     }
+    const isAlreadyAssigned = this.rolePermissions.some(
+      assigned => assigned.toLowerCase() === permission.toLowerCase()
+    );
+    if (isAlreadyAssigned) {
+      this.toastService.show('Permission already assigned to this role.', {
+        classname: 'bg-warning text-dark',
+        delay: 3000
+      });
+      return;
+    }
 
-    this.isSaving = true;
+    this.isAddingPermission = true;
     this.permissionService.addRolePermission(this.selectedRole.id, permission).pipe(first()).subscribe({
       next: () => {
         this.permissionSubmitted = false;
         this.permissionInput = '';
-        this.isSaving = false;
+        this.isAddingPermission = false;
         this.loadRolePermissions(this.selectedRole!.id);
         this.loadAllPermissions();
       },
       error: (error) => {
-        this.isSaving = false;
+        this.isAddingPermission = false;
         this.showError(error);
       }
     });
   }
 
-  removePermission(permission: string) {
+  async removePermission(permission: string) {
     if (!this.selectedRole) {
       return;
     }
-    this.isSaving = true;
+
+    const result = await Swal.fire({
+      title: 'Delete permission?',
+      text: `Are you sure you want to remove "${permission}" from role "${this.selectedRole.name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545'
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    this.deletingPermission = permission;
     this.permissionService.removeRolePermission(this.selectedRole.id, permission).pipe(first()).subscribe({
       next: () => {
-        this.isSaving = false;
+        this.deletingPermission = null;
         this.loadRolePermissions(this.selectedRole!.id);
         this.loadAllPermissions();
       },
       error: (error) => {
-        this.isSaving = false;
+        this.deletingPermission = null;
         this.showError(error);
       }
     });
@@ -129,6 +158,24 @@ export class PermissionsComponent implements OnInit {
   useSuggestedPermission(permission: string) {
     this.permissionInput = permission;
     this.permissionSubmitted = false;
+  }
+
+  get filteredRolePermissions(): string[] {
+    const term = this.permissionSearch.trim().toLowerCase();
+    if (!term) {
+      return this.rolePermissions;
+    }
+    return this.rolePermissions.filter(permission => permission.toLowerCase().includes(term));
+  }
+
+  get filteredAvailablePermissions(): string[] {
+    const term = this.availableSearch.trim().toLowerCase();
+    const assignedPermissions = new Set(this.rolePermissions.map(permission => permission.toLowerCase()));
+    const availableOnly = this.allPermissions.filter(permission => !assignedPermissions.has(permission.toLowerCase()));
+    if (!term) {
+      return availableOnly;
+    }
+    return availableOnly.filter(permission => permission.toLowerCase().includes(term));
   }
 
   private showError(error: any) {
