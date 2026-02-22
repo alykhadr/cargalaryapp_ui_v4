@@ -12,6 +12,7 @@ import { RoleService } from '../services/role.service';
 import { first } from 'rxjs/operators';
 import { CreateRoleRequest, Role, RoleUser, UpdateRoleRequest } from '../interfaces/role.interface';
 import { ToastService } from '../../icons/toast-service';
+import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
   selector: 'app-roles',
@@ -99,7 +100,8 @@ export class RolesComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.toastService.show(error, {
+          const message = this.getErrorMessage(error);
+          this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
           });
@@ -163,7 +165,7 @@ export class RolesComponent {
         error: (error) => {
 
           this.isLoading = false;
-          const message = error?.error?.message || error?.message || 'Something went wrong';
+          const message = this.getErrorMessage(error);
           this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
@@ -197,7 +199,8 @@ export class RolesComponent {
         error: (error) => {
           console.log(error);
           this.isLoading = false;
-          this.toastService.show(error, {
+          const message = this.getErrorMessage(error);
+          this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
           });
@@ -293,7 +296,8 @@ export class RolesComponent {
           error: (error) => {
             console.log(error);
             this.isLoading = false;
-            this.toastService.show(error, {
+            const message = this.getErrorMessage(error);
+            this.toastService.show(message, {
               classname: 'bg-danger text-white',
               delay: 3000
             });
@@ -331,7 +335,6 @@ export class RolesComponent {
   */
   checkedValGet: any[] = [];
   deleteMultiple(content: any) {
-    debugger;
     var checkboxes: any = document.getElementsByName('checkAll');
     var result
     var checkedVal: any[] = [];
@@ -422,7 +425,8 @@ export class RolesComponent {
         error: (error) => {
 
           this.isLoading = false;
-          this.toastService.show(error, {
+          const message = this.getErrorMessage(error);
+          this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
           });
@@ -463,7 +467,6 @@ export class RolesComponent {
   }
 
   openRoleUsersModal(content: any, role: Role) {
-    debugger;
     this.selectedRoleName = role.name;
     this.roleUsers = [];
     this.isRoleUsersLoading = true;
@@ -479,7 +482,7 @@ export class RolesComponent {
         },
         error: (error) => {
           this.isRoleUsersLoading = false;
-          const message = error?.error?.message || error?.message || 'Failed to load role users';
+          const message = this.getErrorMessage(error, 'Failed to load role users');
           this.toastService.show(message, {
             classname: 'bg-danger text-white',
             delay: 3000
@@ -503,6 +506,10 @@ export class RolesComponent {
       headers: ["id", , "name", "createdAt"]
     };
     new ngxCsv(this.content, "roles", role);
+  }
+
+  private getErrorMessage(error: any, fallback = 'Something went wrong'): string {
+    return getErrorMessage(error, fallback);
   }
   /**
   * Sort table data

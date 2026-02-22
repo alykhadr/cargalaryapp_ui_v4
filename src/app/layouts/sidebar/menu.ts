@@ -1458,14 +1458,21 @@ export const MENU: MenuItem[] = [
     subItems: [
       {
         id: 181,
-        label: 'MENUITEMS.ADMIN.LIST.USER',
-        link: '/admin/users',
+        label: 'MENUITEMS.ADMIN.LIST.ROLE',
+        link: '/admin/roles',
         parentId: 180
       },
       {
         id: 182,
-        label: 'MENUITEMS.ADMIN.LIST.ROLE',
-        link: '/admin/roles',
+        label: 'MENUITEMS.ADMIN.LIST.USER',
+        link: '/admin/users',
+        parentId: 180
+      },
+      
+      {
+        id: 183,
+        label: 'MENUITEMS.ADMIN.LIST.PERMISSION',
+        link: '/admin/permissions',
         parentId: 180
       },
       

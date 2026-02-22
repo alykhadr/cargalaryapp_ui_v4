@@ -296,7 +296,8 @@
       "TEXT": "Admin",
       "LIST": {
          "USER": "Users",
-          "ROLE":"Roles"
+          "ROLE":"Roles",
+          "PERMISSION":"Permissions"
       
       }
     }

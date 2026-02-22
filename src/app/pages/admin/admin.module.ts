@@ -9,6 +9,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { UserComponent } from './users/user.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { RolesComponent } from './roles/roles.component';
+import { PermissionsComponent } from './permissions/permissions.component';
+import { AdminToastsContainerComponent } from './shared/admin-toasts-container.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -20,6 +22,7 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NgxSliderModule } from 'ngx-slider-v2';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbPaginationModule, NgbRatingModule, NgbTooltipModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
@@ -34,7 +37,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
 @NgModule({
   declarations: [
     UserComponent,
-    RolesComponent
+    RolesComponent,
+    PermissionsComponent,
+    AdminToastsContainerComponent
   ],
   imports: [
     CommonModule,
@@ -48,6 +53,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     NgbAccordionModule,
     NgbRatingModule,
     NgbTooltipModule,
+    NgbToastModule,
     NgxSliderModule,
     SimplebarAngularModule,
     SlickCarouselModule,

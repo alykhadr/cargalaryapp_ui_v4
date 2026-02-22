@@ -30,7 +30,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 if (error.status === 401) {
                     this.router.navigate(['/auth/login']);
                 }
-                return throwError(error);
+                return throwError(() => error);
             })
         );
     }
