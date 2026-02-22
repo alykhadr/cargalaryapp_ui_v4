@@ -40,6 +40,7 @@ import { CandidatesComponent } from './landing/job/candidates/candidates.compone
 import { BlogComponent } from './landing/job/blog/blog.component';
 import { JobcategoriesComponent } from './landing/job/jobcategories/jobcategories.component';
 import { JobFooterComponent } from './landing/job/job-footer/job-footer.component';
+import { HasPermissionDirective } from './has-permission.directive';
 
 
 @NgModule({
@@ -71,7 +72,8 @@ import { JobFooterComponent } from './landing/job/job-footer/job-footer.componen
     JobcategoriesComponent,
     JobFooterComponent,
     ScrollspyDirective,
-    LandingScrollspyDirective
+    LandingScrollspyDirective,
+    HasPermissionDirective
   ],
   imports: [
     CommonModule,
@@ -84,6 +86,7 @@ import { JobFooterComponent } from './landing/job/job-footer/job-footer.componen
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   exports: [BreadcrumbsComponent, ClientLogoComponent, ServicesComponent, CollectionComponent, CtaComponent, DesignedComponent, PlanComponent, FaqsComponent, ReviewComponent, CounterComponent, WorkProcessComponent, TeamComponent, ContactComponent, FooterComponent, 
     WalletComponent, MarketPlaceComponent, FeaturesComponent, CategoriesComponent, DiscoverComponent, TopCreatorComponent,   ScrollspyDirective,
-    LandingScrollspyDirective, ProcessComponent, FindjobsComponent, CandidatesComponent, BlogComponent, JobcategoriesComponent, JobFooterComponent]
+    LandingScrollspyDirective, ProcessComponent, FindjobsComponent, CandidatesComponent, BlogComponent, JobcategoriesComponent, JobFooterComponent,
+    HasPermissionDirective]
 })
 export class SharedModule { }

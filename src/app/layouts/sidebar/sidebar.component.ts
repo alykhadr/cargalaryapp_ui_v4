@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -20,13 +21,17 @@ export class SidebarComponent implements OnInit {
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(
+    private router: Router,
+    public translate: TranslateService,
+    private accessControlService: AccessControlService
+  ) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
     // Menu Items
-    this.menuItems = MENU;
+    this.menuItems = this.accessControlService.filterMenuByPermission(MENU);
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {

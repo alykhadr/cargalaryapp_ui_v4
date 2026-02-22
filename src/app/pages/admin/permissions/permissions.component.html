@@ -58,7 +58,7 @@
               (keyup.enter)="addPermission()">
           </div>
           <div class="col-md-2 d-grid">
-            <button class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
+            <button *appHasPermission="'permissions.create'" class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
               <span *ngIf="isAddingPermission" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               {{ isAddingPermission ? 'Adding...' : 'Add' }}
             </button>
@@ -123,6 +123,7 @@
                       <td>{{ action }}</td>
                       <td class="text-end">
                         <button
+                          *appHasPermission="'permissions.delete'"
                           class="btn btn-sm btn-soft-danger"
                           type="button"
                           [disabled]="deletingPermission === (pageGroup.page + '.' + action)"
@@ -207,6 +208,7 @@
                       <td>{{ action }}</td>
                       <td class="text-end">
                         <button
+                          *appHasPermission="'permissions.create'"
                           class="btn btn-sm btn-soft-primary"
                           type="button"
                           (click)="useSuggestedPermissionByParts(pageGroup.page, action)">

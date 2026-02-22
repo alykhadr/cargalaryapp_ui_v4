@@ -1,7 +1,7 @@
 <app-breadcrumbs title="Users" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
-  <div class="col-xl-4">
+  <div class="col-xl-4" *appHasPermission="'users.create'">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title mb-0">Create User</h5>
@@ -142,13 +142,13 @@
                 <td>{{ user.createdAt | date : 'mediumDate' }}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-soft-secondary" (click)="openEditModal(user)">Edit</button>
-                    <button class="btn btn-sm btn-soft-dark" (click)="openPasswordModal(user)">Password</button>
-                    <button class="btn btn-sm btn-soft-primary" (click)="openPermissionsModal(user)">Permissions</button>
-                    <button class="btn btn-sm" [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-warning'" (click)="lockUnlock(user)">
+                    <button *appHasPermission="'users.edit'" class="btn btn-sm btn-soft-secondary" (click)="openEditModal(user)">Edit</button>
+                    <button *appHasPermission="'users.edit'" class="btn btn-sm btn-soft-dark" (click)="openPasswordModal(user)">Password</button>
+                    <button *appHasPermission="'users.view'" class="btn btn-sm btn-soft-primary" (click)="openPermissionsModal(user)">Permissions</button>
+                    <button *appHasPermission="'users.lock'" class="btn btn-sm" [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-warning'" (click)="lockUnlock(user)">
                       {{ user.isLocked ? 'Unlock' : 'Lock' }}
                     </button>
-                    <button class="btn btn-sm btn-soft-danger" (click)="deleteUser(user)">Delete</button>
+                    <button *appHasPermission="'users.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteUser(user)">Delete</button>
                   </div>
                 </td>
               </tr>
@@ -254,7 +254,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" type="button" (click)="closeEditModal()">Close</button>
-        <button class="btn btn-success" type="button" [disabled]="isUpdatingUser" (click)="updateUserDetails()">
+        <button *appHasPermission="'users.edit'" class="btn btn-success" type="button" [disabled]="isUpdatingUser" (click)="updateUserDetails()">
           <span *ngIf="isUpdatingUser" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           {{ isUpdatingUser ? 'Saving...' : 'Save Changes' }}
         </button>
@@ -289,7 +289,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" type="button" (click)="closePasswordModal()">Close</button>
-        <button class="btn btn-primary" type="button" [disabled]="isChangingPassword" (click)="changeUserPassword()">
+        <button *appHasPermission="'users.edit'" class="btn btn-primary" type="button" [disabled]="isChangingPassword" (click)="changeUserPassword()">
           <span *ngIf="isChangingPassword" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
         </button>

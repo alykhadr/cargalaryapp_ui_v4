@@ -15,12 +15,12 @@
                     </div>
                     <div class="col-sm-auto">
                         <div class="d-flex flex-wrap align-items-start gap-2">
-                            <button class="btn btn-soft-danger" id="remove-actions" style="display: none"
+                            <button *appHasPermission="'roles.delete'" class="btn btn-soft-danger" id="remove-actions" style="display: none"
                                 (click)="deleteMultiple(deleteModel)"><i class="ri-delete-bin-2-line"></i></button>
-                            <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn"
+                            <button *appHasPermission="'roles.create'" type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn"
                                 data-bs-target="#showModal" (click)="openModal(content)"><i
                                     class="ri-add-line align-bottom me-1"></i> Add Role</button>
-                            <button type="button" class="btn btn-info" (click)="csvFileExport()"><i
+                            <button *appHasPermission="'roles.view'" type="button" class="btn btn-info" (click)="csvFileExport()"><i
                                     class="ri-file-download-line align-bottom me-1"></i> Export</button>
                         </div>
                     </div>
@@ -123,21 +123,21 @@
                                     <td>
 
                                         <ul class="list-inline hstack gap-2 mb-0">
-                                            <li class="list-inline-item edit" ngbTooltip="Edit" placement="top">
+                                            <li class="list-inline-item edit" ngbTooltip="Edit" placement="top" *appHasPermission="'roles.edit'">
                                                 <a href="javascript:void(0);" data-bs-toggle="modal"
                                                     class="text-primary d-inline-block edit-item-btn"
                                                     (click)="editDataGet($index,content)">
                                                     <i class="ri-pencil-fill fs-16"></i>
                                                 </a>
                                             </li>
-                                            <li class="list-inline-item" ngbTooltip="View Users" placement="top">
+                                            <li class="list-inline-item" ngbTooltip="View Users" placement="top" *appHasPermission="'roles.view'">
                                                 <a href="javascript:void(0);"
                                                     class="text-info d-inline-block"
                                                     (click)="openRoleUsersModal(roleUsersModal, role)">
                                                     <i class="ri-group-line fs-16"></i>
                                                 </a>
                                             </li>
-                                            <li class="list-inline-item me-0" ngbTooltip="Remove" placement="top">
+                                            <li class="list-inline-item me-0" ngbTooltip="Remove" placement="top" *appHasPermission="'roles.delete'">
                                                 <a href="javascript:void(0);"
                                                     class="text-danger d-inline-block remove-item-btn"
                                                     data-bs-toggle="modal" data-bs-target="#deleteRecordModal"
@@ -225,7 +225,7 @@
                                     (click)="closeModal()">Close</button>
                                 <!-- <button type="submit" class="btn btn-success" id="add-btn">Add Role</button> -->
 
-                                <button type="submit" class="btn btn-success" id="add-btn" [disabled]="isLoading">
+                                <button *appHasPermission="['roles.create','roles.edit']" type="submit" class="btn btn-success" id="add-btn" [disabled]="isLoading">
                                     <span class="d-flex align-items-center">
 
                                         <!-- Spinner only when submitting -->
