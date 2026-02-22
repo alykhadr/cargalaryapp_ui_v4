@@ -21,7 +21,8 @@ export class PermissionsComponent implements OnInit {
   isAddingPermission = false;
   deletingPermission: string | null = null;
   permissionSubmitted = false;
-  permissionInput = '';
+  pageInput = '';
+  actionInput = '';
   permissionSearch = '';
   availableSearch = '';
   rolePermissions: string[] = [];
@@ -68,7 +69,8 @@ export class PermissionsComponent implements OnInit {
   selectRole(role: Role) {
     this.selectedRole = role;
     this.permissionSubmitted = false;
-    this.permissionInput = '';
+    this.pageInput = '';
+    this.actionInput = '';
     this.loadRolePermissions(role.id);
   }
 
@@ -91,10 +93,12 @@ export class PermissionsComponent implements OnInit {
     if (!this.selectedRole) {
       return;
     }
-    const permission = this.permissionInput.trim();
-    if (!permission) {
+    const page = this.pageInput.trim();
+    const action = this.actionInput.trim();
+    if (!page || !action) {
       return;
     }
+    const permission = this.toPermission(page, action);
     const isAlreadyAssigned = this.rolePermissions.some(
       assigned => assigned.toLowerCase() === permission.toLowerCase()
     );
@@ -107,10 +111,10 @@ export class PermissionsComponent implements OnInit {
     }
 
     this.isAddingPermission = true;
-    this.permissionService.addRolePermission(this.selectedRole.id, permission).pipe(first()).subscribe({
+    this.permissionService.addRolePermission(this.selectedRole.id, page, action).pipe(first()).subscribe({
       next: () => {
         this.permissionSubmitted = false;
-        this.permissionInput = '';
+        this.actionInput = '';
         this.isAddingPermission = false;
         this.loadRolePermissions(this.selectedRole!.id);
         this.loadAllPermissions();
@@ -156,7 +160,15 @@ export class PermissionsComponent implements OnInit {
   }
 
   useSuggestedPermission(permission: string) {
-    this.permissionInput = permission;
+    const parsed = this.parsePermission(permission);
+    this.pageInput = parsed.page;
+    this.actionInput = parsed.action;
+    this.permissionSubmitted = false;
+  }
+
+  useSuggestedPermissionByParts(page: string, action: string) {
+    this.pageInput = page;
+    this.actionInput = action;
     this.permissionSubmitted = false;
   }
 
@@ -176,6 +188,51 @@ export class PermissionsComponent implements OnInit {
       return availableOnly;
     }
     return availableOnly.filter(permission => permission.toLowerCase().includes(term));
+  }
+
+  get groupedAssignedPermissions(): Array<{ page: string; actions: string[] }> {
+    return this.groupPermissions(this.filteredRolePermissions);
+  }
+
+  get groupedAvailablePermissions(): Array<{ page: string; actions: string[] }> {
+    return this.groupPermissions(this.filteredAvailablePermissions);
+  }
+
+  private groupPermissions(permissions: string[]): Array<{ page: string; actions: string[] }> {
+    const map = new Map<string, string[]>();
+    for (const permission of permissions) {
+      const { page, action } = this.parsePermission(permission);
+      const key = page || 'General';
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      const actions = map.get(key)!;
+      if (!actions.some(existing => existing.toLowerCase() === action.toLowerCase())) {
+        actions.push(action);
+      }
+    }
+
+    return Array.from(map.entries())
+      .map(([page, actions]) => ({
+        page,
+        actions: actions.sort((a, b) => a.localeCompare(b))
+      }))
+      .sort((a, b) => a.page.localeCompare(b.page));
+  }
+
+  private parsePermission(permission: string): { page: string; action: string } {
+    const parts = (permission || '').split('.');
+    if (parts.length < 2) {
+      return { page: 'General', action: permission || '' };
+    }
+
+    const page = parts[0].trim();
+    const action = parts.slice(1).join('.').trim();
+    return { page, action };
+  }
+
+  private toPermission(page: string, action: string): string {
+    return `${page.trim()}.${action.trim()}`;
   }
 
   private showError(error: any) {

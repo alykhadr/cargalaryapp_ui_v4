@@ -24,9 +24,7 @@
   background-color: transparent;
 }
 
-.permission-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.permission-action-chip {
   max-width: 100%;
+  white-space: nowrap;
 }

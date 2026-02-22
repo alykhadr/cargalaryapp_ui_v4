@@ -21,8 +21,8 @@ export class PermissionService {
     return this.http.get<string[]>(`${this.baseUrl}/roles/${roleId}`);
   }
 
-  addRolePermission(roleId: string, permission: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/roles/${roleId}`, { permission });
+  addRolePermission(roleId: string, page: string, action: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/roles/${roleId}`, { page, action });
   }
 
   removeRolePermission(roleId: string, permission: string): Observable<void> {

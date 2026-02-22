@@ -40,20 +40,32 @@
         </span>
       </div>
       <div class="card-body">
-        <div class="input-group mb-3">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="e.g. cars.read"
-            [(ngModel)]="permissionInput"
-            (keyup.enter)="addPermission()">
-          <button class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
-            <span *ngIf="isAddingPermission" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            {{ isAddingPermission ? 'Adding...' : 'Add Permission' }}
-          </button>
+        <div class="row g-2 mb-3">
+          <div class="col-md-5">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Page (e.g. users)"
+              [(ngModel)]="pageInput"
+              (keyup.enter)="addPermission()">
+          </div>
+          <div class="col-md-5">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Action (e.g. create)"
+              [(ngModel)]="actionInput"
+              (keyup.enter)="addPermission()">
+          </div>
+          <div class="col-md-2 d-grid">
+            <button class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
+              <span *ngIf="isAddingPermission" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ isAddingPermission ? 'Adding...' : 'Add' }}
+            </button>
+          </div>
         </div>
-        <div class="invalid-feedback d-block mb-3" *ngIf="permissionSubmitted && !permissionInput.trim()">
-          Permission is required.
+        <div class="invalid-feedback d-block mb-3" *ngIf="permissionSubmitted && (!pageInput.trim() || !actionInput.trim())">
+          Page and action are required.
         </div>
 
         <div class="row g-3">
@@ -69,21 +81,26 @@
                 placeholder="Search assigned permissions"
                 [(ngModel)]="permissionSearch">
               <div class="permission-list">
-                <div *ngIf="filteredRolePermissions.length === 0" class="text-muted small p-2">
+                <div *ngIf="groupedAssignedPermissions.length === 0" class="text-muted small p-2">
                   No permissions assigned.
                 </div>
-                <div class="list-group list-group-flush" *ngIf="filteredRolePermissions.length > 0">
-                  @for (permission of filteredRolePermissions; track permission) {
-                  <div class="list-group-item d-flex justify-content-between align-items-center">
-                    <span class="permission-text">{{ permission }}</span>
-                    <button
-                      class="btn btn-sm btn-soft-danger"
-                      type="button"
-                      [disabled]="deletingPermission === permission"
-                      (click)="removePermission(permission)">
-                      <span *ngIf="deletingPermission === permission" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                      <i *ngIf="deletingPermission !== permission" class="ri-delete-bin-line"></i>
-                    </button>
+                <div class="list-group list-group-flush" *ngIf="groupedAssignedPermissions.length > 0">
+                  @for (pageGroup of groupedAssignedPermissions; track pageGroup.page) {
+                  <div class="list-group-item">
+                    <div class="fw-semibold mb-2">{{ pageGroup.page }}</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      @for (action of pageGroup.actions; track action) {
+                      <button
+                        class="btn btn-sm btn-soft-danger permission-action-chip"
+                        type="button"
+                        [disabled]="deletingPermission === (pageGroup.page + '.' + action)"
+                        (click)="removePermission(pageGroup.page + '.' + action)">
+                        <span *ngIf="deletingPermission === (pageGroup.page + '.' + action)" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        {{ action }}
+                        <i *ngIf="deletingPermission !== (pageGroup.page + '.' + action)" class="ri-delete-bin-line ms-1"></i>
+                      </button>
+                      }
+                    </div>
                   </div>
                   }
                 </div>
@@ -103,22 +120,28 @@
                 placeholder="Search available permissions"
                 [(ngModel)]="availableSearch">
               <div class="permission-list">
-                <div *ngIf="filteredAvailablePermissions.length === 0" class="text-muted small p-2">
+                <div *ngIf="groupedAvailablePermissions.length === 0" class="text-muted small p-2">
                   No available permissions.
                 </div>
-                <div class="list-group list-group-flush" *ngIf="filteredAvailablePermissions.length > 0">
-                  @for (permission of filteredAvailablePermissions; track permission) {
-                  <button
-                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                    type="button"
-                    (click)="useSuggestedPermission(permission)">
-                    <span class="permission-text">{{ permission }}</span>
-                    <i class="ri-arrow-left-up-line text-muted"></i>
-                  </button>
+                <div class="list-group list-group-flush" *ngIf="groupedAvailablePermissions.length > 0">
+                  @for (pageGroup of groupedAvailablePermissions; track pageGroup.page) {
+                  <div class="list-group-item">
+                    <div class="fw-semibold mb-2">{{ pageGroup.page }}</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      @for (action of pageGroup.actions; track action) {
+                      <button
+                        class="btn btn-sm btn-soft-secondary permission-action-chip"
+                        type="button"
+                        (click)="useSuggestedPermissionByParts(pageGroup.page, action)">
+                        {{ action }}
+                      </button>
+                      }
+                    </div>
+                  </div>
                   }
                 </div>
               </div>
-              <div class="small text-muted mt-2">Click an available permission to populate the input above.</div>
+              <div class="small text-muted mt-2">Click an action to fill Page + Action inputs.</div>
             </div>
           </div>
         </div>
