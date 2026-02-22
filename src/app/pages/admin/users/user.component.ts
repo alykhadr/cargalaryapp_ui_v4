@@ -46,9 +46,13 @@ export class UserComponent implements OnInit {
 
   selectedUser?: AdminUser;
   selectedUserPermissions: string[] = [];
+  userPermissionGroups: Array<{ page: string; actions: string[] }> = [];
+  pagedUserPermissionGroups: Array<{ page: string; actions: string[] }> = [];
+  expandedUserPermissionPages = new Set<string>();
   isPermissionModalOpen = false;
   isEditModalOpen = false;
   isPasswordModalOpen = false;
+  public permissionsPager = new PaginationService();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -264,9 +268,12 @@ export class UserComponent implements OnInit {
     this.selectedUser = user;
     this.isPermissionModalOpen = true;
     this.selectedUserPermissions = [];
+    this.userPermissionGroups = [];
+    this.pagedUserPermissionGroups = [];
     this.permissionService.getUserPermissions(user.id).pipe(first()).subscribe({
       next: (permissions) => {
         this.selectedUserPermissions = permissions;
+        this.refreshUserPermissionGroups(true);
       },
       error: (error) => this.showError(error)
     });
@@ -276,6 +283,9 @@ export class UserComponent implements OnInit {
     this.isPermissionModalOpen = false;
     this.selectedUser = undefined;
     this.selectedUserPermissions = [];
+    this.userPermissionGroups = [];
+    this.pagedUserPermissionGroups = [];
+    this.expandedUserPermissionPages.clear();
   }
 
   openEditModal(user: AdminUser) {
@@ -434,5 +444,78 @@ export class UserComponent implements OnInit {
       this.service.page = 1;
     }
     this.pagedUsers = this.service.changePage(this.filteredUsers);
+  }
+
+  onPermissionPageChange(page: number) {
+    this.permissionsPager.page = page;
+    this.pagedUserPermissionGroups = this.permissionsPager.changePage(this.userPermissionGroups);
+    this.syncExpandedState(this.pagedUserPermissionGroups, this.expandedUserPermissionPages);
+  }
+
+  togglePermissionGroup(page: string) {
+    if (this.expandedUserPermissionPages.has(page)) {
+      this.expandedUserPermissionPages.delete(page);
+      return;
+    }
+    this.expandedUserPermissionPages.add(page);
+  }
+
+  isPermissionGroupExpanded(page: string): boolean {
+    return this.expandedUserPermissionPages.has(page);
+  }
+
+  private refreshUserPermissionGroups(resetPage = false) {
+    this.userPermissionGroups = this.groupPermissions(this.selectedUserPermissions);
+    if (resetPage) {
+      this.permissionsPager.page = 1;
+    }
+    this.pagedUserPermissionGroups = this.permissionsPager.changePage(this.userPermissionGroups);
+    this.syncExpandedState(this.pagedUserPermissionGroups, this.expandedUserPermissionPages);
+  }
+
+  private syncExpandedState(groups: Array<{ page: string; actions: string[] }>, expandedSet: Set<string>) {
+    const currentPages = new Set(groups.map(group => group.page));
+    for (const page of Array.from(expandedSet)) {
+      if (!currentPages.has(page)) {
+        expandedSet.delete(page);
+      }
+    }
+
+    if (groups.length > 0 && expandedSet.size === 0) {
+      expandedSet.add(groups[0].page);
+    }
+  }
+
+  private groupPermissions(permissions: string[]): Array<{ page: string; actions: string[] }> {
+    const map = new Map<string, string[]>();
+    for (const permission of permissions) {
+      const { page, action } = this.parsePermission(permission);
+      const key = page || 'General';
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      const actions = map.get(key)!;
+      if (!actions.some(existing => existing.toLowerCase() === action.toLowerCase())) {
+        actions.push(action);
+      }
+    }
+
+    return Array.from(map.entries())
+      .map(([page, actions]) => ({
+        page,
+        actions: actions.sort((a, b) => a.localeCompare(b))
+      }))
+      .sort((a, b) => a.page.localeCompare(b.page));
+  }
+
+  private parsePermission(permission: string): { page: string; action: string } {
+    const parts = (permission || '').split('.');
+    if (parts.length < 2) {
+      return { page: 'General', action: permission || '' };
+    }
+    return {
+      page: parts[0],
+      action: parts.slice(1).join('.')
+    };
   }
 }

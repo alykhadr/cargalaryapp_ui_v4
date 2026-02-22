@@ -192,11 +192,53 @@
       </div>
       <div class="modal-body">
         <div *ngIf="selectedUserPermissions.length === 0" class="text-muted">No permissions found.</div>
-        <ul class="list-group">
-          @for (permission of selectedUserPermissions; track permission) {
-          <li class="list-group-item">{{ permission }}</li>
-          }
-        </ul>
+        <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="userPermissionGroups.length > 0">
+          <table class="table table-sm align-middle mb-0 permission-table">
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pageGroup of pagedUserPermissionGroups; track pageGroup.page) {
+              <tr>
+                <td>
+                  <button class="btn btn-sm btn-ghost-primary p-0 me-2" type="button" (click)="togglePermissionGroup(pageGroup.page)">
+                    <i [class]="isPermissionGroupExpanded(pageGroup.page) ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+                  </button>
+                  <span class="fw-semibold">{{ pageGroup.page }}</span>
+                </td>
+                <td>
+                  <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
+                </td>
+              </tr>
+              @if (isPermissionGroupExpanded(pageGroup.page)) {
+              @for (action of pageGroup.actions; track action) {
+              <tr>
+                <td class="ps-4">
+                  <i class="ri-corner-down-right-line text-muted me-2"></i>{{ pageGroup.page }}
+                </td>
+                <td>{{ action }}</td>
+              </tr>
+              }
+              }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-2" *ngIf="userPermissionGroups.length > permissionsPager.pageSize">
+          <ngb-pagination
+            [collectionSize]="userPermissionGroups.length"
+            [pageSize]="permissionsPager.pageSize"
+            [(page)]="permissionsPager.page"
+            (pageChange)="onPermissionPageChange($event)"
+            [maxSize]="3"
+            [rotate]="true"
+            size="sm">
+          </ngb-pagination>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" type="button" (click)="closePermissionsModal()">Close</button>

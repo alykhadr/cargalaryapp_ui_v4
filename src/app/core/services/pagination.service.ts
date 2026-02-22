@@ -15,6 +15,7 @@ export class PaginationService {
     changePage(alldata: any[]) {
         const startItem = (this.page - 1) * this.pageSize + 1;
         const endItem = (this.page - 1) * this.pageSize + this.pageSize;
+        this.startIndex = startItem;
         this.endIndex = endItem;
         if (this.endIndex > alldata.length) {
             this.endIndex = alldata.length;
