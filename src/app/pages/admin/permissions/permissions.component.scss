@@ -1,26 +1,36 @@
 .permission-panel {
-  border: 1px solid var(--vz-border-color);
+  border: 1px solid transparent;
   border-radius: 1rem;
   padding: 1rem;
   background-color: var(--vz-card-bg-custom);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .permission-panel-assigned {
-  border-color: #dc3545;
-  background: linear-gradient(155deg, #dc3545 0%, #b02a37 100%);
+  border-color: rgba(var(--vz-danger-rgb), 0.25);
+  background: linear-gradient(180deg, rgba(var(--vz-danger-rgb), 0.08) 0%, rgba(var(--vz-danger-rgb), 0.03) 100%);
 }
 
 .permission-panel-available {
-  border-color: #0d6efd;
-  background: linear-gradient(155deg, #0d6efd 0%, #0a58ca 100%);
+  border-color: rgba(var(--vz-primary-rgb), 0.25);
+  background: linear-gradient(180deg, rgba(var(--vz-primary-rgb), 0.08) 0%, rgba(var(--vz-primary-rgb), 0.03) 100%);
+}
+
+.permission-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
 }
 
 .permission-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.permission-panel-header h6 {
+  color: var(--vz-heading-color);
 }
 
 .permission-list {
@@ -28,18 +38,17 @@
   border-radius: 0.75rem;
   max-height: 340px;
   overflow-y: auto;
-  background-color: var(--vz-secondary-bg);
+  background-color: var(--vz-card-bg-custom);
 }
 
 .permission-panel-assigned .permission-list,
 .permission-panel-available .permission-list {
-  border-color: rgba(255, 255, 255, 0.25);
-  background-color: rgba(255, 255, 255, 0.96);
+  border-color: rgba(var(--vz-body-color-rgb), 0.12);
 }
 
 .permission-list .list-group-item {
   background-color: transparent;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+  border-bottom: 1px dashed rgba(var(--vz-body-color-rgb), 0.18);
 }
 
 .permission-list .list-group-item:last-child {
@@ -57,15 +66,15 @@
 }
 
 .assigned-count-badge {
-  background-color: #fff;
-  color: #b02a37;
-  border: 1px solid #fff;
+  background-color: rgba(var(--vz-danger-rgb), 0.15);
+  color: var(--vz-danger);
+  border: 1px solid rgba(var(--vz-danger-rgb), 0.25);
 }
 
 .available-count-badge {
-  background-color: #fff;
-  color: #0a58ca;
-  border: 1px solid #fff;
+  background-color: rgba(var(--vz-primary-rgb), 0.15);
+  color: var(--vz-primary);
+  border: 1px solid rgba(var(--vz-primary-rgb), 0.25);
 }
 
 .permission-action-chip {
@@ -75,30 +84,30 @@
 }
 
 .assigned-action-chip {
-  background-color: #ffe3e6;
-  color: #9f1239;
-  border: 1px solid #fecdd3;
+  background-color: rgba(var(--vz-danger-rgb), 0.12);
+  color: var(--vz-danger);
+  border: 1px solid rgba(var(--vz-danger-rgb), 0.2);
 }
 
 .assigned-action-chip:hover {
-  background-color: #fecdd3;
-  color: #881337;
+  background-color: rgba(var(--vz-danger-rgb), 0.22);
+  color: var(--vz-danger);
 }
 
 .available-action-chip {
-  background-color: rgba(13, 110, 253, 0.12);
-  color: #0a58ca;
-  border: 1px solid rgba(13, 110, 253, 0.35);
+  background-color: rgba(var(--vz-primary-rgb), 0.12);
+  color: var(--vz-primary);
+  border: 1px solid rgba(var(--vz-primary-rgb), 0.25);
 }
 
 .available-action-chip:hover {
-  background-color: #0d6efd;
-  color: #ffffff;
-  border-color: #0d6efd;
+  background-color: rgba(var(--vz-primary-rgb), 0.22);
+  color: var(--vz-primary);
+  border-color: rgba(var(--vz-primary-rgb), 0.35);
 }
 
 .permission-help {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--vz-secondary-color);
 }
 
 .permission-pagination :is(.pagination) {
@@ -109,34 +118,34 @@
 .permission-pagination :is(.page-item) .page-link {
   border-radius: 0.5rem;
   border-width: 1px;
-  font-weight: 600;
+  font-weight: 500;
   min-width: 2rem;
   text-align: center;
   transition: all 0.2s ease;
 }
 
 .assigned-pagination ::ng-deep .page-item .page-link {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(var(--vz-danger-rgb), 0.25);
+  color: var(--vz-danger);
+  background-color: rgba(var(--vz-danger-rgb), 0.08);
 }
 
 .assigned-pagination ::ng-deep .page-item.active .page-link,
 .assigned-pagination ::ng-deep .page-item .page-link:hover {
-  background-color: #ffffff;
-  border-color: #ffffff;
-  color: #b02a37;
+  background-color: var(--vz-danger);
+  border-color: var(--vz-danger);
+  color: #fff;
 }
 
 .available-pagination ::ng-deep .page-item .page-link {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(var(--vz-primary-rgb), 0.25);
+  color: var(--vz-primary);
+  background-color: rgba(var(--vz-primary-rgb), 0.08);
 }
 
 .available-pagination ::ng-deep .page-item.active .page-link,
 .available-pagination ::ng-deep .page-item .page-link:hover {
-  background-color: #ffffff;
-  border-color: #ffffff;
-  color: #0a58ca;
+  background-color: var(--vz-primary);
+  border-color: var(--vz-primary);
+  color: #fff;
 }
