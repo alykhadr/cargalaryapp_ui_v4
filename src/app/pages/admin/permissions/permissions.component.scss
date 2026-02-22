@@ -1,8 +1,19 @@
 .permission-panel {
   border: 1px solid var(--vz-border-color);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
+  border-radius: 1rem;
+  padding: 1rem;
   background-color: var(--vz-card-bg-custom);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.permission-panel-assigned {
+  border-color: #dc3545;
+  background: linear-gradient(155deg, #dc3545 0%, #b02a37 100%);
+}
+
+.permission-panel-available {
+  border-color: #0d6efd;
+  background: linear-gradient(155deg, #0d6efd 0%, #0a58ca 100%);
 }
 
 .permission-panel-header {
@@ -14,17 +25,118 @@
 
 .permission-list {
   border: 1px solid var(--vz-border-color);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   max-height: 340px;
   overflow-y: auto;
   background-color: var(--vz-secondary-bg);
 }
 
+.permission-panel-assigned .permission-list,
+.permission-panel-available .permission-list {
+  border-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.96);
+}
+
 .permission-list .list-group-item {
   background-color: transparent;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.permission-list .list-group-item:last-child {
+  border-bottom: 0;
+}
+
+.permission-page-block {
+  padding: 0.6rem 0.75rem;
+}
+
+.permission-page-title {
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.45rem;
+}
+
+.assigned-count-badge {
+  background-color: #fff;
+  color: #b02a37;
+  border: 1px solid #fff;
+}
+
+.available-count-badge {
+  background-color: #fff;
+  color: #0a58ca;
+  border: 1px solid #fff;
 }
 
 .permission-action-chip {
   max-width: 100%;
   white-space: nowrap;
+  border-radius: 999px;
+}
+
+.assigned-action-chip {
+  background-color: #ffe3e6;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+}
+
+.assigned-action-chip:hover {
+  background-color: #fecdd3;
+  color: #881337;
+}
+
+.available-action-chip {
+  background-color: rgba(13, 110, 253, 0.12);
+  color: #0a58ca;
+  border: 1px solid rgba(13, 110, 253, 0.35);
+}
+
+.available-action-chip:hover {
+  background-color: #0d6efd;
+  color: #ffffff;
+  border-color: #0d6efd;
+}
+
+.permission-help {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.permission-pagination :is(.pagination) {
+  margin-bottom: 0;
+  gap: 0.25rem;
+}
+
+.permission-pagination :is(.page-item) .page-link {
+  border-radius: 0.5rem;
+  border-width: 1px;
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.assigned-pagination ::ng-deep .page-item .page-link {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.assigned-pagination ::ng-deep .page-item.active .page-link,
+.assigned-pagination ::ng-deep .page-item .page-link:hover {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #b02a37;
+}
+
+.available-pagination ::ng-deep .page-item .page-link {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.available-pagination ::ng-deep .page-item.active .page-link,
+.available-pagination ::ng-deep .page-item .page-link:hover {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #0a58ca;
 }

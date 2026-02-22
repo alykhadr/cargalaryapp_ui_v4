@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import { PaginationService } from 'src/app/core/services/pagination.service';
 import { Role } from '../interfaces/role.interface';
 import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
@@ -27,6 +28,15 @@ export class PermissionsComponent implements OnInit {
   availableSearch = '';
   rolePermissions: string[] = [];
   allPermissions: string[] = [];
+  filteredAssignedPermissions: string[] = [];
+  filteredAvailablePermissions: string[] = [];
+  assignedGroups: Array<{ page: string; actions: string[] }> = [];
+  availableGroups: Array<{ page: string; actions: string[] }> = [];
+  pagedAssignedGroups: Array<{ page: string; actions: string[] }> = [];
+  pagedAvailableGroups: Array<{ page: string; actions: string[] }> = [];
+
+  assignedPager = new PaginationService();
+  availablePager = new PaginationService();
 
   constructor(
     private roleService: RoleService,
@@ -39,6 +49,8 @@ export class PermissionsComponent implements OnInit {
       { label: 'Admin' },
       { label: 'Permissions', active: true }
     ];
+    this.assignedPager.pageSize = 4;
+    this.availablePager.pageSize = 4;
     this.loadRoles();
     this.loadAllPermissions();
   }
@@ -61,6 +73,7 @@ export class PermissionsComponent implements OnInit {
     this.permissionService.getPermissions().pipe(first()).subscribe({
       next: (permissions) => {
         this.allPermissions = permissions;
+        this.refreshAvailableGroups(true);
       },
       error: (error) => this.showError(error)
     });
@@ -71,6 +84,8 @@ export class PermissionsComponent implements OnInit {
     this.permissionSubmitted = false;
     this.pageInput = '';
     this.actionInput = '';
+    this.permissionSearch = '';
+    this.availableSearch = '';
     this.loadRolePermissions(role.id);
   }
 
@@ -80,6 +95,8 @@ export class PermissionsComponent implements OnInit {
       next: (permissions) => {
         this.rolePermissions = permissions;
         this.isLoading = false;
+        this.refreshAssignedGroups(true);
+        this.refreshAvailableGroups(true);
       },
       error: (error) => {
         this.isLoading = false;
@@ -172,30 +189,50 @@ export class PermissionsComponent implements OnInit {
     this.permissionSubmitted = false;
   }
 
-  get filteredRolePermissions(): string[] {
-    const term = this.permissionSearch.trim().toLowerCase();
-    if (!term) {
-      return this.rolePermissions;
-    }
-    return this.rolePermissions.filter(permission => permission.toLowerCase().includes(term));
+  onAssignedSearchChange() {
+    this.refreshAssignedGroups(true);
   }
 
-  get filteredAvailablePermissions(): string[] {
+  onAvailableSearchChange() {
+    this.refreshAvailableGroups(true);
+  }
+
+  onAssignedPageChange(page: number) {
+    this.assignedPager.page = page;
+    this.pagedAssignedGroups = this.assignedPager.changePage(this.assignedGroups);
+  }
+
+  onAvailablePageChange(page: number) {
+    this.availablePager.page = page;
+    this.pagedAvailableGroups = this.availablePager.changePage(this.availableGroups);
+  }
+
+  private refreshAssignedGroups(resetPage = false) {
+    const term = this.permissionSearch.trim().toLowerCase();
+    this.filteredAssignedPermissions = !term
+      ? [...this.rolePermissions]
+      : this.rolePermissions.filter(permission => permission.toLowerCase().includes(term));
+
+    this.assignedGroups = this.groupPermissions(this.filteredAssignedPermissions);
+    if (resetPage) {
+      this.assignedPager.page = 1;
+    }
+    this.pagedAssignedGroups = this.assignedPager.changePage(this.assignedGroups);
+  }
+
+  private refreshAvailableGroups(resetPage = false) {
     const term = this.availableSearch.trim().toLowerCase();
     const assignedPermissions = new Set(this.rolePermissions.map(permission => permission.toLowerCase()));
     const availableOnly = this.allPermissions.filter(permission => !assignedPermissions.has(permission.toLowerCase()));
-    if (!term) {
-      return availableOnly;
+    this.filteredAvailablePermissions = !term
+      ? availableOnly
+      : availableOnly.filter(permission => permission.toLowerCase().includes(term));
+
+    this.availableGroups = this.groupPermissions(this.filteredAvailablePermissions);
+    if (resetPage) {
+      this.availablePager.page = 1;
     }
-    return availableOnly.filter(permission => permission.toLowerCase().includes(term));
-  }
-
-  get groupedAssignedPermissions(): Array<{ page: string; actions: string[] }> {
-    return this.groupPermissions(this.filteredRolePermissions);
-  }
-
-  get groupedAvailablePermissions(): Array<{ page: string; actions: string[] }> {
-    return this.groupPermissions(this.filteredAvailablePermissions);
+    this.pagedAvailableGroups = this.availablePager.changePage(this.availableGroups);
   }
 
   private groupPermissions(permissions: string[]): Array<{ page: string; actions: string[] }> {

@@ -70,28 +70,29 @@
 
         <div class="row g-3">
           <div class="col-md-6">
-            <div class="permission-panel">
+            <div class="permission-panel permission-panel-assigned">
               <div class="permission-panel-header">
-                <h6 class="mb-0">Assigned Permissions</h6>
-                <span class="badge bg-light text-dark">{{ filteredRolePermissions.length }}</span>
+                <h6 class="mb-0 text-white">Assigned Permissions</h6>
+                <span class="badge assigned-count-badge">{{ filteredAssignedPermissions.length }}</span>
               </div>
               <input
                 type="text"
                 class="form-control form-control-sm mb-2"
                 placeholder="Search assigned permissions"
-                [(ngModel)]="permissionSearch">
+                [(ngModel)]="permissionSearch"
+                (ngModelChange)="onAssignedSearchChange()">
               <div class="permission-list">
-                <div *ngIf="groupedAssignedPermissions.length === 0" class="text-muted small p-2">
+                <div *ngIf="assignedGroups.length === 0" class="text-muted small p-2">
                   No permissions assigned.
                 </div>
-                <div class="list-group list-group-flush" *ngIf="groupedAssignedPermissions.length > 0">
-                  @for (pageGroup of groupedAssignedPermissions; track pageGroup.page) {
-                  <div class="list-group-item">
-                    <div class="fw-semibold mb-2">{{ pageGroup.page }}</div>
+                <div class="list-group list-group-flush" *ngIf="assignedGroups.length > 0">
+                  @for (pageGroup of pagedAssignedGroups; track pageGroup.page) {
+                  <div class="list-group-item permission-page-block">
+                    <div class="permission-page-title">{{ pageGroup.page }}</div>
                     <div class="d-flex flex-wrap gap-2">
                       @for (action of pageGroup.actions; track action) {
                       <button
-                        class="btn btn-sm btn-soft-danger permission-action-chip"
+                        class="btn btn-sm permission-action-chip assigned-action-chip"
                         type="button"
                         [disabled]="deletingPermission === (pageGroup.page + '.' + action)"
                         (click)="removePermission(pageGroup.page + '.' + action)">
@@ -105,32 +106,44 @@
                   }
                 </div>
               </div>
+              <div class="d-flex justify-content-end mt-2 permission-pagination assigned-pagination" *ngIf="assignedGroups.length > assignedPager.pageSize">
+                <ngb-pagination
+                  [collectionSize]="assignedGroups.length"
+                  [pageSize]="assignedPager.pageSize"
+                  [(page)]="assignedPager.page"
+                  (pageChange)="onAssignedPageChange($event)"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  size="sm">
+                </ngb-pagination>
+              </div>
             </div>
           </div>
 
           <div class="col-md-6">
-            <div class="permission-panel">
+            <div class="permission-panel permission-panel-available">
               <div class="permission-panel-header">
-                <h6 class="mb-0">Available Permissions</h6>
-                <span class="badge bg-light text-dark">{{ filteredAvailablePermissions.length }}</span>
+                <h6 class="mb-0 text-white">Available Permissions</h6>
+                <span class="badge available-count-badge">{{ filteredAvailablePermissions.length }}</span>
               </div>
               <input
                 type="text"
                 class="form-control form-control-sm mb-2"
                 placeholder="Search available permissions"
-                [(ngModel)]="availableSearch">
+                [(ngModel)]="availableSearch"
+                (ngModelChange)="onAvailableSearchChange()">
               <div class="permission-list">
-                <div *ngIf="groupedAvailablePermissions.length === 0" class="text-muted small p-2">
+                <div *ngIf="availableGroups.length === 0" class="text-muted small p-2">
                   No available permissions.
                 </div>
-                <div class="list-group list-group-flush" *ngIf="groupedAvailablePermissions.length > 0">
-                  @for (pageGroup of groupedAvailablePermissions; track pageGroup.page) {
-                  <div class="list-group-item">
-                    <div class="fw-semibold mb-2">{{ pageGroup.page }}</div>
+                <div class="list-group list-group-flush" *ngIf="availableGroups.length > 0">
+                  @for (pageGroup of pagedAvailableGroups; track pageGroup.page) {
+                  <div class="list-group-item permission-page-block">
+                    <div class="permission-page-title">{{ pageGroup.page }}</div>
                     <div class="d-flex flex-wrap gap-2">
                       @for (action of pageGroup.actions; track action) {
                       <button
-                        class="btn btn-sm btn-soft-secondary permission-action-chip"
+                        class="btn btn-sm permission-action-chip available-action-chip"
                         type="button"
                         (click)="useSuggestedPermissionByParts(pageGroup.page, action)">
                         {{ action }}
@@ -141,7 +154,18 @@
                   }
                 </div>
               </div>
-              <div class="small text-muted mt-2">Click an action to fill Page + Action inputs.</div>
+              <div class="d-flex justify-content-end mt-2 permission-pagination available-pagination" *ngIf="availableGroups.length > availablePager.pageSize">
+                <ngb-pagination
+                  [collectionSize]="availableGroups.length"
+                  [pageSize]="availablePager.pageSize"
+                  [(page)]="availablePager.page"
+                  (pageChange)="onAvailablePageChange($event)"
+                  [maxSize]="3"
+                  [rotate]="true"
+                  size="sm">
+                </ngb-pagination>
+              </div>
+              <div class="small permission-help mt-2">Click an action to fill Page + Action inputs.</div>
             </div>
           </div>
         </div>
