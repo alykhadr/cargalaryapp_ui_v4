@@ -142,41 +142,42 @@
               <tr *ngIf="expandedBranchId === branch.id" class="bg-light">
                 <td colspan="7">
                   <div class="p-3">
-                    <h6 class="mb-3">Working Days</h6>
-                    <div class="table-responsive">
-                      <table class="table table-sm table-bordered mb-0">
-                        <thead>
-                          <tr>
-                            <th>Day</th>
-                            <th>Status</th>
-                            <th>Working Hours</th>
-                            <th>Time Type</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let day of branch.branchWorkingDaysResponseDtos">
-                            <td>
-                              <div class="fw-semibold">{{ day.dayEn }}</div>
-                              <div class="text-muted small">{{ day.dayAr }}</div>
-                            </td>
-                            <td>
-                              <span class="badge" [ngClass]="day.isAvailable ? 'bg-success' : 'bg-secondary'">
-                                {{ day.isAvailable ? 'Open' : 'Closed' }}
-                              </span>
-                            </td>
-                            <td>
-                              <span *ngIf="day.isAvailable && day.workingFrom != null && day.workingTo != null">
-                                {{ day.workingFrom }}:00 - {{ day.workingTo }}:00
-                              </span>
-                              <span *ngIf="!day.isAvailable" class="text-muted">-</span>
-                            </td>
-                            <td>
-                              <span *ngIf="day.isAvailable">{{ day.timeType }}</span>
-                              <span *ngIf="!day.isAvailable" class="text-muted">-</span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <div class="card shadow-sm border-0">
+                      <div class="card-header bg-primary bg-gradient">
+                        <h6 class="mb-0 text-white"><i class="ri-calendar-2-line me-2"></i>Working Days Schedule</h6>
+                      </div>
+                      <div class="card-body">
+                        <div class="row g-3">
+                          <div class="col-md-6 col-lg-4" *ngFor="let day of branch.branchWorkingDaysResponseDtos">
+                            <div class="card border" [ngClass]="day.isAvailable ? 'border-success' : 'border-danger'">
+                              <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                  <div>
+                                    <h6 class="mb-0 fw-bold">{{ day.dayEn }}</h6>
+                                    <small class="text-muted">{{ day.dayAr }}</small>
+                                  </div>
+                                  <span class="badge" [ngClass]="day.isAvailable ? 'bg-success' : 'bg-danger'">
+                                    {{ day.isAvailable ? 'Open' : 'Closed' }}
+                                  </span>
+                                </div>
+                                <div *ngIf="day.isAvailable && day.workingFrom != null && day.workingTo != null" class="mt-2">
+                                  <div class="d-flex align-items-center text-muted small">
+                                    <i class="ri-time-line me-1"></i>
+                                    <span>{{ day.workingFrom }}:00 - {{ day.workingTo }}:00</span>
+                                  </div>
+                                  <div class="d-flex align-items-center text-muted small mt-1">
+                                    <i class="ri-calendar-check-line me-1"></i>
+                                    <span>{{ day.timeType }}</span>
+                                  </div>
+                                </div>
+                                <div *ngIf="!day.isAvailable" class="mt-2 text-danger small">
+                                  <i class="ri-close-circle-line me-1"></i>Not available
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -349,7 +350,8 @@
               <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="closeModal()" [disabled]="isLoading">Close</button>
               <button type="submit" class="btn btn-success" id="add-btn" [disabled]="isLoading">
                 <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                {{ isLoading ? 'Creating...' : 'Create Branch' }}
+                <span *ngIf="!isLoading">{{ branchForm.get('_id')?.value ? 'Update Branch' : 'Create Branch' }}</span>
+                <span *ngIf="isLoading">{{ branchForm.get('_id')?.value ? 'Updating...' : 'Creating...' }}</span>
               </button>
             </div>
           </div>

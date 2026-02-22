@@ -54,6 +54,7 @@ export interface UpdateBranchRequest {
   latitute?: string;
   longtute?: string;
   isAvailable: boolean;
+  createBranchWorkingDaysRequestDto?: CreateBranchWorkingDay[];
 }
 
 export interface CreateBranchWorkingDay {

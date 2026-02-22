@@ -183,7 +183,15 @@ export class BranchesComponent {
       address: this.form['address'].value,
       latitute: this.form['latitute'].value,
       longtute: this.form['longtute'].value,
-      isAvailable: !!this.form['isAvailable'].value
+      isAvailable: !!this.form['isAvailable'].value,
+      createBranchWorkingDaysRequestDto: this.workingDays.map(day => ({
+        dayEn: day.dayEn,
+        dayAr: day.dayAr,
+        isAvailable: day.isAvailable,
+        workingFrom: day.isAvailable ? day.workingFrom : null,
+        workingTo: day.isAvailable ? day.workingTo : null,
+        timeType: day.timeType
+      }))
     };
 
     this.branchService.updateBranch(branchId, updateRequest).pipe(first()).subscribe({
@@ -341,6 +349,10 @@ export class BranchesComponent {
     this.submitted = false;
     this.branchForm.reset({ isAvailable: true });
     this.initWorkingDays();
+    const modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
+    if (modelTitle) {
+      modelTitle.innerHTML = 'Add Branch';
+    }
     this.modalService.open(content, { size: 'xl', centered: true });
   }
 
@@ -368,11 +380,30 @@ export class BranchesComponent {
       longtute: branch.longtute,
       isAvailable: branch.isAvailable
     });
+
+    // Load working days if available
+    if (branch.branchWorkingDaysResponseDtos && branch.branchWorkingDaysResponseDtos.length > 0) {
+      this.workingDays = branch.branchWorkingDaysResponseDtos.map(day => ({
+        dayEn: day.dayEn,
+        dayAr: day.dayAr,
+        isAvailable: day.isAvailable,
+        workingFrom: day.workingFrom,
+        workingTo: day.workingTo,
+        timeType: day.timeType
+      }));
+    } else {
+      this.initWorkingDays();
+    }
   }
 
   closeModal() {
     this.modalService.dismissAll();
     this.branchForm.reset();
+    this.submitted = false;
+    const modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
+    if (modelTitle) {
+      modelTitle.innerHTML = 'Add Branch';
+    }
   }
 
   get form() {
