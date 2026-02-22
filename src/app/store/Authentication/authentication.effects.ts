@@ -29,23 +29,21 @@ export class AuthenticationEffects {
   this.actions$.pipe(
     ofType(login),
     exhaustMap(({ userName, password }) => {
-      if (environment.defaultauth === "fakebackend") {
+      if (environment.defaultauth === "firebase") {
+        return of();
+      } else {
         return this.AuthenticationService.login(userName, password).pipe(
           map((user) => {
-            if (user.status === 'success') {
+            if (user?.token) {
               sessionStorage.setItem('toast', 'true');
-              sessionStorage.setItem('currentUser', JSON.stringify(user.data));
+              sessionStorage.setItem('currentUser', JSON.stringify(user));
               sessionStorage.setItem('token', user.token);
               this.router.navigate(['/']);
             }
             return loginSuccess({ user });
           }),
-          catchError((error) => of(loginFailure({ error })), // Closing parenthesis added here
-        ));
-      } else if (environment.defaultauth === "firebase") {
-        return of(); // Return an observable, even if it's empty
-      } else {
-        return of(); // Return an observable, even if it's empty
+          catchError((error) => of(loginFailure({ error })))
+        );
       }
     })
   )

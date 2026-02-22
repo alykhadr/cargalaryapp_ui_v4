@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 
 import { RoleService } from '../services/role.service';
 import { first } from 'rxjs/operators';
-import { CreateRoleRequest, Role, UpdateRoleRequest } from '../interfaces/role.interface';
+import { CreateRoleRequest, Role, RoleUser, UpdateRoleRequest } from '../interfaces/role.interface';
 import { ToastService } from '../../icons/toast-service';
 
 @Component({
@@ -32,6 +32,9 @@ export class RolesComponent {
   deleteId: string = '';
 
   role?: Role;
+  selectedRoleName: string = '';
+  roleUsers: RoleUser[] = [];
+  isRoleUsersLoading: boolean = false;
 
 
   // Table data
@@ -457,6 +460,32 @@ export class RolesComponent {
   closeModal() {
     this.modalService.dismissAll();
     this.roleForm.reset();
+  }
+
+  openRoleUsersModal(content: any, role: Role) {
+    debugger;
+    this.selectedRoleName = role.name;
+    this.roleUsers = [];
+    this.isRoleUsersLoading = true;
+
+    this.modalService.open(content, { size: 'lg', centered: true });
+
+    this.roleService.getUsersByRole(role.id)
+      .pipe(first())
+      .subscribe({
+        next: (users: RoleUser[]) => {
+          this.isRoleUsersLoading = false;
+          this.roleUsers = users;
+        },
+        error: (error) => {
+          this.isRoleUsersLoading = false;
+          const message = error?.error?.message || error?.message || 'Failed to load role users';
+          this.toastService.show(message, {
+            classname: 'bg-danger text-white',
+            delay: 3000
+          });
+        }
+      });
   }
 
 

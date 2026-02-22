@@ -6,6 +6,14 @@ export interface Role {
   state:boolean
 }
 
+export interface RoleUser {
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface CreateRoleRequest {
   name: string;
   isActive: boolean;

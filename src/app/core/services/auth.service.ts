@@ -45,7 +45,7 @@ export class AuthenticationService {
         // });
 
         // Register Api
-        return this.http.post(AUTH_API + 'signup', {
+        return this.http.post(AUTH_API + '/signup', {
             email,
             first_name,
             password,
@@ -73,7 +73,7 @@ export class AuthenticationService {
         //     return user;
         // });
 
-        return this.http.post(AUTH_API + 'signin', {
+        return this.http.post(AUTH_API + '/signin', {
             email,
             password
           }, httpOptions).pipe(

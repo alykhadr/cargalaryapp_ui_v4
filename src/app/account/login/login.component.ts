@@ -2,14 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// Login Auth
-import { environment } from '../../../environments/environment';
-import { AuthenticationService } from '../../core/services/auth.service';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { first } from 'rxjs/operators';
 import { ToastService } from './toast-service';
-import { Store } from '@ngrx/store';
-import { login } from 'src/app/store/Authentication/authentication.actions';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { User } from 'src/app/store/Authentication/auth.models';
@@ -38,12 +32,10 @@ export class LoginComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder, private authenticationService: AuthenticationService, private router: Router,
-    private authFackservice: AuthfakeauthenticationService,
+  constructor(private formBuilder: UntypedFormBuilder, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService,
     private myAuthService: MyAuthService,
-    private tokenStorageService: TokenStorageService,
-    private store: Store) {
+    private tokenStorageService: TokenStorageService) {
     // redirect to home if already logged in
     if (this.myAuthService.currentUserValue) {
       this.router.navigate(['/']);
@@ -76,8 +68,6 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     } else {
-      this.submitted = true;
-      this.store.dispatch(login({ userName: this.f['userName'].value, password: this.f['password'].value }));
       this.submitted = true;
 
       this.myAuthService

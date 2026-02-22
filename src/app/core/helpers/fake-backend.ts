@@ -10,6 +10,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     constructor() { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        const requestPath = new URL(request.url, window.location.origin).pathname;
 
         // tslint:disable-next-line: max-line-length
         const users: any[] = JSON.parse(sessionStorage.getItem('users')!) || [{ username: 'admin', email: 'admin@themesbrand.com', password: '123456' }];
@@ -18,7 +19,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         return of(null).pipe(mergeMap(() => {
 
             // authenticate
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
+            if (requestPath === '/users/authenticate' && request.method === 'POST') {
                 const filteredUsers = users.filter(user => {
                     return user.email === request.body.email && user.password === request.body.password;
                 });
@@ -41,7 +42,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
 
             // get users
-            if (request.url.endsWith('/users') && request.method === 'GET') {
+            if (requestPath === '/users' && request.method === 'GET') {
                 // tslint:disable-next-line: max-line-length
                 // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
                 if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
@@ -53,12 +54,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
 
             // get user by id
-            if (request.url.match(/\/users\/\d+$/) && request.method === 'GET') {
+            if (requestPath.match(/^\/users\/\d+$/) && request.method === 'GET') {
                 // tslint:disable-next-line: max-line-length
                 // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
                 if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
                     // find user by id in users array
-                    const urlParts = request.url.split('/');
+                    const urlParts = requestPath.split('/');
                     // tslint:disable-next-line: radix
                     const id = parseInt(urlParts[urlParts.length - 1]);
                     // tslint:disable-next-line: no-shadowed-variable
@@ -73,7 +74,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
 
             // register user
-            if (request.url.endsWith('/users/register') && request.method === 'POST') {
+            if (requestPath === '/users/register' && request.method === 'POST') {
                 // get new user object from post body
                 const newUser = request.body;
 
@@ -93,12 +94,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             }
 
             // delete user
-            if (request.url.match(/\/users\/\d+$/) && request.method === 'DELETE') {
+            if (requestPath.match(/^\/users\/\d+$/) && request.method === 'DELETE') {
                 // tslint:disable-next-line: max-line-length
                 // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
                 if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
                     // find user by id in users array
-                    const urlParts = request.url.split('/');
+                    const urlParts = requestPath.split('/');
                     // tslint:disable-next-line: radix
                     const id = parseInt(urlParts[urlParts.length - 1]);
                     for (let i = 0; i < users.length; i++) {
