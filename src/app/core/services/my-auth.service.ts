@@ -72,4 +72,20 @@ export class MyAuthService {
         this.tokenStorageService.signOut();
         this.currentUserSubject.next(null!);
     }
+
+    forgotPassword(userNameOrEmail: string) {
+        return this.http.post<{ message: string; resetToken?: string | null }>(
+            AUTH_API + '/forgot-password',
+            { userNameOrEmail },
+            httpOptions
+        );
+    }
+
+    resetPassword(userNameOrEmail: string, token: string, newPassword: string) {
+        return this.http.post<{ message: string }>(
+            AUTH_API + '/reset-password',
+            { userNameOrEmail, token, newPassword },
+            httpOptions
+        );
+    }
 }
