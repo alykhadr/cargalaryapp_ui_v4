@@ -74,7 +74,7 @@ export class MyAuthService {
     }
 
     forgotPassword(userNameOrEmail: string) {
-        return this.http.post<{ message: string; resetToken?: string | null }>(
+        return this.http.post<{ message: string }>(
             AUTH_API + '/forgot-password',
             { userNameOrEmail },
             httpOptions

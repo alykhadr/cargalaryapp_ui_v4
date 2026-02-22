@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { getErrorMessage } from 'src/app/pages/admin/shared/error-message.util';
@@ -24,7 +24,6 @@ export class BasicComponent implements OnInit {
   requestLoading = false;
   resetLoading = false;
   isResetStep = false;
-  generatedToken = '';
   fieldTextType = false;
   confirmFieldTextType = false;
   successMessage = '';
@@ -36,7 +35,8 @@ export class BasicComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private myAuthService: MyAuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +45,20 @@ export class BasicComponent implements OnInit {
       token: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
+    });
+
+    this.route.queryParamMap.pipe(first()).subscribe(params => {
+      const token = params.get('token')?.trim() || '';
+      const user = params.get('user')?.trim() || params.get('email')?.trim() || '';
+
+      if (user) {
+        this.f['userNameOrEmail'].setValue(user);
+      }
+
+      if (token) {
+        this.f['token'].setValue(token);
+        this.isResetStep = true;
+      }
     });
   }
 
@@ -70,12 +84,7 @@ export class BasicComponent implements OnInit {
         next: (response) => {
           this.requestLoading = false;
           this.isResetStep = true;
-          this.successMessage = response?.message || 'Reset token generated successfully.';
-
-          this.generatedToken = response?.resetToken || '';
-          if (this.generatedToken) {
-            this.f['token'].setValue(this.generatedToken);
-          }
+          this.successMessage = response?.message || 'If the account exists, a reset link was sent to the email.';
         },
         error: (error) => {
           this.requestLoading = false;
