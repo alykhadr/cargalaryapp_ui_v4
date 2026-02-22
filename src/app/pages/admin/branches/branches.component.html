@@ -66,7 +66,19 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="table-responsive table-card mb-1">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div *ngIf="!isLoading && branches.length === 0" class="text-center py-5">
+          <div class="mb-3">
+            <i class="ri-folder-open-line" style="font-size: 48px; color: #ccc;"></i>
+          </div>
+          <h5 class="text-muted">No branches found</h5>
+          <p class="text-muted">Click "Add Branch" to create your first branch</p>
+        </div>
+        <div *ngIf="!isLoading && branches.length > 0" class="table-responsive table-card mb-1">
           <table class="table">
             <thead class="table-light text-muted">
               <tr>
@@ -107,6 +119,11 @@
                 </td>
                 <td>
                   <ul class="list-inline hstack gap-2 mb-0">
+                    <li class="list-inline-item" ngbTooltip="View Working Days" placement="top">
+                      <a href="javascript:void(0);" class="text-info d-inline-block" (click)="toggleWorkingDays(branch.id)">
+                        <i class="ri-calendar-line fs-16"></i>
+                      </a>
+                    </li>
                     <li class="list-inline-item edit" ngbTooltip="Edit" placement="top" *appHasPermission="'branches.edit'">
                       <a href="javascript:void(0);" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn"
                         (click)="editDataGet(filteredBranches.indexOf(branch), content)">
@@ -122,11 +139,53 @@
                   </ul>
                 </td>
               </tr>
+              <tr *ngIf="expandedBranchId === branch.id" class="bg-light">
+                <td colspan="7">
+                  <div class="p-3">
+                    <h6 class="mb-3">Working Days</h6>
+                    <div class="table-responsive">
+                      <table class="table table-sm table-bordered mb-0">
+                        <thead>
+                          <tr>
+                            <th>Day</th>
+                            <th>Status</th>
+                            <th>Working Hours</th>
+                            <th>Time Type</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let day of branch.branchWorkingDaysResponseDtos">
+                            <td>
+                              <div class="fw-semibold">{{ day.dayEn }}</div>
+                              <div class="text-muted small">{{ day.dayAr }}</div>
+                            </td>
+                            <td>
+                              <span class="badge" [ngClass]="day.isAvailable ? 'bg-success' : 'bg-secondary'">
+                                {{ day.isAvailable ? 'Open' : 'Closed' }}
+                              </span>
+                            </td>
+                            <td>
+                              <span *ngIf="day.isAvailable && day.workingFrom != null && day.workingTo != null">
+                                {{ day.workingFrom }}:00 - {{ day.workingTo }}:00
+                              </span>
+                              <span *ngIf="!day.isAvailable" class="text-muted">-</span>
+                            </td>
+                            <td>
+                              <span *ngIf="day.isAvailable">{{ day.timeType }}</span>
+                              <span *ngIf="!day.isAvailable" class="text-muted">-</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </td>
+              </tr>
               }
             </tbody>
           </table>
         </div>
-        <div class="row justify-content-md-between align-items-md-center">
+        <div *ngIf="!isLoading" class="row justify-content-md-between align-items-md-center">
           <div class="col col-sm-5">
             <div class="dataTables_info mb-2" id="branch-table_info" role="status" aria-live="polite">
               Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredBranches.length }} entries
@@ -153,18 +212,24 @@
             <input type="hidden" name="id" value="" formControlName="_id" />
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label">Branch Name (EN)</label>
+                <label class="form-label">Branch Name (EN) <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" placeholder="Enter name in English"
-                  required formControlName="branchNameEn"
+                  required formControlName="branchNameEn" maxlength="100"
                   [ngClass]="{ 'is-invalid': submitted && form['branchNameEn'].errors }" />
-                <div class="invalid-feedback">Branch name in English is required.</div>
+                <div class="invalid-feedback">
+                  <span *ngIf="form['branchNameEn'].errors?.['required']">Branch name in English is required.</span>
+                  <span *ngIf="form['branchNameEn'].errors?.['maxlength']">Maximum 100 characters allowed.</span>
+                </div>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Branch Name (AR)</label>
+                <label class="form-label">Branch Name (AR) <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" placeholder="Enter name in Arabic"
-                  required formControlName="branchNameAr"
+                  required formControlName="branchNameAr" maxlength="100"
                   [ngClass]="{ 'is-invalid': submitted && form['branchNameAr'].errors }" />
-                <div class="invalid-feedback">Branch name in Arabic is required.</div>
+                <div class="invalid-feedback">
+                  <span *ngIf="form['branchNameAr'].errors?.['required']">Branch name in Arabic is required.</span>
+                  <span *ngIf="form['branchNameAr'].errors?.['maxlength']">Maximum 100 characters allowed.</span>
+                </div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Email</label>
@@ -174,24 +239,35 @@
                 <div class="invalid-feedback">Enter a valid email.</div>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Mobile</label>
-                <input type="text" class="form-control" placeholder="Mobile number" formControlName="mobileNo" />
+                <label class="form-label">Mobile <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="05XXXXXXXX" formControlName="mobileNo" maxlength="10"
+                  [ngClass]="{ 'is-invalid': submitted && form['mobileNo'].errors }" />
+                <div class="invalid-feedback">
+                  <span *ngIf="form['mobileNo'].errors?.['required']">Mobile number is required.</span>
+                  <span *ngIf="form['mobileNo'].errors?.['pattern']">Mobile must start with 05 and be 10 digits.</span>
+                </div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">WhatsApp</label>
                 <input type="text" class="form-control" placeholder="WhatsApp number" formControlName="whatsUpNo" />
               </div>
               <div class="col-md-6">
-                <label class="form-label">Address</label>
-                <input type="text" class="form-control" placeholder="Address" formControlName="address" />
+                <label class="form-label">Address <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Address" formControlName="address"
+                  [ngClass]="{ 'is-invalid': submitted && form['address'].errors }" />
+                <div class="invalid-feedback">Address is required.</div>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Latitude</label>
-                <input type="text" class="form-control" placeholder="Latitude" formControlName="latitute" />
+                <label class="form-label">Latitude <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Latitude" formControlName="latitute"
+                  [ngClass]="{ 'is-invalid': submitted && form['latitute'].errors }" />
+                <div class="invalid-feedback">Latitude is required.</div>
               </div>
               <div class="col-md-6">
-                <label class="form-label">Longitude</label>
-                <input type="text" class="form-control" placeholder="Longitude" formControlName="longtute" />
+                <label class="form-label">Longitude <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Longitude" formControlName="longtute"
+                  [ngClass]="{ 'is-invalid': submitted && form['longtute'].errors }" />
+                <div class="invalid-feedback">Longitude is required.</div>
               </div>
               <div class="col-12">
                 <label class="form-label">Description (EN)</label>
@@ -200,6 +276,63 @@
               <div class="col-12">
                 <label class="form-label">Description (AR)</label>
                 <textarea class="form-control" rows="2" formControlName="descriptionAr"></textarea>
+              </div>
+              <div class="col-12">
+                <hr class="my-3">
+                <h6 class="mb-3">Working Days</h6>
+                <div class="table-responsive">
+                  <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Day</th>
+                        <th style="width: 100px;">Available</th>
+                        <th style="width: 120px;">From (Hour)</th>
+                        <th style="width: 120px;">To (Hour)</th>
+                        <th style="width: 100px;">Time Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let day of workingDays">
+                        <td>
+                          <div class="fw-semibold">{{ day.dayEn }}</div>
+                          <div class="text-muted small">{{ day.dayAr }}</div>
+                        </td>
+                        <td>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" 
+                              [(ngModel)]="day.isAvailable" 
+                              [ngModelOptions]="{standalone: true}"
+                              (change)="toggleDayAvailability(day)">
+                          </div>
+                        </td>
+                        <td>
+                          <input type="number" class="form-control form-control-sm" 
+                            [(ngModel)]="day.workingFrom" 
+                            [ngModelOptions]="{standalone: true}"
+                            [disabled]="!day.isAvailable"
+                            min="0" max="23" placeholder="0-23">
+                        </td>
+                        <td>
+                          <input type="number" class="form-control form-control-sm" 
+                            [(ngModel)]="day.workingTo" 
+                            [ngModelOptions]="{standalone: true}"
+                            [disabled]="!day.isAvailable"
+                            min="0" max="23" placeholder="0-23">
+                        </td>
+                        <td>
+                          <select class="form-select form-select-sm" 
+                            [(ngModel)]="day.timeType" 
+                            [ngModelOptions]="{standalone: true}"
+                            [disabled]="!day.isAvailable">
+                            <option value="24H">24H</option>
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
               <div class="col-12">
                 <div class="form-check form-switch form-switch-lg" dir="ltr">
@@ -213,8 +346,11 @@
           </div>
           <div class="modal-footer">
             <div class="hstack gap-2 justify-content-end">
-              <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="closeModal()">Close</button>
-              <button type="submit" class="btn btn-success" id="add-btn">Save</button>
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal" (click)="closeModal()" [disabled]="isLoading">Close</button>
+              <button type="submit" class="btn btn-success" id="add-btn" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                {{ isLoading ? 'Creating...' : 'Create Branch' }}
+              </button>
             </div>
           </div>
         </form>

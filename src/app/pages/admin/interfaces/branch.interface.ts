@@ -14,6 +14,17 @@ export interface Branch {
   isAvailable: boolean;
   createdBy?: string;
   state?: boolean;
+  branchWorkingDaysResponseDtos?: BranchWorkingDay[];
+}
+
+export interface BranchWorkingDay {
+  id?: number;
+  dayEn: string;
+  dayAr: string;
+  isAvailable: boolean;
+  workingFrom?: number | null;
+  workingTo?: number | null;
+  timeType?: string;
 }
 
 export interface CreateBranchRequest {
@@ -28,6 +39,28 @@ export interface CreateBranchRequest {
   latitute?: string;
   longtute?: string;
   isAvailable: boolean;
+  createBranchWorkingDaysRequestDto?: CreateBranchWorkingDay[];
 }
 
-export interface UpdateBranchRequest extends CreateBranchRequest {}
+export interface UpdateBranchRequest {
+  branchNameAr: string;
+  branchNameEn: string;
+  descriptionAr?: string;
+  descriptionEn?: string;
+  mobileNo?: string;
+  email?: string;
+  address?: string;
+  whatsUpNo?: string;
+  latitute?: string;
+  longtute?: string;
+  isAvailable: boolean;
+}
+
+export interface CreateBranchWorkingDay {
+  isAvailable?: boolean;
+  dayAr?: string;
+  dayEn?: string;
+  workingFrom?: number;
+  workingTo?: number;
+  timeType?: string;
+}

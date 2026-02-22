@@ -37,6 +37,19 @@ export class BranchesComponent {
 
   checkedValGet: Branch[] = [];
 
+  // Working days
+  weekDays = [
+    { dayEn: 'Sunday', dayAr: 'الأحد' },
+    { dayEn: 'Monday', dayAr: 'الإثنين' },
+    { dayEn: 'Tuesday', dayAr: 'الثلاثاء' },
+    { dayEn: 'Wednesday', dayAr: 'الأربعاء' },
+    { dayEn: 'Thursday', dayAr: 'الخميس' },
+    { dayEn: 'Friday', dayAr: 'الجمعة' },
+    { dayEn: 'Saturday', dayAr: 'السبت' }
+  ];
+  workingDays: any[] = [];
+  expandedBranchId: number | null = null;
+
   constructor(
     private modalService: NgbModal,
     public service: PaginationService,
@@ -52,22 +65,34 @@ export class BranchesComponent {
     ];
 
     this.initForm();
+    this.initWorkingDays();
     this.getBranches();
+  }
+
+  initWorkingDays() {
+    this.workingDays = this.weekDays.map(day => ({
+      dayEn: day.dayEn,
+      dayAr: day.dayAr,
+      isAvailable: true,
+      workingFrom: 9,
+      workingTo: 17,
+      timeType: '24H'
+    }));
   }
 
   initForm() {
     this.branchForm = this.formBuilder.group({
       _id: [''],
-      branchNameAr: ['', [Validators.required]],
-      branchNameEn: ['', [Validators.required]],
+      branchNameAr: ['', [Validators.required, Validators.maxLength(100)]],
+      branchNameEn: ['', [Validators.required, Validators.maxLength(100)]],
       descriptionAr: [''],
       descriptionEn: [''],
-      mobileNo: [''],
+      mobileNo: ['', [Validators.required, Validators.pattern(/^05\d{8}$/)]],
       whatsUpNo: [''],
       email: ['', [Validators.email]],
-      address: [''],
-      latitute: [''],
-      longtute: [''],
+      address: ['', [Validators.required]],
+      latitute: ['', [Validators.required]],
+      longtute: ['', [Validators.required]],
       isAvailable: [true]
     });
   }
@@ -115,8 +140,21 @@ export class BranchesComponent {
       address: this.form['address'].value,
       latitute: this.form['latitute'].value,
       longtute: this.form['longtute'].value,
-      isAvailable: !!this.form['isAvailable'].value
+      isAvailable: !!this.form['isAvailable'].value,
+      createBranchWorkingDaysRequestDto: this.workingDays.map(day => ({
+        dayEn: day.dayEn,
+        dayAr: day.dayAr,
+        isAvailable: day.isAvailable,
+        workingFrom: day.isAvailable ? day.workingFrom : null,
+        workingTo: day.isAvailable ? day.workingTo : null,
+        timeType: day.timeType
+      }))
     };
+
+    if (!this.validateWorkingDays()) {
+      this.isLoading = false;
+      return;
+    }
 
     this.branchService.createBranch(request).pipe(first()).subscribe({
       next: () => {
@@ -302,12 +340,13 @@ export class BranchesComponent {
   openModal(content: any) {
     this.submitted = false;
     this.branchForm.reset({ isAvailable: true });
-    this.modalService.open(content, { size: 'lg', centered: true });
+    this.initWorkingDays();
+    this.modalService.open(content, { size: 'xl', centered: true });
   }
 
   editDataGet(index: number, content: any) {
     this.submitted = false;
-    this.modalService.open(content, { size: 'lg', centered: true });
+    this.modalService.open(content, { size: 'xl', centered: true });
 
     const modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     if (modelTitle) {
@@ -373,5 +412,47 @@ export class BranchesComponent {
       classname: 'bg-danger text-white',
       delay: 3000
     });
+  }
+
+  validateWorkingDays(): boolean {
+    for (const day of this.workingDays) {
+      if (day.isAvailable) {
+        if (day.workingFrom == null || day.workingTo == null) {
+          this.showError({ message: `${day.dayEn}: Working hours required when day is available` });
+          return false;
+        }
+        if (day.workingFrom < 0 || day.workingFrom > 23) {
+          this.showError({ message: `${day.dayEn}: Working from must be between 0 and 23` });
+          return false;
+        }
+        if (day.workingTo < 0 || day.workingTo > 23) {
+          this.showError({ message: `${day.dayEn}: Working to must be between 0 and 23` });
+          return false;
+        }
+        if (day.workingFrom >= day.workingTo) {
+          this.showError({ message: `${day.dayEn}: Working from must be less than working to` });
+          return false;
+        }
+        if (!day.timeType || !['AM', 'PM', '24H'].includes(day.timeType)) {
+          this.showError({ message: `${day.dayEn}: Time type must be AM, PM, or 24H` });
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  toggleDayAvailability(day: any) {
+    if (!day.isAvailable) {
+      day.workingFrom = null;
+      day.workingTo = null;
+    } else {
+      day.workingFrom = 9;
+      day.workingTo = 17;
+    }
+  }
+
+  toggleWorkingDays(branchId: number) {
+    this.expandedBranchId = this.expandedBranchId === branchId ? null : branchId;
   }
 }
