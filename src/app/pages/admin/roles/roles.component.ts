@@ -43,6 +43,7 @@ export class RolesComponent {
   rolesList: Role[] = [];
   roles: Role[] = [];
   searchTerm: any;
+  roleNameFilter = '';
   filterDate: any;
   status: any = '';
   // private restApiService: restApiService
@@ -220,19 +221,10 @@ export class RolesComponent {
 
     let data = [...this.rolesList];
 
-    // 🔎 Search
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-
-      data = data.filter(r => {
-        const statusText = r.isActive ? 'active' : 'blocked';
-
-        return (
-          r.name.toLowerCase().includes(term) ||
-          r.createdAt.toLowerCase().includes(term) ||
-          statusText.includes(term)
-        );
-      });
+    // Role name filter
+    const roleNameTerm = this.roleNameFilter.trim().toLowerCase();
+    if (roleNameTerm) {
+      data = data.filter(r => (r.name || '').toLowerCase().includes(roleNameTerm));
     }
 
     // ✅ Status filter
@@ -257,16 +249,22 @@ export class RolesComponent {
     this.roles = this.service.changePage(this.filteredRoles);
   }
 
+  clearFilters() {
+    this.roleNameFilter = '';
+    this.filterDate = null;
+    this.status = '';
+    this.applyFilters();
+  }
+
   statusFilter() {
     this.applyFilters();
   }
 
-  // Search Data
-  performSearch(): void {
+  dateFilter() {
     this.applyFilters();
   }
 
-  dateFilter() {
+  roleNameFilterChanged() {
     this.applyFilters();
   }
 

@@ -28,18 +28,19 @@
             </div>
             <div class="card-body border-bottom-dashed border-bottom">
                 <div class="row g-3">
-                    <div class="col-xl-6">
-                        <div class="search-box">
-                            <input type="text" name="searchTerm" class="form-control"
-                                placeholder="Search for role or status ..." [(ngModel)]="searchTerm"
-                                (ngModelChange)="performSearch()">
-                            <i class="ri-search-line search-icon"></i>
-                        </div>
-                    </div>
-                    <!--end col-->
-                    <div class="col-xl-6">
+                    <div class="col-xl-12">
                         <div class="row g-3">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
+                                <div>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Filter by role name"
+                                        [(ngModel)]="roleNameFilter"
+                                        (ngModelChange)="roleNameFilterChanged()">
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
                                 <div class="">
                                     <input class="form-control flatpickr-input" type="text" mwlFlatpickr
                                         [altInput]="true" [convertModelValue]="true" placeholder="Select date"
@@ -47,7 +48,7 @@
                                 </div>
                             </div>
                             <!--end col-->
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div>
                                     <select class="form-control" data-plugin="choices" data-choices
                                         data-choices-search-false name="choices-single-default" id="idStatus"
@@ -60,10 +61,10 @@
                             </div>
                             <!--end col-->
 
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <div>
-                                    <button type="button" class="btn btn-primary w-100"><i
-                                            class="ri-equalizer-fill mx-2 align-bottom"></i>Filters</button>
+                                    <button type="button" class="btn btn-soft-secondary w-100" (click)="clearFilters()"><i
+                                            class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters</button>
                                 </div>
                             </div>
                             <!--end col-->
@@ -107,14 +108,12 @@
                                         </div>
                                     </th>
                                     <td>
-                                        <ngb-highlight [result]="role.name" [term]="searchTerm">
-                                        </ngb-highlight>
+                                        {{ role.name }}
                                     </td>
 
 
                                     <td>
-                                        <ngb-highlight [result]="role.createdAt | date :'longDate'"
-                                            [term]="searchTerm"></ngb-highlight>
+                                        {{ role.createdAt | date :'longDate' }}
                                     </td>
                                     <td class="status"><span class="badge text-uppercase"
                                             [ngClass]=" { 'bg-success-subtle text-success': role.isActive, 'bg-danger-subtle text-danger': !role.isActive}">

@@ -34,6 +34,8 @@ export class PermissionsComponent implements OnInit {
   availableGroups: Array<{ page: string; actions: string[] }> = [];
   pagedAssignedGroups: Array<{ page: string; actions: string[] }> = [];
   pagedAvailableGroups: Array<{ page: string; actions: string[] }> = [];
+  expandedAssignedPages = new Set<string>();
+  expandedAvailablePages = new Set<string>();
 
   assignedPager = new PaginationService();
   availablePager = new PaginationService();
@@ -49,8 +51,8 @@ export class PermissionsComponent implements OnInit {
       { label: 'Admin' },
       { label: 'Permissions', active: true }
     ];
-    this.assignedPager.pageSize = 4;
-    this.availablePager.pageSize = 4;
+    this.assignedPager.pageSize = 10;
+    this.availablePager.pageSize = 10;
     this.loadRoles();
     this.loadAllPermissions();
   }
@@ -200,11 +202,45 @@ export class PermissionsComponent implements OnInit {
   onAssignedPageChange(page: number) {
     this.assignedPager.page = page;
     this.pagedAssignedGroups = this.assignedPager.changePage(this.assignedGroups);
+    this.syncExpandedState(this.pagedAssignedGroups, this.expandedAssignedPages);
   }
 
   onAvailablePageChange(page: number) {
     this.availablePager.page = page;
     this.pagedAvailableGroups = this.availablePager.changePage(this.availableGroups);
+    this.syncExpandedState(this.pagedAvailableGroups, this.expandedAvailablePages);
+  }
+
+  toggleAssignedGroup(page: string) {
+    if (this.expandedAssignedPages.has(page)) {
+      this.expandedAssignedPages.delete(page);
+      return;
+    }
+    this.expandedAssignedPages.add(page);
+  }
+
+  toggleAvailableGroup(page: string) {
+    if (this.expandedAvailablePages.has(page)) {
+      this.expandedAvailablePages.delete(page);
+      return;
+    }
+    this.expandedAvailablePages.add(page);
+  }
+
+  isAssignedGroupExpanded(page: string): boolean {
+    return this.expandedAssignedPages.has(page);
+  }
+
+  isAvailableGroupExpanded(page: string): boolean {
+    return this.expandedAvailablePages.has(page);
+  }
+
+  get assignedPageCount(): number {
+    return this.assignedGroups.length;
+  }
+
+  get availablePageCount(): number {
+    return this.availableGroups.length;
   }
 
   private refreshAssignedGroups(resetPage = false) {
@@ -218,6 +254,7 @@ export class PermissionsComponent implements OnInit {
       this.assignedPager.page = 1;
     }
     this.pagedAssignedGroups = this.assignedPager.changePage(this.assignedGroups);
+    this.syncExpandedState(this.pagedAssignedGroups, this.expandedAssignedPages);
   }
 
   private refreshAvailableGroups(resetPage = false) {
@@ -233,6 +270,20 @@ export class PermissionsComponent implements OnInit {
       this.availablePager.page = 1;
     }
     this.pagedAvailableGroups = this.availablePager.changePage(this.availableGroups);
+    this.syncExpandedState(this.pagedAvailableGroups, this.expandedAvailablePages);
+  }
+
+  private syncExpandedState(groups: Array<{ page: string; actions: string[] }>, expandedSet: Set<string>) {
+    const currentPages = new Set(groups.map(group => group.page));
+    for (const page of Array.from(expandedSet)) {
+      if (!currentPages.has(page)) {
+        expandedSet.delete(page);
+      }
+    }
+
+    if (groups.length > 0 && expandedSet.size === 0) {
+      expandedSet.add(groups[0].page);
+    }
   }
 
   private groupPermissions(permissions: string[]): Array<{ page: string; actions: string[] }> {
