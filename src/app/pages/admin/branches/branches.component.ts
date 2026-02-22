@@ -73,9 +73,9 @@ export class BranchesComponent {
     this.workingDays = this.weekDays.map(day => ({
       dayEn: day.dayEn,
       dayAr: day.dayAr,
-      isAvailable: true,
-      workingFrom: 9,
-      workingTo: 17,
+      isAvailable: day.dayEn !== 'Friday',
+      workingFrom: day.dayEn !== 'Friday' ? 9 : null,
+      workingTo: day.dayEn !== 'Friday' ? 17 : null,
       timeType: '24H'
     }));
   }
@@ -480,6 +480,26 @@ export class BranchesComponent {
     } else {
       day.workingFrom = 9;
       day.workingTo = 17;
+    }
+  }
+
+  toggleBranchAvailability(isAvailable: boolean) {
+    this.branchForm.get('isAvailable')?.setValue(isAvailable);
+    
+    if (!isAvailable) {
+      // Disable all working days when branch is disabled
+      this.workingDays.forEach(day => {
+        day.isAvailable = false;
+        day.workingFrom = null;
+        day.workingTo = null;
+      });
+    } else {
+      // Enable all working days when branch is enabled
+      this.workingDays.forEach(day => {
+        day.isAvailable = true;
+        day.workingFrom = 9;
+        day.workingTo = 17;
+      });
     }
   }
 
