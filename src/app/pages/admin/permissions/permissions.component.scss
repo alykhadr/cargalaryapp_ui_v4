@@ -1,151 +1,31 @@
-.permission-panel {
-  border: 1px solid transparent;
-  border-radius: 1rem;
-  padding: 1rem;
+.permission-panel-box {
+  background-color: var(--vz-secondary-bg);
+  border-color: var(--vz-border-color) !important;
+}
+
+.permission-table-wrap {
   background-color: var(--vz-card-bg-custom);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border-color: var(--vz-border-color) !important;
 }
 
-.permission-panel-assigned {
-  border-color: rgba(var(--vz-danger-rgb), 0.25);
-  background: linear-gradient(180deg, rgba(var(--vz-danger-rgb), 0.08) 0%, rgba(var(--vz-danger-rgb), 0.03) 100%);
-}
-
-.permission-panel-available {
-  border-color: rgba(var(--vz-primary-rgb), 0.25);
-  background: linear-gradient(180deg, rgba(var(--vz-primary-rgb), 0.08) 0%, rgba(var(--vz-primary-rgb), 0.03) 100%);
-}
-
-.permission-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
-}
-
-.permission-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.65rem;
-}
-
-.permission-panel-header h6 {
-  color: var(--vz-heading-color);
-}
-
-.permission-list {
-  border: 1px solid var(--vz-border-color);
-  border-radius: 0.75rem;
-  max-height: 340px;
-  overflow-y: auto;
-  background-color: var(--vz-card-bg-custom);
-}
-
-.permission-panel-assigned .permission-list,
-.permission-panel-available .permission-list {
-  border-color: rgba(var(--vz-body-color-rgb), 0.12);
-}
-
-.permission-list .list-group-item {
-  background-color: transparent;
-  border-bottom: 1px dashed rgba(var(--vz-body-color-rgb), 0.18);
-}
-
-.permission-list .list-group-item:last-child {
-  border-bottom: 0;
-}
-
-.permission-page-block {
-  padding: 0.6rem 0.75rem;
-}
-
-.permission-page-title {
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.45rem;
-}
-
-.assigned-count-badge {
-  background-color: rgba(var(--vz-danger-rgb), 0.15);
-  color: var(--vz-danger);
-  border: 1px solid rgba(var(--vz-danger-rgb), 0.25);
-}
-
-.available-count-badge {
-  background-color: rgba(var(--vz-primary-rgb), 0.15);
-  color: var(--vz-primary);
-  border: 1px solid rgba(var(--vz-primary-rgb), 0.25);
-}
-
-.permission-action-chip {
-  max-width: 100%;
-  white-space: nowrap;
-  border-radius: 999px;
-}
-
-.assigned-action-chip {
-  background-color: rgba(var(--vz-danger-rgb), 0.12);
-  color: var(--vz-danger);
-  border: 1px solid rgba(var(--vz-danger-rgb), 0.2);
-}
-
-.assigned-action-chip:hover {
-  background-color: rgba(var(--vz-danger-rgb), 0.22);
-  color: var(--vz-danger);
-}
-
-.available-action-chip {
-  background-color: rgba(var(--vz-primary-rgb), 0.12);
-  color: var(--vz-primary);
-  border: 1px solid rgba(var(--vz-primary-rgb), 0.25);
-}
-
-.available-action-chip:hover {
-  background-color: rgba(var(--vz-primary-rgb), 0.22);
-  color: var(--vz-primary);
-  border-color: rgba(var(--vz-primary-rgb), 0.35);
-}
-
-.permission-help {
+.permission-table thead th {
+  background-color: var(--vz-secondary-bg);
   color: var(--vz-secondary-color);
+  border-bottom: 1px solid var(--vz-border-color);
 }
 
-.permission-pagination :is(.pagination) {
-  margin-bottom: 0;
-  gap: 0.25rem;
+.permission-table tbody td {
+  color: var(--vz-body-color);
+  border-bottom: 1px solid var(--vz-border-color);
 }
 
-.permission-pagination :is(.page-item) .page-link {
-  border-radius: 0.5rem;
-  border-width: 1px;
-  font-weight: 500;
-  min-width: 2rem;
-  text-align: center;
-  transition: all 0.2s ease;
+.permission-table tbody tr:hover td {
+  background-color: rgba(var(--vz-primary-rgb), 0.06);
 }
 
-.assigned-pagination ::ng-deep .page-item .page-link {
-  border-color: rgba(var(--vz-danger-rgb), 0.25);
-  color: var(--vz-danger);
-  background-color: rgba(var(--vz-danger-rgb), 0.08);
-}
-
-.assigned-pagination ::ng-deep .page-item.active .page-link,
-.assigned-pagination ::ng-deep .page-item .page-link:hover {
-  background-color: var(--vz-danger);
-  border-color: var(--vz-danger);
-  color: #fff;
-}
-
-.available-pagination ::ng-deep .page-item .page-link {
-  border-color: rgba(var(--vz-primary-rgb), 0.25);
-  color: var(--vz-primary);
-  background-color: rgba(var(--vz-primary-rgb), 0.08);
-}
-
-.available-pagination ::ng-deep .page-item.active .page-link,
-.available-pagination ::ng-deep .page-item .page-link:hover {
-  background-color: var(--vz-primary);
-  border-color: var(--vz-primary);
-  color: #fff;
+.permission-page-badge,
+.permission-group-badge {
+  background-color: var(--vz-tertiary-bg);
+  color: var(--vz-body-color);
+  border: 1px solid var(--vz-border-color);
 }

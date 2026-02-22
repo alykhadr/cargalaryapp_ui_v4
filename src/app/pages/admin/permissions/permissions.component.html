@@ -23,7 +23,7 @@
             [class.active]="selectedRole?.id === role.id"
             (click)="selectRole(role)">
             <span>{{ role.name }}</span>
-            <span class="badge bg-light text-dark">{{ role.isActive ? 'Active' : 'Blocked' }}</span>
+            <span class="badge bg-secondary-subtle text-secondary">{{ role.isActive ? 'Active' : 'Blocked' }}</span>
           </button>
           }
         </div>
@@ -70,12 +70,12 @@
 
         <div class="row g-3">
           <div class="col-md-6">
-            <div class="border rounded-3 p-3 bg-light-subtle">
+            <div class="border rounded-3 p-3 permission-panel-box">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="mb-0">Assigned Permissions</h6>
                 <div class="d-flex align-items-center gap-1">
                   <span class="badge bg-danger-subtle text-danger">{{ filteredAssignedPermissions.length }} actions</span>
-                  <span class="badge bg-light text-dark">{{ assignedPageCount }} pages</span>
+                  <span class="badge permission-page-badge">{{ assignedPageCount }} pages</span>
                 </div>
               </div>
               <input
@@ -89,9 +89,9 @@
                 No permissions assigned.
               </div>
 
-              <div class="table-responsive border rounded-3 bg-white" *ngIf="assignedGroups.length > 0">
-                <table class="table table-sm align-middle mb-0">
-                  <thead class="table-light">
+              <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="assignedGroups.length > 0">
+                <table class="table table-sm align-middle mb-0 permission-table">
+                  <thead>
                     <tr>
                       <th>Page</th>
                       <th>Action</th>
@@ -111,7 +111,7 @@
                         <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
                       </td>
                       <td class="text-end">
-                        <span class="badge bg-light text-dark">Group</span>
+                        <span class="badge permission-group-badge">Group</span>
                       </td>
                     </tr>
                     @if (isAssignedGroupExpanded(pageGroup.page)) {
@@ -154,12 +154,12 @@
           </div>
 
           <div class="col-md-6">
-            <div class="border rounded-3 p-3 bg-light-subtle">
+            <div class="border rounded-3 p-3 permission-panel-box">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="mb-0">Available Permissions</h6>
                 <div class="d-flex align-items-center gap-1">
                   <span class="badge bg-primary-subtle text-primary">{{ filteredAvailablePermissions.length }} actions</span>
-                  <span class="badge bg-light text-dark">{{ availablePageCount }} pages</span>
+                  <span class="badge permission-page-badge">{{ availablePageCount }} pages</span>
                 </div>
               </div>
               <input
@@ -173,9 +173,9 @@
                 No available permissions.
               </div>
 
-              <div class="table-responsive border rounded-3 bg-white" *ngIf="availableGroups.length > 0">
-                <table class="table table-sm align-middle mb-0">
-                  <thead class="table-light">
+              <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="availableGroups.length > 0">
+                <table class="table table-sm align-middle mb-0 permission-table">
+                  <thead>
                     <tr>
                       <th>Page</th>
                       <th>Action</th>
@@ -195,7 +195,7 @@
                         <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
                       </td>
                       <td class="text-end">
-                        <span class="badge bg-light text-dark">Group</span>
+                        <span class="badge permission-group-badge">Group</span>
                       </td>
                     </tr>
                     @if (isAvailableGroupExpanded(pageGroup.page)) {

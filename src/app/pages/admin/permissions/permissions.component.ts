@@ -62,6 +62,18 @@ export class PermissionsComponent implements OnInit {
     this.roleService.getRoles().pipe(first()).subscribe({
       next: (roles) => {
         this.roles = roles;
+        if (this.roles.length > 0) {
+          const hasSelectedRole = !!this.selectedRole && this.roles.some(role => role.id === this.selectedRole!.id);
+          if (!hasSelectedRole) {
+            this.selectRole(this.roles[0]);
+          }
+        } else {
+          this.selectedRole = undefined;
+          this.rolePermissions = [];
+          this.filteredAssignedPermissions = [];
+          this.assignedGroups = [];
+          this.pagedAssignedGroups = [];
+        }
         this.isLoading = false;
       },
       error: (error) => {
