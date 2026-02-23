@@ -101,13 +101,13 @@
                       <div class="col-md-6">
                         <div class="border-start border-3 border-primary ps-3">
                           <h6 class="text-primary mb-2"><i class="ri-english-input me-1"></i>English</h6>
-                          <p class="mb-0 text-muted">{{ faq.descriptionEn }}</p>
+                          <div class="text-muted" [innerHTML]="faq.descriptionEn"></div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="border-start border-3 border-success ps-3">
                           <h6 class="text-success mb-2"><i class="ri-translate me-1"></i>العربية</h6>
-                          <p class="mb-0 text-muted" dir="rtl">{{ faq.descriptionAr }}</p>
+                          <div class="text-muted" dir="rtl" [innerHTML]="faq.descriptionAr"></div>
                         </div>
                       </div>
                     </div>
@@ -139,7 +139,7 @@
 </div>
 
 <div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isModalOpen ? 'block' : 'none' }" *ngIf="isModalOpen">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ isEditMode ? 'Edit FAQ' : 'Create FAQ' }}</h5>
@@ -168,19 +168,17 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Description (English) <span class="text-danger">*</span></label>
-              <textarea class="form-control" formControlName="descriptionEn" rows="4" maxlength="1000" placeholder="Enter description in English"></textarea>
+              <ckeditor [editor]="Editor" formControlName="descriptionEn" data="<p>Enter description in English</p>"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
                 <span *ngIf="form['descriptionEn'].errors['required']">Description in English is required.</span>
-                <span *ngIf="form['descriptionEn'].errors['maxlength']">Max length is 1000 characters.</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Description (Arabic) <span class="text-danger">*</span></label>
-              <textarea class="form-control" formControlName="descriptionAr" rows="4" maxlength="1000" placeholder="أدخل الوصف بالعربية" dir="rtl"></textarea>
+              <ckeditor [editor]="Editor" formControlName="descriptionAr" data="<p dir='rtl'>أدخل الوصف بالعربية</p>"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
                 <span *ngIf="form['descriptionAr'].errors['required']">Description in Arabic is required.</span>
-                <span *ngIf="form['descriptionAr'].errors['maxlength']">Max length is 1000 characters.</span>
               </div>
             </div>
 

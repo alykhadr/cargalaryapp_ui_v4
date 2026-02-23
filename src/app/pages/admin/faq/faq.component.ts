@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { FAQ } from '../interfaces/faq.interface';
@@ -23,6 +24,7 @@ export class FaqComponent implements OnInit {
   isModalOpen = false;
   isEditMode = false;
   selectedFaq?: FAQ;
+  public Editor = ClassicEditor;
 
   faqs: FAQ[] = [];
   filteredFaqs: FAQ[] = [];
@@ -46,8 +48,8 @@ export class FaqComponent implements OnInit {
     this.faqForm = this.formBuilder.group({
       titleAr: ['', [Validators.required, Validators.maxLength(200)]],
       titleEn: ['', [Validators.required, Validators.maxLength(200)]],
-      descriptionAr: ['', [Validators.required, Validators.maxLength(1000)]],
-      descriptionEn: ['', [Validators.required, Validators.maxLength(1000)]],
+      descriptionAr: ['', [Validators.required]],
+      descriptionEn: ['', [Validators.required]],
       order: [0, [Validators.required, Validators.min(0)]],
       isAvailable: [true]
     });
