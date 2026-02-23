@@ -300,7 +300,8 @@
           "PERMISSION":"Permissions",
           "BRANCH":"Branches",
           "BRAND":"Brands",
-          "COLOR":"Colors"
+          "COLOR":"Colors",
+          "GALLERYIMAGE":"Gallery Images"
       
       }
     }

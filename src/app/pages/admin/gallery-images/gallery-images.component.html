@@ -1,0 +1,201 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0">{{ 'GALLERYIMAGE' | translate }}</h4>
+        <div class="page-title-right">
+          <ol class="breadcrumb m-0">
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
+            <li class="breadcrumb-item active">{{ 'GALLERYIMAGE' | translate }}</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header border-bottom-dashed">
+          <div class="row g-4 align-items-center">
+            <div class="col-sm">
+              <h5 class="card-title mb-0">{{ isEditMode ? 'Edit' : 'Add' }} Gallery Image</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Car <span class="text-danger">*</span></label>
+                  <ng-select
+                    [(ngModel)]="galleryImageForm.carId"
+                    name="carId"
+                    [items]="cars"
+                    bindLabel="id"
+                    bindValue="id"
+                    [searchable]="true"
+                    placeholder="Select Car"
+                    required>
+                    <ng-template ng-label-tmp let-item="item">
+                      Car #{{ item.id }} - {{ item.year }}
+                    </ng-template>
+                    <ng-template ng-option-tmp let-item="item">
+                      Car #{{ item.id }} - Year: {{ item.year }} - Price: ${{ item.price }}
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">Image Type</label>
+                  <select class="form-select" [(ngModel)]="galleryImageForm.imageType" name="imageType">
+                    <option [ngValue]="null">Select Type</option>
+                    <option *ngFor="let type of imageTypes" [ngValue]="type.value">{{ type.label }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="galleryImageForm.isPrimary" name="isPrimary" id="isPrimary">
+                    <label class="form-check-label" for="isPrimary">
+                      Set as Primary Image
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label class="form-label">Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
+                  <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                  <div *ngIf="imagePreview" class="mt-2">
+                    <img [src]="imagePreview" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-end">
+              <button type="button" class="btn btn-light me-2" (click)="resetForm()">Cancel</button>
+              <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header border-bottom-dashed">
+          <div class="row g-4 align-items-center">
+            <div class="col-sm">
+              <h5 class="card-title mb-0">Gallery Images List</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body border-bottom-dashed border-bottom">
+          <form>
+            <div class="row g-3">
+              <div class="col-xxl-5 col-sm-6">
+                <div class="search-box">
+                  <input type="text" class="form-control search" placeholder="Search by Car ID..." [(ngModel)]="searchCarId" (ngModelChange)="applyFilters()" name="searchCarId">
+                  <i class="ri-search-line search-icon"></i>
+                </div>
+              </div>
+              <div class="col-xxl-5 col-sm-6">
+                <div class="search-box">
+                  <input type="text" class="form-control search" placeholder="Search by Car Name..." [(ngModel)]="searchCarName" (ngModelChange)="applyFilters()" name="searchCarName">
+                  <i class="ri-search-line search-icon"></i>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="card-body">
+          <div *ngIf="filteredGalleryImages.length === 0" class="text-center py-5">
+            <div class="mb-3">
+              <i class="ri-image-line" style="font-size: 48px; color: #ccc;"></i>
+            </div>
+            <h5 class="text-muted">No gallery images found</h5>
+            <p class="text-muted">Click "Create" above to add your first gallery image</p>
+          </div>
+          <div *ngIf="filteredGalleryImages.length > 0">
+          <div class="table-responsive table-card">
+            <table class="table align-middle table-nowrap">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th>ID</th>
+                  <th>Image</th>
+                  <th>Car</th>
+                  <th>Image Type</th>
+                  <th>Primary</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let image of paginatedGalleryImages">
+                  <td>{{ image.id }}</td>
+                  <td>
+                    <div class="avatar-xs">
+                      <img [src]="image.imageUrl" alt="Gallery Image" class="rounded-circle img-fluid">
+                    </div>
+                  </td>
+                  <td>{{ getCarDisplay(image.carId) }}</td>
+                  <td>{{ getImageTypeLabel(image.imageType) }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="image.isPrimary" [class.bg-secondary]="!image.isPrimary">
+                      {{ image.isPrimary ? 'Yes' : 'No' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-sm btn-soft-primary" (click)="editGalleryImage(image)">
+                        <i class="ri-pencil-fill align-bottom"></i> Edit
+                      </button>
+                      <button class="btn btn-sm btn-soft-danger" (click)="deleteGalleryImage(image.id)">
+                        <i class="ri-delete-bin-fill align-bottom"></i> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="paginatedGalleryImages.length === 0">
+                  <td colspan="6" class="text-center">No gallery images found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row justify-content-between align-items-center mt-3" *ngIf="filteredGalleryImages.length > 0">
+            <div class="col-sm-6">
+              <div class="dataTables_info">
+                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredGalleryImages.length) }} of {{ filteredGalleryImages.length }} entries
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="dataTables_paginate paging_simple_numbers float-end">
+                <ul class="pagination pagination-separated pagination-sm mb-0">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+                  </li>
+                  <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="currentPage === i + 1">
+                    <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

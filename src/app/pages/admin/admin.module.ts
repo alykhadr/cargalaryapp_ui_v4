@@ -1,5 +1,6 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 // Component pages
@@ -14,6 +15,7 @@ import { AdminToastsContainerComponent } from './shared/admin-toasts-container.c
 import { BranchesComponent } from './branches/branches.component';
 import { BrandsComponent } from './brands/brands.component';
 import { ColorsComponent } from './colors/colors.component';
+import { GalleryImagesComponent } from './gallery-images/gallery-images.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -45,11 +47,13 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     AdminToastsContainerComponent,
     BranchesComponent,
     BrandsComponent,
-    ColorsComponent
+    ColorsComponent,
+    GalleryImagesComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    TranslateModule,
     FormsModule,
     ReactiveFormsModule,
     NgbPaginationModule,
