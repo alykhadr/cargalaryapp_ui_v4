@@ -18,6 +18,7 @@ import { ColorsComponent } from './colors/colors.component';
 import { GalleryImagesComponent } from './gallery-images/gallery-images.component';
 import { CompanyInfoComponent } from './company-info/company-info.component';
 import { ContactSalesComponent } from './contact-sales/contact-sales.component';
+import { ContactUsComponent } from './contact-us/contact-us.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -52,7 +53,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ColorsComponent,
     GalleryImagesComponent,
     CompanyInfoComponent,
-    ContactSalesComponent
+    ContactSalesComponent,
+    ContactUsComponent
   ],
   imports: [
     CommonModule,

@@ -93,12 +93,13 @@
                            (change)="toggleBrandSelection(brand.id, $any($event.target).checked)">
                   </td>
                   <td>
-                    <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(getImageUrl(brand.imageUrl))">
-                      <img [src]="getImageUrl(brand.imageUrl)" class="rounded-circle img-fluid" alt="Brand">
-                      <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded-circle opacity-0 hover-overlay">
-                        <i class="ri-eye-line text-white fs-5"></i>
+                    <div *ngIf="brand.imageUrl" class="position-relative d-inline-block">
+                      <img [src]="getImageUrl(brand.imageUrl)" alt="Brand" class="avatar-xs rounded" />
+                      <div class="hover-overlay" (click)="previewImage(getImageUrl(brand.imageUrl))">
+                        <i class="ri-eye-line text-white" style="font-size: 16px;"></i>
                       </div>
                     </div>
+                    <span *ngIf="!brand.imageUrl">-</span>
                   </td>
                   <td>{{ brand.nameEn }}</td>
                   <td>{{ brand.nameAr }}</td>
