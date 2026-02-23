@@ -163,6 +163,22 @@
           </div>
 
           <div class="mb-3">
+            <label class="form-label">Branch <span class="text-danger">*</span></label>
+            <ng-select
+              [items]="branches"
+              bindLabel="branchNameEn"
+              bindValue="id"
+              formControlName="branchId"
+              placeholder="Select Branch"
+              [searchable]="true"
+              [clearable]="false">
+            </ng-select>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['branchId'].errors">
+              Branch is required.
+            </div>
+          </div>
+
+          <div class="mb-3">
             <label class="form-label">Icon Image <span class="text-danger">*</span></label>
             <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
             <div *ngIf="iconPreviewUrl" class="mt-2">

@@ -6,6 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { ContactSales } from '../interfaces/contact-sales.interface';
 import { ContactSalesService } from '../services/contact-sales.service';
+import { BranchService } from '../services/branch.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -33,6 +34,7 @@ export class ContactSalesComponent implements OnInit {
   selectedContactIds = new Set<number>();
   previewImageUrl?: string;
   isPreviewOpen = false;
+  branches: any[] = [];
 
   contactTypes = [
     { value: 1, label: 'Mobile' },
@@ -44,7 +46,8 @@ export class ContactSalesComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private contactSalesService: ContactSalesService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private branchService: BranchService
   ) {}
 
   ngOnInit(): void {
@@ -56,14 +59,25 @@ export class ContactSalesComponent implements OnInit {
     this.contactForm = this.formBuilder.group({
       contactValue: ['', [Validators.required, Validators.maxLength(100)]],
       contactType: [1, Validators.required],
+      branchId: [null, Validators.required],
       isAvailable: [true]
     });
 
+    this.loadBranches();
     this.loadContacts();
   }
 
   get form() {
     return this.contactForm.controls;
+  }
+
+  loadBranches() {
+    this.branchService.getBranches().pipe(first()).subscribe({
+      next: (branches) => {
+        this.branches = branches;
+      },
+      error: (error) => this.showError(error)
+    });
   }
 
   loadContacts() {
@@ -131,6 +145,7 @@ export class ContactSalesComponent implements OnInit {
     this.contactForm.patchValue({
       contactValue: contact.contactValue,
       contactType: contact.contactType,
+      branchId: contact.branchId,
       isAvailable: contact.isAvailable
     });
     this.isModalOpen = true;
@@ -170,6 +185,7 @@ export class ContactSalesComponent implements OnInit {
     const formData = new FormData();
     formData.append('contactValue', this.form['contactValue'].value);
     formData.append('contactType', this.form['contactType'].value.toString());
+    formData.append('branchId', this.form['branchId'].value.toString());
     formData.append('isAvailable', this.form['isAvailable'].value.toString());
     if (this.selectedIconFile) {
       formData.append('iconFile', this.selectedIconFile);

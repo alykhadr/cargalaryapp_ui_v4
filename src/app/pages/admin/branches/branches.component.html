@@ -124,6 +124,11 @@
                         <i class="ri-calendar-line fs-16"></i>
                       </a>
                     </li>
+                    <li class="list-inline-item" ngbTooltip="View Contact Sales" placement="top">
+                      <a href="javascript:void(0);" class="text-success d-inline-block" (click)="viewContactSales(branch.id, contactSalesModal)">
+                        <i class="ri-contacts-line fs-16"></i>
+                      </a>
+                    </li>
                     <li class="list-inline-item edit" ngbTooltip="Edit" placement="top" *appHasPermission="'branches.edit'">
                       <a href="javascript:void(0);" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn"
                         (click)="editDataGet(filteredBranches.indexOf(branch), content)">
@@ -385,6 +390,69 @@
           (click)="modal.close('Close click')">Close</button>
         <button type="button" class="btn w-sm btn-danger" id="delete-product" (click)="deleteData(deleteId)"
           (click)="modal.close('Close click')">Yes, Delete It!</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #contactSalesModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Contact Sales Officers</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="loadingContactSales" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div *ngIf="!loadingContactSales && branchContactSales.length === 0" class="text-center py-4">
+      <i class="ri-contacts-line" style="font-size: 48px; color: #ccc;"></i>
+      <h6 class="text-muted mt-3">No contact sales officers found for this branch</h6>
+    </div>
+    <div *ngIf="!loadingContactSales && branchContactSales.length > 0" class="table-responsive">
+      <table class="table table-sm table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Icon</th>
+            <th>Contact Value</th>
+            <th>Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let contact of pagedBranchContactSales">
+            <td>
+              <img *ngIf="contact.contactIconUrl" [src]="contact.contactIconUrl" alt="Icon" class="avatar-xs rounded" />
+            </td>
+            <td>{{ contact.contactValue }}</td>
+            <td>
+              <span class="badge bg-primary-subtle text-primary">{{ getContactTypeLabel(contact.contactType) }}</span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="contact.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                {{ contact.isAvailable ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row justify-content-between align-items-center mt-3">
+        <div class="col-sm-6">
+          <div class="dataTables_info">
+            Showing {{ (contactSalesPage - 1) * contactSalesPageSize + 1 }} to {{ Math.min(contactSalesPage * contactSalesPageSize, branchContactSales.length) }} of {{ branchContactSales.length }} entries
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="text-end">
+            <ngb-pagination
+              [collectionSize]="branchContactSales.length"
+              [(page)]="contactSalesPage"
+              [pageSize]="contactSalesPageSize"
+              (pageChange)="onContactSalesPageChange($event)">
+            </ngb-pagination>
+          </div>
+        </div>
       </div>
     </div>
   </div>

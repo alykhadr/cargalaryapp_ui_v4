@@ -6,6 +6,7 @@ export interface ContactSales {
   createdBy?: string;
   isAvailable: boolean;
   createdAt: Date;
+  branchId: number;
 }
 
 export interface CreateContactSalesRequest {
@@ -13,6 +14,7 @@ export interface CreateContactSalesRequest {
   contactType: number;
   contactIconUrl?: string;
   isAvailable?: boolean;
+  branchId: number;
 }
 
 export interface UpdateContactSalesRequest {
@@ -20,4 +22,5 @@ export interface UpdateContactSalesRequest {
   contactType: number;
   contactIconUrl?: string;
   isAvailable: boolean;
+  branchId: number;
 }

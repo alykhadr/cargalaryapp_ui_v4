@@ -8,6 +8,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { Branch, CreateBranchRequest, UpdateBranchRequest } from '../interfaces/branch.interface';
 import { BranchService } from '../services/branch.service';
+import { ContactSalesService } from '../services/contact-sales.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -49,13 +50,26 @@ export class BranchesComponent {
   ];
   workingDays: any[] = [];
   expandedBranchId: number | null = null;
+  branchContactSales: any[] = [];
+  pagedBranchContactSales: any[] = [];
+  loadingContactSales = false;
+  contactSalesPage = 1;
+  contactSalesPageSize = 5;
+  Math = Math;
+
+  contactTypes = [
+    { value: 1, label: 'Mobile' },
+    { value: 2, label: 'WhatsApp' },
+    { value: 3, label: 'Email' }
+  ];
 
   constructor(
     private modalService: NgbModal,
     public service: PaginationService,
     private formBuilder: UntypedFormBuilder,
     private branchService: BranchService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private contactSalesService: ContactSalesService
   ) {}
 
   ngOnInit(): void {
@@ -505,5 +519,41 @@ export class BranchesComponent {
 
   toggleWorkingDays(branchId: number) {
     this.expandedBranchId = this.expandedBranchId === branchId ? null : branchId;
+  }
+
+  viewContactSales(branchId: number, modal: any) {
+    this.loadingContactSales = true;
+    this.branchContactSales = [];
+    this.pagedBranchContactSales = [];
+    this.contactSalesPage = 1;
+    this.modalService.open(modal, { size: 'lg', centered: true });
+    
+    this.contactSalesService.getAll().pipe(first()).subscribe({
+      next: (contacts) => {
+        this.branchContactSales = contacts.filter(c => c.branchId === branchId);
+        this.updateContactSalesPagination();
+        this.loadingContactSales = false;
+      },
+      error: (error) => {
+        this.loadingContactSales = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  updateContactSalesPagination() {
+    const startIndex = (this.contactSalesPage - 1) * this.contactSalesPageSize;
+    const endIndex = startIndex + this.contactSalesPageSize;
+    this.pagedBranchContactSales = this.branchContactSales.slice(startIndex, endIndex);
+  }
+
+  onContactSalesPageChange(page: number) {
+    this.contactSalesPage = page;
+    this.updateContactSalesPagination();
+  }
+
+  getContactTypeLabel(type: number): string {
+    const contactType = this.contactTypes.find(t => t.value === type);
+    return contactType ? contactType.label : 'Unknown';
   }
 }
