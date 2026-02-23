@@ -30,6 +30,7 @@ export class BrandsComponent implements OnInit {
   filteredBrands: Brand[] = [];
   pagedBrands: Brand[] = [];
   searchTerm = '';
+  searchTermAr = '';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -77,17 +78,19 @@ export class BrandsComponent implements OnInit {
 
   clearSearch() {
     this.searchTerm = '';
+    this.searchTermAr = '';
     this.applyFilters(true);
   }
 
   private applyFilters(resetPage = false) {
     let data = [...this.brands];
-    const term = this.searchTerm.trim().toLowerCase();
+    const termEn = this.searchTerm.trim().toLowerCase();
+    const termAr = this.searchTermAr.trim().toLowerCase();
 
-    if (term) {
+    if (termEn || termAr) {
       data = data.filter(brand =>
-        (brand.nameEn || '').toLowerCase().includes(term) ||
-        (brand.nameAr || '').toLowerCase().includes(term)
+        (termEn && (brand.nameEn || '').toLowerCase().includes(termEn)) ||
+        (termAr && (brand.nameAr || '').toLowerCase().includes(termAr))
       );
     }
 
@@ -164,6 +167,7 @@ export class BrandsComponent implements OnInit {
   saveBrand() {
     this.submitted = true;
     if (this.brandForm.invalid) return;
+    if (!this.isEditMode && !this.selectedImage) return;
 
     this.isSubmitting = true;
     const payload = {
@@ -172,42 +176,55 @@ export class BrandsComponent implements OnInit {
       imageFile: this.selectedImage || undefined
     };
 
-    const request = this.isEditMode && this.selectedBrand
-      ? this.brandService.updateBrand(this.selectedBrand.id, payload)
-      : this.brandService.createBrand(payload);
-
-    this.brandService.createBrand(payload).pipe(first()).subscribe({
-      next: () => {
-        this.isSubmitting = false;
-        this.showSuccess(this.isEditMode ? 'Brand updated successfully' : 'Brand created successfully');
-        this.closeModal();
-        this.loadBrands();
-      },
-      error: (error) => {
-        this.isSubmitting = false;
-        this.showError(error);
-      }
-    });
+    if (this.isEditMode && this.selectedBrand) {
+      this.brandService.updateBrand(this.selectedBrand.id, payload).pipe(first()).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.showSuccess('Brand updated successfully');
+          this.closeModal();
+          this.loadBrands();
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.showError(error);
+        }
+      });
+    } else {
+      this.brandService.createBrand(payload).pipe(first()).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.showSuccess('Brand created successfully');
+          this.closeModal();
+          this.loadBrands();
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.showError(error);
+        }
+      });
+    }
   }
 
-  async deleteBrand(brand: Brand) {
-    const result = await Swal.fire({
-      title: `Delete ${brand.nameEn}?`,
-      text: 'This action cannot be undone.',
+  deleteBrand(brand: Brand) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you sure you want to remove this record?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Delete',
-      confirmButtonColor: '#d33'
-    });
-
-    if (!result.isConfirmed) return;
-
-    this.brandService.deleteBrand(brand.id).pipe(first()).subscribe({
-      next: () => {
-        this.showSuccess('Brand deleted successfully');
-        this.loadBrands();
-      },
-      error: (error) => this.showError(error)
+      confirmButtonText: 'Yes, Delete It!',
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.brandService.deleteBrand(brand.id).pipe(first()).subscribe({
+          next: () => {
+            this.showSuccess('Brand deleted successfully');
+            this.loadBrands();
+          },
+          error: (error) => this.showError(error)
+        });
+      }
     });
   }
 
@@ -222,7 +239,7 @@ export class BrandsComponent implements OnInit {
     if (this.isEditMode && this.selectedBrand?.imageUrl) {
       return this.getImageUrl(this.selectedBrand.imageUrl);
     }
-    return 'https://via.placeholder.com/200x200?text=Upload+Image';
+    return 'https://ui-avatars.com/api/?name=Brand&size=150&background=405189&color=fff&rounded=true';
   }
 
   private showSuccess(message: string) {

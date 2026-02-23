@@ -13,6 +13,7 @@ import { PermissionsComponent } from './permissions/permissions.component';
 import { AdminToastsContainerComponent } from './shared/admin-toasts-container.component';
 import { BranchesComponent } from './branches/branches.component';
 import { BrandsComponent } from './brands/brands.component';
+import { ColorsComponent } from './colors/colors.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -43,7 +44,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     PermissionsComponent,
     AdminToastsContainerComponent,
     BranchesComponent,
-    BrandsComponent
+    BrandsComponent,
+    ColorsComponent
   ],
   imports: [
     CommonModule,

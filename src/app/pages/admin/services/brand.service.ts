@@ -10,7 +10,7 @@ const API_URL = GlobalComponent.API_URL;
   providedIn: "root",
 })
 export class BrandService {
-  private readonly baseUrl = API_URL + "/api/brand";
+  private readonly baseUrl = API_URL + "/api/brands";
 
   constructor(private http: HttpClient) {}
 

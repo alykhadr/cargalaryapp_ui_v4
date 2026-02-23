@@ -5,6 +5,7 @@ import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { BranchesComponent } from './branches/branches.component';
 import { BrandsComponent } from './brands/brands.component';
+import { ColorsComponent } from './colors/colors.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -40,6 +41,12 @@ const routes: Routes = [
     component: BrandsComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'brands.view' }
+  },
+  {
+    path: "colors",
+    component: ColorsComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'colors.view' }
   }
   
 ];

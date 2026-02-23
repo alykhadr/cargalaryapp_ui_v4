@@ -299,7 +299,8 @@
           "ROLE":"Roles",
           "PERMISSION":"Permissions",
           "BRANCH":"Branches",
-          "BRAND":"Brands"
+          "BRAND":"Brands",
+          "COLOR":"Colors"
       
       }
     }

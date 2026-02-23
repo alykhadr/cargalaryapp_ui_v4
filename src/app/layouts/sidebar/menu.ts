@@ -1491,6 +1491,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/brands',
         parentId: 180,
         permission: 'brands.view'
+      },
+      {
+        id: 186,
+        label: 'MENUITEMS.ADMIN.LIST.COLOR',
+        link: '/admin/colors',
+        parentId: 180,
+        permission: 'colors.view'
       }
       
       ,
