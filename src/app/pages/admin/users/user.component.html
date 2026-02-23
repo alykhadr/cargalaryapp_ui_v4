@@ -160,8 +160,13 @@
               <tr>
                 <td>
                   <div class="d-flex align-items-center">
-                    <img [src]="getProfileImageUrl(user.profileImageUrl)" 
-                         class="rounded-circle avatar-xs me-2" alt="Profile">
+                    <div class="avatar-xs position-relative me-2" style="cursor: pointer;" (click)="previewImage(getProfileImageUrl(user.profileImageUrl))">
+                      <img [src]="getProfileImageUrl(user.profileImageUrl)" 
+                           class="rounded-circle img-fluid" alt="Profile">
+                      <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded-circle opacity-0 hover-overlay">
+                        <i class="ri-eye-line text-white fs-6"></i>
+                      </div>
+                    </div>
                     <span>{{ user.userName }}</span>
                   </div>
                 </td>
@@ -397,5 +402,21 @@
   </div>
 </div>
 <div class="modal-backdrop fade show" *ngIf="isPasswordModalOpen"></div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: previewImageUrl ? 'block' : 'none' }" *ngIf="previewImageUrl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Profile Image Preview</h5>
+        <button type="button" class="btn-close" (click)="closePreview()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="previewImageUrl" alt="Profile Preview" class="img-fluid" style="max-height: 500px;">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="previewImageUrl"></div>
 
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

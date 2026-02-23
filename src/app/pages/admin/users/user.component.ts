@@ -50,6 +50,7 @@ export class UserComponent implements OnInit {
   selectedEditProfileImage: File | null = null;
   profileImagePreview: string | null = null;
   editProfileImagePreview: string | null = null;
+  previewImageUrl: string | null = null;
 
   selectedUser?: AdminUser;
   selectedUserPermissions: string[] = [];
@@ -619,5 +620,13 @@ export class UserComponent implements OnInit {
       return this.editProfileImagePreview; // New preview (base64)
     }
     return this.getProfileImageUrl(this.selectedUser?.profileImageUrl);
+  }
+
+  previewImage(imageUrl: string) {
+    this.previewImageUrl = imageUrl;
+  }
+
+  closePreview() {
+    this.previewImageUrl = null;
   }
 }

@@ -1,0 +1,7 @@
+.hover-overlay {
+  transition: opacity 0.3s ease;
+}
+
+.avatar-sm:hover .hover-overlay {
+  opacity: 1 !important;
+}

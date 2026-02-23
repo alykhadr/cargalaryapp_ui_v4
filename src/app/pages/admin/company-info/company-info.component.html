@@ -274,13 +274,11 @@
                 <tbody>
                   <tr *ngFor="let info of paginatedCompanyInfos">
                     <td>
-                      <div class="d-flex align-items-center gap-2">
-                        <div class="avatar-sm">
-                          <img [src]="info.logoUrl || 'assets/images/companies/img-1.png'" alt="Logo" class="rounded img-fluid">
+                      <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(info.logoUrl || 'assets/images/companies/img-1.png')">
+                        <img [src]="info.logoUrl || 'assets/images/companies/img-1.png'" alt="Logo" class="rounded img-fluid">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded opacity-0 hover-overlay">
+                          <i class="ri-eye-line text-white fs-4"></i>
                         </div>
-                        <button class="btn btn-sm btn-soft-info" (click)="previewImage(info.logoUrl || 'assets/images/companies/img-1.png')" title="Preview Logo">
-                          <i class="ri-eye-line"></i>
-                        </button>
                       </div>
                     </td>
                     <td>{{ info.companyNameEn || info.companyNameAr || '-' }}</td>
