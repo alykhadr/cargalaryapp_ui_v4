@@ -33,6 +33,7 @@ export class ContactUsComponent implements OnInit {
   selectedContactIds = new Set<number>();
   previewImageUrl?: string;
   isPreviewOpen = false;
+  selectedTypeFilter: number | null = null;
 
   contactTypes = [
     { value: 1, label: 'Mobile' },
@@ -89,6 +90,7 @@ export class ContactUsComponent implements OnInit {
 
   clearSearch() {
     this.searchTerm = '';
+    this.selectedTypeFilter = null;
     this.applyFilters(true);
   }
 
@@ -102,6 +104,10 @@ export class ContactUsComponent implements OnInit {
         (contact.messageAr || '').toLowerCase().includes(term) ||
         (contact.messageEn || '').toLowerCase().includes(term)
       );
+    }
+
+    if (this.selectedTypeFilter !== null) {
+      data = data.filter(contact => contact.contactType === this.selectedTypeFilter);
     }
 
     this.filteredContacts = data;

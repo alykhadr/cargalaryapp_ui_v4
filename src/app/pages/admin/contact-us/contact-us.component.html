@@ -24,15 +24,21 @@
       </div>
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
-          <div class="col-sm-10">
+          <div class="col-sm-5">
             <input
               type="text"
               class="form-control"
-              placeholder="Search..."
+              placeholder="Search by contact value..."
               [(ngModel)]="searchTerm"
               (ngModelChange)="onSearch()">
           </div>
-          <div class="col-sm-2">
+          <div class="col-sm-3">
+            <select class="form-select" [(ngModel)]="selectedTypeFilter" (ngModelChange)="onSearch()">
+              <option [value]="null">All Types</option>
+              <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
+            </select>
+          </div>
+          <div class="col-sm-4">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
               <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
             </button>
@@ -165,7 +171,7 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Message (Arabic) <span class="text-danger">*</span></label>
-              <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" placeholder="Enter message in Arabic"></textarea>
+              <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" placeholder="أدخل الرسالة بالعربية" dir="rtl"></textarea>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['messageAr'].errors">
                 <span *ngIf="form['messageAr'].errors['required']">Message in Arabic is required.</span>
                 <span *ngIf="form['messageAr'].errors['maxlength']">Max length is 500 characters.</span>
