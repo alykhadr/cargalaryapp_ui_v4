@@ -8,6 +8,7 @@ import { BrandsComponent } from './brands/brands.component';
 import { ColorsComponent } from './colors/colors.component';
 import { GalleryImagesComponent } from './gallery-images/gallery-images.component';
 import { CompanyInfoComponent } from './company-info/company-info.component';
+import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -61,6 +62,12 @@ const routes: Routes = [
     component: CompanyInfoComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'companyinfo.view' }
+  },
+  {
+    path: "contact-sales",
+    component: ContactSalesComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'contactsales.view' }
   }
   
 ];

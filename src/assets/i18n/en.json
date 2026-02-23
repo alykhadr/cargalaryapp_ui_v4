@@ -302,7 +302,8 @@
           "BRAND":"Brands",
           "COLOR":"Colors",
           "GALLERYIMAGE":"Gallery Images",
-          "COMPANYINFO":"Company Info"
+          "COMPANYINFO":"Company Info",
+          "CONTACTSALES":"Contact Sales"
       
       }
     }
