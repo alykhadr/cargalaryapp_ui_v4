@@ -1540,6 +1540,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/member-services',
         parentId: 180,
         permission: 'memberservices.view'
+      },
+      {
+        id: 193,
+        label: 'MENUITEMS.ADMIN.LIST.OFFER',
+        link: '/admin/offers',
+        parentId: 180,
+        permission: 'offers.view'
       }
       
       ,

@@ -12,6 +12,7 @@ import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FaqComponent } from './faq/faq.component';
 import { MemberServicesComponent } from './member-services/member-services.component';
+import { OffersComponent } from './offers/offers.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -89,6 +90,12 @@ const routes: Routes = [
     component: MemberServicesComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'memberservices.view' }
+  },
+  {
+    path: "offers",
+    component: OffersComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'offers.view' }
   }
   
 ];
