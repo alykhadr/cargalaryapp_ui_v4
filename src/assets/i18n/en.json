@@ -301,7 +301,8 @@
           "BRANCH":"Branches",
           "BRAND":"Brands",
           "COLOR":"Colors",
-          "GALLERYIMAGE":"Gallery Images"
+          "GALLERYIMAGE":"Gallery Images",
+          "COMPANYINFO":"Company Info"
       
       }
     }

@@ -1505,6 +1505,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/gallery-images',
         parentId: 180,
         permission: 'galleryimages.view'
+      },
+      {
+        id: 188,
+        label: 'MENUITEMS.ADMIN.LIST.COMPANYINFO',
+        link: '/admin/company-info',
+        parentId: 180,
+        permission: 'companyinfo.view'
       }
       
       ,
