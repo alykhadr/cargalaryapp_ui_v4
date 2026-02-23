@@ -33,4 +33,8 @@ export class ColorService {
   deleteColor(colorId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${colorId}`);
   }
+
+  bulkDeleteColors(colorIds: number[]): Observable<{ deletedCount: number; failedIds: number[] }> {
+    return this.http.post<{ deletedCount: number; failedIds: number[] }>(`${this.baseUrl}/bulk-delete`, { colorIds });
+  }
 }

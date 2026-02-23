@@ -29,6 +29,7 @@ export class ColorsComponent implements OnInit {
   pagedColors: Color[] = [];
   searchTerm = '';
   searchTermAr = '';
+  selectedColorIds = new Set<number>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -208,6 +209,57 @@ export class ColorsComponent implements OnInit {
     this.toastService.show(message, {
       classname: 'bg-danger text-white',
       delay: 3000
+    });
+  }
+
+  toggleColorSelection(colorId: number, checked: boolean) {
+    if (checked) {
+      this.selectedColorIds.add(colorId);
+    } else {
+      this.selectedColorIds.delete(colorId);
+    }
+  }
+
+  toggleSelectAllColors(checked: boolean) {
+    if (checked) {
+      this.pagedColors.forEach(color => this.selectedColorIds.add(color.id));
+    } else {
+      this.selectedColorIds.clear();
+    }
+  }
+
+  isAllColorsSelected(): boolean {
+    return this.pagedColors.length > 0 && this.pagedColors.every(color => this.selectedColorIds.has(color.id));
+  }
+
+  bulkDeleteColors() {
+    if (this.selectedColorIds.size === 0) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Delete ${this.selectedColorIds.size} selected color(s)?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const colorIds = Array.from(this.selectedColorIds);
+        this.colorService.bulkDeleteColors(colorIds).pipe(first()).subscribe({
+          next: (response) => {
+            this.selectedColorIds.clear();
+            if (response.failedIds.length > 0) {
+              this.showError({ message: `Deleted ${response.deletedCount} colors. Failed to delete ${response.failedIds.length} colors.` });
+            } else {
+              this.showSuccess(`Successfully deleted ${response.deletedCount} color(s)`);
+            }
+            this.loadColors();
+          },
+          error: (error) => this.showError(error)
+        });
+      }
     });
   }
 }

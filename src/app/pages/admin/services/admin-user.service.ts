@@ -54,6 +54,10 @@ export class AdminUserService {
     return this.http.delete<void>(`${this.usersUrl}/${userId}`);
   }
 
+  bulkDeleteUsers(userIds: string[]): Observable<{ deletedCount: number; failedIds: string[] }> {
+    return this.http.post<{ deletedCount: number; failedIds: string[] }>(`${this.usersUrl}/bulk-delete`, { userIds });
+  }
+
   lockUser(userId: string): Observable<string> {
     return this.http.post(`${this.usersUrl}/${userId}/lock`, {}, { responseType: "text" });
   }

@@ -32,6 +32,7 @@ export class BrandsComponent implements OnInit {
   searchTerm = '';
   searchTermAr = '';
   previewImageUrl: string | null = null;
+  selectedBrandIds = new Set<number>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -264,5 +265,56 @@ export class BrandsComponent implements OnInit {
 
   closePreview() {
     this.previewImageUrl = null;
+  }
+
+  toggleBrandSelection(brandId: number, checked: boolean) {
+    if (checked) {
+      this.selectedBrandIds.add(brandId);
+    } else {
+      this.selectedBrandIds.delete(brandId);
+    }
+  }
+
+  toggleSelectAllBrands(checked: boolean) {
+    if (checked) {
+      this.pagedBrands.forEach(brand => this.selectedBrandIds.add(brand.id));
+    } else {
+      this.selectedBrandIds.clear();
+    }
+  }
+
+  isAllBrandsSelected(): boolean {
+    return this.pagedBrands.length > 0 && this.pagedBrands.every(brand => this.selectedBrandIds.has(brand.id));
+  }
+
+  bulkDeleteBrands() {
+    if (this.selectedBrandIds.size === 0) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Delete ${this.selectedBrandIds.size} selected brand(s)?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const brandIds = Array.from(this.selectedBrandIds);
+        this.brandService.bulkDeleteBrands(brandIds).pipe(first()).subscribe({
+          next: (response) => {
+            this.selectedBrandIds.clear();
+            if (response.failedIds.length > 0) {
+              this.showError({ message: `Deleted ${response.deletedCount} brands. Failed to delete ${response.failedIds.length} brands.` });
+            } else {
+              this.showSuccess(`Successfully deleted ${response.deletedCount} brand(s)`);
+            }
+            this.loadBrands();
+          },
+          error: (error) => this.showError(error)
+        });
+      }
+    });
   }
 }

@@ -12,6 +12,10 @@
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
+              <button *appHasPermission="'colors.delete'" type="button" class="btn btn-danger"
+                [disabled]="selectedColorIds.size === 0" (click)="bulkDeleteColors()">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedColorIds.size }})
+              </button>
               <button *appHasPermission="'colors.create'" type="button" class="btn btn-success add-btn"
                 (click)="openCreateModal()">
                 <i class="ri-add-line align-bottom me-1"></i> Add Color
@@ -68,6 +72,11 @@
             <table class="table align-middle table-nowrap table-hover mb-0">
               <thead class="table-light text-muted">
                 <tr>
+                  <th scope="col" style="width: 40px;">
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="isAllColorsSelected()"
+                           (change)="toggleSelectAllColors($any($event.target).checked)">
+                  </th>
                   <th scope="col" style="width: 60px;">Color</th>
                   <th scope="col">Name (English)</th>
                   <th scope="col">Name (Arabic)</th>
@@ -79,6 +88,11 @@
               <tbody>
                 @for (color of pagedColors; track color.id) {
                 <tr id="c_{{ color.id }}">
+                  <td>
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="selectedColorIds.has(color.id)"
+                           (change)="toggleColorSelection(color.id, $any($event.target).checked)">
+                  </td>
                   <td>
                     <div [style.background-color]="color.colorCode" 
                          style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid #e9ecef;"></div>

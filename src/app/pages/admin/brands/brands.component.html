@@ -12,6 +12,10 @@
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
+              <button *appHasPermission="'brands.delete'" type="button" class="btn btn-danger"
+                [disabled]="selectedBrandIds.size === 0" (click)="bulkDeleteBrands()">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedBrandIds.size }})
+              </button>
               <button *appHasPermission="'brands.create'" type="button" class="btn btn-success add-btn"
                 (click)="openCreateModal()">
                 <i class="ri-add-line align-bottom me-1"></i> Add Brand
@@ -68,6 +72,11 @@
             <table class="table align-middle table-nowrap table-hover mb-0">
               <thead class="table-light text-muted">
                 <tr>
+                  <th scope="col" style="width: 40px;">
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="isAllBrandsSelected()"
+                           (change)="toggleSelectAllBrands($any($event.target).checked)">
+                  </th>
                   <th scope="col" style="width: 60px;">Image</th>
                   <th scope="col">Name (English)</th>
                   <th scope="col">Name (Arabic)</th>
@@ -78,6 +87,11 @@
               <tbody>
                 @for (brand of pagedBrands; track brand.id) {
                 <tr id="b_{{ brand.id }}">
+                  <td>
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="selectedBrandIds.has(brand.id)"
+                           (change)="toggleBrandSelection(brand.id, $any($event.target).checked)">
+                  </td>
                   <td>
                     <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(getImageUrl(brand.imageUrl))">
                       <img [src]="getImageUrl(brand.imageUrl)" class="rounded-circle img-fluid" alt="Brand">

@@ -45,4 +45,8 @@ export class BrandService {
   deleteBrand(brandId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${brandId}`);
   }
+
+  bulkDeleteBrands(brandIds: number[]): Observable<{ deletedCount: number; failedIds: number[] }> {
+    return this.http.post<{ deletedCount: number; failedIds: number[] }>(`${this.baseUrl}/bulk-delete`, { brandIds });
+  }
 }

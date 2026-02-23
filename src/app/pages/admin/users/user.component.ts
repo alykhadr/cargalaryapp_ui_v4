@@ -51,6 +51,7 @@ export class UserComponent implements OnInit {
   profileImagePreview: string | null = null;
   editProfileImagePreview: string | null = null;
   previewImageUrl: string | null = null;
+  selectedUserIds = new Set<string>();
 
   selectedUser?: AdminUser;
   selectedUserPermissions: string[] = [];
@@ -628,5 +629,56 @@ export class UserComponent implements OnInit {
 
   closePreview() {
     this.previewImageUrl = null;
+  }
+
+  toggleUserSelection(userId: string, checked: boolean) {
+    if (checked) {
+      this.selectedUserIds.add(userId);
+    } else {
+      this.selectedUserIds.delete(userId);
+    }
+  }
+
+  toggleSelectAll(checked: boolean) {
+    if (checked) {
+      this.pagedUsers.forEach(user => this.selectedUserIds.add(user.id));
+    } else {
+      this.selectedUserIds.clear();
+    }
+  }
+
+  isAllSelected(): boolean {
+    return this.pagedUsers.length > 0 && this.pagedUsers.every(user => this.selectedUserIds.has(user.id));
+  }
+
+  bulkDeleteUsers() {
+    if (this.selectedUserIds.size === 0) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Delete ${this.selectedUserIds.size} selected user(s)?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const userIds = Array.from(this.selectedUserIds);
+        this.adminUserService.bulkDeleteUsers(userIds).pipe(first()).subscribe({
+          next: (response) => {
+            this.selectedUserIds.clear();
+            if (response.failedIds.length > 0) {
+              this.showError({ message: `Deleted ${response.deletedCount} users. Failed to delete ${response.failedIds.length} users.` });
+            } else {
+              this.showSuccess(`Successfully deleted ${response.deletedCount} user(s)`);
+            }
+            this.loadUsersAndRoles();
+          },
+          error: (error) => this.showError(error)
+        });
+      }
+    });
   }
 }

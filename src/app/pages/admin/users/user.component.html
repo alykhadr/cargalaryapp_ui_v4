@@ -99,7 +99,17 @@
   <div class="col-xl-8">
     <div class="card">
       <div class="card-header">
-        <h5 class="card-title mb-0">Users</h5>
+        <div class="row align-items-center">
+          <div class="col-sm">
+            <h5 class="card-title mb-0">Users</h5>
+          </div>
+          <div class="col-sm-auto">
+            <button *appHasPermission="'users.delete'" class="btn btn-danger" 
+                    [disabled]="selectedUserIds.size === 0" (click)="bulkDeleteUsers()">
+              <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedUserIds.size }})
+            </button>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="mb-3 p-3 border border-dashed rounded-3 bg-light-subtle">
@@ -147,6 +157,11 @@
           <table class="table align-middle">
             <thead class="table-light">
               <tr>
+                <th style="width: 40px;">
+                  <input class="form-check-input" type="checkbox" 
+                         [checked]="isAllSelected()" 
+                         (change)="toggleSelectAll($any($event.target).checked)">
+                </th>
                 <th>Username</th>
                 <th>Email</th>
                 <th>Branch</th>
@@ -158,6 +173,11 @@
             <tbody>
               @for (user of pagedUsers; track user.id) {
               <tr>
+                <td>
+                  <input class="form-check-input" type="checkbox" 
+                         [checked]="selectedUserIds.has(user.id)" 
+                         (change)="toggleUserSelection(user.id, $any($event.target).checked)">
+                </td>
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="avatar-xs position-relative me-2" style="cursor: pointer;" (click)="previewImage(getProfileImageUrl(user.profileImageUrl))">
@@ -182,11 +202,22 @@
                   <div class="d-flex gap-2">
                     <button *appHasPermission="'users.edit'" class="btn btn-sm btn-soft-secondary" (click)="openEditModal(user)">Edit</button>
                     <button *appHasPermission="'users.edit'" class="btn btn-sm btn-soft-dark" (click)="openPasswordModal(user)">Password</button>
-                    <button *appHasPermission="'users.view'" class="btn btn-sm btn-soft-primary" (click)="openPermissionsModal(user)">Permissions</button>
                     <button *appHasPermission="'users.lock'" class="btn btn-sm" [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-warning'" (click)="lockUnlock(user)">
                       {{ user.isLocked ? 'Unlock' : 'Lock' }}
                     </button>
-                    <button *appHasPermission="'users.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteUser(user)">Delete</button>
+                    <div ngbDropdown class="d-inline-block">
+                      <button class="btn btn-sm btn-soft-info" ngbDropdownToggle>
+                        More
+                      </button>
+                      <div ngbDropdownMenu>
+                        <button *appHasPermission="'users.view'" ngbDropdownItem (click)="openPermissionsModal(user)">
+                          <i class="ri-shield-keyhole-line me-2"></i>Permissions
+                        </button>
+                        <button *appHasPermission="'users.delete'" ngbDropdownItem class="text-danger" (click)="deleteUser(user)">
+                          <i class="ri-delete-bin-line me-2"></i>Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
