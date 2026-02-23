@@ -11,6 +11,7 @@ import { CompanyInfoComponent } from './company-info/company-info.component';
 import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FaqComponent } from './faq/faq.component';
+import { MemberServicesComponent } from './member-services/member-services.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -82,6 +83,12 @@ const routes: Routes = [
     component: FaqComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'faq.view' }
+  },
+  {
+    path: "member-services",
+    component: MemberServicesComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'memberservices.view' }
   }
   
 ];

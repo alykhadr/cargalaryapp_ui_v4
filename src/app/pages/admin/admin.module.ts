@@ -20,6 +20,7 @@ import { CompanyInfoComponent } from './company-info/company-info.component';
 import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FaqComponent } from './faq/faq.component';
+import { MemberServicesComponent } from './member-services/member-services.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -56,7 +57,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CompanyInfoComponent,
     ContactSalesComponent,
     ContactUsComponent,
-    FaqComponent
+    FaqComponent,
+    MemberServicesComponent
   ],
   imports: [
     CommonModule,

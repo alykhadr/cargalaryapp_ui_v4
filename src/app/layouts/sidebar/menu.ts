@@ -1533,6 +1533,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/faq',
         parentId: 180,
         permission: 'faq.view'
+      },
+      {
+        id: 192,
+        label: 'MENUITEMS.ADMIN.LIST.MEMBERSERVICE',
+        link: '/admin/member-services',
+        parentId: 180,
+        permission: 'memberservices.view'
       }
       
       ,
