@@ -4,6 +4,7 @@ import { UserComponent } from './users/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { BranchesComponent } from './branches/branches.component';
+import { BrandsComponent } from './brands/brands.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -33,6 +34,12 @@ const routes: Routes = [
     component: BranchesComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'branches.view' }
+  },
+  {
+    path: "brands",
+    component: BrandsComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'brands.view' }
   }
   
 ];

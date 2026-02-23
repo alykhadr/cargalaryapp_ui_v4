@@ -1470,6 +1470,7 @@ export const MENU: MenuItem[] = [
         parentId: 180,
         permission: 'branches.view'
       },
+      
       {
         id: 183,
         label: 'MENUITEMS.ADMIN.LIST.PERMISSION',
@@ -1484,6 +1485,13 @@ export const MENU: MenuItem[] = [
         parentId: 180,
         permission: 'users.view'
       },
+      {
+        id: 185,
+        label: 'MENUITEMS.ADMIN.LIST.BRAND',
+        link: '/admin/brands',
+        parentId: 180,
+        permission: 'brands.view'
+      }
       
       ,
       

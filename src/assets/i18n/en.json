@@ -298,7 +298,8 @@
          "USER": "Users",
           "ROLE":"Roles",
           "PERMISSION":"Permissions",
-          "BRANCH":"Branches"
+          "BRANCH":"Branches",
+          "BRAND":"Brands"
       
       }
     }

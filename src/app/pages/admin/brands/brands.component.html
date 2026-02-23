@@ -1,0 +1,149 @@
+<app-breadcrumbs title="Brands" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Car Brands</h5>
+        <button *appHasPermission="'brands.create'" class="btn btn-success" (click)="openCreateModal()">
+          <i class="ri-add-line align-middle me-1"></i> Add Brand
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="row g-2">
+            <div class="col-md-10">
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Search by name..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearch()">
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-soft-secondary w-100" type="button" (click)="clearSearch()">
+                <i class="ri-restart-line"></i> Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div class="table-responsive" *ngIf="!isLoading">
+          <table class="table align-middle table-nowrap">
+            <thead class="table-light">
+              <tr>
+                <th>Image</th>
+                <th>Name (English)</th>
+                <th>Name (Arabic)</th>
+                <th>Created By</th>
+                <th style="width: 200px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (brand of pagedBrands; track brand.id) {
+              <tr>
+                <td>
+                  <img [src]="getImageUrl(brand.imageUrl)" class="avatar-sm rounded" alt="Brand">
+                </td>
+                <td>{{ brand.nameEn }}</td>
+                <td>{{ brand.nameAr }}</td>
+                <td>{{ brand.createdBy || 'N/A' }}</td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button *appHasPermission="'brands.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(brand)">
+                      <i class="ri-edit-line"></i>
+                    </button>
+                    <button *appHasPermission="'brands.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteBrand(brand)">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row align-items-center mt-2" *ngIf="!isLoading && filteredBrands.length > 0">
+          <div class="col-sm-6">
+            <div class="text-muted small">
+              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredBrands.length }} entries
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex justify-content-sm-end mt-2 mt-sm-0">
+              <ngb-pagination
+                [collectionSize]="filteredBrands.length"
+                [(page)]="service.page"
+                [pageSize]="service.pageSize"
+                (pageChange)="onPageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center text-muted py-3" *ngIf="!isLoading && filteredBrands.length === 0">
+          No brands found.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isModalOpen ? 'block' : 'none' }" *ngIf="isModalOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditMode ? 'Edit Brand' : 'Create Brand' }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="brandForm">
+          <div class="mb-3 text-center">
+            <div class="position-relative d-inline-block">
+              <img [src]="getModalImageUrl()" class="rounded" style="width: 200px; height: 200px; object-fit: cover;" alt="Brand">
+              <label for="brandImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                <span class="avatar-xs d-inline-block">
+                  <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                    <i class="ri-camera-fill"></i>
+                  </span>
+                </span>
+              </label>
+              <input type="file" id="brandImageInput" class="d-none" accept="image/*" (change)="onImageSelected($event)">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
+              English name is required (max 100 characters).
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
+              Arabic name is required (max 100 characters).
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveBrand()">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isModalOpen"></div>
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>
