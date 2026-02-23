@@ -79,7 +79,12 @@
                 @for (brand of pagedBrands; track brand.id) {
                 <tr id="b_{{ brand.id }}">
                   <td>
-                    <img [src]="getImageUrl(brand.imageUrl)" class="avatar-xs rounded-circle" alt="Brand">
+                    <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(getImageUrl(brand.imageUrl))">
+                      <img [src]="getImageUrl(brand.imageUrl)" class="rounded-circle img-fluid" alt="Brand">
+                      <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded-circle opacity-0 hover-overlay">
+                        <i class="ri-eye-line text-white fs-5"></i>
+                      </div>
+                    </div>
                   </td>
                   <td>{{ brand.nameEn }}</td>
                   <td>{{ brand.nameAr }}</td>
@@ -173,5 +178,21 @@
   </div>
 </div>
 <div class="modal-backdrop fade show" *ngIf="isModalOpen"></div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: previewImageUrl ? 'block' : 'none' }" *ngIf="previewImageUrl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Brand Image Preview</h5>
+        <button type="button" class="btn-close" (click)="closePreview()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="previewImageUrl" alt="Brand Preview" class="img-fluid" style="max-height: 500px;">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="previewImageUrl"></div>
 
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

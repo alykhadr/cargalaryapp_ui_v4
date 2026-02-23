@@ -10,5 +10,18 @@
   width: 48px;
   height: 48px;
   object-fit: cover;
-  border-radius: 50%;
+}
+
+.avatar-xs {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.hover-overlay {
+  transition: opacity 0.3s ease;
+}
+
+.avatar-sm:hover .hover-overlay {
+  opacity: 1 !important;
 }

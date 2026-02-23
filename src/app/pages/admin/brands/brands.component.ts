@@ -31,6 +31,7 @@ export class BrandsComponent implements OnInit {
   pagedBrands: Brand[] = [];
   searchTerm = '';
   searchTermAr = '';
+  previewImageUrl: string | null = null;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -255,5 +256,13 @@ export class BrandsComponent implements OnInit {
       classname: 'bg-danger text-white',
       delay: 3000
     });
+  }
+
+  previewImage(imageUrl: string) {
+    this.previewImageUrl = imageUrl;
+  }
+
+  closePreview() {
+    this.previewImageUrl = null;
   }
 }
