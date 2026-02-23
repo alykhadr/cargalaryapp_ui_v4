@@ -1526,6 +1526,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/contact-us',
         parentId: 180,
         permission: 'contactus.view'
+      },
+      {
+        id: 191,
+        label: 'MENUITEMS.ADMIN.LIST.FAQ',
+        link: '/admin/faq',
+        parentId: 180,
+        permission: 'faq.view'
       }
       
       ,
