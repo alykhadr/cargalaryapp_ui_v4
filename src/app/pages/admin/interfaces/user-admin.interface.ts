@@ -6,6 +6,8 @@ export interface AdminUser {
   lastName: string;
   isLocked: boolean;
   createdAt: string;
+  branchId: number;
+  profileImageUrl?: string;
 }
 
 export interface CreateAdminUserRequest {
@@ -15,4 +17,6 @@ export interface CreateAdminUserRequest {
   firstName: string;
   lastName: string;
   roles: string[];
+  branchId: number;
+  profileImage?: File;
 }

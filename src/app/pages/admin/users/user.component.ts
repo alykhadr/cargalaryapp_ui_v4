@@ -11,6 +11,8 @@ import { AdminUser } from '../interfaces/user-admin.interface';
 import { AdminUserService } from '../services/admin-user.service';
 import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
+import { BranchService } from '../services/branch.service';
+import { Branch } from '../interfaces/branch.interface';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -38,11 +40,16 @@ export class UserComponent implements OnInit {
   filteredUsers: AdminUser[] = [];
   pagedUsers: AdminUser[] = [];
   roles: Role[] = [];
+  branches: Branch[] = [];
   selectedRoles: string[] = [];
   editSelectedRoles: string[] = [];
   userNameFilter = '';
   emailFilter = '';
   statusFilter: '' | 'active' | 'locked' = '';
+  selectedProfileImage: File | null = null;
+  selectedEditProfileImage: File | null = null;
+  profileImagePreview: string | null = null;
+  editProfileImagePreview: string | null = null;
 
   selectedUser?: AdminUser;
   selectedUserPermissions: string[] = [];
@@ -60,6 +67,7 @@ export class UserComponent implements OnInit {
     private adminUserService: AdminUserService,
     private roleService: RoleService,
     private permissionService: PermissionService,
+    private branchService: BranchService,
     private toastService: ToastService
   ) { }
 
@@ -74,14 +82,16 @@ export class UserComponent implements OnInit {
       userName: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       firstName: [''],
-      lastName: ['']
+      lastName: [''],
+      branchId: [null, Validators.required]
     });
 
     this.editUserForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
       firstName: [''],
-      lastName: ['']
+      lastName: [''],
+      branchId: [null, Validators.required]
     });
 
     this.changePasswordForm = this.formBuilder.group({
@@ -119,11 +129,19 @@ export class UserComponent implements OnInit {
           this.showError(error);
           return of([] as Role[]);
         })
+      ),
+      branches: this.branchService.getBranches().pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as Branch[]);
+        })
       )
     }).subscribe({
-      next: ({ users, roles }) => {
+      next: ({ users, roles, branches }) => {
         this.users = users;
         this.roles = roles;
+        this.branches = branches;
         this.applyFilters(true);
         this.isLoading = false;
       },
@@ -180,13 +198,17 @@ export class UserComponent implements OnInit {
       password: this.form['password'].value,
       firstName: this.form['firstName'].value,
       lastName: this.form['lastName'].value,
-      roles: this.selectedRoles
+      roles: this.selectedRoles,
+      branchId: this.form['branchId'].value,
+      profileImage: this.selectedProfileImage || undefined
     }).pipe(first()).subscribe({
       next: () => {
         this.isCreating = false;
         this.createUserForm.reset();
         this.submitted = false;
         this.selectedRoles = [];
+        this.selectedProfileImage = null;
+        this.profileImagePreview = null;
         this.showSuccess('User created successfully');
         this.loadUsersAndRoles();
       },
@@ -293,11 +315,14 @@ export class UserComponent implements OnInit {
     this.editSubmitted = false;
     this.isEditModalOpen = true;
     this.editSelectedRoles = [];
+    this.selectedEditProfileImage = null;
+    this.editProfileImagePreview = null;
     this.editUserForm.patchValue({
       email: user.email,
       userName: user.userName,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
+      branchId: user.branchId
     });
 
     this.adminUserService.getUserRoles(user.id).pipe(first()).subscribe({
@@ -314,6 +339,8 @@ export class UserComponent implements OnInit {
     this.editSubmitted = false;
     this.editSelectedRoles = [];
     this.selectedUser = undefined;
+    this.selectedEditProfileImage = null;
+    this.editProfileImagePreview = null;
   }
 
   toggleEditRole(roleName: string, checked: boolean) {
@@ -338,7 +365,9 @@ export class UserComponent implements OnInit {
       email: this.editForm['email'].value,
       userName: this.editForm['userName'].value,
       firstName: this.editForm['firstName'].value,
-      lastName: this.editForm['lastName'].value
+      lastName: this.editForm['lastName'].value,
+      branchId: this.editForm['branchId'].value,
+      profileImage: this.selectedEditProfileImage || undefined
     }).pipe(first()).subscribe({
       next: () => {
         this.adminUserService.getUserRoles(this.selectedUser!.id).pipe(first()).subscribe({
@@ -517,5 +546,78 @@ export class UserComponent implements OnInit {
       page: parts[0],
       action: parts.slice(1).join('.')
     };
+  }
+
+  getBranchName(branchId: number): string {
+    const branch = this.branches.find(b => b.id === branchId);
+    return branch ? branch.branchNameEn : 'N/A';
+  }
+
+  onProfileImageSelected(event: any) {
+    const file = event.target?.files?.[0];
+    if (!file) {
+      return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+      this.showError({ message: 'Please select only image files' });
+      event.target.value = '';
+      this.selectedProfileImage = null;
+      this.profileImagePreview = null;
+      return;
+    }
+    
+    this.selectedProfileImage = file;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.profileImagePreview = e.target.result as string;
+    };
+    reader.onerror = () => {
+      this.showError({ message: 'Failed to read image file' });
+      this.selectedProfileImage = null;
+      this.profileImagePreview = null;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  onEditProfileImageSelected(event: any) {
+    const file = event.target?.files?.[0];
+    if (!file) {
+      return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+      this.showError({ message: 'Please select only image files' });
+      event.target.value = '';
+      this.selectedEditProfileImage = null;
+      return;
+    }
+    
+    this.selectedEditProfileImage = file;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.editProfileImagePreview = e.target.result as string;
+    };
+    reader.onerror = () => {
+      this.showError({ message: 'Failed to read image file' });
+      this.selectedEditProfileImage = null;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  getProfileImageUrl(url?: string): string {
+    if (!url) return 'https://ui-avatars.com/api/?name=User&size=120&background=405189&color=fff';
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('data:')) return url; // Handle base64 preview
+    // Remove leading slash if present and construct full URL
+    const cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+    return `http://localhost:5087/${cleanUrl}`;
+  }
+
+  getEditImageUrl(): string {
+    if (this.editProfileImagePreview) {
+      return this.editProfileImagePreview; // New preview (base64)
+    }
+    return this.getProfileImageUrl(this.selectedUser?.profileImageUrl);
   }
 }

@@ -1465,12 +1465,11 @@ export const MENU: MenuItem[] = [
       },
       {
         id: 182,
-        label: 'MENUITEMS.ADMIN.LIST.USER',
-        link: '/admin/users',
+        label: 'MENUITEMS.ADMIN.LIST.BRANCH',
+        link: '/admin/branches',
         parentId: 180,
-        permission: 'users.view'
+        permission: 'branches.view'
       },
-      
       {
         id: 183,
         label: 'MENUITEMS.ADMIN.LIST.PERMISSION',
@@ -1480,11 +1479,14 @@ export const MENU: MenuItem[] = [
       },
       {
         id: 184,
-        label: 'MENUITEMS.ADMIN.LIST.BRANCH',
-        link: '/admin/branches',
+        label: 'MENUITEMS.ADMIN.LIST.USER',
+        link: '/admin/users',
         parentId: 180,
-        permission: 'branches.view'
+        permission: 'users.view'
       },
+      
+      ,
+      
       
     ]
   }

@@ -21,3 +21,19 @@
 .permission-table tbody tr:hover td {
   background-color: rgba(var(--vz-primary-rgb), 0.06);
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.avatar-xl {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.avatar-xs {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}

@@ -8,6 +8,22 @@
       </div>
       <div class="card-body">
         <form [formGroup]="createUserForm" (ngSubmit)="createUser()">
+          <div class="mb-3 text-center">
+            <div class="position-relative d-inline-block">
+              <img [src]="profileImagePreview || 'https://ui-avatars.com/api/?name=User&size=120&background=405189&color=fff'" 
+                   class="rounded-circle avatar-xl" alt="Profile">
+              <label for="profileImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                <span class="avatar-xs d-inline-block">
+                  <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                    <i class="ri-camera-fill"></i>
+                  </span>
+                </span>
+              </label>
+              <input type="file" id="profileImageInput" class="d-none" 
+                     accept="image/*" (change)="onProfileImageSelected($event)">
+            </div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input class="form-control" type="email" formControlName="email" />
@@ -39,6 +55,15 @@
           <div class="mb-3">
             <label class="form-label">Last Name</label>
             <input class="form-control" type="text" formControlName="lastName" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Branch <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="branchId">
+              <option [ngValue]="null">Select Branch</option>
+              <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
+            </select>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['branchId'].errors">Branch is required.</div>
           </div>
 
           <div class="mb-3">
@@ -124,6 +149,7 @@
               <tr>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Branch</th>
                 <th>Status</th>
                 <th>Created</th>
                 <th style="width: 320px;">Actions</th>
@@ -132,8 +158,15 @@
             <tbody>
               @for (user of pagedUsers; track user.id) {
               <tr>
-                <td>{{ user.userName }}</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img [src]="getProfileImageUrl(user.profileImageUrl)" 
+                         class="rounded-circle avatar-xs me-2" alt="Profile">
+                    <span>{{ user.userName }}</span>
+                  </div>
+                </td>
                 <td>{{ user.email }}</td>
+                <td>{{ getBranchName(user.branchId) }}</td>
                 <td>
                   <span class="badge" [ngClass]="user.isLocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'">
                     {{ user.isLocked ? 'Locked' : 'Active' }}
@@ -257,6 +290,22 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="editUserForm">
+          <div class="mb-3 text-center">
+            <div class="position-relative d-inline-block">
+              <img [src]="getEditImageUrl()" 
+                   class="rounded-circle avatar-xl" alt="Profile">
+              <label for="editProfileImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                <span class="avatar-xs d-inline-block">
+                  <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                    <i class="ri-camera-fill"></i>
+                  </span>
+                </span>
+              </label>
+              <input type="file" id="editProfileImageInput" class="d-none" 
+                     accept="image/*" (change)="onEditProfileImageSelected($event)">
+            </div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input class="form-control" type="email" formControlName="email" />
@@ -274,6 +323,14 @@
           <div class="mb-3">
             <label class="form-label">Last Name</label>
             <input class="form-control" type="text" formControlName="lastName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Branch <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="branchId">
+              <option [ngValue]="null">Select Branch</option>
+              <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
+            </select>
+            <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['branchId'].errors">Branch is required.</div>
           </div>
           <div class="mb-3">
             <label class="form-label">Assign Roles</label>
