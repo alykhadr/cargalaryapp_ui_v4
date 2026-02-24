@@ -18,6 +18,10 @@ export class AdminUserService {
     return this.http.get<AdminUser[]>(this.usersUrl);
   }
 
+  getUsersByBranch(branchId: number): Observable<AdminUser[]> {
+    return this.http.get<AdminUser[]>(`${this.usersUrl}/branch/${branchId}`);
+  }
+
   createUser(payload: CreateAdminUserRequest): Observable<unknown> {
     const formData = new FormData();
     formData.append('email', payload.email);

@@ -129,6 +129,11 @@
                         <i class="ri-contacts-line fs-16"></i>
                       </a>
                     </li>
+                    <li class="list-inline-item" ngbTooltip="View Users" placement="top">
+                      <a href="javascript:void(0);" class="text-warning d-inline-block" (click)="viewBranchUsers(branch.id, branchUsersModal)">
+                        <i class="ri-user-line fs-16"></i>
+                      </a>
+                    </li>
                     <li class="list-inline-item edit" ngbTooltip="Edit" placement="top" *appHasPermission="'branches.edit'">
                       <a href="javascript:void(0);" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn"
                         (click)="editDataGet(filteredBranches.indexOf(branch), content)">
@@ -450,6 +455,65 @@
               [(page)]="contactSalesPage"
               [pageSize]="contactSalesPageSize"
               (pageChange)="onContactSalesPageChange($event)">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #branchUsersModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Branch Users</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="loadingUsers" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div *ngIf="!loadingUsers && branchUsers.length === 0" class="text-center py-4">
+      <i class="ri-user-line" style="font-size: 48px; color: #ccc;"></i>
+      <h6 class="text-muted mt-3">No users found for this branch</h6>
+    </div>
+    <div *ngIf="!loadingUsers && branchUsers.length > 0" class="table-responsive">
+      <table class="table table-sm table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of pagedBranchUsers">
+            <td>{{ user.userName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>
+              <span class="badge" [ngClass]="!user.lockoutEnd ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                {{ !user.lockoutEnd ? 'Active' : 'Locked' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row justify-content-between align-items-center mt-3">
+        <div class="col-sm-6">
+          <div class="dataTables_info">
+            Showing {{ (usersPage - 1) * usersPageSize + 1 }} to {{ Math.min(usersPage * usersPageSize, branchUsers.length) }} of {{ branchUsers.length }} entries
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="text-end">
+            <ngb-pagination
+              [collectionSize]="branchUsers.length"
+              [(page)]="usersPage"
+              [pageSize]="usersPageSize"
+              (pageChange)="onUsersPageChange($event)">
             </ngb-pagination>
           </div>
         </div>

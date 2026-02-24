@@ -9,6 +9,7 @@ import { ToastService } from '../../icons/toast-service';
 import { Branch, CreateBranchRequest, UpdateBranchRequest } from '../interfaces/branch.interface';
 import { BranchService } from '../services/branch.service';
 import { ContactSalesService } from '../services/contact-sales.service';
+import { AdminUserService } from '../services/admin-user.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -57,6 +58,12 @@ export class BranchesComponent {
   contactSalesPageSize = 5;
   Math = Math;
 
+  branchUsers: any[] = [];
+  pagedBranchUsers: any[] = [];
+  loadingUsers = false;
+  usersPage = 1;
+  usersPageSize = 5;
+
   contactTypes = [
     { value: 1, label: 'Mobile' },
     { value: 2, label: 'WhatsApp' },
@@ -69,7 +76,8 @@ export class BranchesComponent {
     private formBuilder: UntypedFormBuilder,
     private branchService: BranchService,
     private toastService: ToastService,
-    private contactSalesService: ContactSalesService
+    private contactSalesService: ContactSalesService,
+    private adminUserService: AdminUserService
   ) {}
 
   ngOnInit(): void {
@@ -555,5 +563,36 @@ export class BranchesComponent {
   getContactTypeLabel(type: number): string {
     const contactType = this.contactTypes.find(t => t.value === type);
     return contactType ? contactType.label : 'Unknown';
+  }
+
+  viewBranchUsers(branchId: number, modal: any) {
+    this.loadingUsers = true;
+    this.branchUsers = [];
+    this.pagedBranchUsers = [];
+    this.usersPage = 1;
+    this.modalService.open(modal, { size: 'lg', centered: true });
+    
+    this.adminUserService.getUsersByBranch(branchId).pipe(first()).subscribe({
+      next: (users) => {
+        this.branchUsers = users;
+        this.updateUsersPagination();
+        this.loadingUsers = false;
+      },
+      error: (error) => {
+        this.loadingUsers = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  updateUsersPagination() {
+    const startIndex = (this.usersPage - 1) * this.usersPageSize;
+    const endIndex = startIndex + this.usersPageSize;
+    this.pagedBranchUsers = this.branchUsers.slice(startIndex, endIndex);
+  }
+
+  onUsersPageChange(page: number) {
+    this.usersPage = page;
+    this.updateUsersPagination();
   }
 }
