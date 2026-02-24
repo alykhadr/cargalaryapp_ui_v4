@@ -304,7 +304,8 @@
         "GALLERYIMAGE":"صور المعرض",
         "COMPANYINFO":"معلومات الشركة",
         "MODEL":"موديلات السيارات",
-        "CAREXTRADETAILS":"تفاصيل السيارة الإضافية"
+        "CAREXTRADETAILS":"تفاصيل السيارة الإضافية",
+        "CARTYPE":"أنواع السيارات"
       }
     }
   }

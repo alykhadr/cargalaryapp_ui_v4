@@ -310,7 +310,8 @@
           "OFFER":"Offers",
           "SERVICE":"Services",
           "MODEL":"Car Models",
-          "CAREXTRADETAILS":"Car Extra Details"
+          "CAREXTRADETAILS":"Car Extra Details",
+          "CARTYPE":"Types"
       
       }
     }

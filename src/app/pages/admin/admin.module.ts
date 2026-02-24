@@ -25,6 +25,7 @@ import { OffersComponent } from './offers/offers.component';
 import { ServicesComponent } from './services/services.component';
 import { ModelsComponent } from './models/models.component';
 import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.component';
+import { CarTypesComponent } from './car-types/car-types.component';
 import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
@@ -68,6 +69,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ServicesComponent,
     ModelsComponent,
     CarExtraDetailsComponent,
+    CarTypesComponent,
     CarByIdPipe
   ],
   imports: [

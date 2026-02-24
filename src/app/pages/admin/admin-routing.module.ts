@@ -16,6 +16,7 @@ import { OffersComponent } from './offers/offers.component';
 import { ServicesComponent } from './services/services.component';
 import { ModelsComponent } from './models/models.component';
 import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.component';
+import { CarTypesComponent } from './car-types/car-types.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -117,6 +118,12 @@ const routes: Routes = [
     component: CarExtraDetailsComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'carextradetails.view' }
+  },
+  {
+    path: "car-types",
+    component: CarTypesComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'types.view' }
   }
   
 ];
