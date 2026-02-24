@@ -27,7 +27,12 @@ export interface Car {
   modelId: number;
   typeId: number;
   year: number;
+  color?: string;
   price: number;
+  mileage: number;
+  descriptionAr?: string;
+  descriptionEn?: string;
+  createdBy?: string;
   isAvailable: boolean;
   modelNameEn?: string;
   modelNameAr?: string;

@@ -6,8 +6,10 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { CarModel } from '../interfaces/car-model.interface';
 import { Brand } from '../interfaces/brand.interface';
+import { Car } from '../interfaces/gallery-image.interface';
 import { CarModelService } from '../services/car-model.service';
 import { BrandService } from '../services/brand.service';
+import { CarService } from '../services/car.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -37,11 +39,20 @@ export class ModelsComponent implements OnInit {
   previewImageUrl: string | null = null;
   selectedModelIds = new Set<number>();
 
+  // Cars modal properties
+  isCarsModalOpen = false;
+  isCarsLoading = false;
+  selectedModelForCars?: CarModel;
+  cars: Car[] = [];
+  pagedCars: Car[] = [];
+  carsPaginationService = new PaginationService();
+
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private modelService: CarModelService,
     private brandService: BrandService,
+    private carService: CarService,
     private toastService: ToastService
   ) {}
 
@@ -338,5 +349,42 @@ export class ModelsComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Cars modal methods
+  openCarsModal(model: CarModel) {
+    this.selectedModelForCars = model;
+    this.isCarsModalOpen = true;
+    this.carsPaginationService.page = 1;
+    this.loadCars();
+  }
+
+  closeCarsModal() {
+    this.isCarsModalOpen = false;
+    this.selectedModelForCars = undefined;
+    this.cars = [];
+    this.pagedCars = [];
+  }
+
+  loadCars() {
+    if (!this.selectedModelForCars) return;
+    
+    this.isCarsLoading = true;
+    this.carService.getCarsByModel(this.selectedModelForCars.id).pipe(first()).subscribe({
+      next: (cars) => {
+        this.cars = cars;
+        this.pagedCars = this.carsPaginationService.changePage(this.cars);
+        this.isCarsLoading = false;
+      },
+      error: (error) => {
+        this.showError(error);
+        this.isCarsLoading = false;
+      }
+    });
+  }
+
+  onCarsPageChange(page: number) {
+    this.carsPaginationService.page = page;
+    this.pagedCars = this.carsPaginationService.changePage(this.cars);
   }
 }

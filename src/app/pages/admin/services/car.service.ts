@@ -19,4 +19,8 @@ export class CarService {
   getCarById(id: number): Observable<Car> {
     return this.http.get<Car>(`${this.apiUrl}/${id}`);
   }
+
+  getCarsByModel(modelId: number): Observable<Car[]> {
+    return this.http.get<Car[]>(`${this.apiUrl}/by-model/${modelId}`);
+  }
 }
