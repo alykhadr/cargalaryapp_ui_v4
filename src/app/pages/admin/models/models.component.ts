@@ -1,78 +1,75 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
+import { CarModel } from '../interfaces/car-model.interface';
 import { Brand } from '../interfaces/brand.interface';
+import { CarModelService } from '../services/car-model.service';
 import { BrandService } from '../services/brand.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
-  selector: 'app-brands',
-  templateUrl: './brands.component.html',
-  styleUrl: './brands.component.scss',
+  selector: 'app-models',
+  templateUrl: './models.component.html',
+  styleUrl: './models.component.scss',
   standalone: false
 })
-export class BrandsComponent implements OnInit {
+export class ModelsComponent implements OnInit {
   breadCrumbItems!: Array<{}>;
-  brandForm!: UntypedFormGroup;
+  modelForm!: UntypedFormGroup;
   isLoading = false;
   isSubmitting = false;
   submitted = false;
   isModalOpen = false;
   isEditMode = false;
-  selectedBrand?: Brand;
+  selectedModel?: CarModel;
   selectedImage: File | null = null;
   imagePreview: string | null = null;
 
+  models: CarModel[] = [];
+  filteredModels: CarModel[] = [];
+  pagedModels: CarModel[] = [];
   brands: Brand[] = [];
-  filteredBrands: Brand[] = [];
-  pagedBrands: Brand[] = [];
   searchTerm = '';
   searchTermAr = '';
   previewImageUrl: string | null = null;
-  selectedBrandIds = new Set<number>();
-
-  brandModels: any[] = [];
-  pagedBrandModels: any[] = [];
-  loadingModels = false;
-  modelsPage = 1;
-  modelsPageSize = 5;
-  Math = Math;
+  selectedModelIds = new Set<number>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
+    private modelService: CarModelService,
     private brandService: BrandService,
-    private toastService: ToastService,
-    private modalService: NgbModal
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: 'Admin' },
-      { label: 'Brands', active: true }
+      { label: 'Car Models', active: true }
     ];
 
-    this.brandForm = this.formBuilder.group({
+    this.modelForm = this.formBuilder.group({
       nameEn: ['', [Validators.required, Validators.maxLength(100)]],
-      nameAr: ['', [Validators.required, Validators.maxLength(100)]]
+      nameAr: ['', [Validators.required, Validators.maxLength(100)]],
+      brandId: [null, [Validators.required]]
     });
 
+    this.loadModels();
     this.loadBrands();
   }
 
   get form() {
-    return this.brandForm.controls;
+    return this.modelForm.controls;
   }
 
-  loadBrands() {
+  loadModels() {
     this.isLoading = true;
-    this.brandService.getBrands().pipe(first()).subscribe({
-      next: (brands) => {
-        this.brands = brands;
+    this.modelService.getModels().pipe(first()).subscribe({
+      next: (models) => {
+        this.models = models;
         this.applyFilters(true);
         this.isLoading = false;
       },
@@ -80,6 +77,15 @@ export class BrandsComponent implements OnInit {
         this.showError(error);
         this.isLoading = false;
       }
+    });
+  }
+
+  loadBrands() {
+    this.brandService.getBrands().pipe(first()).subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+      error: (error) => this.showError(error)
     });
   }
 
@@ -94,48 +100,49 @@ export class BrandsComponent implements OnInit {
   }
 
   private applyFilters(resetPage = false) {
-    let data = [...this.brands];
+    let data = [...this.models];
     const termEn = this.searchTerm.trim().toLowerCase();
     const termAr = this.searchTermAr.trim().toLowerCase();
 
     if (termEn || termAr) {
-      data = data.filter(brand =>
-        (termEn && (brand.nameEn || '').toLowerCase().includes(termEn)) ||
-        (termAr && (brand.nameAr || '').toLowerCase().includes(termAr))
+      data = data.filter(model =>
+        (termEn && (model.nameEn || '').toLowerCase().includes(termEn)) ||
+        (termAr && (model.nameAr || '').toLowerCase().includes(termAr))
       );
     }
 
-    this.filteredBrands = data;
+    this.filteredModels = data;
     if (resetPage) {
       this.service.page = 1;
     }
-    this.pagedBrands = this.service.changePage(this.filteredBrands);
+    this.pagedModels = this.service.changePage(this.filteredModels);
   }
 
   onPageChange(page: number) {
     this.service.page = page;
-    this.pagedBrands = this.service.changePage(this.filteredBrands);
+    this.pagedModels = this.service.changePage(this.filteredModels);
   }
 
   openCreateModal() {
     this.isEditMode = false;
-    this.selectedBrand = undefined;
-    this.brandForm.reset();
+    this.selectedModel = undefined;
+    this.modelForm.reset();
     this.submitted = false;
     this.selectedImage = null;
     this.imagePreview = null;
     this.isModalOpen = true;
   }
 
-  openEditModal(brand: Brand) {
+  openEditModal(model: CarModel) {
     this.isEditMode = true;
-    this.selectedBrand = brand;
+    this.selectedModel = model;
     this.submitted = false;
     this.selectedImage = null;
     this.imagePreview = null;
-    this.brandForm.patchValue({
-      nameEn: brand.nameEn,
-      nameAr: brand.nameAr
+    this.modelForm.patchValue({
+      nameEn: model.nameEn,
+      nameAr: model.nameAr,
+      brandId: model.brandId
     });
     this.isModalOpen = true;
   }
@@ -143,8 +150,8 @@ export class BrandsComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.isEditMode = false;
-    this.selectedBrand = undefined;
-    this.brandForm.reset();
+    this.selectedModel = undefined;
+    this.modelForm.reset();
     this.submitted = false;
     this.selectedImage = null;
     this.imagePreview = null;
@@ -175,25 +182,26 @@ export class BrandsComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  saveBrand() {
+  saveModel() {
     this.submitted = true;
-    if (this.brandForm.invalid) return;
+    if (this.modelForm.invalid) return;
     if (!this.isEditMode && !this.selectedImage) return;
 
     this.isSubmitting = true;
     const payload = {
       nameEn: this.form['nameEn'].value,
       nameAr: this.form['nameAr'].value,
+      brandId: this.form['brandId'].value,
       imageFile: this.selectedImage || undefined
     };
 
-    if (this.isEditMode && this.selectedBrand) {
-      this.brandService.updateBrand(this.selectedBrand.id, payload).pipe(first()).subscribe({
+    if (this.isEditMode && this.selectedModel) {
+      this.modelService.updateModel(this.selectedModel.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Brand updated successfully');
+          this.showSuccess('Model updated successfully');
           this.closeModal();
-          this.loadBrands();
+          this.loadModels();
         },
         error: (error) => {
           this.isSubmitting = false;
@@ -201,12 +209,12 @@ export class BrandsComponent implements OnInit {
         }
       });
     } else {
-      this.brandService.createBrand(payload).pipe(first()).subscribe({
+      this.modelService.createModel(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Brand created successfully');
+          this.showSuccess('Model created successfully');
           this.closeModal();
-          this.loadBrands();
+          this.loadModels();
         },
         error: (error) => {
           this.isSubmitting = false;
@@ -216,7 +224,7 @@ export class BrandsComponent implements OnInit {
     }
   }
 
-  deleteBrand(brand: Brand) {
+  deleteModel(model: CarModel) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'Are you sure you want to remove this record?',
@@ -228,10 +236,10 @@ export class BrandsComponent implements OnInit {
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.brandService.deleteBrand(brand.id).pipe(first()).subscribe({
+        this.modelService.deleteModel(model.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Brand deleted successfully');
-            this.loadBrands();
+            this.showSuccess('Model deleted successfully');
+            this.loadModels();
           },
           error: (error) => this.showError(error)
         });
@@ -247,10 +255,15 @@ export class BrandsComponent implements OnInit {
 
   getModalImageUrl(): string {
     if (this.imagePreview) return this.imagePreview;
-    if (this.isEditMode && this.selectedBrand?.imageUrl) {
-      return this.getImageUrl(this.selectedBrand.imageUrl);
+    if (this.isEditMode && this.selectedModel?.imageUrl) {
+      return this.getImageUrl(this.selectedModel.imageUrl);
     }
-    return 'https://ui-avatars.com/api/?name=Brand&size=150&background=405189&color=fff&rounded=true';
+    return 'https://ui-avatars.com/api/?name=Model&size=150&background=405189&color=fff&rounded=true';
+  }
+
+  getBrandName(brandId: number): string {
+    const brand = this.brands.find(b => b.id === brandId);
+    return brand ? brand.nameEn : 'N/A';
   }
 
   private showSuccess(message: string) {
@@ -276,32 +289,32 @@ export class BrandsComponent implements OnInit {
     this.previewImageUrl = null;
   }
 
-  toggleBrandSelection(brandId: number, checked: boolean) {
+  toggleModelSelection(modelId: number, checked: boolean) {
     if (checked) {
-      this.selectedBrandIds.add(brandId);
+      this.selectedModelIds.add(modelId);
     } else {
-      this.selectedBrandIds.delete(brandId);
+      this.selectedModelIds.delete(modelId);
     }
   }
 
-  toggleSelectAllBrands(checked: boolean) {
+  toggleSelectAllModels(checked: boolean) {
     if (checked) {
-      this.pagedBrands.forEach(brand => this.selectedBrandIds.add(brand.id));
+      this.pagedModels.forEach(model => this.selectedModelIds.add(model.id));
     } else {
-      this.selectedBrandIds.clear();
+      this.selectedModelIds.clear();
     }
   }
 
-  isAllBrandsSelected(): boolean {
-    return this.pagedBrands.length > 0 && this.pagedBrands.every(brand => this.selectedBrandIds.has(brand.id));
+  isAllModelsSelected(): boolean {
+    return this.pagedModels.length > 0 && this.pagedModels.every(model => this.selectedModelIds.has(model.id));
   }
 
-  bulkDeleteBrands() {
-    if (this.selectedBrandIds.size === 0) return;
+  bulkDeleteModels() {
+    if (this.selectedModelIds.size === 0) return;
 
     Swal.fire({
       title: 'Are you sure?',
-      text: `Delete ${this.selectedBrandIds.size} selected brand(s)?`,
+      text: `Delete ${this.selectedModelIds.size} selected model(s)?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delete!',
@@ -310,51 +323,20 @@ export class BrandsComponent implements OnInit {
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
-        const brandIds = Array.from(this.selectedBrandIds);
-        this.brandService.bulkDeleteBrands(brandIds).pipe(first()).subscribe({
+        const modelIds = Array.from(this.selectedModelIds);
+        this.modelService.bulkDeleteModels(modelIds).pipe(first()).subscribe({
           next: (response) => {
-            this.selectedBrandIds.clear();
+            this.selectedModelIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} brands. Failed to delete ${response.failedIds.length} brands.` });
+              this.showError({ message: `Deleted ${response.deletedCount} models. Failed to delete ${response.failedIds.length} models.` });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} brand(s)`);
+              this.showSuccess(`Successfully deleted ${response.deletedCount} model(s)`);
             }
-            this.loadBrands();
+            this.loadModels();
           },
           error: (error) => this.showError(error)
         });
       }
     });
-  }
-
-  viewBrandModels(brandId: number, modal: any) {
-    this.loadingModels = true;
-    this.brandModels = [];
-    this.pagedBrandModels = [];
-    this.modelsPage = 1;
-    this.modalService.open(modal, { size: 'lg', centered: true });
-    
-    this.brandService.getCarModelsByBrand(brandId).pipe(first()).subscribe({
-      next: (models) => {
-        this.brandModels = models;
-        this.updateModelsPagination();
-        this.loadingModels = false;
-      },
-      error: (error) => {
-        this.loadingModels = false;
-        this.showError(error);
-      }
-    });
-  }
-
-  updateModelsPagination() {
-    const startIndex = (this.modelsPage - 1) * this.modelsPageSize;
-    const endIndex = startIndex + this.modelsPageSize;
-    this.pagedBrandModels = this.brandModels.slice(startIndex, endIndex);
-  }
-
-  onModelsPageChange(page: number) {
-    this.modelsPage = page;
-    this.updateModelsPagination();
   }
 }

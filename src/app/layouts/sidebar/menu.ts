@@ -1554,6 +1554,13 @@ export const MENU: MenuItem[] = [
         link: '/admin/services',
         parentId: 180,
         permission: 'services.view'
+      },
+      {
+        id: 195,
+        label: 'MENUITEMS.ADMIN.LIST.MODEL',
+        link: '/admin/models',
+        parentId: 180,
+        permission: 'models.view'
       }
       
       ,

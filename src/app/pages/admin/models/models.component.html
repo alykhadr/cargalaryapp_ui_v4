@@ -1,24 +1,24 @@
-<app-breadcrumbs title="Brands" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs title="Car Models" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
-    <div class="card" id="brandList">
+    <div class="card" id="modelList">
       <div class="card-header border-bottom-dashed">
         <div class="row g-4 align-items-center">
           <div class="col-sm">
             <div>
-              <h5 class="card-title mb-0">Brand List</h5>
+              <h5 class="card-title mb-0">Car Model List</h5>
             </div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
-              <button *appHasPermission="'brands.delete'" type="button" class="btn btn-danger"
-                [disabled]="selectedBrandIds.size === 0" (click)="bulkDeleteBrands()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedBrandIds.size }})
+              <button *appHasPermission="'models.delete'" type="button" class="btn btn-danger"
+                [disabled]="selectedModelIds.size === 0" (click)="bulkDeleteModels()">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedModelIds.size }})
               </button>
-              <button *appHasPermission="'brands.create'" type="button" class="btn btn-success add-btn"
+              <button *appHasPermission="'models.create'" type="button" class="btn btn-success add-btn"
                 (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Brand
+                <i class="ri-add-line align-bottom me-1"></i> Add Model
               </button>
             </div>
           </div>
@@ -60,59 +60,64 @@
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>
-        <div *ngIf="!isLoading && filteredBrands.length === 0" class="text-center py-5">
+        <div *ngIf="!isLoading && filteredModels.length === 0" class="text-center py-5">
           <div class="mb-3">
-            <i class="ri-folder-open-line" style="font-size: 48px; color: #ccc;"></i>
+            <i class="ri-car-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No brands found</h5>
-          <p class="text-muted">Click "Add Brand" to create your first brand</p>
+          <h5 class="text-muted">No models found</h5>
+          <p class="text-muted">Click "Add Model" to create your first model</p>
         </div>
-        <div *ngIf="!isLoading && filteredBrands.length > 0">
+        <div *ngIf="!isLoading && filteredModels.length > 0">
           <div class="table-responsive table-card mb-1">
             <table class="table align-middle table-nowrap table-hover mb-0">
               <thead class="table-light text-muted">
                 <tr>
                   <th scope="col" style="width: 40px;">
                     <input class="form-check-input" type="checkbox"
-                           [checked]="isAllBrandsSelected()"
-                           (change)="toggleSelectAllBrands($any($event.target).checked)">
+                           [checked]="isAllModelsSelected()"
+                           (change)="toggleSelectAllModels($any($event.target).checked)">
                   </th>
                   <th scope="col" style="width: 60px;">Image</th>
                   <th scope="col">Name (English)</th>
                   <th scope="col">Name (Arabic)</th>
+                  <th scope="col">Brand</th>
+                  <th scope="col">Status</th>
                   <th scope="col">Created By</th>
                   <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
-                @for (brand of pagedBrands; track brand.id) {
-                <tr id="b_{{ brand.id }}">
+                @for (model of pagedModels; track model.id) {
+                <tr id="m_{{ model.id }}">
                   <td>
                     <input class="form-check-input" type="checkbox"
-                           [checked]="selectedBrandIds.has(brand.id)"
-                           (change)="toggleBrandSelection(brand.id, $any($event.target).checked)">
+                           [checked]="selectedModelIds.has(model.id)"
+                           (change)="toggleModelSelection(model.id, $any($event.target).checked)">
                   </td>
                   <td>
-                    <div *ngIf="brand.imageUrl" class="position-relative d-inline-block">
-                      <img [src]="getImageUrl(brand.imageUrl)" alt="Brand" class="avatar-xs rounded" />
-                      <div class="hover-overlay" (click)="previewImage(getImageUrl(brand.imageUrl))">
+                    <div *ngIf="model.imageUrl" class="position-relative d-inline-block">
+                      <img [src]="getImageUrl(model.imageUrl)" alt="Model" class="avatar-xs rounded" />
+                      <div class="hover-overlay" (click)="previewImage(getImageUrl(model.imageUrl))">
                         <i class="ri-eye-line text-white" style="font-size: 16px;"></i>
                       </div>
                     </div>
-                    <span *ngIf="!brand.imageUrl">-</span>
+                    <span *ngIf="!model.imageUrl">-</span>
                   </td>
-                  <td>{{ brand.nameEn }}</td>
-                  <td>{{ brand.nameAr }}</td>
-                  <td>{{ brand.createdBy || 'N/A' }}</td>
+                  <td>{{ model.nameEn }}</td>
+                  <td>{{ model.nameAr }}</td>
+                  <td>{{ getBrandName(model.brandId) }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="model.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ model.isAvailable ? 'Available' : 'Unavailable' }}
+                    </span>
+                  </td>
+                  <td>{{ model.createdBy || 'N/A' }}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button class="btn btn-sm btn-soft-info" (click)="viewBrandModels(brand.id, brandModelsModal)" title="View Models">
-                        <i class="ri-car-line"></i>
-                      </button>
-                      <button *appHasPermission="'brands.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(brand)">
+                      <button *appHasPermission="'models.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(model)">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button *appHasPermission="'brands.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteBrand(brand)">
+                      <button *appHasPermission="'models.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteModel(model)">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -124,13 +129,13 @@
           </div>
           <div class="row justify-content-md-between align-items-md-center">
             <div class="col col-sm-5">
-              <div class="dataTables_info mb-2" id="brand-table_info" role="status" aria-live="polite">
-                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredBrands.length }} entries
+              <div class="dataTables_info mb-2" id="model-table_info" role="status" aria-live="polite">
+                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredModels.length }} entries
               </div>
             </div>
             <div class="col col-sm-5">
               <div class="text-sm-right float-sm-end listjs-pagination">
-                <ngb-pagination [collectionSize]="filteredBrands.length" [(page)]="service.page"
+                <ngb-pagination [collectionSize]="filteredModels.length" [(page)]="service.page"
                   [pageSize]="service.pageSize" (pageChange)="onPageChange($event)">
                 </ngb-pagination>
               </div>
@@ -146,25 +151,25 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Brand' : 'Create Brand' }}</h5>
+        <h5 class="modal-title">{{ isEditMode ? 'Edit Model' : 'Create Model' }}</h5>
         <button class="btn-close" type="button" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="brandForm">
+        <form [formGroup]="modelForm">
           <div class="mb-3 text-center">
             <div class="position-relative d-inline-block">
-              <img [src]="getModalImageUrl()" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #e9ecef;" alt="Brand">
-              <label for="brandImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+              <img [src]="getModalImageUrl()" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #e9ecef;" alt="Model">
+              <label for="modelImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
                 <span class="avatar-xs d-inline-block">
                   <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
                     <i class="ri-camera-fill"></i>
                   </span>
                 </span>
               </label>
-              <input type="file" id="brandImageInput" class="d-none" accept="image/*" (change)="onImageSelected($event)" required>
+              <input type="file" id="modelImageInput" class="d-none" accept="image/*" (change)="onImageSelected($event)" required>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && !selectedImage && !isEditMode">
-              Brand image is required.
+              Model image is required.
             </div>
           </div>
 
@@ -183,11 +188,22 @@
               Arabic name is required (max 100 characters).
             </div>
           </div>
+
+          <div class="mb-3">
+            <label class="form-label">Brand <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="brandId">
+              <option [ngValue]="null">Select Brand</option>
+              <option *ngFor="let brand of brands" [ngValue]="brand.id">{{ brand.nameEn }}</option>
+            </select>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['brandId'].errors">
+              Brand is required.
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveBrand()">
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveModel()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
           {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
         </button>
@@ -202,11 +218,11 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Brand Image Preview</h5>
+        <h5 class="modal-title">Model Image Preview</h5>
         <button type="button" class="btn-close" (click)="closePreview()"></button>
       </div>
       <div class="modal-body text-center">
-        <img [src]="previewImageUrl" alt="Brand Preview" class="img-fluid" style="max-height: 500px;">
+        <img [src]="previewImageUrl" alt="Model Preview" class="img-fluid" style="max-height: 500px;">
       </div>
     </div>
   </div>
@@ -214,62 +230,3 @@
 <div class="modal-backdrop fade show" *ngIf="previewImageUrl"></div>
 
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>
-
-<ng-template #brandModelsModal let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">Car Models</h5>
-    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
-  </div>
-  <div class="modal-body">
-    <div *ngIf="loadingModels" class="text-center py-4">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-    <div *ngIf="!loadingModels && brandModels.length === 0" class="text-center py-4">
-      <i class="ri-car-line" style="font-size: 48px; color: #ccc;"></i>
-      <h6 class="text-muted mt-3">No car models found for this brand</h6>
-    </div>
-    <div *ngIf="!loadingModels && brandModels.length > 0" class="table-responsive">
-      <table class="table table-sm table-hover">
-        <thead class="table-light">
-          <tr>
-            <th>Name (English)</th>
-            <th>Name (Arabic)</th>
-            <th>Status</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let model of pagedBrandModels">
-            <td>{{ model.nameEn }}</td>
-            <td>{{ model.nameAr }}</td>
-            <td>
-              <span class="badge" [ngClass]="model.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                {{ model.isAvailable ? 'Available' : 'Unavailable' }}
-              </span>
-            </td>
-            <td>{{ model.createdAt | date:'short' }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="row justify-content-between align-items-center mt-3">
-        <div class="col-sm-6">
-          <div class="dataTables_info">
-            Showing {{ (modelsPage - 1) * modelsPageSize + 1 }} to {{ Math.min(modelsPage * modelsPageSize, brandModels.length) }} of {{ brandModels.length }} entries
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="text-end">
-            <ngb-pagination
-              [collectionSize]="brandModels.length"
-              [(page)]="modelsPage"
-              [pageSize]="modelsPageSize"
-              (pageChange)="onModelsPageChange($event)">
-            </ngb-pagination>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>

@@ -49,4 +49,8 @@ export class BrandService {
   bulkDeleteBrands(brandIds: number[]): Observable<{ deletedCount: number; failedIds: number[] }> {
     return this.http.post<{ deletedCount: number; failedIds: number[] }>(`${this.baseUrl}/bulk-delete`, { brandIds });
   }
+
+  getCarModelsByBrand(brandId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/${brandId}/models`);
+  }
 }
