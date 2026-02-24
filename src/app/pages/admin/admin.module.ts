@@ -24,6 +24,8 @@ import { MemberServicesComponent } from './member-services/member-services.compo
 import { OffersComponent } from './offers/offers.component';
 import { ServicesComponent } from './services/services.component';
 import { ModelsComponent } from './models/models.component';
+import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.component';
+import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -64,7 +66,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     MemberServicesComponent,
     OffersComponent,
     ServicesComponent,
-    ModelsComponent
+    ModelsComponent,
+    CarExtraDetailsComponent,
+    CarByIdPipe
   ],
   imports: [
     CommonModule,

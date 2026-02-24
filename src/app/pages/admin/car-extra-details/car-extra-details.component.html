@@ -1,0 +1,236 @@
+<app-breadcrumbs title="Extra Car Info" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card" id="extraDetailsList">
+      <div class="card-header border-bottom-dashed">
+        <div class="row g-4 align-items-center">
+          <div class="col-sm">
+            <div>
+              <h5 class="card-title mb-0">Extra Car Details List</h5>
+            </div>
+          </div>
+          <div class="col-sm-auto">
+            <div class="d-flex flex-wrap align-items-start gap-2">
+              <button type="button" class="btn btn-danger"
+                [disabled]="selectedExtraDetailIds.size === 0" (click)="bulkDeleteExtraDetails()">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedExtraDetailIds.size }})
+              </button>
+              <button type="button" class="btn btn-success add-btn" (click)="openCreateModal()">
+                <i class="ri-add-line align-bottom me-1"></i> Add Extra Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body border-bottom-dashed border-bottom">
+        <div class="row g-3">
+          <div class="col-xl-12">
+            <div class="row g-3">
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search by English name..."
+                  [(ngModel)]="searchTerm"
+                  (ngModelChange)="onSearch()">
+              </div>
+              <div class="col-sm-5">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="ابحث بالاسم العربي..."
+                  [(ngModel)]="searchTermAr"
+                  (ngModelChange)="onSearch()"
+                  dir="rtl">
+              </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
+                  <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <div *ngIf="!isLoading && filteredExtraDetails.length === 0" class="text-center py-5">
+          <div class="mb-3">
+            <i class="ri-information-line" style="font-size: 48px; color: #ccc;"></i>
+          </div>
+          <h5 class="text-muted">No extra details found</h5>
+          <p class="text-muted">Click "Add Extra Detail" to create your first extra detail</p>
+        </div>
+        <div *ngIf="!isLoading && filteredExtraDetails.length > 0">
+          <div class="table-responsive table-card mb-1">
+            <table class="table align-middle table-nowrap table-hover mb-0">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th scope="col" style="width: 40px;">
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="isAllExtraDetailsSelected()"
+                           (change)="toggleSelectAllExtraDetails($any($event.target).checked)">
+                  </th>
+                  <th scope="col">Name (English)</th>
+                  <th scope="col">Name (Arabic)</th>
+                  <th scope="col">Car ID</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Created By</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (extraDetail of pagedExtraDetails; track extraDetail.id) {
+                <tr id="ed_{{ extraDetail.id }}">
+                  <td>
+                    <input class="form-check-input" type="checkbox"
+                           [checked]="selectedExtraDetailIds.has(extraDetail.id)"
+                           (change)="toggleExtraDetailSelection(extraDetail.id, $any($event.target).checked)">
+                  </td>
+                  <td>{{ extraDetail.nameEn }}</td>
+                  <td>{{ extraDetail.nameAr }}</td>
+                  <td>
+                    <span *ngIf="carsMap.get(extraDetail.carId) as car; else unknownCar">
+                      {{ car.year }} - ${{ car.price?.toLocaleString() }}
+                    </span>
+                    <ng-template #unknownCar>
+                      <span class="text-muted">Unknown Car</span>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="extraDetail.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ extraDetail.isAvailable ? 'Available' : 'Unavailable' }}
+                    </span>
+                  </td>
+                  <td>{{ extraDetail.createdBy || 'N/A' }}</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-sm btn-soft-primary" (click)="openEditModal(extraDetail)">
+                        <i class="ri-edit-line"></i>
+                      </button>
+                      <button class="btn btn-sm btn-soft-danger" (click)="deleteExtraDetail(extraDetail)">
+                        <i class="ri-delete-bin-line"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="row justify-content-md-between align-items-md-center">
+            <div class="col col-sm-5">
+              <div class="dataTables_info mb-2" id="extraDetails-table_info" role="status" aria-live="polite">
+                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredExtraDetails.length }} entries
+              </div>
+            </div>
+            <div class="col col-sm-5">
+              <div class="text-sm-right float-sm-end listjs-pagination">
+                <ngb-pagination [collectionSize]="filteredExtraDetails.length" [(page)]="service.page"
+                  [pageSize]="service.pageSize" (pageChange)="onPageChange($event)">
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isModalOpen ? 'block' : 'none' }" *ngIf="isModalOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditMode ? 'Edit Extra Detail' : 'Create Extra Detail' }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="extraDetailsForm">
+          <div class="mb-3">
+            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
+              English name is required (max 200 characters).
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
+              Arabic name is required (max 200 characters).
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description (English)</label>
+            <textarea class="form-control" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
+              Description must be max 500 characters.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description (Arabic)</label>
+            <textarea class="form-control" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
+              الوصف يجب أن يكون كحد أقصى 500 حرف.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Car <span class="text-danger">*</span></label>
+            <ng-select
+              [items]="cars"
+              bindLabel="year"
+              bindValue="id"
+              formControlName="carId"
+              placeholder="Select a car"
+              [searchable]="true"
+              [clearable]="true"
+              [loading]="cars.length === 0">
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.year }} - ${{ item.price?.toLocaleString() }} - {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+                <div class="d-flex flex-column">
+                  <span><strong>Year:</strong> {{ item.year }} | <strong>Price:</strong> ${{ item.price?.toLocaleString() }}</span>
+                  <small class="text-muted">ID: {{ item.id }} | Status: {{ item.isAvailable ? 'Available' : 'Unavailable' }}</small>
+                </div>
+              </ng-template>
+            </ng-select>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">
+              Car is required.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
+              <label class="form-check-label" for="isAvailable">
+                Available
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveExtraDetail()">
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isModalOpen"></div>
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

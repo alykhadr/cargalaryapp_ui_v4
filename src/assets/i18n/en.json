@@ -309,7 +309,8 @@
           "MEMBERSERVICE":"Member Services",
           "OFFER":"Offers",
           "SERVICE":"Services",
-          "MODEL":"Car Models"
+          "MODEL":"Car Models",
+          "CAREXTRADETAILS":"Car Extra Details"
       
       }
     }
