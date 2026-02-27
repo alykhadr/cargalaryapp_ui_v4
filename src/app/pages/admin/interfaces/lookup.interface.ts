@@ -4,5 +4,6 @@ export interface LookupDetail {
   detailCode: string;
   nameAr: string;
   nameEn: string;
+  mappedCode?: string;
   displayName: string;
 }

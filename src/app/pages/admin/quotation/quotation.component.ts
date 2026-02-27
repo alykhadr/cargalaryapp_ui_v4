@@ -36,6 +36,7 @@ export class QuotationComponent implements OnInit {
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
   cityLookups: LookupDetail[] = [];
+  filteredCityLookups: LookupDetail[] = [];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -66,6 +67,10 @@ export class QuotationComponent implements OnInit {
       notes: ['', [Validators.maxLength(1000)]]
     });
 
+    this.quotationForm.get('regionId')?.valueChanges.subscribe(() => {
+      this.filterCitiesByRegion();
+    });
+
     this.loadFormDependencies();
 
     if (this.mode === 'list') {
@@ -91,6 +96,7 @@ export class QuotationComponent implements OnInit {
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
         this.cityLookups = cities;
+        this.filterCitiesByRegion();
       },
       error: (error) => this.showError(error)
     });
@@ -167,6 +173,24 @@ export class QuotationComponent implements OnInit {
     const found = items.find(x => x.id === id || x.detailCode === String(id));
     if (!found) return String(id);
     return found.nameAr && found.nameEn ? `${found.nameAr} - ${found.nameEn}` : (found.displayName || found.nameEn || found.nameAr || String(id));
+  }
+
+  private filterCitiesByRegion() {
+    const selectedRegion = this.form['regionId'].value;
+    if (!selectedRegion) {
+      this.filteredCityLookups = [...this.cityLookups];
+      return;
+    }
+
+    const regionCode = String(selectedRegion);
+    this.filteredCityLookups = this.cityLookups.filter(
+      c => !c.mappedCode || c.mappedCode === regionCode
+    );
+
+    const selectedCity = this.form['cityId'].value;
+    if (selectedCity && !this.filteredCityLookups.some(c => c.id === selectedCity)) {
+      this.form['cityId'].setValue(null);
+    }
   }
 
   private applyFilters(resetPage = false) {

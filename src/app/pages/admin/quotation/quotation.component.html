@@ -38,10 +38,21 @@
 
           <div class="col-md-4">
             <label class="form-label">Car <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="carId">
-              <option [ngValue]="null">Select car</option>
-              <option *ngFor="let car of cars" [ngValue]="car.id">{{ car.nameEn || car.nameAr || ('Car #' + car.id) }}</option>
-            </select>
+            <ng-select
+              [items]="cars"
+              bindLabel="nameEn"
+              bindValue="id"
+              [searchable]="true"
+              [clearable]="true"
+              placeholder="Search car"
+              formControlName="carId">
+              <ng-template ng-option-tmp let-item="item">
+                {{ item.nameEn || item.nameAr || ('Car #' + item.id) }}
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{ item.nameEn || item.nameAr || ('Car #' + item.id) }}
+              </ng-template>
+            </ng-select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">Required</div>
           </div>
 
@@ -56,19 +67,29 @@
 
           <div class="col-md-4">
             <label class="form-label">Region <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="regionId">
-              <option [ngValue]="null">Select region</option>
-              <option *ngFor="let item of regionLookups" [ngValue]="item.id">{{ item.nameAr }} - {{ item.nameEn }}</option>
-            </select>
+            <ng-select
+              [items]="regionLookups"
+              bindLabel="displayName"
+              bindValue="id"
+              [searchable]="true"
+              [clearable]="true"
+              placeholder="Search region"
+              formControlName="regionId">
+            </ng-select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['regionId'].errors">Required</div>
           </div>
 
           <div class="col-md-4">
             <label class="form-label">City <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="cityId">
-              <option [ngValue]="null">Select city</option>
-              <option *ngFor="let item of cityLookups" [ngValue]="item.id">{{ item.nameAr }} - {{ item.nameEn }}</option>
-            </select>
+            <ng-select
+              [items]="filteredCityLookups"
+              bindLabel="displayName"
+              bindValue="id"
+              [searchable]="true"
+              [clearable]="true"
+              placeholder="Search city"
+              formControlName="cityId">
+            </ng-select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['cityId'].errors">Required</div>
           </div>
 
