@@ -29,6 +29,8 @@ import { Router } from '@angular/router';
 import { AccessControlService } from 'src/app/core/services/access-control.service';
 import { CarCarColor } from '../interfaces/car-car-color.interface';
 import { CarCarColorService } from '../services/car-car-color.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { LookupService } from '../services/lookup.service';
 
 interface CarListActionCounts {
   features: number;
@@ -65,7 +67,7 @@ export class CarsComponent implements OnInit {
   canDeleteCar = false;
   private requestedCarIdToOpen: number | null = null;
   private requestedTabToOpen: number = 1;
-  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'plateNumberAr', 'plateNumberEn', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
+  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'manufactureCountryId', 'plateNumberAr', 'plateNumberEn', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
 
   // Lists
   cars: Car[] = [];
@@ -119,14 +121,22 @@ export class CarsComponent implements OnInit {
   pendingGalleryPagination = new PaginationService();
   uploadedImagePagination = new PaginationService();
   selectedPendingGalleryImageIds = new Set<number>();
-  imageTypeOptions = [
-    { id: 1, name: 'External' },
-    { id: 2, name: 'Internal' },
-    { id: 3, name: 'Front' },
-    { id: 4, name: 'Back' },
-    { id: 5, name: 'Side' },
-    { id: 6, name: 'Interior' }
-  ];
+  imageTypeOptions: Array<{ id: number; name: string; nameAr: string; nameEn: string }> = [];
+  imageTypeLookups: LookupDetail[] = [];
+  conditionOptions: Array<{ value: number; label: string }> = [];
+  conditionLookups: LookupDetail[] = [];
+  trimLevelOptions: Array<{ value: number; label: string }> = [];
+  trimLevelLookups: LookupDetail[] = [];
+  vehicleClassOptions: Array<{ value: number; label: string }> = [];
+  vehicleClassLookups: LookupDetail[] = [];
+  transmisionTypeOptions: Array<{ value: number; label: string }> = [];
+  transmisionTypeLookups: LookupDetail[] = [];
+  drivetrainOptions: Array<{ value: number; label: string }> = [];
+  drivetrainLookups: LookupDetail[] = [];
+  fuelTypeOptions: Array<{ value: number; label: string }> = [];
+  fuelTypeLookups: LookupDetail[] = [];
+  manufactureCountryOptions: Array<{ value: number; label: string }> = [];
+  manufactureCountryLookups: LookupDetail[] = [];
   showColorImagePreview = false;
   colorImagePreviewUrl?: string;
   colorImagePreviewName?: string;
@@ -139,6 +149,8 @@ export class CarsComponent implements OnInit {
   isCarPreviewLoading = false;
   carPreviewTab: 'features' | 'colors' | 'details' | 'images' = 'features';
   previewCar?: Car;
+  showCarInfoModal = false;
+  infoCar?: Car;
   previewFeatures: CarCarFeature[] = [];
   pagedPreviewFeatures: CarCarFeature[] = [];
   previewFeaturePagination = new PaginationService();
@@ -258,17 +270,8 @@ export class CarsComponent implements OnInit {
     carExtraDetailsType: null,
     isAvailable: true
   };
-  extraDetailTypeOptions = [
-    { id: 1, name: 'Audio And Communication System', nameAr: 'نظام الصوت والاتصال' },
-    { id: 2, name: 'Ease And Comfort', nameAr: 'الراحة والسهولة' },
-    { id: 3, name: 'Engine Specification', nameAr: 'مواصفات المحرك' },
-    { id: 4, name: 'Exterior', nameAr: 'الهيكل الخارجي' },
-    { id: 5, name: 'Extra Feature', nameAr: 'ميزة إضافية' },
-    { id: 6, name: 'Measurements', nameAr: 'القياسات' },
-    { id: 7, name: 'Safety', nameAr: 'السلامة' },
-    { id: 8, name: 'Seating', nameAr: 'المقاعد' },
-    { id: 9, name: 'Transmission', nameAr: 'ناقل الحركة' }
-  ];
+  extraDetailTypeOptions: Array<{ id: number; name: string; nameAr: string }> = [];
+  extraDetailTypeLookups: LookupDetail[] = [];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -285,7 +288,8 @@ export class CarsComponent implements OnInit {
     private toastService: ToastService,
     private route: ActivatedRoute,
     private router: Router,
-    private accessControlService: AccessControlService
+    private accessControlService: AccessControlService,
+    private lookupService: LookupService
   ) {}
 
   ngOnInit(): void {
@@ -320,15 +324,16 @@ export class CarsComponent implements OnInit {
       branchId: [null, [Validators.required]],
       year: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
       mileage: [0, [Validators.required, Validators.min(0)]],
-      vat: [0, [Validators.required, Validators.min(0)]],
+      vat: [15, [Validators.required, Validators.min(0)]],
       conditionId: [null, [Validators.required, Validators.min(1)]],
       seatingCapacity: [null, [Validators.required, Validators.min(1)]],
       weelSizeInch: ['', [Validators.required]],
       fuelTankCapacityLiter: [null, [Validators.required, Validators.min(0.01)]],
       trimLevel: [null, [Validators.required, Validators.min(1)]],
       vehicleClass: [null, [Validators.required, Validators.min(1)]],
-      plateNumberAr: ['', [Validators.required, Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
-      plateNumberEn: ['', [Validators.required, Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
+      manufactureCountryId: [null, [Validators.required, Validators.min(1)]],
+      plateNumberAr: ['', [Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
+      plateNumberEn: ['', [Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
       transmisionType: [null, [Validators.required, Validators.min(1)]],
       drivetrain: [null, [Validators.required, Validators.min(1)]],
       cylenders: [null, [Validators.required, Validators.min(1)]],
@@ -366,6 +371,15 @@ export class CarsComponent implements OnInit {
     this.loadBrands();
     this.loadBranches();
     this.loadColors();
+    this.loadConditionOptions();
+    this.loadTrimLevelOptions();
+    this.loadVehicleClassOptions();
+    this.loadManufactureCountryOptions();
+    this.loadTransmisionTypeOptions();
+    this.loadDrivetrainOptions();
+    this.loadFuelTypeOptions();
+    this.loadExtraDetailTypeOptions();
+    this.loadImageTypeOptions();
   }
 
   get form() {
@@ -463,6 +477,218 @@ export class CarsComponent implements OnInit {
         this.showError(error);
       }
     });
+  }
+
+  loadConditionOptions() {
+    this.lookupService.getByMasterCode('CAR_CONDITION').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.conditionLookups = lookups || [];
+        this.conditionOptions = this.conditionLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  getConditionLabel(conditionId?: number | null): string {
+    if (!conditionId) return '-';
+    return this.conditionOptions.find(item => item.value === conditionId)?.label || `#${conditionId}`;
+  }
+
+  loadTrimLevelOptions() {
+    this.lookupService.getByMasterCode('CAR_TRIM_LEVEL').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.trimLevelLookups = lookups || [];
+        this.trimLevelOptions = this.trimLevelLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  getTrimLevelLabel(trimLevel?: number | null): string {
+    if (!trimLevel) return '-';
+    return this.trimLevelOptions.find(item => item.value === trimLevel)?.label || `#${trimLevel}`;
+  }
+
+  loadVehicleClassOptions() {
+    this.lookupService.getByMasterCode('CAR_VEHICLE_CLASS').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.vehicleClassLookups = lookups || [];
+        this.vehicleClassOptions = this.vehicleClassLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getVehicleClassLabel(vehicleClass?: number | null): string {
+    if (!vehicleClass) return '-';
+    return this.vehicleClassOptions.find(item => item.value === vehicleClass)?.label || `#${vehicleClass}`;
+  }
+
+  loadTransmisionTypeOptions() {
+    this.lookupService.getByMasterCode('CAR_TRANSMISION_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.transmisionTypeLookups = lookups || [];
+        this.transmisionTypeOptions = this.transmisionTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getTransmisionTypeLabel(transmisionType?: number | null): string {
+    if (!transmisionType) return '-';
+    return this.transmisionTypeOptions.find(item => item.value === transmisionType)?.label || `#${transmisionType}`;
+  }
+
+  loadDrivetrainOptions() {
+    this.lookupService.getByMasterCode('CAR_DRIVETRAIN').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.drivetrainLookups = lookups || [];
+        this.drivetrainOptions = this.drivetrainLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getDrivetrainLabel(drivetrain?: number | null): string {
+    if (!drivetrain) return '-';
+    return this.drivetrainOptions.find(item => item.value === drivetrain)?.label || `#${drivetrain}`;
+  }
+
+  loadFuelTypeOptions() {
+    this.lookupService.getByMasterCode('CAR_FUEL_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.fuelTypeLookups = lookups || [];
+        this.fuelTypeOptions = this.fuelTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getFuelTypeLabel(fuelType?: number | null): string {
+    if (!fuelType) return '-';
+    return this.fuelTypeOptions.find(item => item.value === fuelType)?.label || `#${fuelType}`;
+  }
+
+  loadImageTypeOptions() {
+    this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.imageTypeLookups = lookups || [];
+        this.imageTypeOptions = this.imageTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            if (!Number.isFinite(parsedValue)) {
+              return null;
+            }
+            return {
+              id: parsedValue,
+              name: `${item.nameAr} - ${item.nameEn}`,
+              nameAr: item.nameAr,
+              nameEn: item.nameEn
+            };
+          })
+          .filter((item): item is { id: number; name: string; nameAr: string; nameEn: string } => item !== null)
+          .sort((a, b) => a.id - b.id);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadExtraDetailTypeOptions() {
+    this.lookupService.getByMasterCode('EXTRA_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.extraDetailTypeLookups = lookups || [];
+        this.extraDetailTypeOptions = this.extraDetailTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            if (!Number.isFinite(parsedValue)) {
+              return null;
+            }
+            return {
+              id: parsedValue,
+              name: item.nameEn,
+              nameAr: item.nameAr
+            };
+          })
+          .filter((item): item is { id: number; name: string; nameAr: string } => item !== null)
+          .sort((a, b) => a.id - b.id);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadManufactureCountryOptions() {
+    this.lookupService.getByMasterCode('COUNTRY').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.manufactureCountryLookups = lookups || [];
+        this.manufactureCountryOptions = this.manufactureCountryLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getManufactureCountryLabel(manufactureCountryId?: number | null): string {
+    if (!manufactureCountryId) return '-';
+    return this.manufactureCountryOptions.find(item => item.value === manufactureCountryId)?.label || `#${manufactureCountryId}`;
   }
 
   loadBranches() {
@@ -1762,13 +1988,14 @@ export class CarsComponent implements OnInit {
       branchId: null,
       year: new Date().getFullYear(),
       mileage: 0,
-      vat: 0,
+      vat: 15,
       conditionId: null,
       seatingCapacity: null,
       weelSizeInch: '',
       fuelTankCapacityLiter: null,
       trimLevel: null,
       vehicleClass: null,
+      manufactureCountryId: null,
       plateNumberAr: '',
       plateNumberEn: '',
       transmisionType: null,
@@ -1843,6 +2070,14 @@ export class CarsComponent implements OnInit {
     const brandModels = this.carModels.filter(m => m.brandId === selectedBrandId);
     const selectedBrandModel = brandModels[0] ?? selectedModel;
 
+    const defaultCondition = this.conditionOptions[0]?.value ?? 1;
+    const defaultTrimLevel = this.trimLevelOptions[0]?.value ?? 1;
+    const defaultVehicleClass = this.vehicleClassOptions[0]?.value ?? 1;
+    const defaultManufactureCountry = this.manufactureCountryOptions[0]?.value ?? 1;
+    const defaultTransmisionType = this.transmisionTypeOptions[0]?.value ?? 1;
+    const defaultDrivetrain = this.drivetrainOptions[0]?.value ?? 1;
+    const defaultFuelType = this.fuelTypeOptions[0]?.value ?? 1;
+
     this.formCarModels = brandModels;
     this.carForm.patchValue({
       nameEn: 'Test Car',
@@ -1854,18 +2089,19 @@ export class CarsComponent implements OnInit {
       year: new Date().getFullYear(),
       mileage: 1000,
       vat: 15,
-      conditionId: 1,
+      conditionId: defaultCondition,
       seatingCapacity: 5,
       weelSizeInch: '18',
       fuelTankCapacityLiter: 60,
-      trimLevel: 1,
-      vehicleClass: 1,
+      trimLevel: defaultTrimLevel,
+      vehicleClass: defaultVehicleClass,
+      manufactureCountryId: defaultManufactureCountry,
       plateNumberAr: 'ABC-1234',
       plateNumberEn: 'XYZ-5678',
-      transmisionType: 1,
-      drivetrain: 1,
+      transmisionType: defaultTransmisionType,
+      drivetrain: defaultDrivetrain,
       cylenders: 4,
-      fuelType: 1,
+      fuelType: defaultFuelType,
       enginNumber: 'EN-TEST-001',
       descriptionEn: 'Test mode car description (EN)',
       descriptionAr: 'وصف سيارة تجريبي',
@@ -2079,6 +2315,7 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: car.fuelTankCapacityLiter,
       trimLevel: car.trimLevel,
       vehicleClass: car.vehicleClass,
+      manufactureCountryId: car.manufactureCountryId,
       plateNumberAr: car.plateNumberAr,
       plateNumberEn: car.plateNumberEn,
       transmisionType: car.transmisionType,
@@ -2195,6 +2432,16 @@ export class CarsComponent implements OnInit {
     });
   }
 
+  openCarInfoModal(car: Car) {
+    this.infoCar = car;
+    this.showCarInfoModal = true;
+  }
+
+  closeCarInfoModal() {
+    this.showCarInfoModal = false;
+    this.infoCar = undefined;
+  }
+
   closeCarPreviewModal() {
     this.showCarPreviewModal = false;
     this.isCarPreviewLoading = false;
@@ -2305,6 +2552,7 @@ export class CarsComponent implements OnInit {
       drivetrain: this.form['drivetrain'].value,
       cylenders: this.form['cylenders'].value,
       fuelType: this.form['fuelType'].value,
+      manufactureCountryId: this.form['manufactureCountryId'].value,
       enginNumber: this.form['enginNumber'].value,
       descriptionEn: this.form['descriptionEn'].value,
       descriptionAr: this.form['descriptionAr'].value,
@@ -3140,6 +3388,8 @@ export class CarsComponent implements OnInit {
           return 'Trim level is required.';
         case 'vehicleClass':
           return 'Vehicle class is required.';
+        case 'manufactureCountryId':
+          return 'Manufacture country is required.';
         case 'plateNumberAr':
           return 'Plate number (AR) is required.';
         case 'plateNumberEn':
@@ -3182,6 +3432,9 @@ export class CarsComponent implements OnInit {
     }
     if (controlName === 'vehicleClass' && control.errors['min']) {
       return 'Vehicle class must be greater than 0.';
+    }
+    if (controlName === 'manufactureCountryId' && control.errors['min']) {
+      return 'Manufacture country must be greater than 0.';
     }
     if (controlName === 'transmisionType' && control.errors['min']) {
       return 'Transmission type must be greater than 0.';

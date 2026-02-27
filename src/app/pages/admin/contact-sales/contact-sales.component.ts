@@ -7,6 +7,8 @@ import { ToastService } from '../../icons/toast-service';
 import { ContactSales } from '../interfaces/contact-sales.interface';
 import { ContactSalesService } from '../services/contact-sales.service';
 import { BranchService } from '../services/branch.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { LookupService } from '../services/lookup.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -35,6 +37,7 @@ export class ContactSalesComponent implements OnInit {
   previewImageUrl?: string;
   isPreviewOpen = false;
   branches: any[] = [];
+  contactTypeLookups: LookupDetail[] = [];
 
   contactTypes = [
     { value: 1, label: 'Mobile' },
@@ -47,7 +50,8 @@ export class ContactSalesComponent implements OnInit {
     public service: PaginationService,
     private contactSalesService: ContactSalesService,
     private toastService: ToastService,
-    private branchService: BranchService
+    private branchService: BranchService,
+    private lookupService: LookupService
   ) {}
 
   ngOnInit(): void {
@@ -58,11 +62,12 @@ export class ContactSalesComponent implements OnInit {
 
     this.contactForm = this.formBuilder.group({
       contactValue: ['', [Validators.required, Validators.maxLength(100)]],
-      contactType: [1, Validators.required],
+      contactType: [null, Validators.required],
       branchId: [null, Validators.required],
       isAvailable: [true]
     });
 
+    this.loadContactTypes();
     this.loadBranches();
     this.loadContacts();
   }
@@ -77,6 +82,36 @@ export class ContactSalesComponent implements OnInit {
         this.branches = branches;
       },
       error: (error) => this.showError(error)
+    });
+  }
+
+  loadContactTypes() {
+    this.lookupService.getByMasterCode('CONTACT_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.contactTypeLookups = lookups || [];
+        const mappedTypes = this.contactTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+
+        if (mappedTypes.length > 0) {
+          this.contactTypes = mappedTypes;
+        }
+
+        if (!this.form['contactType'].value && this.contactTypes.length > 0) {
+          this.contactForm.patchValue({ contactType: this.contactTypes[0].value });
+        }
+      },
+      error: () => {
+        if (this.contactTypes.length > 0 && !this.form['contactType'].value) {
+          this.contactForm.patchValue({ contactType: this.contactTypes[0].value });
+        }
+      }
     });
   }
 
@@ -131,7 +166,10 @@ export class ContactSalesComponent implements OnInit {
     this.selectedContact = undefined;
     this.selectedIconFile = undefined;
     this.iconPreviewUrl = undefined;
-    this.contactForm.reset({ contactType: 1, isAvailable: true });
+    this.contactForm.reset({
+      contactType: this.contactTypes.length > 0 ? this.contactTypes[0].value : null,
+      isAvailable: true
+    });
     this.submitted = false;
     this.isModalOpen = true;
   }

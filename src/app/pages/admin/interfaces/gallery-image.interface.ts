@@ -24,6 +24,8 @@ export interface UpdateGalleryImageRequest {
 
 export interface Car {
   id: number;
+  nameAr?: string;
+  nameEn?: string;
   modelId: number;
   typeId: number;
   branchId?: number;

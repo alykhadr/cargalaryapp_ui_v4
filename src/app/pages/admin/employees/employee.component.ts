@@ -15,6 +15,8 @@ import { BranchService } from '../services/branch.service';
 import { Branch } from '../interfaces/branch.interface';
 import { Department } from '../interfaces/department.interface';
 import { DepartmentService } from '../services/department.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { LookupService } from '../services/lookup.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -46,6 +48,8 @@ export class EmployeeComponent implements OnInit {
   roles: Role[] = [];
   branches: Branch[] = [];
   departments: Department[] = [];
+  employmentStatusLookups: LookupDetail[] = [];
+  countryLookups: LookupDetail[] = [];
   selectedRoles: string[] = [];
   editSelectedRoles: string[] = [];
   userNameFilter = '';
@@ -79,6 +83,7 @@ export class EmployeeComponent implements OnInit {
     private permissionService: PermissionService,
     private branchService: BranchService,
     private departmentService: DepartmentService,
+    private lookupService: LookupService,
     private toastService: ToastService
   ) { }
 
@@ -190,12 +195,28 @@ export class EmployeeComponent implements OnInit {
           this.showError(error);
           return of([] as Department[]);
         })
+      ),
+      statuses: this.lookupService.getByMasterCode('EMPLOYMENT_STATUS').pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as LookupDetail[]);
+        })
+      ),
+      countries: this.lookupService.getByMasterCode('COUNTRY').pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as LookupDetail[]);
+        })
       )
     }).subscribe({
-      next: ({ roles, branches, departments }) => {
+      next: ({ roles, branches, departments, statuses, countries }) => {
         this.roles = roles;
         this.branches = branches;
         this.departments = departments;
+        this.employmentStatusLookups = statuses;
+        this.countryLookups = countries;
         this.isLoading = false;
       },
       error: () => {
@@ -234,13 +255,29 @@ export class EmployeeComponent implements OnInit {
           this.showError(error);
           return of([] as Department[]);
         })
+      ),
+      statuses: this.lookupService.getByMasterCode('EMPLOYMENT_STATUS').pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as LookupDetail[]);
+        })
+      ),
+      countries: this.lookupService.getByMasterCode('COUNTRY').pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as LookupDetail[]);
+        })
       )
     }).subscribe({
-      next: ({ users, roles, branches, departments }) => {
+      next: ({ users, roles, branches, departments, statuses, countries }) => {
         this.users = users;
         this.roles = roles;
         this.branches = branches;
         this.departments = departments;
+        this.employmentStatusLookups = statuses;
+        this.countryLookups = countries;
         this.selectedUserIds.clear();
         this.applyFilters(true);
         this.isLoading = false;

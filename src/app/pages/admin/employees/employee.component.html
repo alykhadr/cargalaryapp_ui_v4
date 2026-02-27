@@ -144,9 +144,9 @@
             <div class="input-group">
               <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
               <select class="form-select" formControlName="employmentStatus">
-                <option value="Active">Active</option>
-                <option value="OnLeave">On Leave</option>
-                <option value="Terminated">Terminated</option>
+                <option *ngFor="let status of employmentStatusLookups" [value]="status.detailCode">
+                  {{ status.nameAr }} - {{ status.nameEn }}
+                </option>
               </select>
             </div>
           </div>
@@ -164,6 +164,24 @@
             <div class="input-group">
               <span class="input-group-text"><i class="ri-phone-line"></i></span>
               <input class="form-control" type="text" formControlName="workPhone" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nationality</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-earth-line"></i></span>
+              <ng-select
+                class="flex-grow-1"
+                [items]="countryLookups"
+                bindLabel="displayName"
+                bindValue="detailCode"
+                formControlName="nationality"
+                placeholder="Select nationality"
+                [searchable]="true"
+                [clearable]="true"
+                [appendTo]="'body'">
+              </ng-select>
             </div>
           </div>
 
@@ -259,9 +277,9 @@
               <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
               <select class="form-select" [(ngModel)]="employeeStatusFilter" (ngModelChange)="onFiltersChanged()">
                 <option value="">Status</option>
-                <option value="Active">Active</option>
-                <option value="OnLeave">On Leave</option>
-                <option value="Terminated">Terminated</option>
+                <option *ngFor="let status of employmentStatusLookups" [value]="status.detailCode">
+                  {{ status.nameAr }} - {{ status.nameEn }}
+                </option>
               </select>
             </div>
           </div>
@@ -561,9 +579,9 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
                 <select class="form-select" formControlName="employmentStatus">
-                  <option value="Active">Active</option>
-                  <option value="OnLeave">On Leave</option>
-                  <option value="Terminated">Terminated</option>
+                  <option *ngFor="let status of employmentStatusLookups" [value]="status.detailCode">
+                    {{ status.nameAr }} - {{ status.nameEn }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -581,6 +599,24 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-phone-line"></i></span>
                 <input class="form-control" type="text" formControlName="workPhone" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Nationality</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-earth-line"></i></span>
+                <ng-select
+                  class="flex-grow-1"
+                  [items]="countryLookups"
+                  bindLabel="displayName"
+                  bindValue="detailCode"
+                  formControlName="nationality"
+                  placeholder="Select nationality"
+                  [searchable]="true"
+                  [clearable]="true"
+                  [appendTo]="'body'">
+                </ng-select>
               </div>
             </div>
 
@@ -819,9 +855,9 @@
                 <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
                 <select class="form-select" formControlName="employmentStatus">
                   <option value="">Select Status</option>
-                  <option value="Active">Active</option>
-                  <option value="OnLeave">On Leave</option>
-                  <option value="Terminated">Terminated</option>
+                  <option *ngFor="let status of employmentStatusLookups" [value]="status.detailCode">
+                    {{ status.nameAr }} - {{ status.nameEn }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -839,6 +875,24 @@
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-phone-line"></i></span>
                 <input class="form-control" type="text" formControlName="workPhone" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Nationality</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-earth-line"></i></span>
+                <ng-select
+                  class="flex-grow-1"
+                  [items]="countryLookups"
+                  bindLabel="displayName"
+                  bindValue="detailCode"
+                  formControlName="nationality"
+                  placeholder="Select nationality"
+                  [searchable]="true"
+                  [clearable]="true"
+                  [appendTo]="'body'">
+                </ng-select>
               </div>
             </div>
 

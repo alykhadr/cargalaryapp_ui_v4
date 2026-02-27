@@ -6,6 +6,8 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { ContactUs } from '../interfaces/contact-us.interface';
 import { ContactUsService } from '../services/contact-us.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { LookupService } from '../services/lookup.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -34,6 +36,7 @@ export class ContactUsComponent implements OnInit {
   previewImageUrl?: string;
   isPreviewOpen = false;
   selectedTypeFilter: number | null = null;
+  contactTypeLookups: LookupDetail[] = [];
 
   contactTypes = [
     { value: 1, label: 'Mobile' },
@@ -45,6 +48,7 @@ export class ContactUsComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private contactUsService: ContactUsService,
+    private lookupService: LookupService,
     private toastService: ToastService
   ) {}
 
@@ -56,12 +60,13 @@ export class ContactUsComponent implements OnInit {
 
     this.contactForm = this.formBuilder.group({
       contactValue: ['', [Validators.required, Validators.maxLength(100)]],
-      contactType: [1, Validators.required],
+      contactType: [null, Validators.required],
       messageAr: ['', [Validators.required, Validators.maxLength(500)]],
       messageEn: ['', [Validators.required, Validators.maxLength(500)]],
       isAvailable: [true]
     });
 
+    this.loadContactTypes();
     this.loadContacts();
   }
 
@@ -122,12 +127,45 @@ export class ContactUsComponent implements OnInit {
     this.pagedContacts = this.service.changePage(this.filteredContacts);
   }
 
+  private loadContactTypes() {
+    this.lookupService.getByMasterCode('CONTACT_TYPE').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.contactTypeLookups = lookups || [];
+        const mappedTypes = this.contactTypeLookups
+          .map(item => {
+            const parsedValue = Number(item.detailCode);
+            return Number.isFinite(parsedValue)
+              ? { value: parsedValue, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((item): item is { value: number; label: string } => item !== null)
+          .sort((a, b) => a.value - b.value);
+
+        if (mappedTypes.length > 0) {
+          this.contactTypes = mappedTypes;
+        }
+
+        if (!this.form['contactType'].value && this.contactTypes.length > 0) {
+          this.contactForm.patchValue({ contactType: this.contactTypes[0].value });
+        }
+      },
+      error: () => {
+        if (this.contactTypes.length > 0 && !this.form['contactType'].value) {
+          this.contactForm.patchValue({ contactType: this.contactTypes[0].value });
+        }
+      }
+    });
+  }
+
   openCreateModal() {
     this.isEditMode = false;
     this.selectedContact = undefined;
     this.selectedIconFile = undefined;
     this.iconPreviewUrl = undefined;
-    this.contactForm.reset({ contactType: 1, isAvailable: true });
+    this.contactForm.reset({
+      contactType: this.contactTypes.length > 0 ? this.contactTypes[0].value : null,
+      isAvailable: true
+    });
     this.submitted = false;
     this.isModalOpen = true;
   }

@@ -72,6 +72,7 @@ export class CarService {
     formData.append('drivetrain', payload.drivetrain.toString());
     formData.append('cylenders', payload.cylenders.toString());
     formData.append('fuelType', payload.fuelType.toString());
+    formData.append('manufactureCountryId', payload.manufactureCountryId.toString());
     formData.append('enginNumber', payload.enginNumber);
     if (payload.descriptionAr !== undefined && payload.descriptionAr !== null) {
       formData.append('descriptionAr', payload.descriptionAr);

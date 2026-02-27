@@ -43,10 +43,13 @@
                         placeholder="Select Car"
                         required>
                         <ng-template ng-label-tmp let-item="item">
-                          Car #{{ item.id }} - {{ item.year }}
+                          #{{ item.id }} - {{ item.nameEn || '-' }} / {{ item.nameAr || '-' }}
                         </ng-template>
                         <ng-template ng-option-tmp let-item="item">
-                          Car #{{ item.id }} - Year: {{ item.year }} - Price: ${{ item.price }}
+                          <div class="fw-semibold">#{{ item.id }} - {{ item.nameEn || '-' }} / {{ item.nameAr || '-' }}</div>
+                          <div class="small text-muted">Brand: {{ getBrandNameByModelId(item.modelId) }}</div>
+                          <div class="small text-muted">Model: {{ getModelName(item.modelId) }}</div>
+                          <div class="small text-muted">Year: {{ item.year }}</div>
                         </ng-template>
                       </ng-select>
                     </div>
@@ -141,7 +144,6 @@
             <table class="table align-middle table-nowrap">
               <thead class="table-light text-muted">
                 <tr>
-                  <th>ID</th>
                   <th>Image</th>
                   <th>Car</th>
                   <th>Image Type</th>
@@ -151,7 +153,6 @@
               </thead>
               <tbody>
                 <tr *ngFor="let image of paginatedGalleryImages">
-                  <td>{{ image.id }}</td>
                   <td>
                     <div class="avatar-xs">
                       <img [src]="image.imageUrl" alt="Gallery Image" class="rounded-circle img-fluid">
@@ -176,7 +177,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="paginatedGalleryImages.length === 0">
-                  <td colspan="6" class="text-center">No gallery images found</td>
+                  <td colspan="5" class="text-center">No gallery images found</td>
                 </tr>
               </tbody>
             </table>

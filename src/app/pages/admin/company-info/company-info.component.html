@@ -50,6 +50,12 @@
               </ul>
             </div>
 
+            <div class="d-flex justify-content-end mb-3">
+              <button type="button" class="btn btn-soft-info btn-sm" (click)="fillTestDataForCurrentStep()">
+                <i class="ri-file-copy-line align-middle me-1"></i> Fill Test Data (Step {{ currentStep }})
+              </button>
+            </div>
+
             <!-- Step 1: Basic Info -->
             <div *ngIf="currentStep === 1">
               <div class="mb-4">

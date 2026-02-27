@@ -20,6 +20,7 @@ export interface Car {
   drivetrain: number;
   cylenders: number;
   fuelType: number;
+  manufactureCountryId: number;
   enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
@@ -58,6 +59,7 @@ export interface CreateCarRequest {
   drivetrain: number;
   cylenders: number;
   fuelType: number;
+  manufactureCountryId: number;
   enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
@@ -131,6 +133,7 @@ export interface UpdateCarRequest {
   drivetrain: number;
   cylenders: number;
   fuelType: number;
+  manufactureCountryId: number;
   enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;

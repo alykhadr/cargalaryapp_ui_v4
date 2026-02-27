@@ -39,6 +39,7 @@ export class CompanyInfoComponent implements OnInit {
 
   currentPage: number = 1;
   itemsPerPage: number = 10;
+  private readonly testLogoSvg: string = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#405189"/><stop offset="100%" stop-color="#0ab39c"/></linearGradient></defs><rect width="240" height="240" rx="24" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-size="64" fill="white">CG</text></svg>`;
 
   constructor(private companyInfoService: CompanyInfoService) {}
 
@@ -102,6 +103,41 @@ export class CompanyInfoComponent implements OnInit {
     if (this.currentStep > 1) {
       this.currentStep--;
     }
+  }
+
+  fillTestDataForCurrentStep(): void {
+    if (this.currentStep === 1) {
+      if (!this.companyInfoForm.companyNameEn) this.companyInfoForm.companyNameEn = 'Car Gallery Motors';
+      if (!this.companyInfoForm.companyNameAr) this.companyInfoForm.companyNameAr = 'معرض السيارات';
+      if (!this.companyInfoForm.crNumber) this.companyInfoForm.crNumber = '1010123456';
+      if (!this.companyInfoForm.email) this.companyInfoForm.email = 'info@cargallery.com';
+      if (!this.companyInfoForm.mobileNo) this.companyInfoForm.mobileNo = '0551234567';
+      if (!this.companyInfoForm.telNo) this.companyInfoForm.telNo = '0112345678';
+      if (!this.selectedFile && !this.logoPreview) {
+        this.applyTestLogo();
+      }
+    }
+
+    if (this.currentStep === 2) {
+      if (!this.companyInfoForm.aboutUsEn) this.companyInfoForm.aboutUsEn = 'Car Gallery provides trusted new and used vehicles with financing, warranty and after-sales support.';
+      if (!this.companyInfoForm.aboutUsAr) this.companyInfoForm.aboutUsAr = 'يوفر معرض السيارات مركبات جديدة ومستعملة موثوقة مع خدمات تمويل وضمان ودعم ما بعد البيع.';
+    }
+
+    if (this.currentStep === 3) {
+      if (!this.companyInfoForm.ourMissionEn) this.companyInfoForm.ourMissionEn = 'To simplify car ownership through transparent pricing, quality vehicles and excellent service.';
+      if (!this.companyInfoForm.ourMissionAr) this.companyInfoForm.ourMissionAr = 'تتمثل مهمتنا في تسهيل امتلاك السيارة عبر أسعار واضحة وجودة عالية وخدمة متميزة.';
+    }
+
+    if (this.currentStep === 4) {
+      if (!this.companyInfoForm.ourGoalsEn) this.companyInfoForm.ourGoalsEn = 'Expand branches, improve digital services and maintain top customer satisfaction.';
+      if (!this.companyInfoForm.ourGoalsAr) this.companyInfoForm.ourGoalsAr = 'التوسع في الفروع وتطوير الخدمات الرقمية والمحافظة على أعلى مستويات رضا العملاء.';
+    }
+  }
+
+  private applyTestLogo(): void {
+    const logoBlob = new Blob([this.testLogoSvg], { type: 'image/svg+xml' });
+    this.selectedFile = new File([logoBlob], 'company-logo-test.svg', { type: 'image/svg+xml' });
+    this.logoPreview = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(this.testLogoSvg)}`;
   }
 
   validateCurrentStep(): boolean {

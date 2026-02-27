@@ -4,9 +4,15 @@ import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
+import { Branch } from '../interfaces/branch.interface';
+import { Brand } from '../interfaces/brand.interface';
 import { CarExtraDetails } from '../interfaces/car-extra-details.interface';
+import { CarModel } from '../interfaces/car-model.interface';
 import { Car } from '../interfaces/car.interface';
+import { BranchService } from '../services/branch.service';
+import { BrandService } from '../services/brand.service';
 import { CarExtraDetailsService } from '../services/car-extra-details.service';
+import { CarModelService } from '../services/car-model.service';
 import { CarService } from '../services/car.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
@@ -34,12 +40,18 @@ export class CarExtraDetailsComponent implements OnInit {
   selectedExtraDetailIds = new Set<number>();
   cars: Car[] = [];
   carsMap: Map<number, Car> = new Map();
+  branches: Branch[] = [];
+  brands: Brand[] = [];
+  carModels: CarModel[] = [];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private extraDetailsService: CarExtraDetailsService,
     private carService: CarService,
+    private branchService: BranchService,
+    private brandService: BrandService,
+    private carModelService: CarModelService,
     private toastService: ToastService
   ) {}
 
@@ -60,6 +72,9 @@ export class CarExtraDetailsComponent implements OnInit {
 
     this.loadExtraDetails();
     this.loadCars();
+    this.loadBranches();
+    this.loadBrands();
+    this.loadModels();
   }
 
   get form() {
@@ -93,8 +108,66 @@ export class CarExtraDetailsComponent implements OnInit {
     });
   }
 
+  loadBranches() {
+    this.branchService.getBranches().pipe(first()).subscribe({
+      next: (branches) => {
+        this.branches = branches;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadBrands() {
+    this.brandService.getBrands().pipe(first()).subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadModels() {
+    this.carModelService.getModels().pipe(first()).subscribe({
+      next: (models) => {
+        this.carModels = models;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
   getCarById(carId: number): Car | undefined {
     return this.carsMap.get(carId);
+  }
+
+  getBranchName(branchId?: number): string {
+    if (!branchId) return '-';
+    const branch = this.branches.find(item => item.id === branchId);
+    if (!branch) return '-';
+    return `${branch.branchNameAr} / ${branch.branchNameEn}`;
+  }
+
+  getModelName(modelId: number): string {
+    const model = this.carModels.find(item => item.id === modelId);
+    if (!model) return '-';
+    return `${model.nameAr} / ${model.nameEn}`;
+  }
+
+  getBrandNameByModelId(modelId: number): string {
+    const model = this.carModels.find(item => item.id === modelId);
+    if (!model) return '-';
+    const brand = this.brands.find(item => item.id === model.brandId);
+    if (!brand) return '-';
+    return `${brand.nameAr} / ${brand.nameEn}`;
+  }
+
+  getCarDropdownLabel(car: Car): string {
+    return `${car.nameAr || '-'} - ${car.nameEn || '-'} - ${this.getBranchName(car.branchId)} - ${this.getBrandNameByModelId(car.modelId)} - ${this.getModelName(car.modelId)} - ${car.year}`;
   }
 
   onSearch() {

@@ -3,6 +3,12 @@ import { GalleryImageService } from '../services/gallery-image.service';
 import { CarService } from '../services/car.service';
 import { GalleryImage, CreateGalleryImageRequest, UpdateGalleryImageRequest, Car } from '../interfaces/gallery-image.interface';
 import Swal from 'sweetalert2';
+import { LookupService } from '../services/lookup.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { CarModelService } from '../services/car-model.service';
+import { CarModel } from '../interfaces/car-model.interface';
+import { BrandService } from '../services/brand.service';
+import { Brand } from '../interfaces/brand.interface';
 
 @Component({
   selector: 'app-gallery-images',
@@ -14,6 +20,8 @@ export class GalleryImagesComponent implements OnInit {
   galleryImages: GalleryImage[] = [];
   filteredGalleryImages: GalleryImage[] = [];
   cars: Car[] = [];
+  carModels: CarModel[] = [];
+  brands: Brand[] = [];
   searchCarId: string = '';
   searchCarName: string = '';
   isEditMode: boolean = false;
@@ -22,12 +30,8 @@ export class GalleryImagesComponent implements OnInit {
   imagePreview: string | null = null;
   Math = Math;
 
-  imageTypes = [
-    { value: 1, label: 'Interior' },
-    { value: 2, label: 'Exterior' },
-    { value: 3, label: 'Engine' },
-    { value: 4, label: 'Other' }
-  ];
+  imageTypes: Array<{ value: number; label: string }> = [];
+  imageTypeLookups: LookupDetail[] = [];
 
   galleryImageForm = {
     carId: null as number | null,
@@ -40,12 +44,36 @@ export class GalleryImagesComponent implements OnInit {
 
   constructor(
     private galleryImageService: GalleryImageService,
-    private carService: CarService
+    private carService: CarService,
+    private lookupService: LookupService,
+    private carModelService: CarModelService,
+    private brandService: BrandService
   ) {}
 
   ngOnInit(): void {
+    this.loadImageTypes();
+    this.loadModels();
+    this.loadBrands();
     this.loadGalleryImages();
     this.loadCars();
+  }
+
+  loadImageTypes(): void {
+    this.lookupService.getByMasterCode('IMAGE_TYPE').subscribe({
+      next: (data) => {
+        this.imageTypeLookups = data;
+        this.imageTypes = data
+          .map(item => {
+            const parsed = Number(item.detailCode);
+            return Number.isFinite(parsed)
+              ? { value: parsed, label: `${item.nameAr} - ${item.nameEn}` }
+              : null;
+          })
+          .filter((x): x is { value: number; label: string } => x !== null)
+          .sort((a, b) => a.value - b.value);
+      },
+      error: (error) => console.error('Error loading image type lookup:', error)
+    });
   }
 
   loadCars(): void {
@@ -54,6 +82,24 @@ export class GalleryImagesComponent implements OnInit {
         this.cars = data;
       },
       error: (error) => console.error('Error loading cars:', error)
+    });
+  }
+
+  loadModels(): void {
+    this.carModelService.getModels().subscribe({
+      next: (data) => {
+        this.carModels = data;
+      },
+      error: (error) => console.error('Error loading models:', error)
+    });
+  }
+
+  loadBrands(): void {
+    this.brandService.getBrands().subscribe({
+      next: (data) => {
+        this.brands = data;
+      },
+      error: (error) => console.error('Error loading brands:', error)
     });
   }
 
@@ -99,7 +145,7 @@ export class GalleryImagesComponent implements OnInit {
   }
 
   createGalleryImage(): void {
-    if (!this.galleryImageForm.carId || !this.selectedFile) {
+    if (!this.galleryImageForm.carId || !this.selectedFile || !this.galleryImageForm.imageType) {
       Swal.fire('Error', 'Please fill all required fields', 'error');
       return;
     }
@@ -107,7 +153,7 @@ export class GalleryImagesComponent implements OnInit {
     const request: CreateGalleryImageRequest = {
       carId: this.galleryImageForm.carId,
       imageFile: this.selectedFile,
-      imageType: this.galleryImageForm.imageType || undefined,
+      imageType: this.galleryImageForm.imageType,
       isPrimary: this.galleryImageForm.isPrimary
     };
 
@@ -125,14 +171,15 @@ export class GalleryImagesComponent implements OnInit {
   }
 
   updateGalleryImage(): void {
-    if (!this.selectedGalleryImageId || !this.galleryImageForm.carId) {
+    if (!this.selectedGalleryImageId || !this.galleryImageForm.carId || !this.galleryImageForm.imageType) {
+      Swal.fire('Error', 'Please fill all required fields', 'error');
       return;
     }
 
     const request: UpdateGalleryImageRequest = {
       carId: this.galleryImageForm.carId,
       imageFile: this.selectedFile || undefined,
-      imageType: this.galleryImageForm.imageType || undefined,
+      imageType: this.galleryImageForm.imageType,
       isPrimary: this.galleryImageForm.isPrimary
     };
 
@@ -197,7 +244,26 @@ export class GalleryImagesComponent implements OnInit {
 
   getCarDisplay(carId: number): string {
     const car = this.cars.find(c => c.id === carId);
-    return car ? `#${car.id} - ${car.modelNameEn || car.modelNameAr || 'Unknown'} (${car.year})` : `Car #${carId}`;
+    if (!car) return `Car #${carId}`;
+    const nameEn = car.nameEn || '-';
+    const nameAr = car.nameAr || '-';
+    const brand = this.getBrandNameByModelId(car.modelId);
+    const model = this.getModelName(car.modelId);
+    return `#${car.id} - ${nameEn} / ${nameAr} - ${brand} - ${model} - ${car.year}`;
+  }
+
+  getModelName(modelId: number): string {
+    const model = this.carModels.find(m => m.id === modelId);
+    if (!model) return '-';
+    return `${model.nameEn || '-'} / ${model.nameAr || '-'}`;
+  }
+
+  getBrandNameByModelId(modelId: number): string {
+    const model = this.carModels.find(m => m.id === modelId);
+    if (!model) return '-';
+    const brand = this.brands.find(b => b.id === model.brandId);
+    if (!brand) return '-';
+    return `${brand.nameEn || '-'} / ${brand.nameAr || '-'}`;
   }
 
   getImageTypeLabel(type?: number): string {

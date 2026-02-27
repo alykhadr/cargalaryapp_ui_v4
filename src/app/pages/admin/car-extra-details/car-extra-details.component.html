@@ -210,7 +210,7 @@
               <div class="flex-grow-1">
                 <ng-select
                   [items]="cars"
-                  bindLabel="year"
+                  bindLabel="nameEn"
                   bindValue="id"
                   formControlName="carId"
                   placeholder="Select a car"
@@ -218,12 +218,15 @@
                   [clearable]="true"
                   [loading]="cars.length === 0">
                   <ng-template ng-label-tmp let-item="item">
-                    {{ item.year }} - ${{ item.price?.toLocaleString() }} - {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+                    {{ getCarDropdownLabel(item) }}
                   </ng-template>
                   <ng-template ng-option-tmp let-item="item" let-index="index">
                     <div class="d-flex flex-column">
-                      <span><strong>Year:</strong> {{ item.year }} | <strong>Price:</strong> ${{ item.price?.toLocaleString() }}</span>
-                      <small class="text-muted">ID: {{ item.id }} | Status: {{ item.isAvailable ? 'Available' : 'Unavailable' }}</small>
+                      <span class="fw-semibold">{{ item.nameAr || '-' }} - {{ item.nameEn || '-' }}</span>
+                      <small class="text-muted">Branch: {{ getBranchName(item.branchId) }}</small>
+                      <small class="text-muted">Brand: {{ getBrandNameByModelId(item.modelId) }}</small>
+                      <small class="text-muted">Model: {{ getModelName(item.modelId) }}</small>
+                      <small class="text-muted">Year: {{ item.year }}</small>
                     </div>
                   </ng-template>
                 </ng-select>

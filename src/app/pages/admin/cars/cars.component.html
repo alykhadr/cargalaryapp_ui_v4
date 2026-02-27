@@ -8,6 +8,9 @@
         <div class="d-flex align-items-center">
           <h5 class="card-title mb-0 flex-grow-1">{{ isEditMode ? 'Edit Car' : 'Create Car' }}</h5>
           <div class="flex-shrink-0 d-flex gap-2">
+            <button type="button" class="btn btn-info btn-sm" *appHasPermission="'cars.view'" [routerLink]="['/admin/cars/list']">
+              <i class="ri-list-unordered me-1"></i> Car List
+            </button>
             <button type="button" class="btn btn-success btn-sm" (click)="openCreateModal()" *ngIf="isEditMode">
               <i class="ri-add-line align-bottom me-1"></i> New Car
             </button>
@@ -232,7 +235,7 @@
                       <label class="form-label">VAT (%) <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-percent-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('vat')" type="number" formControlName="vat" placeholder="Enter VAT" min="0" step="0.01">
+                        <input class="form-control bg-warning-subtle border-warning-subtle" [class.is-invalid]="isControlInvalid('vat')" type="number" formControlName="vat" placeholder="Enter VAT" min="0" step="0.01">
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('vat')">
                         {{ getControlError('vat') }}
@@ -281,7 +284,10 @@
                       <label class="form-label">Trim Level <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-list-check"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('trimLevel')" type="number" formControlName="trimLevel" placeholder="Enter trim level">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('trimLevel')" formControlName="trimLevel">
+                          <option [ngValue]="null">Select trim level</option>
+                          <option *ngFor="let option of trimLevelOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('trimLevel')">
                         {{ getControlError('trimLevel') }}
@@ -290,22 +296,50 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Vehicle Class <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-steering-2-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('vehicleClass')" type="number" formControlName="vehicleClass" placeholder="Enter vehicle class">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('vehicleClass')" formControlName="vehicleClass">
+                          <option [ngValue]="null">Select vehicle class</option>
+                          <option *ngFor="let option of vehicleClassOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('vehicleClass')">
                         {{ getControlError('vehicleClass') }}
                       </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Manufacture Country <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-earth-line"></i></span>
+                        <ng-select
+                          class="flex-grow-1"
+                          [items]="manufactureCountryOptions"
+                          bindLabel="label"
+                          bindValue="value"
+                          formControlName="manufactureCountryId"
+                          placeholder="Select country"
+                          [searchable]="true"
+                          [clearable]="true"
+                          [appendTo]="'body'"
+                          [ngClass]="{ 'is-invalid': isControlInvalid('manufactureCountryId') }">
+                        </ng-select>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('manufactureCountryId')">
+                        {{ getControlError('manufactureCountryId') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Transmission Type <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-settings-3-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('transmisionType')" type="number" formControlName="transmisionType" placeholder="Enter transmission type">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('transmisionType')" formControlName="transmisionType">
+                          <option [ngValue]="null">Select transmission type</option>
+                          <option *ngFor="let option of transmisionTypeOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('transmisionType')">
                         {{ getControlError('transmisionType') }}
@@ -315,10 +349,13 @@
 
                   <div class="row">
                     <div class="col-md-4 mb-3">
-                      <label class="form-label">Condition Id <span class="text-danger">*</span></label>
+                      <label class="form-label">Condition <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-checkbox-circle-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('conditionId')" type="number" formControlName="conditionId" placeholder="Enter condition id">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('conditionId')" formControlName="conditionId">
+                          <option [ngValue]="null">Select condition</option>
+                          <option *ngFor="let option of conditionOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('conditionId')">
                         {{ getControlError('conditionId') }}
@@ -329,7 +366,10 @@
                       <label class="form-label">Drivetrain <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-roadster-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('drivetrain')" type="number" formControlName="drivetrain" placeholder="Enter drivetrain">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('drivetrain')" formControlName="drivetrain">
+                          <option [ngValue]="null">Select drivetrain</option>
+                          <option *ngFor="let option of drivetrainOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('drivetrain')">
                         {{ getControlError('drivetrain') }}
@@ -353,7 +393,10 @@
                       <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-gas-station-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('fuelType')" type="number" formControlName="fuelType" placeholder="Enter fuel type">
+                        <select class="form-select" [class.is-invalid]="isControlInvalid('fuelType')" formControlName="fuelType">
+                          <option [ngValue]="null">Select fuel type</option>
+                          <option *ngFor="let option of fuelTypeOptions" [ngValue]="option.value">{{ option.label }}</option>
+                        </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('fuelType')">
                         {{ getControlError('fuelType') }}
@@ -383,7 +426,7 @@
 
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label class="form-label">Plate Number (AR) <span class="text-danger">*</span></label>
+                      <label class="form-label">Plate Number (AR)</label>
                       <div class="border rounded p-2 bg-light-subtle" [class.border-danger]="isControlInvalid('plateNumberAr')">
                         <div class="row g-2 align-items-center">
                           <div class="col-5">
@@ -416,7 +459,7 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                      <label class="form-label">Plate Number (EN) <span class="text-danger">*</span></label>
+                      <label class="form-label">Plate Number (EN)</label>
                       <div class="border rounded p-2 bg-light-subtle" [class.border-danger]="isControlInvalid('plateNumberEn')">
                         <div class="row g-2 align-items-center">
                           <div class="col-5">
@@ -1658,10 +1701,19 @@
               </span>
             </div>
           </div>
-          <button type="button" class="btn btn-danger btn-sm flex-shrink-0" *appHasPermission="'cars.delete'"
-            [disabled]="selectedCarIds.size === 0" (click)="deleteSelectedCars()">
-            <i class="ri-delete-bin-line align-bottom me-1"></i>Delete Selected
-          </button>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <button
+              type="button"
+              class="btn btn-success btn-sm"
+              *appHasPermission="'cars.create'"
+              [routerLink]="['/admin/cars/create']">
+              <i class="ri-add-line align-bottom me-1"></i>Add New Car
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" *appHasPermission="'cars.delete'"
+              [disabled]="selectedCarIds.size === 0" (click)="deleteSelectedCars()">
+              <i class="ri-delete-bin-line align-bottom me-1"></i>Delete Selected
+            </button>
+          </div>
         </div>
       </div>
       <div class="card-body">
@@ -1728,6 +1780,9 @@
                 </td>
                 <td class="text-end" (click)="$event.stopPropagation()">
                   <div class="d-inline-flex align-items-center flex-wrap gap-1 justify-content-end">
+                    <button class="btn btn-sm btn-soft-dark" *appHasPermission="'cars.view'" title="Info" (click)="openCarInfoModal(car)">
+                      <i class="ri-information-line me-1"></i>Info
+                    </button>
                     <button class="btn btn-sm btn-soft-primary" *appHasPermission="'cars.edit'" title="Edit" (click)="openCarTab(car, 1)">
                       <i class="ri-edit-line me-1"></i>Edit
                     </button>
@@ -1979,6 +2034,241 @@
 </div>
 <div *ngIf="showCarPreviewModal" class="modal-backdrop fade show" (click)="closeCarPreviewModal()"></div>
 
+<div *ngIf="showCarInfoModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-light-subtle border-bottom">
+        <h5 class="modal-title">Car Info - {{ infoCar?.nameEn || '-' }} / {{ infoCar?.nameAr || '-' }}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeCarInfoModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3" *ngIf="infoCar as car">
+          <div class="col-md-6 col-lg-4">
+            <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Name (EN)</small>
+                <div class="fw-semibold">{{ car.nameEn || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Name (AR)</small>
+                <div class="fw-semibold" dir="rtl">{{ car.nameAr || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Status</small>
+                <span class="badge" [ngClass]="car.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                  {{ car.isAvailable ? 'Available' : 'Unavailable' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Branch</small>
+                <div class="fw-semibold">{{ getBranchName(car.branchId) || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Brand</small>
+                <div class="fw-semibold">{{ getBrandName(getModelBrandId(car.modelId) || 0) || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Model</small>
+                <div class="fw-semibold">{{ getCarModelName(car.modelId) || '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Type</small>
+                <div class="fw-semibold">{{ getCarTypeName(car.typeId) || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Year</small>
+                <div class="fw-semibold">{{ car.year ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Mileage</small>
+                <div class="fw-semibold">{{ car.mileage ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">VAT (%)</small>
+                <div class="fw-semibold">{{ car.vat ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Condition</small>
+                <div class="fw-semibold">{{ getConditionLabel(car.conditionId) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Seating Capacity</small>
+                <div class="fw-semibold">{{ car.seatingCapacity ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Wheel Size (Inch)</small>
+                <div class="fw-semibold">{{ car.weelSizeInch || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Fuel Tank Capacity (L)</small>
+                <div class="fw-semibold">{{ car.fuelTankCapacityLiter ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Trim Level</small>
+                <div class="fw-semibold">{{ getTrimLevelLabel(car.trimLevel) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Vehicle Class</small>
+                <div class="fw-semibold">{{ getVehicleClassLabel(car.vehicleClass) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Manufacture Country</small>
+                <div class="fw-semibold">{{ getManufactureCountryLabel(car.manufactureCountryId) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Transmission Type</small>
+                <div class="fw-semibold">{{ getTransmisionTypeLabel(car.transmisionType) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Drivetrain</small>
+                <div class="fw-semibold">{{ getDrivetrainLabel(car.drivetrain) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Cylenders</small>
+                <div class="fw-semibold">{{ car.cylenders ?? '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Fuel Type</small>
+                <div class="fw-semibold">{{ getFuelTypeLabel(car.fuelType) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Engine Number</small>
+                <div class="fw-semibold">{{ car.enginNumber || '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Plate Number</small>
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <div class="fw-semibold" dir="rtl">{{ car.plateNumberAr || '-' }}</div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="fw-semibold text-success-emphasis">{{ car.plateNumberEn || '-' }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Description (EN)</small>
+                <div class="fw-semibold">{{ car.descriptionEn || '-' }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border h-100 mb-0 shadow-sm">
+              <div class="card-body py-3">
+                <small class="text-muted d-block">Description (AR)</small>
+                <div class="fw-semibold" dir="rtl">{{ car.descriptionAr || '-' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showCarInfoModal" class="modal-backdrop fade show" (click)="closeCarInfoModal()"></div>
+
 <div *ngIf="showExtraDetailsAddModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered extra-details-modal-dialog" role="document">
     <div class="modal-content">
@@ -2018,19 +2308,7 @@
             </div>
             <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('type')">Type is required.</small>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text"
-                [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameEn')"
-                [(ngModel)]="extraDetailDraft.nameEn"
-                [ngModelOptions]="{ standalone: true }"
-                placeholder="e.g. Warranty">
-            </div>
-            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</small>
-          </div>
-          <div class="col-md-6">
+          <div class="col-12">
             <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
@@ -2041,6 +2319,18 @@
                 placeholder="الاسم بالعربية">
             </div>
             <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameAr')">Name (AR) is required.</small>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text"
+                [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameEn')"
+                [(ngModel)]="extraDetailDraft.nameEn"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="e.g. Warranty">
+            </div>
+            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</small>
           </div>
           <div class="col-12">
             <label class="form-label">Description (EN)</label>
