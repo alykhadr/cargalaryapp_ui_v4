@@ -242,19 +242,6 @@
 
                   <div class="row">
                     <div class="col-md-6 mb-3">
-                      <label class="form-label">Condition Id <span class="text-danger">*</span></label>
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="ri-checkbox-circle-line"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('conditionId')" type="number" formControlName="conditionId" placeholder="Enter condition id">
-                      </div>
-                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('conditionId')">
-                        {{ getControlError('conditionId') }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
                       <label class="form-label">Seating Capacity <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-user-line"></i></span>
@@ -327,7 +314,18 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Condition Id <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-checkbox-circle-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('conditionId')" type="number" formControlName="conditionId" placeholder="Enter condition id">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('conditionId')">
+                        {{ getControlError('conditionId') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Drivetrain <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-roadster-line"></i></span>
@@ -338,7 +336,7 @@
                       </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Cylenders <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-speed-up-line"></i></span>
@@ -351,7 +349,7 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-gas-station-line"></i></span>
@@ -362,20 +360,7 @@
                       </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                      <label class="form-label">Plate Number <span class="text-danger">*</span></label>
-                      <div class="input-group">
-                        <span class="input-group-text"><i class="ri-hashtag"></i></span>
-                        <input class="form-control" [class.is-invalid]="isControlInvalid('plateNumber')" type="text" formControlName="plateNumber" placeholder="Enter plate number">
-                      </div>
-                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('plateNumber')">
-                        {{ getControlError('plateNumber') }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                       <label class="form-label">Engine Number <span class="text-danger">*</span></label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-car-line"></i></span>
@@ -386,12 +371,80 @@
                       </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                       <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
                         <label class="form-check-label" for="isAvailable">
                           Available for Sale
                         </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Plate Number (AR) <span class="text-danger">*</span></label>
+                      <div class="border rounded p-2 bg-light-subtle" [class.border-danger]="isControlInvalid('plateNumberAr')">
+                        <div class="row g-2 align-items-center">
+                          <div class="col-5">
+                            <input
+                              class="form-control text-uppercase text-center fw-semibold"
+                              type="text"
+                              [ngModel]="plateArLetters"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="onPlateArLettersInput($event)"
+                              placeholder="ABC"
+                              maxlength="3">
+                          </div>
+                          <div class="col-auto px-0 fw-bold text-muted">-</div>
+                          <div class="col">
+                            <input
+                              class="form-control text-center fw-semibold"
+                              type="text"
+                              [ngModel]="plateArDigits"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="onPlateArDigitsInput($event)"
+                              placeholder="1234"
+                              maxlength="4">
+                          </div>
+                        </div>
+                        <small class="text-muted">Format: letters + numbers (example: ABC-1234)</small>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('plateNumberAr')">
+                        {{ getControlError('plateNumberAr') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Plate Number (EN) <span class="text-danger">*</span></label>
+                      <div class="border rounded p-2 bg-light-subtle" [class.border-danger]="isControlInvalid('plateNumberEn')">
+                        <div class="row g-2 align-items-center">
+                          <div class="col-5">
+                            <input
+                              class="form-control text-uppercase text-center fw-semibold"
+                              type="text"
+                              [ngModel]="plateEnLetters"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="onPlateEnLettersInput($event)"
+                              placeholder="ABC"
+                              maxlength="3">
+                          </div>
+                          <div class="col-auto px-0 fw-bold text-muted">-</div>
+                          <div class="col">
+                            <input
+                              class="form-control text-center fw-semibold"
+                              type="text"
+                              [ngModel]="plateEnDigits"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="onPlateEnDigitsInput($event)"
+                              placeholder="1234"
+                              maxlength="4">
+                          </div>
+                        </div>
+                        <small class="text-muted">Format: letters + numbers (example: ABC-1234)</small>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('plateNumberEn')">
+                        {{ getControlError('plateNumberEn') }}
                       </div>
                     </div>
                   </div>

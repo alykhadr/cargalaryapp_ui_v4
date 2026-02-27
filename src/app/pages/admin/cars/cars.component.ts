@@ -65,7 +65,7 @@ export class CarsComponent implements OnInit {
   canDeleteCar = false;
   private requestedCarIdToOpen: number | null = null;
   private requestedTabToOpen: number = 1;
-  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'plateNumber', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
+  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'plateNumberAr', 'plateNumberEn', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
 
   // Lists
   cars: Car[] = [];
@@ -179,6 +179,10 @@ export class CarsComponent implements OnInit {
   colorTabSubmitted = false;
   detailsTabSubmitted = false;
   imageTabSubmitted = false;
+  plateArLetters = '';
+  plateArDigits = '';
+  plateEnLetters = '';
+  plateEnDigits = '';
 
   // Car Colors
   colors: Color[] = [];
@@ -323,7 +327,8 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: [null, [Validators.required, Validators.min(0.01)]],
       trimLevel: [null, [Validators.required, Validators.min(1)]],
       vehicleClass: [null, [Validators.required, Validators.min(1)]],
-      plateNumber: ['', [Validators.required]],
+      plateNumberAr: ['', [Validators.required, Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
+      plateNumberEn: ['', [Validators.required, Validators.pattern(/^[A-Z]{1,3}-[0-9]{1,4}$/)]],
       transmisionType: [null, [Validators.required, Validators.min(1)]],
       drivetrain: [null, [Validators.required, Validators.min(1)]],
       cylenders: [null, [Validators.required, Validators.min(1)]],
@@ -1284,6 +1289,67 @@ export class CarsComponent implements OnInit {
     }
   }
 
+  onPlateArLettersInput(value: string) {
+    this.plateArLetters = (value || '')
+      .toUpperCase()
+      .replace(/[^A-Z]/g, '')
+      .slice(0, 3);
+    this.syncPlateNumberAr();
+  }
+
+  onPlateArDigitsInput(value: string) {
+    this.plateArDigits = (value || '')
+      .replace(/\D/g, '')
+      .slice(0, 4);
+    this.syncPlateNumberAr();
+  }
+
+  onPlateEnLettersInput(value: string) {
+    this.plateEnLetters = (value || '')
+      .toUpperCase()
+      .replace(/[^A-Z]/g, '')
+      .slice(0, 3);
+    this.syncPlateNumberEn();
+  }
+
+  onPlateEnDigitsInput(value: string) {
+    this.plateEnDigits = (value || '')
+      .replace(/\D/g, '')
+      .slice(0, 4);
+    this.syncPlateNumberEn();
+  }
+
+  private syncPlateNumberAr() {
+    const plateNumberAr = this.plateArLetters && this.plateArDigits
+      ? `${this.plateArLetters}-${this.plateArDigits}`
+      : '';
+    this.carForm.patchValue({ plateNumberAr }, { emitEvent: false });
+    this.carForm.get('plateNumberAr')?.markAsTouched();
+  }
+
+  private syncPlateNumberEn() {
+    const plateNumberEn = this.plateEnLetters && this.plateEnDigits
+      ? `${this.plateEnLetters}-${this.plateEnDigits}`
+      : '';
+    this.carForm.patchValue({ plateNumberEn }, { emitEvent: false });
+    this.carForm.get('plateNumberEn')?.markAsTouched();
+  }
+
+  private setPlateParts(plateNumberAr?: string | null, plateNumberEn?: string | null) {
+    const arMatch = (plateNumberAr || '').toUpperCase().trim().match(/^([A-Z]{1,3})-?([0-9]{1,4})$/);
+    this.plateArLetters = arMatch?.[1] ?? '';
+    this.plateArDigits = arMatch?.[2] ?? '';
+
+    const enMatch = (plateNumberEn || '').toUpperCase().trim().match(/^([A-Z]{1,3})-?([0-9]{1,4})$/);
+    this.plateEnLetters = enMatch?.[1] ?? '';
+    this.plateEnDigits = enMatch?.[2] ?? '';
+
+    this.carForm.patchValue({
+      plateNumberAr: this.plateArLetters && this.plateArDigits ? `${this.plateArLetters}-${this.plateArDigits}` : '',
+      plateNumberEn: this.plateEnLetters && this.plateEnDigits ? `${this.plateEnLetters}-${this.plateEnDigits}` : ''
+    }, { emitEvent: false });
+  }
+
   private isPendingCarColorStockValid(item: {
     stockQuantity?: number | null;
   }): boolean {
@@ -1703,7 +1769,8 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: null,
       trimLevel: null,
       vehicleClass: null,
-      plateNumber: '',
+      plateNumberAr: '',
+      plateNumberEn: '',
       transmisionType: null,
       drivetrain: null,
       cylenders: null,
@@ -1711,6 +1778,7 @@ export class CarsComponent implements OnInit {
       enginNumber: '',
       isAvailable: true
     });
+    this.setPlateParts('', '');
     this.submitted = false;
     this.activeTab = 1;
     this.showCreateSuccessTab = false;
@@ -1792,7 +1860,8 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: 60,
       trimLevel: 1,
       vehicleClass: 1,
-      plateNumber: 'ABC-1234',
+      plateNumberAr: 'ABC-1234',
+      plateNumberEn: 'XYZ-5678',
       transmisionType: 1,
       drivetrain: 1,
       cylenders: 4,
@@ -1802,6 +1871,7 @@ export class CarsComponent implements OnInit {
       descriptionAr: 'وصف سيارة تجريبي',
       isAvailable: true
     });
+    this.setPlateParts('ABC-1234', 'XYZ-5678');
 
     this.submitted = false;
     this.invalidTabs.delete(1);
@@ -2009,7 +2079,8 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: car.fuelTankCapacityLiter,
       trimLevel: car.trimLevel,
       vehicleClass: car.vehicleClass,
-      plateNumber: car.plateNumber,
+      plateNumberAr: car.plateNumberAr,
+      plateNumberEn: car.plateNumberEn,
       transmisionType: car.transmisionType,
       drivetrain: car.drivetrain,
       cylenders: car.cylenders,
@@ -2019,6 +2090,7 @@ export class CarsComponent implements OnInit {
       descriptionAr: car.descriptionAr,
       isAvailable: car.isAvailable
     });
+    this.setPlateParts(car.plateNumberAr, car.plateNumberEn);
 
     this.loadCarImages(car.id);
     this.loadCarCarFeatures(car.id);
@@ -2227,7 +2299,8 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: this.form['fuelTankCapacityLiter'].value,
       trimLevel: this.form['trimLevel'].value,
       vehicleClass: this.form['vehicleClass'].value,
-      plateNumber: this.form['plateNumber'].value,
+      plateNumberAr: this.form['plateNumberAr'].value,
+      plateNumberEn: this.form['plateNumberEn'].value,
       transmisionType: this.form['transmisionType'].value,
       drivetrain: this.form['drivetrain'].value,
       cylenders: this.form['cylenders'].value,
@@ -3067,8 +3140,10 @@ export class CarsComponent implements OnInit {
           return 'Trim level is required.';
         case 'vehicleClass':
           return 'Vehicle class is required.';
-        case 'plateNumber':
-          return 'Plate number is required.';
+        case 'plateNumberAr':
+          return 'Plate number (AR) is required.';
+        case 'plateNumberEn':
+          return 'Plate number (EN) is required.';
         case 'transmisionType':
           return 'Transmission type is required.';
         case 'drivetrain':
@@ -3119,6 +3194,12 @@ export class CarsComponent implements OnInit {
     }
     if (controlName === 'fuelType' && control.errors['min']) {
       return 'Fuel type must be greater than 0.';
+    }
+    if (controlName === 'plateNumberAr' && control.errors['pattern']) {
+      return 'Plate number (AR) must be like ABC-1234.';
+    }
+    if (controlName === 'plateNumberEn' && control.errors['pattern']) {
+      return 'Plate number (EN) must be like ABC-1234.';
     }
 
     return 'Invalid value.';

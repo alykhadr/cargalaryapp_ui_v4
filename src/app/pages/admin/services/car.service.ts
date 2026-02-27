@@ -66,7 +66,8 @@ export class CarService {
     formData.append('fuelTankCapacityLiter', payload.fuelTankCapacityLiter.toString());
     formData.append('trimLevel', payload.trimLevel.toString());
     formData.append('vehicleClass', payload.vehicleClass.toString());
-    formData.append('plateNumber', payload.plateNumber);
+    formData.append('plateNumberAr', payload.plateNumberAr);
+    formData.append('plateNumberEn', payload.plateNumberEn);
     formData.append('transmisionType', payload.transmisionType.toString());
     formData.append('drivetrain', payload.drivetrain.toString());
     formData.append('cylenders', payload.cylenders.toString());
