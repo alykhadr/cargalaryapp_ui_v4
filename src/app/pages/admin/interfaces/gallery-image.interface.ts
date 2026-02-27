@@ -26,9 +26,8 @@ export interface Car {
   id: number;
   modelId: number;
   typeId: number;
+  branchId?: number;
   year: number;
-  color?: string;
-  price: number;
   mileage: number;
   descriptionAr?: string;
   descriptionEn?: string;

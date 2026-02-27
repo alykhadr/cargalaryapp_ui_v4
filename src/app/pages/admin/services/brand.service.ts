@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { GlobalComponent } from "src/app/global-component";
 import { Brand, CreateBrandRequest, UpdateBrandRequest } from "../interfaces/brand.interface";
+import { CarModel } from "../interfaces/car-model.interface";
 
 const API_URL = GlobalComponent.API_URL;
 
@@ -50,7 +51,7 @@ export class BrandService {
     return this.http.post<{ deletedCount: number; failedIds: number[] }>(`${this.baseUrl}/bulk-delete`, { brandIds });
   }
 
-  getCarModelsByBrand(brandId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/${brandId}/models`);
+  getCarModelsByBrand(brandId: number): Observable<CarModel[]> {
+    return this.http.get<CarModel[]>(`${this.baseUrl}/${brandId}/models`);
   }
 }

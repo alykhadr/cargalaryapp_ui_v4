@@ -17,6 +17,8 @@ import { ServicesComponent } from './services/services.component';
 import { ModelsComponent } from './models/models.component';
 import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.component';
 import { CarTypesComponent } from './car-types/car-types.component';
+import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
+import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -124,6 +126,23 @@ const routes: Routes = [
     component: CarTypesComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'types.view' }
+  },
+  {
+    path: "cars",
+    redirectTo: "cars/list",
+    pathMatch: "full"
+  },
+  {
+    path: "cars/list",
+    component: CarsListPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'cars.view' }
+  },
+  {
+    path: "cars/create",
+    component: CarsCreatePageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'cars.create' }
   }
   
 ];

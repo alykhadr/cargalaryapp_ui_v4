@@ -1,0 +1,2873 @@
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { first } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { ToastService } from '../../icons/toast-service';
+import { Car, CarImage, CreateCarRequest, CreateCarWithDetailsRequest, UpdateCarRequest } from '../interfaces/car.interface';
+import { CarService } from '../services/car.service';
+import { CarType } from '../interfaces/car-type.interface';
+import { CarTypeService } from '../services/car-type.service';
+import { CarModel } from '../interfaces/car-model.interface';
+import { CarModelService } from '../services/car-model.service';
+import { getErrorMessage } from '../shared/error-message.util';
+import { NgbNav, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
+import { CarFeatureService } from '../services/car-feature.service';
+import { CarFeature, CarCarFeature, AssignCarFeatureRequest } from '../interfaces/car-feature.interface';
+import { Branch } from '../interfaces/branch.interface';
+import { BranchService } from '../services/branch.service';
+import { Brand } from '../interfaces/brand.interface';
+import { BrandService } from '../services/brand.service';
+import { GlobalComponent } from 'src/app/global-component';
+import { Color } from '../interfaces/color.interface';
+import { ColorService } from '../services/color.service';
+import { CarExtraDetails as CarExtraDetailItem } from '../interfaces/car-extra-details.interface';
+import { CarExtraDetailsService } from '../services/car-extra-details.service';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { CarCarColor } from '../interfaces/car-car-color.interface';
+import { CarCarColorService } from '../services/car-car-color.service';
+
+interface CarListActionCounts {
+  features: number;
+  colors: number;
+  details: number;
+  images: number;
+  loading: boolean;
+}
+
+@Component({
+  selector: 'app-cars',
+  templateUrl: './cars.component.html',
+  styleUrl: './cars.component.scss',
+  standalone: false
+})
+export class CarsComponent implements OnInit {
+  @Input() mode: 'create' | 'list' | null = null;
+  @ViewChild('nav') nav!: NgbNav;
+  
+  breadCrumbItems!: Array<{}>;
+  carForm!: UntypedFormGroup;
+  featureDetailForm!: UntypedFormGroup;
+  isLoading = false;
+  isSubmitting = false;
+  submitted = false;
+  isEditMode = false;
+  selectedCar?: Car;
+  activeTab = 1;
+  pageMode: 'create' | 'list' = 'create';
+  pageTitle = 'Create Car';
+  canViewCar = false;
+  canCreateCar = false;
+  canEditCar = false;
+  canDeleteCar = false;
+  private requestedCarIdToOpen: number | null = null;
+  private requestedTabToOpen: number = 1;
+  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'descriptionEn', 'descriptionAr'];
+
+  // Lists
+  cars: Car[] = [];
+  filteredCars: Car[] = [];
+  pagedCars: Car[] = [];
+  carTypes: CarType[] = [];
+  carModels: CarModel[] = [];
+  brands: Brand[] = [];
+  filterCarModels: CarModel[] = [];
+  formCarModels: CarModel[] = [];
+  branches: Branch[] = [];
+  carImages: CarImage[] = [];
+  pagedUploadedImages: CarImage[] = [];
+  
+  // Search & Filter
+  searchTerm = '';
+  filterNameEn = '';
+  filterNameAr = '';
+  selectedBranchFilterId?: number;
+  selectedYearFilter?: number;
+  selectedBrandId?: number;
+  selectedModelId?: number;
+  selectedCarIds = new Set<number>();
+  carListActionCounts = new Map<number, CarListActionCounts>();
+
+  // Image upload
+  selectedImageFile?: File;
+  selectedImageType?: number | null;
+  selectedImageIsPrimary = true;
+  imagePreviewUrl?: string;
+  isUploadingImage = false;
+  imageFileSubmitted = false;
+  imageTypeSubmitted = false;
+  private readonly maxGalleryImageSizeBytes = 5 * 1024 * 1024;
+  pendingGalleryImages: Array<{
+    pendingId: number;
+    file: File;
+    previewUrl: string;
+    imageType?: number | null;
+    isPrimary: boolean;
+  }> = [];
+  pagedPendingGalleryImages: Array<{
+    pendingId: number;
+    file: File;
+    previewUrl: string;
+    imageType?: number | null;
+    isPrimary: boolean;
+  }> = [];
+  pendingGalleryImageIdSeq = 1;
+  editingPendingGalleryImageId: number | null = null;
+  pendingGalleryPagination = new PaginationService();
+  uploadedImagePagination = new PaginationService();
+  selectedPendingGalleryImageIds = new Set<number>();
+  imageTypeOptions = [
+    { id: 1, name: 'External' },
+    { id: 2, name: 'Internal' },
+    { id: 3, name: 'Front' },
+    { id: 4, name: 'Back' },
+    { id: 5, name: 'Side' },
+    { id: 6, name: 'Interior' }
+  ];
+  showColorImagePreview = false;
+  colorImagePreviewUrl?: string;
+  colorImagePreviewName?: string;
+  hoveredPendingGalleryImageId?: number | null;
+  hoveredUploadedImageId?: number | null;
+  showSelectedGalleryImagePreview = false;
+  showExtraDetailsAddModal = false;
+  showExtraDetailsStatsModal = false;
+  showCarPreviewModal = false;
+  isCarPreviewLoading = false;
+  carPreviewTab: 'features' | 'colors' | 'details' | 'images' = 'features';
+  previewCar?: Car;
+  previewFeatures: CarCarFeature[] = [];
+  pagedPreviewFeatures: CarCarFeature[] = [];
+  previewFeaturePagination = new PaginationService();
+  previewColors: CarCarColor[] = [];
+  pagedPreviewColors: CarCarColor[] = [];
+  previewColorPagination = new PaginationService();
+  previewDetails: CarExtraDetailItem[] = [];
+  pagedPreviewDetails: CarExtraDetailItem[] = [];
+  previewDetailsPagination = new PaginationService();
+  previewImages: CarImage[] = [];
+  pagedPreviewImages: CarImage[] = [];
+  previewImagesPagination = new PaginationService();
+  showCreateSuccessTab = false;
+  finishTabAction: 'created' | 'updated' | null = null;
+  extraDetailAddSubmitted = false;
+  editingPendingExtraDetailIndex: number | null = null;
+
+  // Tab Validation
+  invalidTabs: Set<number> = new Set();
+  validatedTabs: Set<number> = new Set();
+  private skipNextTabValidation = false;
+
+  // Car Features
+  carFeatures: CarFeature[] = [];
+  pagedCarFeatures: CarFeature[] = [];
+  carCarFeatures: CarCarFeature[] = [];
+  pagedCarCarFeatures: CarCarFeature[] = [];
+  availableFeatures: CarFeature[] = [];
+  featurePagination = new PaginationService();
+  pendingFeaturePagination = new PaginationService();
+  selectedFeatureId?: number;
+  selectedFeatureAssignmentAvailable = true;
+  isAssigningFeature = false;
+  featureAssignSubmitted = false;
+  isCreatingFeature = false;
+  featureSubmitted = false;
+  featureTabSubmitted = false;
+  colorTabSubmitted = false;
+  detailsTabSubmitted = false;
+  imageTabSubmitted = false;
+
+  // Car Colors
+  colors: Color[] = [];
+  pagedColors: Color[] = [];
+  pendingCarColors: Array<{
+    colorId: number;
+    stockQuantity?: number | null;
+    colorImageUrl?: string;
+    colorImageFile?: File;
+    pricingPerColor?: number | null;
+    createdAt?: string;
+    isAvailable: boolean;
+  }> = [];
+  pagedPendingCarColors: Array<{
+    colorId: number;
+    stockQuantity?: number | null;
+    colorImageUrl?: string;
+    colorImageFile?: File;
+    pricingPerColor?: number | null;
+    createdAt?: string;
+    isAvailable: boolean;
+  }> = [];
+  colorPagination = new PaginationService();
+  pendingColorPagination = new PaginationService();
+  pendingExtraDetails: Array<{
+    pendingId: number;
+    sourceExtraDetailId?: number;
+    nameAr?: string;
+    nameEn?: string;
+    descriptionEn?: string;
+    descriptionAr?: string;
+    carExtraDetailsType: number;
+    isAvailable: boolean;
+  }> = [];
+  pagedPendingExtraDetails: Array<{
+    pendingId: number;
+    sourceExtraDetailId?: number;
+    nameAr?: string;
+    nameEn?: string;
+    descriptionEn?: string;
+    descriptionAr?: string;
+    carExtraDetailsType: number;
+    isAvailable: boolean;
+  }> = [];
+  extraDetailsCatalog: CarExtraDetailItem[] = [];
+  pagedExtraDetailsCatalog: CarExtraDetailItem[] = [];
+  extraDetailsCatalogPagination = new PaginationService();
+  extraDetailsPagination = new PaginationService();
+  pendingExtraDetailIdSeq = 1;
+  selectedPendingExtraDetailIds = new Set<number>();
+  extraDetailDraft: {
+    nameAr?: string;
+    nameEn?: string;
+    descriptionEn?: string;
+    descriptionAr?: string;
+    carExtraDetailsType?: number | null;
+    isAvailable: boolean;
+  } = {
+    nameAr: '',
+    nameEn: '',
+    descriptionEn: '',
+    descriptionAr: '',
+    carExtraDetailsType: null,
+    isAvailable: true
+  };
+  extraDetailTypeOptions = [
+    { id: 1, name: 'Audio And Communication System', nameAr: 'نظام الصوت والاتصال' },
+    { id: 2, name: 'Ease And Comfort', nameAr: 'الراحة والسهولة' },
+    { id: 3, name: 'Engine Specification', nameAr: 'مواصفات المحرك' },
+    { id: 4, name: 'Exterior', nameAr: 'الهيكل الخارجي' },
+    { id: 5, name: 'Extra Feature', nameAr: 'ميزة إضافية' },
+    { id: 6, name: 'Measurements', nameAr: 'القياسات' },
+    { id: 7, name: 'Safety', nameAr: 'السلامة' },
+    { id: 8, name: 'Seating', nameAr: 'المقاعد' },
+    { id: 9, name: 'Transmission', nameAr: 'ناقل الحركة' }
+  ];
+
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    public service: PaginationService,
+    private carService: CarService,
+    private carTypeService: CarTypeService,
+    private carModelService: CarModelService,
+    private carFeatureService: CarFeatureService,
+    private colorService: ColorService,
+    private carCarColorService: CarCarColorService,
+    private carExtraDetailsService: CarExtraDetailsService,
+    private branchService: BranchService,
+    private brandService: BrandService,
+    private toastService: ToastService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private accessControlService: AccessControlService
+  ) {}
+
+  ngOnInit(): void {
+    const mode = this.mode ?? this.route.snapshot.data['mode'];
+    this.pageMode = mode === 'list' ? 'list' : 'create';
+    this.pageTitle = this.pageMode === 'list' ? 'Car List' : 'Create Car';
+    this.canViewCar = this.accessControlService.hasPermission('cars.view');
+    this.canCreateCar = this.accessControlService.hasPermission('cars.create');
+    this.canEditCar = this.accessControlService.hasPermission('cars.edit');
+    this.canDeleteCar = this.accessControlService.hasPermission('cars.delete');
+
+    this.breadCrumbItems = [
+      { label: 'Admin' },
+      { label: this.pageTitle, active: true }
+    ];
+
+    const carIdParam = this.route.snapshot.queryParamMap.get('carId');
+    const tabParam = this.route.snapshot.queryParamMap.get('tab');
+    const parsedCarId = carIdParam ? Number(carIdParam) : NaN;
+    const parsedTab = tabParam ? Number(tabParam) : NaN;
+    if (Number.isFinite(parsedCarId) && parsedCarId > 0) {
+      this.requestedCarIdToOpen = parsedCarId;
+      this.requestedTabToOpen = Number.isFinite(parsedTab) && parsedTab >= 1 && parsedTab <= 5 ? parsedTab : 1;
+    }
+
+    this.carForm = this.formBuilder.group({
+      nameEn: ['', [Validators.required]],
+      nameAr: ['', [Validators.required]],
+      brandFilterId: [null, [Validators.required]],
+      modelId: [null, [Validators.required]],
+      typeId: [null, [Validators.required]],
+      branchId: [null, [Validators.required]],
+      year: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
+      mileage: [0, [Validators.required, Validators.min(0)]],
+      descriptionEn: ['', [Validators.required]],
+      descriptionAr: ['', [Validators.required]],
+      isAvailable: [true]
+    });
+
+    this.featureDetailForm = this.formBuilder.group({
+      nameEn: ['', [Validators.required, Validators.maxLength(100)]],
+      nameAr: ['', [Validators.required, Validators.maxLength(100)]],
+      isAvailable: [true]
+    });
+
+    this.featurePagination.pageSize = 8;
+    this.pendingFeaturePagination.pageSize = 8;
+    this.colorPagination.pageSize = 8;
+    this.pendingColorPagination.pageSize = 8;
+    this.extraDetailsPagination.pageSize = 8;
+    this.pendingGalleryPagination.pageSize = 8;
+    this.uploadedImagePagination.pageSize = 8;
+    this.previewFeaturePagination.pageSize = 6;
+    this.previewColorPagination.pageSize = 6;
+    this.previewDetailsPagination.pageSize = 6;
+    this.previewImagesPagination.pageSize = 8;
+    this.extraDetailsCatalogPagination.pageSize = 8;
+
+    if (this.canViewCar) {
+      this.loadCars();
+    }
+    this.loadCarTypes();
+    this.loadCarModels();
+    this.loadBrands();
+    this.loadBranches();
+    this.loadColors();
+  }
+
+  get form() {
+    return this.carForm.controls;
+  }
+
+  get featureForm() {
+    return this.featureDetailForm.controls;
+  }
+
+  get isCreatePage(): boolean {
+    return this.pageMode === 'create';
+  }
+
+  get isListPage(): boolean {
+    return this.pageMode === 'list';
+  }
+
+  get availableCarsCount(): number {
+    return this.filteredCars.filter(car => car.isAvailable).length;
+  }
+
+  get unavailableCarsCount(): number {
+    return this.filteredCars.length - this.availableCarsCount;
+  }
+
+  loadCars() {
+    this.isLoading = true;
+    this.carService.getCars().pipe(first()).subscribe({
+      next: (cars) => {
+        this.cars = cars;
+        this.carListActionCounts.clear();
+        this.applyFilters(true);
+        this.isLoading = false;
+        this.tryOpenRequestedCar();
+      },
+      error: (error) => {
+        this.showError(error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private tryOpenRequestedCar() {
+    if (this.requestedCarIdToOpen === null) return;
+
+    const car = this.cars.find(c => c.id === this.requestedCarIdToOpen);
+    if (!car) return;
+
+    const targetTab = this.requestedTabToOpen;
+    this.requestedCarIdToOpen = null;
+    this.requestedTabToOpen = 1;
+
+    this.openEditModal(car);
+    this.activeTab = targetTab;
+  }
+
+  loadCarTypes() {
+    this.carTypeService.getCarTypes().pipe(first()).subscribe({
+      next: (types) => {
+        this.carTypes = types;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadCarModels() {
+    this.carModelService.getModels().pipe(first()).subscribe({
+      next: (models) => {
+        this.carModels = models;
+        this.filterCarModels = models;
+        this.formCarModels = [];
+        if (this.selectedCar && !this.carForm?.get('brandFilterId')?.value) {
+          const selectedModel = models.find(m => m.id === this.selectedCar?.modelId);
+          if (selectedModel) {
+            this.carForm.patchValue({ brandFilterId: selectedModel.brandId }, { emitEvent: false });
+            this.onFormBrandChange(selectedModel.brandId);
+          }
+        }
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadBrands() {
+    this.brandService.getBrands().pipe(first()).subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadBranches() {
+    this.branchService.getBranches().pipe(first()).subscribe({
+      next: (branches) => {
+        this.branches = branches;
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadCarImages(carId: number) {
+    this.carService.getCarImages(carId).pipe(first()).subscribe({
+      next: (images) => {
+        this.carImages = images;
+        this.refreshUploadedImagePagination(true);
+        this.syncImageTabValidationState();
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  loadCarCarColors(carId: number) {
+    this.carCarColorService.getByCarId(carId).pipe(first()).subscribe({
+      next: (carColors: CarCarColor[]) => {
+        this.pendingCarColors = carColors.map((item) => ({
+          colorId: item.colorId,
+          stockQuantity: item.stockQuantity ?? null,
+          colorImageUrl: item.colorImageUrl || '',
+          colorImageFile: undefined,
+          pricingPerColor: item.pricingPerColor ?? null,
+          createdAt: undefined,
+          isAvailable: item.isAvailable
+        }));
+        this.refreshPendingColorPagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadCarExtraDetails(carId: number) {
+    this.carExtraDetailsService.getExtraDetailsByCarId(carId).pipe(first()).subscribe({
+      next: (items) => {
+        this.pendingExtraDetails = items.map((item, index) => ({
+          pendingId: index + 1,
+          sourceExtraDetailId: undefined,
+          nameAr: item.nameAr?.trim(),
+          nameEn: item.nameEn?.trim(),
+          descriptionEn: item.descriptionEn?.trim(),
+          descriptionAr: item.descriptionAr?.trim(),
+          carExtraDetailsType: item.carExtraDetailsType || 1,
+          isAvailable: item.isAvailable
+        }));
+        this.pendingExtraDetailIdSeq = this.pendingExtraDetails.length + 1;
+        this.selectedPendingExtraDetailIds.clear();
+        this.refreshPendingExtraDetailsPagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadCarFeatures() {
+    this.carFeatureService.getCarFeatures().pipe(first()).subscribe({
+      next: (features) => {
+        this.carFeatures = features;
+        this.updateAvailableFeatures();
+        this.refreshFeaturePagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadColors() {
+    this.colorService.getColors().pipe(first()).subscribe({
+      next: (colors) => {
+        this.colors = colors;
+        this.refreshColorPagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  reloadColors() {
+    this.loadColors();
+  }
+
+  loadExtraDetailsCatalog() {
+    this.carExtraDetailsService.getExtraDetails().pipe(first()).subscribe({
+      next: (items) => {
+        this.extraDetailsCatalog = items;
+        this.refreshExtraDetailsCatalogPagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  reloadExtraDetailsCatalog() {
+    this.loadExtraDetailsCatalog();
+  }
+
+  reloadFeatureCatalog() {
+    this.loadCarFeatures();
+    if (this.selectedCar) {
+      this.loadCarCarFeatures(this.selectedCar.id);
+    }
+  }
+
+  refreshFeaturePagination(resetPage = false) {
+    if (resetPage) {
+      this.featurePagination.page = 1;
+    }
+    this.pagedCarFeatures = this.featurePagination.changePage(this.carFeatures);
+  }
+
+  onFeaturePageChange(page: number) {
+    this.featurePagination.page = page;
+    this.pagedCarFeatures = this.featurePagination.changePage(this.carFeatures);
+  }
+
+  refreshColorPagination(resetPage = false) {
+    if (resetPage) {
+      this.colorPagination.page = 1;
+    }
+    this.pagedColors = this.colorPagination.changePage(this.colors);
+  }
+
+  onColorPageChange(page: number) {
+    this.colorPagination.page = page;
+    this.pagedColors = this.colorPagination.changePage(this.colors);
+  }
+
+  refreshPendingColorPagination(resetPage = false) {
+    if (resetPage) {
+      this.pendingColorPagination.page = 1;
+    }
+    this.pagedPendingCarColors = this.pendingColorPagination.changePage(this.pendingCarColors);
+    this.syncColorTabValidationState();
+  }
+
+  onPendingColorPageChange(page: number) {
+    this.pendingColorPagination.page = page;
+    this.pagedPendingCarColors = this.pendingColorPagination.changePage(this.pendingCarColors);
+  }
+
+  refreshPendingExtraDetailsPagination(resetPage = false) {
+    if (resetPage) {
+      this.extraDetailsPagination.page = 1;
+    }
+    this.pagedPendingExtraDetails = this.extraDetailsPagination.changePage(this.pendingExtraDetails);
+    this.syncDetailsTabValidationState();
+  }
+
+  onPendingExtraDetailsPageChange(page: number) {
+    this.extraDetailsPagination.page = page;
+    this.pagedPendingExtraDetails = this.extraDetailsPagination.changePage(this.pendingExtraDetails);
+  }
+
+  refreshExtraDetailsCatalogPagination(resetPage = false) {
+    if (resetPage) {
+      this.extraDetailsCatalogPagination.page = 1;
+    }
+    this.pagedExtraDetailsCatalog = this.extraDetailsCatalogPagination.changePage(this.extraDetailsCatalog);
+  }
+
+  onExtraDetailsCatalogPageChange(page: number) {
+    this.extraDetailsCatalogPagination.page = page;
+    this.pagedExtraDetailsCatalog = this.extraDetailsCatalogPagination.changePage(this.extraDetailsCatalog);
+  }
+
+  refreshPendingFeaturePagination(resetPage = false) {
+    if (resetPage) {
+      this.pendingFeaturePagination.page = 1;
+    }
+    this.pagedCarCarFeatures = this.pendingFeaturePagination.changePage(this.carCarFeatures);
+    this.syncFeatureTabValidationState();
+  }
+
+  onPendingFeaturePageChange(page: number) {
+    this.pendingFeaturePagination.page = page;
+    this.pagedCarCarFeatures = this.pendingFeaturePagination.changePage(this.carCarFeatures);
+  }
+
+  createFeatureFromTab() {
+    this.featureSubmitted = true;
+    if (this.featureDetailForm.invalid) {
+      this.featureDetailForm.markAllAsTouched();
+      return;
+    }
+
+    this.isCreatingFeature = true;
+    const isAvailable = !!this.featureForm['isAvailable'].value;
+    const payload = {
+      nameEn: this.featureForm['nameEn'].value,
+      nameAr: this.featureForm['nameAr'].value
+    };
+
+    this.carFeatureService.createCarFeature(payload).pipe(first()).subscribe({
+      next: (createdFeature) => {
+        this.isCreatingFeature = false;
+        this.showSuccess('Feature created successfully');
+
+        const resetForm = () => {
+          this.featureDetailForm.reset({ nameEn: '', nameAr: '', isAvailable: true });
+          this.featureSubmitted = false;
+          this.loadCarFeatures();
+        };
+
+        if (!isAvailable) {
+          this.carFeatureService.updateCarFeature(createdFeature.id, {
+            nameEn: createdFeature.nameEn,
+            nameAr: createdFeature.nameAr,
+            isAvailable: false
+          }).pipe(first()).subscribe({
+            next: () => resetForm(),
+            error: (error) => {
+              this.showError(error);
+              resetForm();
+            }
+          });
+          return;
+        }
+
+        resetForm();
+      },
+      error: (error) => {
+        this.isCreatingFeature = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  loadCarCarFeatures(carId: number) {
+    this.carFeatureService.getCarFeaturesByCarId(carId).pipe(first()).subscribe({
+      next: (carFeatures) => {
+        this.carCarFeatures = carFeatures;
+        this.updateAvailableFeatures();
+        this.refreshPendingFeaturePagination(true);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  updateAvailableFeatures() {
+    const assignedFeatureIds = new Set(this.carCarFeatures.map(cf => cf.featureId));
+    this.availableFeatures = this.carFeatures.filter(f => !assignedFeatureIds.has(f.id));
+  }
+
+  isFeatureAssigned(featureId: number): boolean {
+    return this.carCarFeatures.some(cf => cf.featureId === featureId);
+  }
+
+  getCarFeatureAssignment(featureId: number): CarCarFeature | undefined {
+    return this.carCarFeatures.find(cf => cf.featureId === featureId);
+  }
+
+  assignFeatureToCar() {
+    this.featureAssignSubmitted = true;
+    if (!this.selectedFeatureId) return;
+    
+    this.isAssigningFeature = true;
+    const payload: AssignCarFeatureRequest = {
+      featureId: this.selectedFeatureId,
+      isAvailable: this.selectedFeatureAssignmentAvailable
+    };
+
+    if (!this.selectedCar) {
+      const alreadyExists = this.carCarFeatures.some(cf => cf.featureId === payload.featureId);
+      if (alreadyExists) {
+        this.isAssigningFeature = false;
+        this.showError('Feature already added to pending list');
+        return;
+      }
+
+      this.carCarFeatures = [
+        ...this.carCarFeatures,
+        {
+          carId: 0,
+          featureId: payload.featureId,
+          isAvailable: payload.isAvailable,
+          createdBy: undefined,
+          createdAt: undefined
+        }
+      ];
+      this.updateAvailableFeatures();
+      this.refreshPendingFeaturePagination();
+      this.isAssigningFeature = false;
+      this.selectedFeatureId = undefined;
+      this.selectedFeatureAssignmentAvailable = true;
+      this.featureAssignSubmitted = false;
+      this.showSuccess('Feature added to list. It will be saved with the car.');
+      return;
+    }
+    
+    this.carFeatureService.assignFeatureToCar(this.selectedCar.id, payload).pipe(first()).subscribe({
+      next: () => {
+        this.isAssigningFeature = false;
+        this.selectedFeatureId = undefined;
+        this.selectedFeatureAssignmentAvailable = true;
+        this.featureAssignSubmitted = false;
+        this.showSuccess('Feature assigned successfully');
+        this.loadCarCarFeatures(this.selectedCar!.id);
+      },
+      error: (error) => {
+        this.isAssigningFeature = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  onFeatureAssignedToggle(featureId: number, checked: boolean) {
+    if (checked) {
+      this.selectedFeatureId = featureId;
+      this.selectedFeatureAssignmentAvailable = true;
+      this.assignFeatureToCar();
+      return;
+    }
+
+    this.removeFeatureFromCar(featureId);
+  }
+
+  selectAllFeaturesForCar() {
+    if (this.isEditMode) {
+      this.showError('Select all features is available in create mode only right now.');
+      return;
+    }
+
+    const existingIds = new Set(this.carCarFeatures.map(cf => cf.featureId));
+    const toAdd = this.carFeatures
+      .filter(f => !existingIds.has(f.id))
+      .map(f => ({
+        carId: 0,
+        featureId: f.id,
+        isAvailable: true,
+        createdBy: undefined,
+        createdAt: undefined
+      }));
+
+    if (!toAdd.length) return;
+
+    this.carCarFeatures = [...this.carCarFeatures, ...toAdd];
+    this.updateAvailableFeatures();
+    this.refreshPendingFeaturePagination(true);
+  }
+
+  clearAllFeaturesForCar() {
+    if (this.isEditMode) {
+      this.showError('Clear all features is available in create mode only right now.');
+      return;
+    }
+
+    if (!this.carCarFeatures.length) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Remove all ${this.carCarFeatures.length} feature(s) from the list?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Clear All!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.carCarFeatures = [];
+      this.updateAvailableFeatures();
+      this.refreshPendingFeaturePagination(true);
+      this.showSuccess('All features removed from list');
+    });
+  }
+
+  isColorAssigned(colorId: number): boolean {
+    return this.pendingCarColors.some(c => c.colorId === colorId);
+  }
+
+  onColorAssignedToggle(color: Color, checked: boolean) {
+    if (checked) {
+      if (this.isColorAssigned(color.id)) return;
+
+      this.pendingCarColors = [
+        ...this.pendingCarColors,
+        {
+          colorId: color.id,
+          stockQuantity: null,
+          colorImageUrl: '',
+          colorImageFile: undefined,
+          pricingPerColor: null,
+          createdAt: new Date().toISOString(),
+          isAvailable: true
+        }
+      ];
+      this.refreshPendingColorPagination();
+      this.showSuccess('Color added to list. It will be saved with the car.');
+      return;
+    }
+
+    this.pendingCarColors = this.pendingCarColors.filter(c => c.colorId !== color.id);
+    this.refreshPendingColorPagination();
+    this.showSuccess('Color removed from list');
+  }
+
+  selectAllColorsForCar() {
+    if (this.isEditMode) {
+      this.showError('Select all colors is available in create mode only right now.');
+      return;
+    }
+
+    const existingIds = new Set(this.pendingCarColors.map(c => c.colorId));
+    const toAdd = this.colors
+      .filter(c => !existingIds.has(c.id))
+      .map(c => ({
+        colorId: c.id,
+        stockQuantity: null,
+        colorImageUrl: '',
+        colorImageFile: undefined,
+        pricingPerColor: null,
+        createdAt: new Date().toISOString(),
+        isAvailable: true
+      }));
+
+    if (!toAdd.length) return;
+
+    this.pendingCarColors = [...this.pendingCarColors, ...toAdd];
+    this.refreshPendingColorPagination(true);
+  }
+
+  clearAllColorsForCar() {
+    if (this.isEditMode) {
+      this.showError('Clear all colors is available in create mode only right now.');
+      return;
+    }
+
+    if (!this.pendingCarColors.length) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Remove all ${this.pendingCarColors.length} color(s) from the list?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Clear All!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.pendingCarColors = [];
+      this.refreshPendingColorPagination(true);
+      this.showSuccess('All colors removed from list');
+    });
+  }
+
+  getColorById(colorId: number): Color | undefined {
+    return this.colors.find(c => c.id === colorId);
+  }
+
+  isExtraDetailAssigned(extraDetailId: number): boolean {
+    return this.pendingExtraDetails.some(d => d.sourceExtraDetailId === extraDetailId);
+  }
+
+  onExtraDetailAssignedToggle(detail: CarExtraDetailItem, checked: boolean) {
+    if (this.isEditMode) {
+      this.showError('Extra details catalog assign is available in create mode only right now.');
+      return;
+    }
+
+    if (checked) {
+      if (this.isExtraDetailAssigned(detail.id)) return;
+
+      this.pendingExtraDetails = [
+        ...this.pendingExtraDetails,
+        {
+          pendingId: this.pendingExtraDetailIdSeq++,
+          sourceExtraDetailId: detail.id,
+          nameAr: detail.nameAr?.trim(),
+          nameEn: detail.nameEn?.trim(),
+          descriptionEn: detail.descriptionEn?.trim(),
+          descriptionAr: detail.descriptionAr?.trim(),
+          carExtraDetailsType: this.getExtraDetailTypeIdFromItem(detail),
+          isAvailable: detail.isAvailable ?? true
+        }
+      ];
+      this.refreshPendingExtraDetailsPagination();
+      this.showSuccess('Extra detail added to list. It will be saved with the car.');
+      return;
+    }
+
+    const removedIds = this.pendingExtraDetails
+      .filter(d => d.sourceExtraDetailId === detail.id)
+      .map(d => d.pendingId);
+    removedIds.forEach(id => this.selectedPendingExtraDetailIds.delete(id));
+    this.pendingExtraDetails = this.pendingExtraDetails.filter(d => d.sourceExtraDetailId !== detail.id);
+    this.refreshPendingExtraDetailsPagination();
+    this.showSuccess('Extra detail removed from list');
+  }
+
+  selectAllExtraDetailsForCar() {
+    if (this.isEditMode) {
+      this.showError('Select all extra details is available in create mode only right now.');
+      return;
+    }
+
+    const existingIds = new Set(
+      this.pendingExtraDetails
+        .map(d => d.sourceExtraDetailId)
+        .filter((id): id is number => typeof id === 'number')
+    );
+
+    const toAdd = this.extraDetailsCatalog
+      .filter(d => !existingIds.has(d.id))
+      .map(d => ({
+        pendingId: this.pendingExtraDetailIdSeq++,
+        sourceExtraDetailId: d.id,
+        nameAr: d.nameAr?.trim(),
+        nameEn: d.nameEn?.trim(),
+        descriptionEn: d.descriptionEn?.trim(),
+        descriptionAr: d.descriptionAr?.trim(),
+        carExtraDetailsType: this.getExtraDetailTypeIdFromItem(d),
+        isAvailable: d.isAvailable ?? true
+      }));
+
+    if (!toAdd.length) return;
+
+    this.pendingExtraDetails = [...this.pendingExtraDetails, ...toAdd];
+    this.refreshPendingExtraDetailsPagination(true);
+  }
+
+  clearCatalogExtraDetailsForCar() {
+    if (this.isEditMode) {
+      this.showError('Clear selected extra details is available in create mode only right now.');
+      return;
+    }
+
+    this.pendingExtraDetails = this.pendingExtraDetails.filter(d => d.sourceExtraDetailId === undefined);
+    this.refreshPendingExtraDetailsPagination(true);
+  }
+
+  addExtraDetailToList() {
+    this.extraDetailAddSubmitted = true;
+
+    if (!this.extraDetailDraft.carExtraDetailsType) {
+      this.showError('Extra detail type is required');
+      return;
+    }
+    if (!this.extraDetailDraft.nameEn?.trim()) {
+      this.showError('Name (EN) is required');
+      return;
+    }
+    if (!this.extraDetailDraft.nameAr?.trim()) {
+      this.showError('Name (AR) is required');
+      return;
+    }
+
+    const existingItem = this.editingPendingExtraDetailIndex !== null
+      ? this.pendingExtraDetails[this.editingPendingExtraDetailIndex]
+      : undefined;
+
+    const item = {
+      pendingId: existingItem?.pendingId ?? this.pendingExtraDetailIdSeq++,
+      sourceExtraDetailId: existingItem?.sourceExtraDetailId,
+      nameAr: this.extraDetailDraft.nameAr?.trim(),
+      nameEn: this.extraDetailDraft.nameEn?.trim(),
+      descriptionEn: this.extraDetailDraft.descriptionEn?.trim(),
+      descriptionAr: this.extraDetailDraft.descriptionAr?.trim(),
+      carExtraDetailsType: this.extraDetailDraft.carExtraDetailsType,
+      isAvailable: this.extraDetailDraft.isAvailable
+    };
+
+    if (this.editingPendingExtraDetailIndex !== null) {
+      this.pendingExtraDetails = this.pendingExtraDetails.map((d, i) =>
+        i === this.editingPendingExtraDetailIndex ? item : d
+      );
+    } else {
+      this.pendingExtraDetails = [...this.pendingExtraDetails, item];
+    }
+
+    this.extraDetailDraft = {
+      nameAr: '',
+      nameEn: '',
+      descriptionEn: '',
+      descriptionAr: '',
+      carExtraDetailsType: null,
+      isAvailable: true
+    };
+    this.refreshPendingExtraDetailsPagination(true);
+    this.showExtraDetailsAddModal = false;
+    this.extraDetailAddSubmitted = false;
+    const wasEditing = this.editingPendingExtraDetailIndex !== null;
+    this.editingPendingExtraDetailIndex = null;
+    this.showSuccess(wasEditing ? 'Extra detail updated successfully' : 'Extra detail added to list. It will be saved with the car.');
+  }
+
+  openExtraDetailsAddModal() {
+    this.extraDetailAddSubmitted = false;
+    this.editingPendingExtraDetailIndex = null;
+    this.showExtraDetailsAddModal = true;
+  }
+
+  closeExtraDetailsAddModal() {
+    this.extraDetailAddSubmitted = false;
+    this.editingPendingExtraDetailIndex = null;
+    this.showExtraDetailsAddModal = false;
+  }
+
+  editPendingExtraDetail(indexInPaged: number) {
+    const actualIndex = this.getPendingExtraDetailActualIndex(indexInPaged);
+    const item = this.pendingExtraDetails[actualIndex];
+    if (!item) return;
+
+    this.editingPendingExtraDetailIndex = actualIndex;
+    this.extraDetailAddSubmitted = false;
+    this.extraDetailDraft = {
+      nameAr: item.nameAr || '',
+      nameEn: item.nameEn || '',
+      descriptionEn: item.descriptionEn || '',
+      descriptionAr: item.descriptionAr || '',
+      carExtraDetailsType: item.carExtraDetailsType,
+      isAvailable: item.isAvailable
+    };
+    this.showExtraDetailsAddModal = true;
+  }
+
+  openExtraDetailsStatsModal() {
+    this.showExtraDetailsStatsModal = true;
+  }
+
+  closeExtraDetailsStatsModal() {
+    this.showExtraDetailsStatsModal = false;
+  }
+
+  removePendingExtraDetail(indexInPaged: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Remove this extra detail from the list?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Remove!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const actualIndex = this.getPendingExtraDetailActualIndex(indexInPaged);
+      const removedItem = this.pendingExtraDetails[actualIndex];
+      if (removedItem) {
+        this.selectedPendingExtraDetailIds.delete(removedItem.pendingId);
+      }
+      this.pendingExtraDetails = this.pendingExtraDetails.filter((_, i) => i !== actualIndex);
+      this.refreshPendingExtraDetailsPagination();
+      this.showSuccess('Extra detail removed from list');
+    });
+  }
+
+  private getPendingExtraDetailActualIndex(indexInPaged: number): number {
+    const startIndex = (this.extraDetailsPagination.page - 1) * this.extraDetailsPagination.pageSize;
+    return startIndex + indexInPaged;
+  }
+
+  clearAllExtraDetails() {
+    if (!this.pendingExtraDetails.length) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Remove all ${this.pendingExtraDetails.length} extra detail(s) from the list?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Clear All!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.pendingExtraDetails = [];
+      this.selectedPendingExtraDetailIds.clear();
+      this.refreshPendingExtraDetailsPagination(true);
+      this.showSuccess('All extra details removed from list');
+    });
+  }
+
+  togglePendingExtraDetailSelection(pendingId: number, checked: boolean) {
+    if (checked) {
+      this.selectedPendingExtraDetailIds.add(pendingId);
+    } else {
+      this.selectedPendingExtraDetailIds.delete(pendingId);
+    }
+  }
+
+  toggleSelectAllPendingExtraDetails(checked: boolean) {
+    if (checked) {
+      this.pendingExtraDetails.forEach(item => this.selectedPendingExtraDetailIds.add(item.pendingId));
+      return;
+    }
+    this.selectedPendingExtraDetailIds.clear();
+  }
+
+  isAllPendingExtraDetailsSelected(): boolean {
+    return this.pendingExtraDetails.length > 0 && this.pendingExtraDetails.every(item => this.selectedPendingExtraDetailIds.has(item.pendingId));
+  }
+
+  clearSelectedPendingExtraDetails() {
+    if (this.selectedPendingExtraDetailIds.size === 0) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Remove ${this.selectedPendingExtraDetailIds.size} selected extra detail(s) from the list?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Remove!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.pendingExtraDetails = this.pendingExtraDetails.filter(item => !this.selectedPendingExtraDetailIds.has(item.pendingId));
+      this.selectedPendingExtraDetailIds.clear();
+      this.refreshPendingExtraDetailsPagination(true);
+      this.showSuccess('Selected extra details removed from list');
+    });
+  }
+
+  getExtraDetailTypeName(typeId: number): string {
+    return this.extraDetailTypeOptions.find(t => t.id === typeId)?.name || `Type ${typeId}`;
+  }
+
+  isExtraDetailDraftFieldInvalid(field: 'type' | 'nameEn' | 'nameAr'): boolean {
+    if (!this.extraDetailAddSubmitted) return false;
+    if (field === 'type') return !this.extraDetailDraft.carExtraDetailsType;
+    if (field === 'nameEn') return !this.extraDetailDraft.nameEn?.trim();
+    return !this.extraDetailDraft.nameAr?.trim();
+  }
+
+  getExtraDetailTypeIcon(typeId: number): string {
+    switch (typeId) {
+      case 1: return 'ri-volume-up-line'; // Audio And Communication System
+      case 2: return 'ri-steering-2-line'; // Ease And Comfort
+      case 3: return 'ri-settings-3-line'; // Engine Specification
+      case 4: return 'ri-roadster-line'; // Exterior
+      case 5: return 'ri-star-smile-line'; // Extra Feature
+      case 6: return 'ri-ruler-line'; // Measurements
+      case 7: return 'ri-shield-check-line'; // Safety
+      case 8: return 'ri-user-star-line'; // Seating
+      case 9: return 'ri-arrow-left-right-line'; // Transmission
+      default: return 'ri-list-check-2';
+    }
+  }
+
+  getExtraDetailsTypeStats() {
+    return this.extraDetailTypeOptions.map(type => {
+      const allCount = this.extraDetailsCatalog.filter(d => (d.carExtraDetailsType || 1) === type.id).length;
+      const assignedCount = this.pendingExtraDetails.filter(d => d.carExtraDetailsType === type.id).length;
+      return {
+        id: type.id,
+        name: type.name,
+        nameAr: (type as any).nameAr || '',
+        allCount,
+        assignedCount,
+        availableCount: Math.max(allCount - assignedCount, 0)
+      };
+    });
+  }
+
+  private getExtraDetailTypeIdFromItem(detail: CarExtraDetailItem): number {
+    const raw = (detail as any).carExtraDetailsType;
+    return typeof raw === 'number' && raw > 0 ? raw : 1;
+  }
+
+  onPendingCarColorImageSelected(
+    pending: {
+      colorId: number;
+      stockQuantity?: number | null;
+      colorImageUrl?: string;
+      colorImageFile?: File;
+      pricingPerColor?: number | null;
+      createdAt?: string;
+      isAvailable: boolean;
+    },
+    event: Event
+  ) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    pending.colorImageFile = file;
+    if (file) {
+      pending.colorImageUrl = '';
+    }
+  }
+
+  private isPendingCarColorStockValid(item: {
+    stockQuantity?: number | null;
+  }): boolean {
+    return item.stockQuantity !== null && item.stockQuantity !== undefined && item.stockQuantity >= 0;
+  }
+
+  private isPendingCarColorPricingValid(item: {
+    pricingPerColor?: number | null;
+  }): boolean {
+    return item.pricingPerColor !== null && item.pricingPerColor !== undefined && item.pricingPerColor >= 0;
+  }
+
+  private isPendingCarColorImageValid(item: {
+    colorImageUrl?: string;
+    colorImageFile?: File;
+  }): boolean {
+    return !!item.colorImageFile || !!(item.colorImageUrl && item.colorImageUrl.trim());
+  }
+
+  isPendingCarColorFieldInvalid(
+    item: {
+      stockQuantity?: number | null;
+      pricingPerColor?: number | null;
+      colorImageUrl?: string;
+      colorImageFile?: File;
+    },
+    field: 'stockQuantity' | 'pricingPerColor' | 'colorImage'
+  ): boolean {
+    if (!(this.colorTabSubmitted || this.invalidTabs.has(3))) return false;
+    if (field === 'stockQuantity') return !this.isPendingCarColorStockValid(item);
+    if (field === 'pricingPerColor') return !this.isPendingCarColorPricingValid(item);
+    return !this.isPendingCarColorImageValid(item);
+  }
+
+  previewPendingCarColorImage(file?: File) {
+    if (!file) return;
+    if (this.colorImagePreviewUrl) {
+      URL.revokeObjectURL(this.colorImagePreviewUrl);
+    }
+    this.colorImagePreviewUrl = URL.createObjectURL(file);
+    this.colorImagePreviewName = file.name;
+    this.showColorImagePreview = true;
+  }
+
+  closeColorImagePreview() {
+    this.showColorImagePreview = false;
+    if (this.colorImagePreviewUrl) {
+      URL.revokeObjectURL(this.colorImagePreviewUrl);
+    }
+    this.colorImagePreviewUrl = undefined;
+    this.colorImagePreviewName = undefined;
+  }
+
+  toggleFeatureAvailability(featureId: number, isAvailable: boolean) {
+    if (!this.selectedCar) {
+      this.carCarFeatures = this.carCarFeatures.map(cf =>
+        cf.featureId === featureId ? { ...cf, isAvailable } : cf
+      );
+      this.refreshPendingFeaturePagination();
+      return;
+    }
+    
+    this.carFeatureService.updateCarFeatureAssignment(this.selectedCar.id, featureId, isAvailable).pipe(first()).subscribe({
+      next: () => {
+        this.showSuccess('Feature availability updated');
+        this.loadCarCarFeatures(this.selectedCar!.id);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  removeFeatureFromCar(featureId: number) {
+    if (!this.selectedCar) {
+      this.carCarFeatures = this.carCarFeatures.filter(cf => cf.featureId !== featureId);
+      this.updateAvailableFeatures();
+      this.refreshPendingFeaturePagination();
+      this.showSuccess('Feature removed from list');
+      return;
+    }
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Remove this feature from the car?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Remove!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.carFeatureService.removeFeatureFromCar(this.selectedCar!.id, featureId).pipe(first()).subscribe({
+          next: () => {
+            this.showSuccess('Feature removed successfully');
+            this.loadCarCarFeatures(this.selectedCar!.id);
+          },
+          error: (error) => this.showError(error)
+        });
+      }
+    });
+  }
+
+  getFeatureName(featureId: number): string {
+    const feature = this.carFeatures.find(f => f.id === featureId);
+    return feature ? `${feature.nameEn} (${feature.nameAr})` : 'Unknown';
+  }
+
+  getFeatureById(featureId: number): CarFeature | undefined {
+    return this.carFeatures.find(f => f.id === featureId);
+  }
+
+  getFeatureDisplayName(featureId: number): string {
+    const feature = this.getFeatureById(featureId);
+    return feature?.nameAr || feature?.nameEn || `Feature #${featureId}`;
+  }
+
+  trackByFeatureId(index: number, cf: CarCarFeature): number {
+    return cf.featureId;
+  }
+
+  applyFilters(resetPage = false) {
+    let data = [...this.cars];
+    const term = this.searchTerm.trim().toLowerCase();
+    const nameEnTerm = this.filterNameEn.trim().toLowerCase();
+    const nameArTerm = this.filterNameAr.trim().toLowerCase();
+    const branchId = this.normalizeNumericFilter(this.selectedBranchFilterId);
+    const brandId = this.normalizeNumericFilter(this.selectedBrandId);
+    const modelId = this.normalizeNumericFilter(this.selectedModelId);
+    const year = this.normalizeNumericFilter(this.selectedYearFilter);
+
+    if (term) {
+      data = data.filter(car => this.getCarColumnSearchValue(car).includes(term));
+    }
+
+    if (nameEnTerm) {
+      data = data.filter(car => (car.nameEn || '').toLowerCase().includes(nameEnTerm));
+    }
+
+    if (nameArTerm) {
+      data = data.filter(car => (car.nameAr || '').toLowerCase().includes(nameArTerm));
+    }
+
+    if (branchId !== undefined) {
+      data = data.filter(car => car.branchId === branchId);
+    }
+
+    if (brandId !== undefined) {
+      data = data.filter(car => this.getModelBrandId(car.modelId) === brandId);
+    }
+
+    if (modelId !== undefined) {
+      data = data.filter(car => car.modelId === modelId);
+    }
+
+    if (year !== undefined) {
+      const yearTerm = year.toString();
+      data = data.filter(car => car.year.toString().includes(yearTerm));
+    }
+
+    this.filteredCars = data;
+    if (resetPage) {
+      this.service.page = 1;
+    }
+    this.pagedCars = this.service.changePage(this.filteredCars);
+    this.loadVisibleCarActionCounts();
+  }
+
+  private getCarColumnSearchValue(car: Car): string {
+    const branch = this.getBranchName(car.branchId) || '';
+    const brand = this.getBrandName(this.getModelBrandId(car.modelId) || 0) || '';
+    const model = this.getCarModelName(car.modelId) || '';
+    return `${car.nameEn || ''} ${car.nameAr || ''} ${branch} ${brand} ${model} ${car.year || ''}`.toLowerCase();
+  }
+
+  private normalizeNumericFilter(value: number | string | null | undefined): number | undefined {
+    if (value === null || value === undefined || value === '') {
+      return undefined;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+
+  onSearch() {
+    this.applyFilters(true);
+  }
+
+  clearFilters() {
+    this.searchTerm = '';
+    this.filterNameEn = '';
+    this.filterNameAr = '';
+    this.selectedBranchFilterId = undefined;
+    this.selectedYearFilter = undefined;
+    this.selectedBrandId = undefined;
+    this.selectedModelId = undefined;
+    this.filterCarModels = this.carModels;
+    this.applyFilters(true);
+  }
+
+  onBrandFilterChange(brandValue?: number | Brand | null) {
+    const brandId = this.extractBrandId(brandValue);
+    this.selectedBrandId = brandId ?? undefined;
+    this.selectedModelId = undefined;
+
+    if (!this.selectedBrandId) {
+      this.filterCarModels = this.carModels;
+      this.applyFilters(true);
+      return;
+    }
+
+    this.brandService.getCarModelsByBrand(this.selectedBrandId).pipe(first()).subscribe({
+      next: (models: CarModel[]) => {
+        this.filterCarModels = models;
+        this.applyFilters(true);
+      },
+      error: (error) => {
+        this.showError(error);
+      }
+    });
+  }
+
+  onFormBrandChange(brandValue?: number | Brand | null) {
+    const selectedBrandId = this.extractBrandId(brandValue);
+    const currentModelId = this.carForm.get('modelId')?.value as number | null;
+
+    if (!selectedBrandId) {
+      this.formCarModels = [];
+      this.carForm.patchValue({ modelId: null });
+      return;
+    }
+
+    this.brandService.getCarModelsByBrand(selectedBrandId).pipe(first()).subscribe({
+      next: (models) => {
+        this.formCarModels = models;
+        const currentStillValid = !!currentModelId && models.some(m => m.id === currentModelId);
+        if (!currentStillValid) {
+          this.carForm.patchValue({ modelId: null });
+        }
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  onFormModelChange(modelId?: number) {
+    if (!modelId) return;
+    const model = this.carModels.find(m => m.id === modelId);
+    if (!model) return;
+
+    if (this.carForm.get('brandFilterId')?.value !== model.brandId) {
+      this.carForm.patchValue({ brandFilterId: model.brandId }, { emitEvent: false });
+      this.onFormBrandChange(model.brandId);
+    }
+  }
+
+  isFeatureControlInvalid(controlName: string): boolean {
+    const control = this.featureDetailForm?.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty || this.featureSubmitted);
+  }
+
+  isFeatureAssignInvalid(): boolean {
+    return this.featureAssignSubmitted && !this.selectedFeatureId;
+  }
+
+  onPageChange(page: number) {
+    this.service.page = page;
+    this.pagedCars = this.service.changePage(this.filteredCars);
+    this.loadVisibleCarActionCounts();
+  }
+
+  getCarActionCountLabel(carId: number, type: 'features' | 'colors' | 'details' | 'images'): string {
+    const counts = this.carListActionCounts.get(carId);
+    if (!counts) return '-';
+    if (counts.loading) return '...';
+    return String(counts[type] ?? 0);
+  }
+
+  private loadVisibleCarActionCounts() {
+    this.pagedCars.forEach(car => this.ensureCarActionCounts(car.id));
+  }
+
+  private ensureCarActionCounts(carId: number) {
+    const existing = this.carListActionCounts.get(carId);
+    if (existing && !existing.loading) {
+      return;
+    }
+
+    this.carListActionCounts.set(carId, {
+      features: existing?.features ?? 0,
+      colors: existing?.colors ?? 0,
+      details: existing?.details ?? 0,
+      images: existing?.images ?? 0,
+      loading: true
+    });
+
+    forkJoin({
+      features: this.carFeatureService.getCarFeaturesByCarId(carId),
+      colors: this.carCarColorService.getByCarId(carId),
+      details: this.carExtraDetailsService.getExtraDetailsByCarId(carId),
+      images: this.carService.getCarImages(carId)
+    }).pipe(first()).subscribe({
+      next: ({ features, colors, details, images }) => {
+        this.carListActionCounts.set(carId, {
+          features: features.length,
+          colors: colors.length,
+          details: details.length,
+          images: images.length,
+          loading: false
+        });
+      },
+      error: () => {
+        this.carListActionCounts.set(carId, {
+          features: 0,
+          colors: 0,
+          details: 0,
+          images: 0,
+          loading: false
+        });
+      }
+    });
+  }
+
+  openCreateModal() {
+    this.isEditMode = false;
+    this.selectedCar = undefined;
+    this.carForm.reset();
+    this.carForm.patchValue({
+      nameEn: '',
+      nameAr: '',
+      brandFilterId: null,
+      branchId: null,
+      year: new Date().getFullYear(),
+      mileage: 0,
+      isAvailable: true
+    });
+    this.submitted = false;
+    this.activeTab = 1;
+    this.showCreateSuccessTab = false;
+    this.finishTabAction = null;
+    this.carImages = [];
+    this.pagedUploadedImages = [];
+    this.pendingGalleryImages = [];
+    this.pagedPendingGalleryImages = [];
+    this.pendingGalleryImageIdSeq = 1;
+    this.selectedPendingGalleryImageIds.clear();
+    this.selectedImageType = null;
+    this.selectedImageIsPrimary = true;
+    this.carCarFeatures = [];
+    this.pagedCarCarFeatures = [];
+    this.pendingCarColors = [];
+    this.pagedPendingCarColors = [];
+    this.pendingExtraDetails = [];
+    this.pagedPendingExtraDetails = [];
+    this.selectedPendingExtraDetailIds.clear();
+    this.pendingExtraDetailIdSeq = 1;
+    this.availableFeatures = [];
+    this.selectedFeatureId = undefined;
+    this.selectedFeatureAssignmentAvailable = true;
+    this.featureAssignSubmitted = false;
+    this.featureSubmitted = false;
+    this.featureTabSubmitted = false;
+    this.featureDetailForm?.reset({ nameEn: '', nameAr: '', isAvailable: true });
+    this.colorTabSubmitted = false;
+    this.detailsTabSubmitted = false;
+    this.imageTabSubmitted = false;
+    this.formCarModels = [];
+    this.invalidTabs.clear();
+    this.validatedTabs.clear();
+    this.loadCarFeatures();
+    this.loadExtraDetailsCatalog();
+    this.refreshPendingFeaturePagination(true);
+    this.refreshPendingColorPagination(true);
+    this.refreshPendingExtraDetailsPagination(true);
+  }
+
+  activateTestMode() {
+    this.fillInfoTabTestMode();
+    this.fillFeatureTabTestMode();
+    this.fillColorTabTestMode();
+    this.fillDetailsTabTestMode();
+    this.fillImagesTabTestMode();
+    this.showSuccess('Test mode filled all tabs with sample data.');
+  }
+
+  fillInfoTabTestMode() {
+    if (!this.ensureCreateModeForTestMode()) return;
+
+    if (!this.carTypes.length || !this.branches.length || !this.carModels.length) {
+      this.showError('Info tab test data is not ready yet. Please wait for types, branches and models to load.');
+      return;
+    }
+
+    const selectedType = this.carTypes[0];
+    const selectedBranch = this.branches[0];
+    const selectedModel = this.carModels[0];
+    const selectedBrandId = selectedModel.brandId;
+    const brandModels = this.carModels.filter(m => m.brandId === selectedBrandId);
+    const selectedBrandModel = brandModels[0] ?? selectedModel;
+
+    this.formCarModels = brandModels;
+    this.carForm.patchValue({
+      nameEn: 'Test Car',
+      nameAr: 'سيارة اختبار',
+      typeId: selectedType.id,
+      branchId: selectedBranch.id,
+      brandFilterId: selectedBrandId,
+      modelId: selectedBrandModel.id,
+      year: new Date().getFullYear(),
+      mileage: 1000,
+      descriptionEn: 'Test mode car description (EN)',
+      descriptionAr: 'وصف سيارة تجريبي',
+      isAvailable: true
+    });
+
+    this.submitted = false;
+    this.invalidTabs.delete(1);
+    this.showSuccess('Info tab filled with test data.');
+  }
+
+  fillFeatureTabTestMode() {
+    if (!this.ensureCreateModeForTestMode()) return;
+
+    if (!this.carFeatures.length) {
+      this.showError('Feature tab test data is not ready yet. Please wait for features to load.');
+      return;
+    }
+
+    const selectedFeature = this.carFeatures[0];
+    const alreadyExists = this.carCarFeatures.some(cf => cf.featureId === selectedFeature.id);
+    if (!alreadyExists) {
+      this.carCarFeatures = [
+        ...this.carCarFeatures,
+        {
+          carId: 0,
+          featureId: selectedFeature.id,
+          isAvailable: true,
+          createdBy: undefined,
+          createdAt: undefined
+        }
+      ];
+    }
+
+    this.updateAvailableFeatures();
+    this.refreshPendingFeaturePagination(true);
+    this.featureTabSubmitted = false;
+    this.invalidTabs.delete(2);
+    this.showSuccess('Feature tab filled with test data.');
+  }
+
+  fillColorTabTestMode() {
+    if (!this.ensureCreateModeForTestMode()) return;
+
+    if (!this.colors.length) {
+      this.showError('Color tab test data is not ready yet. Please wait for colors to load.');
+      return;
+    }
+
+    const selectedColor = this.colors[0];
+    const existing = this.pendingCarColors.find(c => c.colorId === selectedColor.id);
+    if (existing) {
+      existing.stockQuantity = existing.stockQuantity ?? 5;
+      existing.pricingPerColor = existing.pricingPerColor ?? 0;
+      existing.isAvailable = true;
+    } else {
+      this.pendingCarColors = [
+        ...this.pendingCarColors,
+        {
+          colorId: selectedColor.id,
+          stockQuantity: 5,
+          colorImageUrl: '',
+          colorImageFile: undefined,
+          pricingPerColor: 0,
+          createdAt: new Date().toISOString(),
+          isAvailable: true
+        }
+      ];
+    }
+
+    this.refreshPendingColorPagination(true);
+    this.colorTabSubmitted = false;
+    this.invalidTabs.delete(3);
+    this.showSuccess('Color tab filled with test data.');
+  }
+
+  fillDetailsTabTestMode() {
+    if (!this.ensureCreateModeForTestMode()) return;
+
+    const selectedExtraDetail = this.extraDetailsCatalog[0];
+    const extraDetailType = selectedExtraDetail
+      ? this.getExtraDetailTypeIdFromItem(selectedExtraDetail)
+      : (this.extraDetailTypeOptions[0]?.id ?? 1);
+
+    this.pendingExtraDetails = [
+      ...this.pendingExtraDetails,
+      {
+        pendingId: this.pendingExtraDetailIdSeq++,
+        sourceExtraDetailId: selectedExtraDetail?.id,
+        nameAr: selectedExtraDetail?.nameAr?.trim() || 'تفاصيل تجريبية',
+        nameEn: selectedExtraDetail?.nameEn?.trim() || 'Test Details',
+        descriptionEn: selectedExtraDetail?.descriptionEn?.trim() || 'Generated by test mode.',
+        descriptionAr: selectedExtraDetail?.descriptionAr?.trim() || 'تم الإنشاء بواسطة وضع الاختبار.',
+        carExtraDetailsType: extraDetailType,
+        isAvailable: selectedExtraDetail?.isAvailable ?? true
+      }
+    ];
+
+    this.refreshPendingExtraDetailsPagination(true);
+    this.detailsTabSubmitted = false;
+    this.invalidTabs.delete(4);
+    this.showSuccess('Details tab filled with test data.');
+  }
+
+  fillImagesTabTestMode() {
+    if (!this.ensureCreateModeForTestMode()) return;
+
+    const selectedImageType = this.imageTypeOptions[0]?.id ?? 1;
+    if (!this.pendingGalleryImages.length) {
+      const testImageFile = this.createTestModeImageFile();
+      this.pendingGalleryImages = [
+        {
+          pendingId: this.pendingGalleryImageIdSeq++,
+          file: testImageFile,
+          previewUrl: URL.createObjectURL(testImageFile),
+          imageType: selectedImageType,
+          isPrimary: true
+        }
+      ];
+    } else {
+      this.pendingGalleryImages = this.pendingGalleryImages.map((img, index) => ({
+        ...img,
+        imageType: img.imageType ?? selectedImageType,
+        isPrimary: index === 0
+      }));
+    }
+
+    this.refreshPendingGalleryPagination(true);
+    this.imageTabSubmitted = false;
+    this.invalidTabs.delete(5);
+    this.showSuccess('Images tab filled with test data.');
+  }
+
+  private ensureCreateModeForTestMode(): boolean {
+    if (this.isEditMode) {
+      this.showError('Test mode is available in create mode only.');
+      return false;
+    }
+    return true;
+  }
+
+  openEditModal(car: Car) {
+    if (!this.canEditCar) {
+      this.showError('You do not have permission to edit cars.');
+      return;
+    }
+
+    this.isEditMode = true;
+    this.selectedCar = car;
+    this.submitted = false;
+    this.activeTab = 1;
+    this.showCreateSuccessTab = false;
+    this.finishTabAction = null;
+    this.carImages = [];
+    this.pagedUploadedImages = [];
+    this.pendingGalleryImages = [];
+    this.pagedPendingGalleryImages = [];
+    this.pendingGalleryImageIdSeq = 1;
+    this.selectedPendingGalleryImageIds.clear();
+    this.selectedImageType = null;
+    this.selectedImageIsPrimary = true;
+    this.selectedFeatureId = undefined;
+    this.selectedFeatureAssignmentAvailable = true;
+    this.featureAssignSubmitted = false;
+    this.featureSubmitted = false;
+    this.featureTabSubmitted = false;
+    this.colorTabSubmitted = false;
+    this.detailsTabSubmitted = false;
+    this.imageTabSubmitted = false;
+    this.pendingExtraDetails = [];
+    this.pagedPendingExtraDetails = [];
+    this.selectedPendingExtraDetailIds.clear();
+    this.pendingExtraDetailIdSeq = 1;
+    this.extraDetailDraft = {
+      nameAr: '',
+      nameEn: '',
+      descriptionEn: '',
+      descriptionAr: '',
+      carExtraDetailsType: null,
+      isAvailable: true
+    };
+    this.invalidTabs.clear();
+    this.validatedTabs.clear();
+    
+    const selectedModel = this.carModels.find(m => m.id === car.modelId);
+
+    this.carForm.patchValue({
+      nameEn: car.nameEn,
+      nameAr: car.nameAr,
+      brandFilterId: selectedModel?.brandId ?? null,
+      modelId: car.modelId,
+      typeId: car.typeId,
+      branchId: car.branchId,
+      year: car.year,
+      mileage: car.mileage,
+      descriptionEn: car.descriptionEn,
+      descriptionAr: car.descriptionAr,
+      isAvailable: car.isAvailable
+    });
+
+    this.loadCarImages(car.id);
+    this.loadCarCarFeatures(car.id);
+    this.loadCarCarColors(car.id);
+    this.loadCarExtraDetails(car.id);
+    this.loadCarFeatures();
+    this.loadExtraDetailsCatalog();
+    if (selectedModel?.brandId) {
+      this.onFormBrandChange(selectedModel.brandId);
+    }
+  }
+
+  openCarTab(car: Car, tabId: number) {
+    if (this.isListPage) {
+      this.router.navigate(['/admin/cars/create'], {
+        queryParams: {
+          carId: car.id,
+          tab: tabId
+        }
+      });
+      return;
+    }
+
+    this.openEditModal(car);
+    this.activeTab = tabId;
+  }
+
+  openCarPreviewModal(car: Car, tab: 'features' | 'colors' | 'details' | 'images') {
+    this.previewCar = car;
+    this.carPreviewTab = tab;
+    this.showCarPreviewModal = true;
+    this.isCarPreviewLoading = true;
+    this.previewFeatures = [];
+    this.pagedPreviewFeatures = [];
+    this.previewColors = [];
+    this.pagedPreviewColors = [];
+    this.previewDetails = [];
+    this.pagedPreviewDetails = [];
+    this.previewImages = [];
+    this.pagedPreviewImages = [];
+
+    if (tab === 'features') {
+      const catalog$ = this.carFeatures.length > 0 ? of(this.carFeatures) : this.carFeatureService.getCarFeatures();
+      forkJoin({
+        assigned: this.carFeatureService.getCarFeaturesByCarId(car.id),
+        catalog: catalog$
+      }).pipe(first()).subscribe({
+        next: ({ assigned, catalog }) => {
+          this.carFeatures = catalog;
+          this.previewFeatures = assigned;
+          this.refreshPreviewFeaturePagination(true);
+          this.isCarPreviewLoading = false;
+        },
+        error: (error) => {
+          this.isCarPreviewLoading = false;
+          this.showError(error);
+        }
+      });
+      return;
+    }
+
+    if (tab === 'colors') {
+      this.carCarColorService.getByCarId(car.id).pipe(first()).subscribe({
+        next: (items) => {
+          this.previewColors = items;
+          this.refreshPreviewColorPagination(true);
+          this.isCarPreviewLoading = false;
+        },
+        error: (error) => {
+          this.isCarPreviewLoading = false;
+          this.showError(error);
+        }
+      });
+      return;
+    }
+
+    if (tab === 'details') {
+      this.carExtraDetailsService.getExtraDetailsByCarId(car.id).pipe(first()).subscribe({
+        next: (items) => {
+          this.previewDetails = items;
+          this.refreshPreviewDetailsPagination(true);
+          this.isCarPreviewLoading = false;
+        },
+        error: (error) => {
+          this.isCarPreviewLoading = false;
+          this.showError(error);
+        }
+      });
+      return;
+    }
+
+    this.carService.getCarImages(car.id).pipe(first()).subscribe({
+      next: (items) => {
+        this.previewImages = items;
+        this.refreshPreviewImagesPagination(true);
+        this.isCarPreviewLoading = false;
+      },
+      error: (error) => {
+        this.isCarPreviewLoading = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  closeCarPreviewModal() {
+    this.showCarPreviewModal = false;
+    this.isCarPreviewLoading = false;
+    this.previewFeatures = [];
+    this.pagedPreviewFeatures = [];
+    this.previewColors = [];
+    this.pagedPreviewColors = [];
+    this.previewDetails = [];
+    this.pagedPreviewDetails = [];
+    this.previewImages = [];
+    this.pagedPreviewImages = [];
+  }
+
+  refreshPreviewFeaturePagination(resetPage = false) {
+    if (resetPage) {
+      this.previewFeaturePagination.page = 1;
+    }
+    this.pagedPreviewFeatures = this.previewFeaturePagination.changePage(this.previewFeatures);
+  }
+
+  onPreviewFeaturePageChange(page: number) {
+    this.previewFeaturePagination.page = page;
+    this.pagedPreviewFeatures = this.previewFeaturePagination.changePage(this.previewFeatures);
+  }
+
+  refreshPreviewColorPagination(resetPage = false) {
+    if (resetPage) {
+      this.previewColorPagination.page = 1;
+    }
+    this.pagedPreviewColors = this.previewColorPagination.changePage(this.previewColors);
+  }
+
+  onPreviewColorPageChange(page: number) {
+    this.previewColorPagination.page = page;
+    this.pagedPreviewColors = this.previewColorPagination.changePage(this.previewColors);
+  }
+
+  refreshPreviewDetailsPagination(resetPage = false) {
+    if (resetPage) {
+      this.previewDetailsPagination.page = 1;
+    }
+    this.pagedPreviewDetails = this.previewDetailsPagination.changePage(this.previewDetails);
+  }
+
+  onPreviewDetailsPageChange(page: number) {
+    this.previewDetailsPagination.page = page;
+    this.pagedPreviewDetails = this.previewDetailsPagination.changePage(this.previewDetails);
+  }
+
+  refreshPreviewImagesPagination(resetPage = false) {
+    if (resetPage) {
+      this.previewImagesPagination.page = 1;
+    }
+    this.pagedPreviewImages = this.previewImagesPagination.changePage(this.previewImages);
+  }
+
+  onPreviewImagesPageChange(page: number) {
+    this.previewImagesPagination.page = page;
+    this.pagedPreviewImages = this.previewImagesPagination.changePage(this.previewImages);
+  }
+
+
+  saveCar() {
+    if (this.isEditMode && !this.canEditCar) {
+      this.showError('You do not have permission to edit cars.');
+      return;
+    }
+
+    if (!this.isEditMode && !this.canCreateCar) {
+      this.showError('You do not have permission to create cars.');
+      return;
+    }
+
+    this.submitted = true;
+    if (this.carForm.invalid) {
+      this.markMainInfoControlsTouched();
+      this.invalidTabs.add(1);
+      this.activeTab = 1;
+      return;
+    }
+
+    if (!this.validateImagesTab()) {
+      this.invalidTabs.add(5);
+      this.activeTab = 5;
+      this.showError(this.getTabValidationErrorMessage(5));
+      return;
+    }
+
+    this.isSubmitting = true;
+    const payload: CreateCarRequest | UpdateCarRequest = {
+      nameEn: this.form['nameEn'].value,
+      nameAr: this.form['nameAr'].value,
+      modelId: this.form['modelId'].value,
+      typeId: this.form['typeId'].value,
+      branchId: this.form['branchId'].value,
+      year: this.form['year'].value,
+      mileage: this.form['mileage'].value,
+      descriptionEn: this.form['descriptionEn'].value,
+      descriptionAr: this.form['descriptionAr'].value,
+      isAvailable: this.form['isAvailable'].value
+    };
+
+    if (this.isEditMode && this.selectedCar) {
+      this.carService.updateCar(this.selectedCar.id, payload as UpdateCarRequest).pipe(first()).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.showSuccess('Car updated successfully');
+          this.finishTabAction = 'updated';
+          this.showCreateSuccessTab = true;
+          this.selectedCar = {
+            ...this.selectedCar!,
+            ...(payload as UpdateCarRequest)
+          };
+          this.navigateToFinishTab();
+          if (this.canViewCar) {
+            this.loadCars();
+          }
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.showError(error);
+        }
+      });
+    } else {
+      const createPayload: CreateCarWithDetailsRequest = {
+        ...(payload as CreateCarRequest),
+        features: this.carCarFeatures.map(cf => ({
+          featureId: cf.featureId,
+          isAvailable: cf.isAvailable
+        })),
+        carColors: this.pendingCarColors.map(c => ({
+          colorId: c.colorId,
+          stockQuantity: c.stockQuantity ?? null,
+          colorImageUrl: c.colorImageFile ? '' : (c.colorImageUrl || ''),
+          pricingPerColor: c.pricingPerColor ?? null,
+          isAvailable: c.isAvailable
+        })),
+        carColorImageFiles: this.pendingCarColors
+          .map(c => c.colorImageFile)
+          .filter((f): f is File => !!f),
+        carColorImagesMeta: this.pendingCarColors
+          .filter(c => !!c.colorImageFile)
+          .map(c => ({
+            colorId: c.colorId,
+            fileName: c.colorImageFile?.name
+          })),
+        extraDetails: this.pendingExtraDetails.map(d => ({
+          nameAr: d.nameAr || '',
+          nameEn: d.nameEn || '',
+          descriptionEn: d.descriptionEn || '',
+          descriptionAr: d.descriptionAr || '',
+          carExtraDetailsType: d.carExtraDetailsType,
+          isAvailable: d.isAvailable
+        })),
+        galleryImages: this.pendingGalleryImages.map(g => g.file),
+        galleryImagesMeta: this.pendingGalleryImages.map(g => ({
+          fileName: g.file.name,
+          imageType: g.imageType ?? null,
+          isPrimary: g.isPrimary
+        }))
+      };
+
+      this.carService.createCarWithDetails(createPayload).pipe(first()).subscribe({
+        next: (createdCar) => {
+          this.isSubmitting = false;
+          this.showSuccess('Car created successfully');
+          this.selectedCar = createdCar;
+          this.isEditMode = true;
+          this.finishTabAction = 'created';
+          this.showCreateSuccessTab = true;
+          this.navigateToFinishTab();
+          this.loadCarCarFeatures(createdCar.id);
+          this.loadCarImages(createdCar.id);
+          if (this.canViewCar) {
+            this.loadCars();
+          }
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          this.showError(error);
+        }
+      });
+    }
+  }
+
+  deleteCar(car: Car) {
+    if (!this.canDeleteCar) {
+      this.showError('You do not have permission to delete cars.');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you sure you want to remove this car?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete It!',
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.carService.deleteCar(car.id).pipe(first()).subscribe({
+          next: () => {
+            this.showSuccess('Car deleted successfully');
+            this.loadCars();
+          },
+          error: (error) => this.showError(error)
+        });
+      }
+    });
+  }
+
+  // Image handling
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.imageFileSubmitted = false;
+    if (input.files && input.files[0]) {
+      this.selectedImageFile = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreviewUrl = e.target?.result as string;
+      };
+      reader.readAsDataURL(this.selectedImageFile);
+    }
+  }
+
+  addPendingGalleryImage() {
+    this.imageFileSubmitted = true;
+    this.imageTypeSubmitted = true;
+    const editingItem = this.editingPendingGalleryImageId !== null
+      ? this.pendingGalleryImages.find(g => g.pendingId === this.editingPendingGalleryImageId)
+      : undefined;
+
+    if (!this.selectedImageFile && !editingItem) {
+      this.showError('Please select an image first');
+      return;
+    }
+    if (this.selectedImageFile && this.isSelectedImageFileTooLarge()) {
+      this.showError('Image size must be less than or equal to 5 MB');
+      return;
+    }
+    if (!this.selectedImageType) {
+      this.showError('Image type is required');
+      return;
+    }
+
+    const alreadyExists = !!this.selectedImageFile && this.pendingGalleryImages.some(g =>
+      g.pendingId !== this.editingPendingGalleryImageId &&
+      g.file.name === this.selectedImageFile?.name &&
+      g.file.size === this.selectedImageFile?.size
+    );
+    if (alreadyExists) {
+      this.showError('This image is already added to the list');
+      return;
+    }
+
+    const sourceFile = this.selectedImageFile ?? editingItem!.file;
+    const sourcePreviewUrl = this.imagePreviewUrl || editingItem?.previewUrl || URL.createObjectURL(sourceFile);
+    const makePrimary = this.selectedImageIsPrimary || (this.pendingGalleryImages.length === 0);
+    const nextImage = {
+      pendingId: editingItem?.pendingId ?? this.pendingGalleryImageIdSeq++,
+      file: sourceFile,
+      previewUrl: sourcePreviewUrl,
+      imageType: this.selectedImageType,
+      isPrimary: makePrimary
+    };
+
+    if (nextImage.isPrimary) {
+      this.pendingGalleryImages = this.pendingGalleryImages.map(g => ({ ...g, isPrimary: false }));
+    }
+    if (editingItem) {
+      this.pendingGalleryImages = this.pendingGalleryImages.map(g => g.pendingId === editingItem.pendingId ? nextImage : g);
+    } else {
+      this.pendingGalleryImages = [...this.pendingGalleryImages, nextImage];
+    }
+    this.refreshPendingGalleryPagination(true);
+    this.selectedImageFile = undefined;
+    this.selectedImageType = null;
+    this.selectedImageIsPrimary = true;
+    this.imagePreviewUrl = undefined;
+    this.imageFileSubmitted = false;
+    this.imageTypeSubmitted = false;
+    const wasEditing = this.editingPendingGalleryImageId !== null;
+    this.editingPendingGalleryImageId = null;
+    this.showSuccess(wasEditing ? 'Image updated in list.' : 'Image added to list. It will be saved with the car.');
+  }
+
+  editPendingGalleryImage(img: {
+    pendingId: number;
+    file: File;
+    previewUrl: string;
+    imageType?: number | null;
+    isPrimary: boolean;
+  }) {
+    this.editingPendingGalleryImageId = img.pendingId;
+    this.selectedImageFile = undefined;
+    this.imagePreviewUrl = img.previewUrl;
+    this.selectedImageType = img.imageType ?? null;
+    this.selectedImageIsPrimary = !!img.isPrimary;
+    this.imageFileSubmitted = false;
+    this.imageTypeSubmitted = false;
+  }
+
+  cancelPendingGalleryImageEdit() {
+    this.editingPendingGalleryImageId = null;
+    this.selectedImageFile = undefined;
+    this.selectedImageType = null;
+    this.selectedImageIsPrimary = true;
+    this.imagePreviewUrl = undefined;
+    this.imageFileSubmitted = false;
+    this.imageTypeSubmitted = false;
+  }
+
+  removePendingGalleryImage(pendingId: number) {
+    const item = this.pendingGalleryImages.find(g => g.pendingId === pendingId);
+    if (!item) return;
+
+    const wasPrimary = item.isPrimary;
+    this.selectedPendingGalleryImageIds.delete(pendingId);
+    this.pendingGalleryImages = this.pendingGalleryImages.filter(g => g.pendingId !== pendingId);
+    if (this.editingPendingGalleryImageId === pendingId) {
+      this.cancelPendingGalleryImageEdit();
+    }
+
+    if (wasPrimary && this.pendingGalleryImages.length > 0) {
+      this.pendingGalleryImages = this.pendingGalleryImages.map((g, i) => ({ ...g, isPrimary: i === 0 }));
+    }
+    this.refreshPendingGalleryPagination();
+
+    this.showSuccess('Image removed from list');
+  }
+
+  setPendingGalleryPrimary(pendingId: number) {
+    this.pendingGalleryImages = this.pendingGalleryImages.map(g => ({
+      ...g,
+      isPrimary: g.pendingId === pendingId
+    }));
+    this.refreshPendingGalleryPagination();
+  }
+
+  refreshPendingGalleryPagination(resetPage = false) {
+    if (resetPage) {
+      this.pendingGalleryPagination.page = 1;
+    }
+    this.pagedPendingGalleryImages = this.pendingGalleryPagination.changePage(this.pendingGalleryImages);
+    this.syncImageTabValidationState();
+  }
+
+  onPendingGalleryPageChange(page: number) {
+    this.pendingGalleryPagination.page = page;
+    this.pagedPendingGalleryImages = this.pendingGalleryPagination.changePage(this.pendingGalleryImages);
+  }
+
+  refreshUploadedImagePagination(resetPage = false) {
+    if (resetPage) {
+      this.uploadedImagePagination.page = 1;
+    }
+    this.pagedUploadedImages = this.uploadedImagePagination.changePage(this.carImages);
+  }
+
+  onUploadedImagePageChange(page: number) {
+    this.uploadedImagePagination.page = page;
+    this.pagedUploadedImages = this.uploadedImagePagination.changePage(this.carImages);
+  }
+
+  togglePendingGalleryImageSelection(pendingId: number, checked: boolean) {
+    if (checked) {
+      this.selectedPendingGalleryImageIds.add(pendingId);
+    } else {
+      this.selectedPendingGalleryImageIds.delete(pendingId);
+    }
+  }
+
+  toggleSelectAllPendingGalleryImages(checked: boolean) {
+    if (checked) {
+      this.pendingGalleryImages.forEach(img => this.selectedPendingGalleryImageIds.add(img.pendingId));
+      return;
+    }
+    this.selectedPendingGalleryImageIds.clear();
+  }
+
+  isAllPendingGalleryImagesSelected(): boolean {
+    return this.pendingGalleryImages.length > 0 && this.pendingGalleryImages.every(img => this.selectedPendingGalleryImageIds.has(img.pendingId));
+  }
+
+  deleteSelectedPendingGalleryImages() {
+    if (!this.selectedPendingGalleryImageIds.size) return;
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Remove ${this.selectedPendingGalleryImageIds.size} selected image(s) from the list?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Remove!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const deletedEditing = this.editingPendingGalleryImageId !== null && this.selectedPendingGalleryImageIds.has(this.editingPendingGalleryImageId);
+      this.pendingGalleryImages = this.pendingGalleryImages.filter(img => !this.selectedPendingGalleryImageIds.has(img.pendingId));
+      this.selectedPendingGalleryImageIds.clear();
+
+      if (deletedEditing) {
+        this.cancelPendingGalleryImageEdit();
+      }
+
+      if (this.pendingGalleryImages.length > 0 && !this.pendingGalleryImages.some(i => i.isPrimary)) {
+        this.pendingGalleryImages = this.pendingGalleryImages.map((img, i) => ({ ...img, isPrimary: i === 0 }));
+      }
+
+      this.refreshPendingGalleryPagination(true);
+      this.showSuccess('Selected images removed from list');
+    });
+  }
+
+  getImageTypeName(imageType?: number | null): string {
+    if (imageType === null || imageType === undefined) return 'Not set';
+    return this.imageTypeOptions.find(t => t.id === imageType)?.name || `Type ${imageType}`;
+  }
+
+  isImageFileInputInvalid(): boolean {
+    if (!this.imageFileSubmitted) return false;
+    return !this.selectedImageFile || this.isSelectedImageFileTooLarge();
+  }
+
+  isImageTypeInputInvalid(): boolean {
+    return this.imageTypeSubmitted && !this.selectedImageType;
+  }
+
+  getImageFileInputErrorMessage(): string {
+    if (this.imageFileSubmitted && this.isSelectedImageFileTooLarge()) {
+      return 'Image size must be less than or equal to 5 MB.';
+    }
+    return 'Image file is required.';
+  }
+
+  private isSelectedImageFileTooLarge(): boolean {
+    return !!this.selectedImageFile && this.selectedImageFile.size > this.maxGalleryImageSizeBytes;
+  }
+
+  private createTestModeImageFile(): File {
+    const base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7Z4nQAAAAASUVORK5CYII=';
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    return new File([bytes], 'test-mode-image.png', { type: 'image/png' });
+  }
+
+  openSelectedGalleryImagePreview() {
+    if (this.selectedImageFile) {
+      this.previewPendingCarColorImage(this.selectedImageFile);
+      return;
+    }
+    if (!this.imagePreviewUrl) return;
+    this.colorImagePreviewUrl = this.imagePreviewUrl;
+    this.colorImagePreviewName = 'Selected image preview';
+    this.showColorImagePreview = true;
+  }
+
+  previewPendingGalleryGridImage(file: File) {
+    this.previewPendingCarColorImage(file);
+  }
+
+  previewUploadedGalleryGridImage(image: CarImage) {
+    this.colorImagePreviewUrl = this.getEntityImageUrl(image.imageUrl);
+    this.colorImagePreviewName = image.imageUrl?.split('/').pop() || 'Image preview';
+    this.showColorImagePreview = true;
+  }
+
+  closeSelectedGalleryImagePreview() {
+    this.showSelectedGalleryImagePreview = false;
+  }
+
+  uploadImage() {
+    this.imageFileSubmitted = true;
+    this.imageTypeSubmitted = true;
+    if (!this.selectedImageFile || !this.selectedCar) return;
+    if (this.isSelectedImageFileTooLarge()) {
+      this.showError('Image size must be less than or equal to 5 MB');
+      return;
+    }
+    if (!this.selectedImageType) {
+      this.showError('Image type is required');
+      return;
+    }
+
+    this.isUploadingImage = true;
+    const isPrimary = this.selectedImageIsPrimary || this.carImages.length === 0;
+    
+    this.carService.uploadCarImage(this.selectedCar.id, this.selectedImageFile, isPrimary, this.selectedImageType ?? undefined).pipe(first()).subscribe({
+      next: () => {
+        this.isUploadingImage = false;
+        this.selectedImageFile = undefined;
+        this.selectedImageType = null;
+        this.selectedImageIsPrimary = true;
+        this.imagePreviewUrl = undefined;
+        this.imageFileSubmitted = false;
+        this.imageTypeSubmitted = false;
+        this.showSuccess('Image uploaded successfully');
+        this.loadCarImages(this.selectedCar!.id);
+      },
+      error: (error) => {
+        this.isUploadingImage = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  deleteImage(image: CarImage) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Delete this image?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.carService.deleteCarImage(image.id).pipe(first()).subscribe({
+          next: () => {
+            this.showSuccess('Image deleted successfully');
+            this.loadCarImages(this.selectedCar!.id);
+          },
+          error: (error) => this.showError(error)
+        });
+      }
+    });
+  }
+
+  setPrimaryImage(image: CarImage) {
+    this.carService.setPrimaryImage(image.id, true).pipe(first()).subscribe({
+      next: () => {
+        this.showSuccess('Primary image set successfully');
+        this.loadCarImages(this.selectedCar!.id);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  // Helpers
+  getCarTypeName(typeId: number): string {
+    const type = this.carTypes.find(t => t.id === typeId);
+    return type ? `${type.nameEn} (${type.nameAr})` : 'Unknown';
+  }
+
+  getBranchName(branchId: number): string {
+    const branch = this.branches.find(b => b.id === branchId);
+    return branch ? `${branch.branchNameEn} (${branch.branchNameAr})` : 'Unknown';
+  }
+
+  getCarModelName(modelId: number): string {
+    const model = this.carModels.find(m => m.id === modelId);
+    return model ? `${model.nameEn} (${model.nameAr})` : 'Unknown';
+  }
+
+  getEntityImageUrl(imageUrl?: string): string {
+    return this.resolveImageUrl(imageUrl, 'assets/images/car-placeholder.png');
+  }
+
+  getBrandName(brandId: number): string {
+    const brand = this.brands.find(b => b.id === brandId);
+    return brand ? `${brand.nameEn} (${brand.nameAr})` : 'Unknown';
+  }
+
+  getModelBrandId(modelId: number): number | undefined {
+    return this.carModels.find(m => m.id === modelId)?.brandId;
+  }
+
+  private extractBrandId(brandValue?: number | Brand | null): number | undefined {
+    if (brandValue === null || brandValue === undefined) return undefined;
+    if (typeof brandValue === 'number') return brandValue;
+    return typeof brandValue.id === 'number' ? brandValue.id : undefined;
+  }
+
+  brandSearchFn(term: string, item: Brand): boolean {
+    const q = term.toLowerCase().trim();
+    if (!q) return true;
+    return (item.nameEn || '').toLowerCase().includes(q) || (item.nameAr || '').toLowerCase().includes(q);
+  }
+
+  modelSearchFn(term: string, item: CarModel): boolean {
+    const q = term.toLowerCase().trim();
+    if (!q) return true;
+    return (item.nameEn || '').toLowerCase().includes(q) || (item.nameAr || '').toLowerCase().includes(q);
+  }
+
+  typeSearchFn(term: string, item: CarType): boolean {
+    const q = term.toLowerCase().trim();
+    if (!q) return true;
+    return (item.nameEn || '').toLowerCase().includes(q) || (item.nameAr || '').toLowerCase().includes(q);
+  }
+
+  branchSearchFn(term: string, item: Branch): boolean {
+    const q = term.toLowerCase().trim();
+    if (!q) return true;
+    return (item.branchNameEn || '').toLowerCase().includes(q) || (item.branchNameAr || '').toLowerCase().includes(q);
+  }
+
+  getPrimaryImageUrl(): string {
+    const primary = this.carImages.find(img => img.isPrimary);
+    return this.resolveImageUrl(primary?.imageUrl || this.carImages[0]?.imageUrl, 'assets/images/car-placeholder.png');
+  }
+
+  private resolveImageUrl(imageUrl?: string, fallback: string = 'assets/images/car-placeholder.png'): string {
+    if (!imageUrl) return fallback;
+    if (
+      imageUrl.startsWith('http://') ||
+      imageUrl.startsWith('https://') ||
+      imageUrl.startsWith('data:') ||
+      imageUrl.startsWith('assets/')
+    ) {
+      return imageUrl;
+    }
+    if (imageUrl.startsWith('/')) {
+      return `${GlobalComponent.API_URL}${imageUrl}`;
+    }
+    return `${GlobalComponent.API_URL}/${imageUrl}`;
+  }
+
+  // Selection handling
+  toggleCarSelection(carId: number, checked: boolean) {
+    if (checked) {
+      this.selectedCarIds.add(carId);
+    } else {
+      this.selectedCarIds.delete(carId);
+    }
+  }
+
+  toggleSelectAllCars(checked: boolean) {
+    if (checked) {
+      this.pagedCars.forEach(car => this.selectedCarIds.add(car.id));
+    } else {
+      this.selectedCarIds.clear();
+    }
+  }
+
+  isAllCarsSelected(): boolean {
+    return this.pagedCars.length > 0 && this.pagedCars.every(car => this.selectedCarIds.has(car.id));
+  }
+
+  deleteSelectedCars() {
+    if (!this.canDeleteCar) {
+      this.showError('You do not have permission to delete cars.');
+      return;
+    }
+
+    if (this.selectedCarIds.size === 0) {
+      return;
+    }
+
+    const ids = Array.from(this.selectedCarIds);
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Delete ${ids.length} selected car(s)?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.carService.bulkDeleteCars({ carIds: ids }).pipe(first()).subscribe({
+          next: (response) => {
+            this.selectedCarIds.clear();
+
+            if (response.failedIds?.length) {
+              this.showError(`Deleted ${response.deletedCount} car(s). Failed: ${response.failedIds.join(', ')}`);
+            } else {
+              this.showSuccess(`Successfully deleted ${response.deletedCount} car(s)`);
+            }
+
+            this.loadCars();
+          },
+          error: (error) => {
+            this.showError(error);
+          }
+        });
+      }
+    });
+  }
+
+  private showSuccess(message: string) {
+    this.toastService.show(message, {
+      classname: 'bg-success text-white',
+      delay: 3000
+    });
+  }
+
+  // Tab Navigation with Validation
+  onTabNavChange(event: NgbNavChangeEvent) {
+    if (event.activeId === event.nextId) return;
+    if (this.skipNextTabValidation && event.nextId === 6) {
+      this.skipNextTabValidation = false;
+      return;
+    }
+
+    if (!this.validateTab(event.activeId)) {
+      event.preventDefault();
+      this.invalidTabs.add(event.activeId);
+      this.showError(this.getTabValidationErrorMessage(event.activeId));
+      return;
+    }
+
+    this.invalidTabs.delete(event.activeId);
+    this.validatedTabs.add(event.activeId);
+
+    if (event.nextId === 2) {
+      this.reloadFeatureCatalog();
+    }
+    if (event.nextId === 4) {
+      this.reloadExtraDetailsCatalog();
+    }
+  }
+
+  goToTab(tabId: number) {
+    // Validate current tab before navigating
+    if (!this.validateTab(this.activeTab)) {
+      this.invalidTabs.add(this.activeTab);
+      this.showError(this.getTabValidationErrorMessage(this.activeTab));
+      return;
+    }
+    
+    // Clear invalid state for current tab if valid
+    this.invalidTabs.delete(this.activeTab);
+    this.validatedTabs.add(this.activeTab);
+
+    if (tabId === 2) {
+      this.reloadFeatureCatalog();
+    }
+    if (tabId === 4) {
+      this.reloadExtraDetailsCatalog();
+    }
+    
+    // Navigate to new tab
+    this.activeTab = tabId;
+  }
+
+  private navigateToFinishTab() {
+    this.skipNextTabValidation = true;
+    this.activeTab = 6;
+  }
+
+  validateTab(tabId: number): boolean {
+    switch (tabId) {
+      case 1: // Main Info
+        return this.validateMainInfoTab();
+      case 2: // Car Features
+        return this.validateFeatureTab();
+      case 3: // Car Colors
+        return this.validateCarColorsTab();
+      case 4: // Extra Details
+        return this.validateExtraDetailsTab();
+      case 5: // Images
+        return this.validateImagesTab();
+      default:
+        return true;
+    }
+  }
+
+  validateMainInfoTab(): boolean {
+    if (!this.carForm) return false;
+    this.markMainInfoControlsTouched();
+    return this.mainInfoFields.every((field) => this.carForm.get(field)?.valid);
+  }
+
+  validateFeatureTab(): boolean {
+    this.featureTabSubmitted = true;
+    return this.carCarFeatures.length > 0;
+  }
+
+  validateCarColorsTab(): boolean {
+    this.colorTabSubmitted = true;
+    if (!this.pendingCarColors.length) return false;
+    return this.pendingCarColors.every(item =>
+      this.isPendingCarColorStockValid(item) &&
+      this.isPendingCarColorPricingValid(item) &&
+      this.isPendingCarColorImageValid(item)
+    );
+  }
+
+  validateExtraDetailsTab(): boolean {
+    this.detailsTabSubmitted = true;
+    return this.pendingExtraDetails.length > 0;
+  }
+
+  validateImagesTab(): boolean {
+    this.imageTabSubmitted = true;
+    return this.isEditMode ? this.carImages.length > 0 : this.pendingGalleryImages.length > 0;
+  }
+
+  isTabInvalid(tabId: number): boolean {
+    return this.invalidTabs.has(tabId);
+  }
+
+  isTabValidated(tabId: number): boolean {
+    return this.validatedTabs.has(tabId);
+  }
+
+  isTabNavigationDisabled(tabId: number): boolean {
+    if (!this.carForm) return false;
+    if (tabId === this.activeTab) return false;
+    return this.activeTab === 1 && this.mainInfoFields.some((field) => this.carForm.get(field)?.invalid);
+  }
+
+  shouldShowFeatureSelectionError(): boolean {
+    return this.carCarFeatures.length === 0 && (this.featureTabSubmitted || this.invalidTabs.has(2));
+  }
+
+  shouldShowColorSelectionError(): boolean {
+    return this.pendingCarColors.length === 0 && (this.colorTabSubmitted || this.invalidTabs.has(3));
+  }
+
+  shouldShowExtraDetailsSelectionError(): boolean {
+    return this.pendingExtraDetails.length === 0 && (this.detailsTabSubmitted || this.invalidTabs.has(4));
+  }
+
+  shouldShowImageSelectionError(): boolean {
+    const hasImages = this.isEditMode ? this.carImages.length > 0 : this.pendingGalleryImages.length > 0;
+    return !hasImages && (this.imageTabSubmitted || this.invalidTabs.has(5));
+  }
+
+  private syncFeatureTabValidationState() {
+    if (this.carCarFeatures.length > 0) {
+      this.invalidTabs.delete(2);
+    }
+  }
+
+  private syncColorTabValidationState() {
+    if (this.pendingCarColors.length > 0) {
+      this.invalidTabs.delete(3);
+    }
+  }
+
+  private syncDetailsTabValidationState() {
+    if (this.pendingExtraDetails.length > 0) {
+      this.invalidTabs.delete(4);
+    }
+  }
+
+  private syncImageTabValidationState() {
+    const hasImages = this.isEditMode ? this.carImages.length > 0 : this.pendingGalleryImages.length > 0;
+    if (hasImages) {
+      this.invalidTabs.delete(5);
+    }
+  }
+
+  private getTabValidationErrorMessage(tabId: number): string {
+    if (tabId === 2) {
+      return 'Please select at least one feature before proceeding to the next tab.';
+    }
+    if (tabId === 3) {
+      return 'Please select at least one color before proceeding to the next tab.';
+    }
+    if (tabId === 4) {
+      return 'Please add at least one extra detail before proceeding to the next tab.';
+    }
+    if (tabId === 5) {
+      return 'Please add at least one gallery image before saving.';
+    }
+    return 'Please fill all required fields before proceeding';
+  }
+
+  isControlInvalid(controlName: string): boolean {
+    if (!this.carForm) return false;
+    const control = this.carForm.get(controlName);
+    return !!control && control.invalid && (control.touched || control.dirty || this.submitted);
+  }
+
+  getControlError(controlName: string): string {
+    if (!this.carForm) return '';
+    const control = this.carForm.get(controlName);
+    if (!control?.errors) return '';
+
+    if (control.errors['required']) {
+      switch (controlName) {
+        case 'modelId':
+          return 'Model is required.';
+        case 'nameEn':
+          return 'Name (English) is required.';
+        case 'nameAr':
+          return 'Name (Arabic) is required.';
+        case 'brandFilterId':
+          return 'Brand is required.';
+        case 'typeId':
+          return 'Type is required.';
+        case 'year':
+          return 'Year is required.';
+        case 'branchId':
+          return 'Branch is required.';
+        case 'mileage':
+          return 'Mileage is required.';
+        case 'descriptionEn':
+          return 'Description (English) is required.';
+        case 'descriptionAr':
+          return 'Description (Arabic) is required.';
+      }
+    }
+
+    if (controlName === 'year') {
+      if (control.errors['min']) return 'Year must be 1900 or later.';
+      if (control.errors['max']) return 'Year must be 2100 or earlier.';
+    }
+
+    if (controlName === 'mileage' && control.errors['min']) {
+      return 'Mileage must be 0 or greater.';
+    }
+
+    return 'Invalid value.';
+  }
+
+  private markMainInfoControlsTouched() {
+    if (!this.carForm) return;
+    this.mainInfoFields.forEach((field) => this.carForm.get(field)?.markAsTouched());
+    this.carForm.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private showError(error: any) {
+    const message = getErrorMessage(error);
+    this.toastService.show(message, {
+      classname: 'bg-danger text-white',
+      delay: 3000
+    });
+  }
+}

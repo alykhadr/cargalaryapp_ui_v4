@@ -1575,6 +1575,32 @@ export const MENU: MenuItem[] = [
         link: '/admin/car-types',
         parentId: 180,
         permission: 'types.view'
+      },
+      {
+        id: 198,
+        label: 'MENUITEMS.ADMIN.LIST.CAR',
+        icon: 'ri-car-line',
+        parentId: 180,
+        permission: 'cars.view',
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1981,
+            label: 'Car List',
+            link: '/admin/cars/list',
+            parentId: 198,
+            icon: 'ri-list-check-2',
+            permission: 'cars.view'
+          },
+          {
+            id: 1982,
+            label: 'Create Car',
+            link: '/admin/cars/create',
+            parentId: 198,
+            icon: 'ri-add-circle-line',
+            permission: 'cars.create'
+          }
+        ]
       }
       
       ,

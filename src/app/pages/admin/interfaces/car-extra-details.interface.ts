@@ -6,6 +6,7 @@ export interface CarExtraDetails {
   descriptionAr?: string;
   createdBy?: string;
   isAvailable: boolean;
+  carExtraDetailsType?: number;
   carId: number;
 }
 
@@ -14,6 +15,7 @@ export interface CreateCarExtraDetailsRequest {
   nameEn: string;
   descriptionEn?: string;
   descriptionAr?: string;
+  carExtraDetailsType?: number;
   carId: number;
 }
 
@@ -22,6 +24,7 @@ export interface UpdateCarExtraDetailsRequest {
   nameEn: string;
   descriptionEn?: string;
   descriptionAr?: string;
+  carExtraDetailsType?: number;
   carId: number;
   isAvailable?: boolean;
 }

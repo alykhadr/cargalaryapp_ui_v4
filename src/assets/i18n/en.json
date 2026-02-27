@@ -311,7 +311,8 @@
           "SERVICE":"Services",
           "MODEL":"Car Models",
           "CAREXTRADETAILS":"Car Extra Details",
-          "CARTYPE":"Types"
+          "CARTYPE":"Types",
+          "CAR":"Cars"
       
       }
     }

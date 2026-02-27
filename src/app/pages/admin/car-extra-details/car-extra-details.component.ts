@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { CarExtraDetails } from '../interfaces/car-extra-details.interface';
-import { Car } from '../interfaces/gallery-image.interface';
+import { Car } from '../interfaces/car.interface';
 import { CarExtraDetailsService } from '../services/car-extra-details.service';
 import { CarService } from '../services/car.service';
 import { getErrorMessage } from '../shared/error-message.util';

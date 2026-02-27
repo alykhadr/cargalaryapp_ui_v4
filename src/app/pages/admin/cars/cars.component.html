@@ -1,0 +1,1864 @@
+<app-breadcrumbs [title]="pageTitle" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row">
+  <!-- Left Side - Car Details with Tabs (like checkout) -->
+  <div [ngClass]="isCreatePage ? 'col-12' : 'col-xl-8'" *ngIf="!isListPage">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <h5 class="card-title mb-0 flex-grow-1">{{ isEditMode ? 'Edit Car' : 'Create Car' }}</h5>
+          <div class="flex-shrink-0 d-flex gap-2">
+            <button type="button" class="btn btn-success btn-sm" (click)="openCreateModal()" *ngIf="isEditMode">
+              <i class="ri-add-line align-bottom me-1"></i> New Car
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body checkout-tab">
+        <!-- Tabs Navigation - Checkout Style -->
+        <div class="step-arrow-nav mx-n3 mb-3">
+          <ul ngbNav #nav="ngbNav" [(activeId)]="activeTab" (navChange)="onTabNavChange($event)" class="nav nav-pills custom-nav nav-justified" role="tablist">
+            <li [ngbNavItem]="1" class="nav-item" [class.ngb-tab-invalid]="isTabInvalid(1)" [disabled]="isTabNavigationDisabled(1)">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-information-line fs-16 p-2 bg-primary-subtle text-primary rounded-circle align-middle mx-2"></i>
+                Info
+              </a>
+              <ng-template ngbNavContent>
+                <form [formGroup]="carForm">
+                  <div class="row">
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Type <span class="text-danger">*</span></label>
+                      <ng-select
+                        [items]="carTypes"
+                        bindLabel="nameEn"
+                        bindValue="id"
+                        formControlName="typeId"
+                        placeholder="Select Type"
+                        [searchable]="true"
+                        [searchFn]="typeSearchFn"
+                        [clearable]="true"
+                        [ngClass]="{ 'is-invalid': isControlInvalid('typeId') }">
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="d-flex align-items-center gap-2">
+                            <span class="fw-medium">{{ item.nameEn }}</span>
+                            <small class="text-muted">({{ item.nameAr }})</small>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('typeId')">
+                        {{ getControlError('typeId') }}
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Branch <span class="text-danger">*</span></label>
+                      <ng-select
+                        [items]="branches"
+                        bindLabel="branchNameEn"
+                        bindValue="id"
+                        formControlName="branchId"
+                        placeholder="Select Branch"
+                        [searchable]="true"
+                        [searchFn]="branchSearchFn"
+                        [clearable]="true"
+                        [ngClass]="{ 'is-invalid': isControlInvalid('branchId') }">
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="d-flex align-items-center justify-content-between gap-2">
+                            <span class="fw-medium">{{ item.branchNameEn }}</span>
+                            <small class="text-muted">{{ item.branchNameAr }}</small>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('branchId')">
+                        {{ getControlError('branchId') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Brand <span class="text-danger">*</span></label>
+                      <ng-select
+                        [items]="brands"
+                        bindLabel="nameEn"
+                        bindValue="id"
+                        formControlName="brandFilterId"
+                        placeholder="Select Brand"
+                        [searchable]="true"
+                        [searchFn]="brandSearchFn"
+                        [clearable]="true"
+                        (change)="onFormBrandChange($event)"
+                        [ngClass]="{ 'is-invalid': isControlInvalid('brandFilterId') }">
+                        <ng-template ng-label-tmp let-item="item">
+                          <div class="d-flex align-items-center gap-2 py-1">
+                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
+                            <span class="fw-medium">{{ item.nameEn }}</span>
+                          </div>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="d-flex align-items-center gap-2 py-1">
+                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
+                            <div class="d-flex flex-column">
+                              <span class="fw-medium">{{ item.nameEn }}</span>
+                              <small class="text-muted">{{ item.nameAr }}</small>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('brandFilterId')">
+                        {{ getControlError('brandFilterId') }}
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Model <span class="text-danger">*</span></label>
+                      <ng-select
+                        [items]="formCarModels"
+                        bindLabel="nameEn"
+                        bindValue="id"
+                        formControlName="modelId"
+                        placeholder="Select Model"
+                        [searchable]="true"
+                        [searchFn]="modelSearchFn"
+                        [clearable]="true"
+                        [disabled]="!carForm.get('brandFilterId')?.value"
+                        (change)="onFormModelChange($event)"
+                        [ngClass]="{ 'is-invalid': isControlInvalid('modelId') }">
+                        <ng-template ng-label-tmp let-item="item">
+                          <div class="d-flex align-items-center gap-2 py-1">
+                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
+                            <span class="fw-medium">{{ item.nameEn }}</span>
+                          </div>
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="d-flex align-items-center gap-2 py-1">
+                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
+                            <div class="d-flex flex-column">
+                              <span class="fw-medium">{{ item.nameEn }}</span>
+                              <small class="text-muted">{{ item.nameAr }}</small>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('modelId')">
+                        {{ getControlError('modelId') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+                      <input class="form-control" [class.is-invalid]="isControlInvalid('nameEn')" type="text" formControlName="nameEn" placeholder="Enter English name">
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('nameEn')">
+                        {{ getControlError('nameEn') }}
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                      <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+                      <input class="form-control" [class.is-invalid]="isControlInvalid('nameAr')" type="text" dir="rtl" formControlName="nameAr" placeholder="أدخل الاسم بالعربية">
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('nameAr')">
+                        {{ getControlError('nameAr') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Year <span class="text-danger">*</span></label>
+                      <input class="form-control" [class.is-invalid]="isControlInvalid('year')" type="number" formControlName="year" placeholder="Enter year">
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('year')">
+                        {{ getControlError('year') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                      <div class="border rounded p-3 h-100 bg-warning-subtle border-warning-subtle">
+                        <div class="d-flex align-items-start gap-2">
+                          <i class="ri-alert-line text-warning fs-18 mt-1"></i>
+                          <div>
+                            <div class="text-warning-emphasis small">Pricing moved to Car Colors tab</div>
+                            <div class="fw-medium text-warning-emphasis">Use color-specific pricing in the next steps.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Mileage <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('mileage')" type="number" formControlName="mileage" placeholder="Enter mileage">
+                        <span class="input-group-text">km</span>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('mileage')">
+                        {{ getControlError('mileage') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
+                        <label class="form-check-label" for="isAvailable">
+                          Available for Sale
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Description (English) <span class="text-danger">*</span></label>
+                      <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionEn')" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('descriptionEn')">
+                        {{ getControlError('descriptionEn') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Description (Arabic) <span class="text-danger">*</span></label>
+                      <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionAr')" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('descriptionAr')">
+                        {{ getControlError('descriptionAr') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card border bg-light-subtle mb-3" *ngIf="isEditMode && selectedCar">
+                    <div class="card-body py-2">
+                      <div class="row g-2 align-items-center">
+                        <div class="col-md-6">
+                          <small class="text-muted d-block">Created By</small>
+                          <span class="fw-medium">{{ selectedCar.createdBy || 'System' }}</span>
+                        </div>
+                        <div class="col-md-6">
+                          <small class="text-muted d-block">Car Status</small>
+                          <span class="badge" [ngClass]="form['isAvailable'].value ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                            {{ form['isAvailable'].value ? 'Available' : 'Inactive' }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 mt-3">
+                    <ng-container *ngIf="!isEditMode">
+                      <button type="button" class="btn btn-info btn-label" *appHasPermission="'cars.create'" (click)="fillInfoTabTestMode()">
+                        <i class="ri-flask-line label-icon align-middle fs-16 me-2"></i>
+                        Test Info
+                      </button>
+                    </ng-container>
+                    <button type="button" class="btn btn-light btn-label right ms-auto" (click)="goToTab(2)">
+                      <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                      Next
+                    </button>
+                  </div>
+                </form>
+              </ng-template>
+            </li>
+
+            <li [ngbNavItem]="2" class="nav-item" [class.ngb-tab-invalid]="isTabInvalid(2)" [disabled]="isTabNavigationDisabled(2)">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-star-line fs-16 p-2 bg-primary-subtle text-primary rounded-circle align-middle mx-2"></i>
+                Feature
+              </a>
+              <ng-template ngbNavContent>
+		                <div class="mb-4">
+		                  <div class="alert alert-info">
+	                    <i class="ri-information-line me-1"></i> 
+	                    Car features management. Assign features like sunroof, navigation, leather seats, etc.
+	                  </div>
+
+	                  <div class="card border mb-3">
+	                    <div class="card-body">
+	                      <div class="row g-2">
+	                        <div class="col-md-4">
+	                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+	                            <span class="text-muted">All Features :</span>
+	                            <span class="fw-semibold">{{ carFeatures.length }}</span>
+	                          </div>
+	                        </div>
+	                        <div class="col-md-4">
+	                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+	                            <span class="text-muted">Assigned To Car :</span>
+	                            <span class="fw-semibold">{{ carCarFeatures.length }}</span>
+	                          </div>
+	                        </div>
+	                        <div class="col-md-4">
+	                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+	                            <span class="text-muted">Available To Assign :</span>
+	                            <span class="fw-semibold">{{ availableFeatures.length }}</span>
+	                          </div>
+	                        </div>
+	                      </div>
+	                    </div>
+	                  </div>
+
+		                  <div class="alert alert-primary mb-3" *ngIf="!isEditMode">
+                        <i class="ri-information-line me-1"></i>
+                        Added features are kept in a local list and will be saved when you click the main Create Car button.
+                      </div>
+		                  
+		                  <div>
+		                    <div class="card border mb-3">
+		                      <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                                  <div class="d-flex align-items-center gap-2">
+			                            <i class="ri-star-smile-line text-primary fs-18"></i>
+			                            <h6 class="card-title mb-0">All Features</h6>
+                                  </div>
+                                  <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                                      {{ carFeatures.length }}
+                                    </span>
+                                    <button type="button" class="btn btn-sm btn-soft-success" (click)="selectAllFeaturesForCar()">
+                                      <i class="ri-checkbox-multiple-line me-1"></i> Select All
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-soft-danger" (click)="clearAllFeaturesForCar()">
+                                      <i class="ri-close-circle-line me-1"></i> Clear All
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-soft-primary" (click)="reloadFeatureCatalog()">
+                                      <i class="ri-refresh-line me-1"></i> Reload Features
+                                    </button>
+                                  </div>
+                                </div>
+                              <div *ngIf="carFeatures.length === 0" class="text-center py-3">
+                                <i class="ri-star-line" style="font-size: 28px; color: #ccc;"></i>
+                                <p class="text-muted mt-2 mb-0">No features found</p>
+                              </div>
+
+                              <div *ngIf="carFeatures.length > 0" class="table-responsive">
+                                <table class="table table-sm table-hover align-middle mb-0">
+                                  <thead class="table-light">
+                                    <tr>
+                                      <th>Name (EN)</th>
+                                      <th class="text-center">Name (AR)</th>
+                                      <th class="text-center">Status</th>
+                                      <th class="text-center text-info">Select for Car</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor="let feature of pagedCarFeatures">
+                                      <td>
+                                        <div class="d-flex align-items-center">
+                                          <i class="ri-star-line text-warning me-2"></i>
+                                          <span>{{ feature.nameEn || '-' }}</span>
+                                        </div>
+                                      </td>
+                                      <td dir="rtl">
+                                        <div class="d-flex align-items-center">
+                                          <i class="ri-star-line text-warning me-2"></i>
+                                          <span>{{ feature.nameAr || '-' }}</span>
+                                        </div>
+                                      </td>
+                                      <td class="text-center">
+                                        <span class="badge" [ngClass]="feature.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                          {{ feature.isAvailable ? 'Active' : 'Inactive' }}
+                                        </span>
+                                      </td>
+                                      <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                          <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            [checked]="isFeatureAssigned(feature.id)"
+                                            [disabled]="isAssigningFeature"
+                                            (change)="onFeatureAssignedToggle(feature.id, $any($event.target).checked)">
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div *ngIf="carFeatures.length > 0" class="d-flex justify-content-end mt-3">
+                                <ngb-pagination
+                                  [collectionSize]="carFeatures.length"
+                                  [(page)]="featurePagination.page"
+                                  [pageSize]="featurePagination.pageSize"
+                                  [size]="'sm'"
+                                  (pageChange)="onFeaturePageChange($event)">
+                                </ngb-pagination>
+                              </div>
+	                      </div>
+	                    </div>
+
+	                    <div class="card border mb-3">
+                        <div class="card-body">
+                          <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                            <div class="d-flex align-items-center gap-2">
+                              <i class="ri-list-check-3 text-primary fs-18"></i>
+                              <h6 class="card-title mb-0">{{ isEditMode ? 'Assigned' : 'Pending' }} CarFeature Details</h6>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                              {{ carCarFeatures.length }}
+                            </span>
+                          </div>
+
+                          <div *ngIf="carCarFeatures.length === 0" class="text-center py-4">
+                            <i class="ri-star-line" style="font-size: 32px; color: #ccc;"></i>
+                            <p class="text-muted mt-2 mb-0">No features assigned yet</p>
+                          </div>
+
+                          <div *ngIf="carCarFeatures.length > 0" class="table-responsive">
+			                        <table class="table table-sm table-hover align-middle mb-0">
+			                          <thead class="table-light">
+			                            <tr>
+				                              <th>Name (EN)</th>
+				                              <th class="text-center">Name (AR)</th>
+				                              <th class="text-center">Status</th>
+				                              <th class="text-center text-info">Assigned to Car</th>
+			                              <th class="text-end">Action</th>
+			                            </tr>
+			                          </thead>
+			                          <tbody>
+			                            <tr *ngFor="let cf of pagedCarCarFeatures; trackBy: trackByFeatureId">
+				                              <td>
+			                                <div class="d-flex align-items-center">
+			                                  <i class="ri-star-line text-warning me-2"></i>
+			                                  <span>{{ getFeatureById(cf.featureId)?.nameEn || '-' }}</span>
+			                                </div>
+			                              </td>
+                                    <td dir="rtl">
+                                      <div class="d-flex align-items-center">
+                                        <i class="ri-star-line text-warning me-2"></i>
+                                        <span>{{ getFeatureById(cf.featureId)?.nameAr || '-' }}</span>
+                                      </div>
+                                    </td>
+		                                <td class="text-center">
+                                  <span class="badge" [ngClass]="(getFeatureById(cf.featureId)?.isAvailable ?? false) ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                    {{ (getFeatureById(cf.featureId)?.isAvailable ?? false) ? 'Active' : 'Inactive' }}
+                                  </span>
+                                </td>
+		                              <td class="text-center">
+		                                <div class="form-check d-inline-block">
+		                                  <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+		                                    [checked]="cf.isAvailable"
+		                                    (change)="toggleFeatureAvailability(cf.featureId, !cf.isAvailable)">
+		                                </div>
+		                              </td>
+		                              <td class="text-end">
+                                <button class="btn btn-sm btn-soft-danger" (click)="removeFeatureFromCar(cf.featureId)">
+                                  <i class="ri-delete-bin-line"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                          <div *ngIf="carCarFeatures.length > 0" class="d-flex justify-content-end mt-3">
+                            <ngb-pagination
+                              [collectionSize]="carCarFeatures.length"
+                              [(page)]="pendingFeaturePagination.page"
+                              [pageSize]="pendingFeaturePagination.pageSize"
+                              [size]="'sm'"
+                              (pageChange)="onPendingFeaturePageChange($event)">
+                            </ngb-pagination>
+                          </div>
+                        </div>
+                      </div>
+	                  </div>
+
+                  <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowFeatureSelectionError()">
+                    Please select at least one feature before proceeding to the next tab.
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 mt-4">
+                    <button type="button" class="btn btn-light btn-label" (click)="goToTab(1)">
+                      <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
+                      Previous
+                    </button>
+                    <ng-container *ngIf="!isEditMode">
+                      <button type="button" class="btn btn-info btn-label" *appHasPermission="'cars.create'" (click)="fillFeatureTabTestMode()">
+                        <i class="ri-flask-line label-icon align-middle fs-16 me-2"></i>
+                        Test Feature
+                      </button>
+                    </ng-container>
+                    <button type="button" class="btn btn-light btn-label right ms-auto" (click)="goToTab(3)">
+                      <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li [ngbNavItem]="3" class="nav-item" [class.ngb-tab-invalid]="isTabInvalid(3)" [disabled]="isTabNavigationDisabled(3)">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-palette-line fs-16 p-2 bg-primary-subtle text-primary rounded-circle align-middle mx-2"></i>
+                Color
+              </a>
+              <ng-template ngbNavContent>
+                <div class="mb-4">
+                  <div class="alert alert-info">
+                    <i class="ri-information-line me-1"></i> 
+                    Car colors management. Select colors and add CarColor details (stock, image URL, pricing, availability).
+                  </div>
+
+                  <div class="card border mb-3">
+                    <div class="card-body">
+                      <div class="row g-2">
+                        <div class="col-md-4">
+                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+                            <span class="text-muted">All Colors :</span>
+                            <span class="fw-semibold">{{ colors.length }}</span>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+                            <span class="text-muted">{{ isEditMode ? 'Assigned To Car' : 'Pending For Car' }} :</span>
+                            <span class="fw-semibold">{{ pendingCarColors.length }}</span>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
+                            <span class="text-muted">Available To Assign :</span>
+                            <span class="fw-semibold">{{ (colors.length - pendingCarColors.length) < 0 ? 0 : (colors.length - pendingCarColors.length) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-primary mb-3" *ngIf="!isEditMode">
+                    <i class="ri-information-line me-1"></i>
+                    Added colors are kept in a local list and will be saved when you click the main Create Car button.
+                  </div>
+
+                  <div class="card border mb-3">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-palette-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">All Colors</h6>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ colors.length }}</span>
+                          <button type="button" class="btn btn-sm btn-soft-success" (click)="selectAllColorsForCar()">
+                            <i class="ri-checkbox-multiple-line me-1"></i> Select All
+                          </button>
+                          <button type="button" class="btn btn-sm btn-soft-danger" (click)="clearAllColorsForCar()">
+                            <i class="ri-close-circle-line me-1"></i> Clear All
+                          </button>
+                          <button type="button" class="btn btn-sm btn-soft-primary" (click)="reloadColors()">
+                            <i class="ri-refresh-line me-1"></i> Reload Colors
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="colors.length === 0" class="text-center py-3">
+                        <i class="ri-palette-line" style="font-size: 28px; color: #ccc;"></i>
+                        <p class="text-muted mt-2 mb-0">No colors found</p>
+                      </div>
+
+                      <div *ngIf="colors.length > 0" class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Name (EN)</th>
+                              <th class="text-center">Name (AR)</th>
+                              <th class="text-center">Color Code</th>
+                              <th class="text-center">Status</th>
+                              <th class="text-center text-info">Select for Car</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let color of pagedColors">
+                              <td>
+                                <div class="d-flex align-items-center">
+                                  <i class="ri-palette-line text-warning me-2"></i>
+                                  <span>{{ color.colorNameEn || '-' }}</span>
+                                </div>
+                              </td>
+                              <td dir="rtl">
+                                <div class="d-flex align-items-center">
+                                  <i class="ri-palette-line text-warning me-2"></i>
+                                  <span>{{ color.colorNameAr || '-' }}</span>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <span class="d-inline-flex align-items-center gap-2">
+                                  <span class="rounded-circle border" [style.background]="color.colorCode" style="width:14px;height:14px;display:inline-block;"></span>
+                                  <code>{{ color.colorCode || '-' }}</code>
+                                </span>
+                              </td>
+                              <td class="text-center">
+                                <span class="badge" [ngClass]="color.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                  {{ color.isAvailable ? 'Active' : 'Inactive' }}
+                                </span>
+                              </td>
+                              <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [checked]="isColorAssigned(color.id)"
+                                    (change)="onColorAssignedToggle(color, $any($event.target).checked)">
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div *ngIf="colors.length > 0" class="d-flex justify-content-end mt-3">
+                        <ngb-pagination
+                          [collectionSize]="colors.length"
+                          [(page)]="colorPagination.page"
+                          [pageSize]="colorPagination.pageSize"
+                          [size]="'sm'"
+                          (pageChange)="onColorPageChange($event)">
+                        </ngb-pagination>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card border mb-3">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-list-check-3 text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">{{ isEditMode ? 'Assigned' : 'Pending' }} CarColor Details</h6>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ pendingCarColors.length }}</span>
+                      </div>
+
+                      <div *ngIf="pendingCarColors.length === 0" class="text-center py-4">
+                        <i class="ri-palette-line" style="font-size: 32px; color: #ccc;"></i>
+                        <p class="text-muted mt-2 mb-0">No colors selected yet</p>
+                      </div>
+
+                      <div *ngIf="pendingCarColors.length > 0" class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th class="text-center">Color Code</th>
+                              <th class="text-center">Stock Qty</th>
+                              <th class="text-center">Pricing</th>
+                              <th>Color Image Upload</th>
+                              <th class="text-center">Available</th>
+                              <th class="text-end">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let cc of pagedPendingCarColors">
+                              <td class="text-center">
+                                <span class="d-inline-flex align-items-center gap-2">
+                                  <span class="rounded-circle border" [style.background]="getColorById(cc.colorId)?.colorCode" style="width:14px;height:14px;display:inline-block;"></span>
+                                  <code class="fw-bold">{{ getColorById(cc.colorId)?.colorCode || '-' }}</code>
+                                </span>
+                              </td>
+                              <td class="text-center" style="min-width: 110px;">
+                                <input type="number" class="form-control form-control-sm"
+                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'stockQuantity')"
+                                  [(ngModel)]="cc.stockQuantity" [ngModelOptions]="{ standalone: true }" min="0">
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'stockQuantity')">
+                                  Stock Qty is required.
+                                </div>
+                              </td>
+                              <td class="text-center" style="min-width: 130px;">
+                                <input type="number" class="form-control form-control-sm"
+                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')"
+                                  [(ngModel)]="cc.pricingPerColor" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')">
+                                  Pricing is required.
+                                </div>
+                              </td>
+                              <td style="min-width: 240px;">
+                                <input type="file" class="form-control form-control-sm"
+                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'colorImage')"
+                                  accept="image/*"
+                                  (change)="onPendingCarColorImageSelected(cc, $event)">
+                                <div class="d-flex align-items-center gap-2 mt-1" *ngIf="cc.colorImageFile">
+                                  <small class="text-success mb-0">{{ cc.colorImageFile.name }}</small>
+                                  <button
+                                    type="button"
+                                    class="btn btn-sm btn-soft-info py-0 px-2"
+                                    (click)="previewPendingCarColorImage(cc.colorImageFile)">
+                                    Preview
+                                  </button>
+                                </div>
+                                <div class="invalid-feedback d-block" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorImage')">
+                                  Color image is required.
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                  <input class="form-check-input" type="checkbox"
+                                    [(ngModel)]="cc.isAvailable" [ngModelOptions]="{ standalone: true }">
+                                </div>
+                              </td>
+                              <td class="text-end">
+                                <button class="btn btn-sm btn-soft-danger" (click)="onColorAssignedToggle(getColorById(cc.colorId)!, false)">
+                                  <i class="ri-delete-bin-line"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div *ngIf="pendingCarColors.length > 0" class="d-flex justify-content-end mt-3">
+                        <ngb-pagination
+                          [collectionSize]="pendingCarColors.length"
+                          [(page)]="pendingColorPagination.page"
+                          [pageSize]="pendingColorPagination.pageSize"
+                          [size]="'sm'"
+                          (pageChange)="onPendingColorPageChange($event)">
+                        </ngb-pagination>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowColorSelectionError()">
+                    Please select at least one color before proceeding to the next tab.
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 mt-4">
+                    <button type="button" class="btn btn-light btn-label" (click)="goToTab(2)">
+                      <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
+                      Previous
+                    </button>
+                    <ng-container *ngIf="!isEditMode">
+                      <button type="button" class="btn btn-info btn-label" *appHasPermission="'cars.create'" (click)="fillColorTabTestMode()">
+                        <i class="ri-flask-line label-icon align-middle fs-16 me-2"></i>
+                        Test Color
+                      </button>
+                    </ng-container>
+                    <button type="button" class="btn btn-light btn-label right ms-auto" (click)="goToTab(4)">
+                      <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li [ngbNavItem]="4" class="nav-item" [class.ngb-tab-invalid]="isTabInvalid(4)" [disabled]="isTabNavigationDisabled(4)">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-list-check-2 fs-16 p-2 bg-primary-subtle text-primary rounded-circle align-middle mx-2"></i>
+                Details
+              </a>
+              <ng-template ngbNavContent>
+                <div class="mb-4">
+                  <div class="alert alert-info">
+                    <i class="ri-information-line me-1"></i> 
+                    Add Car Extra Details rows (name, description, type, availability) and save them with the car.
+                  </div>
+
+                  <div class="card border mb-3">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-bar-chart-box-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">Extra Details Statistics</h6>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="openExtraDetailsStatsModal()">
+                          <i class="ri-eye-line me-1"></i> Open Statistics
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-primary mb-3" *ngIf="!isEditMode">
+                    <i class="ri-information-line me-1"></i>
+                    Added extra details are kept in a local list and will be saved when you click the main Create Car button.
+                  </div>
+
+                  <div class="card border mb-3" [class.border-danger]="shouldShowExtraDetailsSelectionError()">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 p-2 rounded bg-light-subtle border"
+                        [class.border-danger]="shouldShowExtraDetailsSelectionError()">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-add-box-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">Add Car Extra Details</h6>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-soft-success" (click)="openExtraDetailsAddModal()">
+                          <i class="ri-add-line me-1"></i> Open Add Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowExtraDetailsSelectionError()">
+                    Please add at least one extra detail before proceeding to the next tab.
+                  </div>
+
+                  <div class="card border mb-3">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-list-check-2 text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">{{ isEditMode ? 'Assigned Car Extra Details' : 'Pending Car Extra Details' }}</h6>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ pendingExtraDetails.length }}</span>
+                          <button type="button" class="btn btn-sm btn-soft-warning" (click)="clearSelectedPendingExtraDetails()"
+                            [disabled]="selectedPendingExtraDetailIds.size === 0">
+                            <i class="ri-checkbox-indeterminate-line me-1"></i> Clear Selection
+                          </button>
+                          <button type="button" class="btn btn-sm btn-soft-danger" (click)="clearAllExtraDetails()" [disabled]="pendingExtraDetails.length === 0">
+                            <i class="ri-close-circle-line me-1"></i> Clear All
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="pendingExtraDetails.length === 0" class="text-center py-4">
+                        <i class="ri-list-check-2" style="font-size: 32px; color: #ccc;"></i>
+                        <p class="text-muted mt-2 mb-0">No extra details added yet</p>
+                      </div>
+
+                      <div *ngIf="pendingExtraDetails.length > 0" class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th style="width: 36px;" class="text-center">
+                                <input class="form-check-input" type="checkbox"
+                                  [checked]="isAllPendingExtraDetailsSelected()"
+                                  (change)="toggleSelectAllPendingExtraDetails($any($event.target).checked)">
+                              </th>
+                              <th>Type</th>
+                              <th>Name (EN)</th>
+                              <th class="text-center">Name (AR)</th>
+                              <th class="text-center">Available</th>
+                              <th class="text-end">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let d of pagedPendingExtraDetails; let i = index">
+                              <td class="text-center">
+                                <input class="form-check-input" type="checkbox"
+                                  [checked]="selectedPendingExtraDetailIds.has(d.pendingId)"
+                                  (change)="togglePendingExtraDetailSelection(d.pendingId, $any($event.target).checked)">
+                              </td>
+                              <td>{{ getExtraDetailTypeName(d.carExtraDetailsType) }}</td>
+                              <td>{{ d.nameEn || '-' }}</td>
+                              <td dir="rtl">{{ d.nameAr || '-' }}</td>
+                              <td class="text-center">
+                                <div class="form-check d-inline-block">
+                                  <input class="form-check-input" type="checkbox"
+                                    [(ngModel)]="d.isAvailable" [ngModelOptions]="{ standalone: true }">
+                                </div>
+                              </td>
+                              <td class="text-end">
+                                <button class="btn btn-sm btn-soft-primary me-1" (click)="editPendingExtraDetail(i)">
+                                  <i class="ri-pencil-line"></i>
+                                </button>
+                                <button class="btn btn-sm btn-soft-danger" (click)="removePendingExtraDetail(i)">
+                                  <i class="ri-delete-bin-line"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div *ngIf="pendingExtraDetails.length > 0" class="d-flex justify-content-end mt-3">
+                        <ngb-pagination
+                          [collectionSize]="pendingExtraDetails.length"
+                          [(page)]="extraDetailsPagination.page"
+                          [pageSize]="extraDetailsPagination.pageSize"
+                          [size]="'sm'"
+                          (pageChange)="onPendingExtraDetailsPageChange($event)">
+                        </ngb-pagination>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 mt-4">
+                    <button type="button" class="btn btn-light btn-label" (click)="goToTab(3)">
+                      <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
+                      Previous
+                    </button>
+                    <ng-container *ngIf="!isEditMode">
+                      <button type="button" class="btn btn-info btn-label" *appHasPermission="'cars.create'" (click)="fillDetailsTabTestMode()">
+                        <i class="ri-flask-line label-icon align-middle fs-16 me-2"></i>
+                        Test Details
+                      </button>
+                    </ng-container>
+                    <button type="button" class="btn btn-light btn-label right ms-auto" (click)="goToTab(5)">
+                      <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li [ngbNavItem]="5" class="nav-item" [class.ngb-tab-invalid]="isTabInvalid(5)" [disabled]="isTabNavigationDisabled(5)">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-image-2-line fs-16 p-2 bg-primary-subtle text-primary rounded-circle align-middle mx-2"></i>
+                Images
+              </a>
+              <ng-template ngbNavContent>
+                <div class="mb-4">
+                  <div class="alert alert-info">
+                    <i class="ri-information-line me-1"></i>
+                    Manage car gallery images. In create mode, images are staged locally and saved with the main Create Car button.
+                  </div>
+
+                  <div class="card border mb-3" [class.border-danger]="shouldShowImageSelectionError()">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border"
+                        [class.border-danger]="shouldShowImageSelectionError()">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-image-add-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">{{ editingPendingGalleryImageId !== null ? 'Edit Car Gallery Image' : 'Add Car Gallery Image' }}</h6>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                          {{ isEditMode ? carImages.length : pendingGalleryImages.length }}
+                        </span>
+                      </div>
+
+                      <div class="row g-2">
+                        <div class="col-md-8">
+                          <label class="form-label">Image File <span class="text-danger">*</span></label>
+                          <input class="form-control" type="file" accept="image/*"
+                            [class.is-invalid]="isImageFileInputInvalid()"
+                            (change)="onImageSelected($event)">
+                          <div class="d-flex align-items-center gap-2 mt-1" *ngIf="selectedImageFile">
+                            <small class="text-success mb-0">{{ selectedImageFile.name }}</small>
+                            <button type="button" class="btn btn-sm btn-soft-primary py-0 px-2"
+                              *ngIf="imagePreviewUrl"
+                              (click)="openSelectedGalleryImagePreview()">
+                              <i class="ri-eye-line me-1"></i>
+                              Preview
+                            </button>
+                          </div>
+                          <small class="d-block mt-1"
+                            [ngClass]="isImageFileInputInvalid() ? 'text-danger' : 'invisible'">
+                            {{ getImageFileInputErrorMessage() }}
+                          </small>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label d-block invisible mb-1">Spacer</label>
+                          <div class="border rounded px-3 py-2">
+                            <div class="form-check form-switch mb-0">
+                              <input class="form-check-input" type="checkbox"
+                                [(ngModel)]="selectedImageIsPrimary"
+                                [ngModelOptions]="{ standalone: true }"
+                                id="selectedImageIsPrimary">
+                              <label class="form-check-label" for="selectedImageIsPrimary">
+                                Mark as primary image
+                              </label>
+                            </div>
+                          </div>
+                          <small class="d-block mt-1 invisible">spacer</small>
+                        </div>
+                      </div>
+
+                      <div class="row g-2 align-items-start mt-0">
+                        <div class="col-md-8">
+                          <label class="form-label">Image Type <span class="text-danger">*</span></label>
+                          <ng-select
+                            class="image-type-select"
+                            [items]="imageTypeOptions"
+                            bindLabel="name"
+                            bindValue="id"
+                            [(ngModel)]="selectedImageType"
+                            [ngModelOptions]="{ standalone: true }"
+                            placeholder="Select Type"
+                            [clearable]="true"
+                            [searchable]="true">
+                          </ng-select>
+                          <small class="d-block mt-1"
+                            [ngClass]="isImageTypeInputInvalid() ? 'text-danger' : 'invisible'">
+                            Image type is required.
+                          </small>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label d-block invisible mb-1">Spacer</label>
+                          <div class="d-grid">
+                            <button type="button" class="btn btn-soft-success"
+                              *ngIf="!isEditMode"
+                              (click)="addPendingGalleryImage()">
+                              <i [class]="editingPendingGalleryImageId !== null ? 'ri-save-line me-1' : 'ri-add-line me-1'"></i>
+                              {{ editingPendingGalleryImageId !== null ? 'Save Changes' : 'Add To List' }}
+                            </button>
+                            <button type="button" class="btn btn-soft-success"
+                              *ngIf="isEditMode"
+                              [disabled]="isUploadingImage"
+                              (click)="uploadImage()">
+                              <span *ngIf="isUploadingImage" class="spinner-border spinner-border-sm me-1"></span>
+                              <i *ngIf="!isUploadingImage" class="ri-upload-2-line me-1"></i>
+                              {{ isUploadingImage ? 'Uploading...' : 'Upload Image' }}
+                            </button>
+                            <button type="button" class="btn btn-light mt-2"
+                              *ngIf="!isEditMode && editingPendingGalleryImageId !== null"
+                              (click)="cancelPendingGalleryImageEdit()">
+                              Cancel Edit
+                            </button>
+                          </div>
+                          <small class="d-block mt-1 invisible">spacer</small>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowImageSelectionError()">
+                    Please add at least one gallery image before saving.
+                  </div>
+
+                  <div class="card border mb-3" *ngIf="!isEditMode">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-gallery-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">Pending Car Gallery Images</h6>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ pendingGalleryImages.length }}</span>
+                          <button type="button" class="btn btn-sm btn-soft-danger"
+                            [disabled]="selectedPendingGalleryImageIds.size === 0"
+                            (click)="deleteSelectedPendingGalleryImages()">
+                            <i class="ri-delete-bin-line me-1"></i> Delete Selected
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="pendingGalleryImages.length === 0" class="text-center py-4">
+                        <i class="ri-image-line" style="font-size: 32px; color: #ccc;"></i>
+                        <p class="text-muted mt-2 mb-0">No images added yet</p>
+                      </div>
+
+                      <div *ngIf="pendingGalleryImages.length > 0" class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th style="width: 36px;" class="text-center">
+                                <input class="form-check-input" type="checkbox"
+                                  [checked]="isAllPendingGalleryImagesSelected()"
+                                  (change)="toggleSelectAllPendingGalleryImages($any($event.target).checked)">
+                              </th>
+                              <th>Preview</th>
+                              <th>File Name</th>
+                              <th>Type</th>
+                              <th class="text-center">Primary</th>
+                              <th class="text-end">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let img of pagedPendingGalleryImages">
+                              <td class="text-center">
+                                <input class="form-check-input" type="checkbox"
+                                  [checked]="selectedPendingGalleryImageIds.has(img.pendingId)"
+                                  (change)="togglePendingGalleryImageSelection(img.pendingId, $any($event.target).checked)">
+                              </td>
+                              <td>
+                                <div class="position-relative d-inline-block"
+                                  (mouseenter)="hoveredPendingGalleryImageId = img.pendingId"
+                                  (mouseleave)="hoveredPendingGalleryImageId = null">
+                                  <img
+                                    [src]="img.previewUrl"
+                                    alt=""
+                                    class="rounded border"
+                                    style="width: 56px; height: 42px; object-fit: cover;">
+                                  <button
+                                    *ngIf="hoveredPendingGalleryImageId === img.pendingId"
+                                    type="button"
+                                    class="btn btn-sm btn-dark position-absolute top-50 start-50 translate-middle py-0 px-1"
+                                    (click)="previewPendingGalleryGridImage(img.file)">
+                                    <i class="ri-eye-line"></i>
+                                  </button>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="fw-medium">{{ img.file.name }}</div>
+                                <small class="text-muted">{{ (img.file.size / 1024) | number:'1.0-0' }} KB</small>
+                              </td>
+                              <td style="min-width: 180px;">
+                                <ng-select
+                                  class="image-type-select"
+                                  [items]="imageTypeOptions"
+                                  bindLabel="name"
+                                  bindValue="id"
+                                  [(ngModel)]="img.imageType"
+                                  [ngModelOptions]="{ standalone: true }"
+                                  placeholder="Type"
+                                  [clearable]="true"
+                                  [searchable]="true">
+                                </ng-select>
+                              </td>
+                              <td class="text-center">
+                                <input class="form-check-input" type="radio" name="pendingPrimaryImage"
+                                  [checked]="img.isPrimary"
+                                  (change)="setPendingGalleryPrimary(img.pendingId)">
+                              </td>
+                              <td class="text-end">
+                                <button class="btn btn-sm btn-soft-primary me-1" (click)="editPendingGalleryImage(img)">
+                                  <i class="ri-pencil-line"></i>
+                                </button>
+                                <button class="btn btn-sm btn-soft-danger" (click)="removePendingGalleryImage(img.pendingId)">
+                                  <i class="ri-delete-bin-line"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div *ngIf="pendingGalleryImages.length > 0" class="d-flex justify-content-end mt-3">
+                        <ngb-pagination
+                          [collectionSize]="pendingGalleryImages.length"
+                          [(page)]="pendingGalleryPagination.page"
+                          [pageSize]="pendingGalleryPagination.pageSize"
+                          [size]="'sm'"
+                          (pageChange)="onPendingGalleryPageChange($event)">
+                        </ngb-pagination>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card border mb-3" *ngIf="isEditMode">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
+                        <div class="d-flex align-items-center gap-2">
+                          <i class="ri-gallery-line text-primary fs-18"></i>
+                          <h6 class="card-title mb-0">Uploaded Images</h6>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ carImages.length }}</span>
+                      </div>
+
+                      <div *ngIf="carImages.length === 0" class="text-center py-4">
+                        <i class="ri-image-line" style="font-size: 32px; color: #ccc;"></i>
+                        <p class="text-muted mt-2 mb-0">No uploaded images yet</p>
+                      </div>
+
+                      <div *ngIf="carImages.length > 0" class="row g-3">
+                        <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let image of pagedUploadedImages">
+                          <div class="border rounded p-2 h-100">
+                            <div class="position-relative mb-2"
+                              (mouseenter)="hoveredUploadedImageId = image.id"
+                              (mouseleave)="hoveredUploadedImageId = null">
+                              <img
+                                [src]="getEntityImageUrl(image.imageUrl)"
+                                alt=""
+                                class="rounded w-100"
+                                style="height: 120px; object-fit: cover;">
+                              <button
+                                *ngIf="hoveredUploadedImageId === image.id"
+                                type="button"
+                                class="btn btn-sm btn-dark position-absolute top-50 start-50 translate-middle"
+                                (click)="previewUploadedGalleryGridImage(image)">
+                                <i class="ri-eye-line me-1"></i> Preview
+                              </button>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                              <span class="small text-muted">{{ getImageTypeName(image.imageType) }}</span>
+                              <span class="badge" [ngClass]="image.isPrimary ? 'bg-success-subtle text-success' : 'bg-light text-muted'">
+                                {{ image.isPrimary ? 'Primary' : 'Image' }}
+                              </span>
+                            </div>
+                            <div class="d-flex gap-2">
+                              <button type="button" class="btn btn-sm btn-soft-primary flex-fill" [disabled]="image.isPrimary" (click)="setPrimaryImage(image)">
+                                <i class="ri-star-line me-1"></i> Set Primary
+                              </button>
+                              <button type="button" class="btn btn-sm btn-soft-danger" (click)="deleteImage(image)">
+                                <i class="ri-delete-bin-line"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div *ngIf="carImages.length > 0" class="d-flex justify-content-end mt-3">
+                        <ngb-pagination
+                          [collectionSize]="carImages.length"
+                          [(page)]="uploadedImagePagination.page"
+                          [pageSize]="uploadedImagePagination.pageSize"
+                          [size]="'sm'"
+                          (pageChange)="onUploadedImagePageChange($event)">
+                        </ngb-pagination>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-start gap-3 mt-4">
+                    <button type="button" class="btn btn-light btn-label" (click)="goToTab(4)">
+                      <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i>
+                      Previous
+                    </button>
+                    <ng-container *ngIf="!isEditMode">
+                      <button type="button" class="btn btn-info btn-label" *appHasPermission="'cars.create'" (click)="fillImagesTabTestMode()">
+                        <i class="ri-flask-line label-icon align-middle fs-16 me-2"></i>
+                        Test Images
+                      </button>
+                    </ng-container>
+                    <button type="button" class="btn btn-success btn-label right ms-auto"
+                      [disabled]="isSubmitting"
+                      *appHasPermission="isEditMode ? 'cars.edit' : 'cars.create'"
+                      (click)="saveCar()">
+                      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      <i class="ri-save-line label-icon align-middle fs-16 ms-2"></i>
+                      {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Car' : 'Create Car') }}
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li [ngbNavItem]="6" class="nav-item">
+              <a ngbNavLink class="nav-link fs-15 p-3" role="tab">
+                <i class="ri-checkbox-circle-line fs-16 p-2 bg-success-subtle text-success rounded-circle align-middle mx-2"></i>
+                Finish
+              </a>
+              <ng-template ngbNavContent>
+                <div class="text-center py-5 finish-tab-content">
+                  <div class="mb-4">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success"
+                      style="width: 96px; height: 96px;">
+                      <i class="ri-check-double-line" style="font-size: 44px;"></i>
+                    </span>
+                  </div>
+
+                  <h5 class="mb-2">{{ finishTabAction === 'updated' ? 'Car Updated Successfully' : 'Car Created Successfully' }}</h5>
+                  <p class="text-muted mb-4">
+                    {{ finishTabAction === 'updated' ? 'The car has been updated and saved with the latest details.' : 'The car has been created and saved with its selected details.' }}
+                  </p>
+
+                  <div class="row g-3 justify-content-center text-start">
+                    <div class="col-md-8 col-lg-7">
+                      <div class="card border-0 shadow-sm">
+                        <div class="card-body bg-light-subtle rounded">
+                          <div class="row g-2">
+                            <div class="col-6">
+                              <small class="text-muted d-block">Name (EN)</small>
+                              <div class="fw-semibold">{{ selectedCar?.nameEn || form['nameEn'].value || '-' }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Name (AR)</small>
+                              <div class="fw-semibold" dir="rtl">{{ selectedCar?.nameAr || form['nameAr'].value || '-' }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Branch</small>
+                              <div class="fw-semibold">{{ getBranchName(selectedCar?.branchId || form['branchId'].value || 0) }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Brand</small>
+                              <div class="fw-semibold">{{ getBrandName(getModelBrandId(selectedCar?.modelId || form['modelId'].value || 0) || form['brandFilterId'].value || 0) }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Model</small>
+                              <div class="fw-semibold">{{ getCarModelName(selectedCar?.modelId || form['modelId'].value || 0) }}</div>
+                            </div>
+                            <div class="col-6">
+                              <small class="text-muted d-block">Type</small>
+                              <div class="fw-semibold">{{ getCarTypeName(selectedCar?.typeId || form['typeId'].value || 0) }}</div>
+                            </div>
+                            <div class="col-12">
+                              <small class="text-muted d-block">Year</small>
+                              <div class="fw-semibold">{{ selectedCar?.year || form['year'].value || '-' }}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap mt-4">
+                    <button type="button" class="btn btn-primary" *appHasPermission="'cars.edit'" (click)="activeTab = 1">
+                      <i class="ri-pencil-line me-1"></i> Continue Editing
+                    </button>
+                    <button type="button" class="btn btn-info" *appHasPermission="'cars.view'" [routerLink]="['/admin/cars/list']">
+                      <i class="ri-list-unordered me-1"></i> Car List
+                    </button>
+                    <button type="button" class="btn btn-success px-4 py-2" *appHasPermission="'cars.create'" (click)="openCreateModal()">
+                      <i class="ri-add-line me-1"></i> Create Another Car
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side - Cars List Summary (like Order Summary) -->
+  <div [ngClass]="isListPage ? 'col-12' : 'col-xl-4'" *ngIf="!isCreatePage">
+    <div class="card border-0 shadow-sm mb-3">
+      <div class="card-header bg-light-subtle border-0">
+        <div class="d-flex align-items-center">
+          <h5 class="card-title mb-0 flex-grow-1">Filters</h5>
+          <button type="button" class="btn btn-soft-secondary btn-sm" title="Clear Filter" (click)="clearFilters()">
+            <i class="ri-filter-off-line align-bottom me-1"></i>Clear Filter
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="car-filter-panel">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Brand</label>
+              <ng-select [items]="brands" bindLabel="nameEn" bindValue="id"
+                [(ngModel)]="selectedBrandId" (change)="onBrandFilterChange($event)"
+                placeholder="Filter by Brand" [clearable]="true" [searchable]="true" class="car-filter-input">
+              </ng-select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Model</label>
+              <ng-select [items]="filterCarModels" bindLabel="nameEn" bindValue="id"
+                [(ngModel)]="selectedModelId" (change)="applyFilters(true)"
+                placeholder="Filter by Model" [clearable]="true" [searchable]="true" class="car-filter-input"
+                [disabled]="!!selectedBrandId && filterCarModels.length === 0">
+              </ng-select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Branch</label>
+              <ng-select [items]="branches" bindLabel="branchNameEn" bindValue="id"
+                [(ngModel)]="selectedBranchFilterId" (change)="applyFilters(true)"
+                placeholder="Filter by Branch" [clearable]="true" [searchable]="true" class="car-filter-input">
+              </ng-select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Year</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                <input type="number" class="form-control car-filter-input"
+                  placeholder="Filter by Year"
+                  [(ngModel)]="selectedYearFilter"
+                  (ngModelChange)="applyFilters(true)">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Name (EN)</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control car-filter-input"
+                  placeholder="Filter by Name (EN)"
+                  [(ngModel)]="filterNameEn"
+                  (ngModelChange)="applyFilters(true)">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label car-filter-label">Name (AR)</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input type="text" class="form-control car-filter-input"
+                  placeholder="Filter by Name (AR)"
+                  dir="rtl"
+                  [(ngModel)]="filterNameAr"
+                  (ngModelChange)="applyFilters(true)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-light-subtle border-0">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center flex-wrap gap-2 flex-grow-1">
+            <div class="d-flex align-items-center flex-wrap gap-2 car-list-stats">
+              <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
+                <i class="ri-list-check-2 me-1"></i>Total: {{ filteredCars.length }}
+              </span>
+              <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+                <i class="ri-checkbox-circle-line me-1"></i>Available: {{ availableCarsCount }}
+              </span>
+              <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">
+                <i class="ri-close-circle-line me-1"></i>Unavailable: {{ unavailableCarsCount }}
+              </span>
+              <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+                <i class="ri-check-double-line me-1"></i>Selected: {{ selectedCarIds.size }}
+              </span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger btn-sm flex-shrink-0" *appHasPermission="'cars.delete'"
+            [disabled]="selectedCarIds.size === 0" (click)="deleteSelectedCars()">
+            <i class="ri-delete-bin-line align-bottom me-1"></i>Delete Selected
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="text-center py-3">
+          <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && filteredCars.length === 0" class="text-center py-4">
+          <i class="ri-car-line" style="font-size: 32px; color: #ccc;"></i>
+          <p class="text-muted mt-2 mb-0">No cars found</p>
+        </div>
+
+        <!-- Cars List -->
+        <div *ngIf="!isLoading && filteredCars.length > 0">
+          <table class="table table-hover align-middle mb-0 car-list-table">
+            <thead class="table-light text-muted">
+              <tr>
+                <th style="width: 30px;">
+                  <input class="form-check-input" type="checkbox"
+                    [checked]="isAllCarsSelected()"
+                    (change)="toggleSelectAllCars($any($event.target).checked)">
+                </th>
+                <th>Car</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (car of pagedCars; track car.id) {
+              <tr [class.table-active]="selectedCar?.id === car.id"
+                [style.cursor]="(isListPage || !canEditCar) ? 'default' : 'pointer'"
+                (click)="!isListPage && canEditCar && openEditModal(car)">
+                <td (click)="$event.stopPropagation()">
+                  <input class="form-check-input" type="checkbox"
+                    [checked]="selectedCarIds.has(car.id)"
+                    (change)="toggleCarSelection(car.id, $any($event.target).checked)">
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <div class="avatar-xs bg-primary-subtle rounded-circle car-list-avatar">
+                        <i class="ri-car-line fs-16 text-primary"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 ms-2">
+                      <h6 class="fs-13 mb-1">{{ car.nameEn || '-' }} - {{ car.nameAr || '-' }}</h6>
+                      <small class="text-muted d-block">
+                        Branch: {{ getBranchName(car.branchId) || '-' }}
+                      </small>
+                      <small class="text-muted d-block">
+                        Brand: {{ getBrandName(getModelBrandId(car.modelId) || 0) || '-' }}
+                      </small>
+                      <small class="text-muted d-block">
+                        Model: {{ getCarModelName(car.modelId) || '-' }}
+                      </small>
+                      <small class="text-muted d-block">
+                        Year: {{ car.year || '-' }}
+                      </small>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-end" (click)="$event.stopPropagation()">
+                  <div class="d-inline-flex align-items-center flex-wrap gap-1 justify-content-end">
+                    <button class="btn btn-sm btn-soft-primary" *appHasPermission="'cars.edit'" title="Edit" (click)="openCarTab(car, 1)">
+                      <i class="ri-edit-line me-1"></i>Edit
+                    </button>
+                    <button class="btn btn-sm btn-soft-info action-count-btn" *appHasPermission="'cars.view'" title="Features" (click)="openCarPreviewModal(car, 'features')">
+                      <i class="ri-settings-4-line me-1"></i>Features
+                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'features') }}</span>
+                    </button>
+                    <button class="btn btn-sm btn-soft-warning action-count-btn" *appHasPermission="'cars.view'" title="Colors" (click)="openCarPreviewModal(car, 'colors')">
+                      <i class="ri-palette-line me-1"></i>Colors
+                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'colors') }}</span>
+                    </button>
+                    <button class="btn btn-sm btn-soft-secondary action-count-btn" *appHasPermission="'cars.view'" title="Details" (click)="openCarPreviewModal(car, 'details')">
+                      <i class="ri-file-list-3-line me-1"></i>Details
+                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'details') }}</span>
+                    </button>
+                    <button class="btn btn-sm btn-soft-success action-count-btn" *appHasPermission="'cars.view'" title="Images" (click)="openCarPreviewModal(car, 'images')">
+                      <i class="ri-image-line me-1"></i>Images
+                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'images') }}</span>
+                    </button>
+                    <button class="btn btn-sm btn-soft-danger" *appHasPermission="'cars.delete'" title="Delete" (click)="deleteCar(car)">
+                      <i class="ri-delete-bin-line me-1"></i>Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="row justify-content-md-between align-items-md-center mt-3">
+            <div class="col col-sm-6">
+              <div class="dataTables_info mb-2" role="status" aria-live="polite">
+                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredCars.length }} entries
+              </div>
+            </div>
+            <div class="col col-sm-6">
+              <div class="text-sm-right float-sm-end listjs-pagination">
+                <ngb-pagination [collectionSize]="filteredCars.length" [(page)]="service.page"
+                  [pageSize]="service.pageSize"
+                  [maxSize]="5"
+                  [ellipses]="true"
+                  [rotate]="true"
+                  [boundaryLinks]="true"
+                  [directionLinks]="true"
+                  firstLabel="First"
+                  previousLabel="Previous"
+                  nextLabel="Next"
+                  lastLabel="Last"
+                  (pageChange)="onPageChange($event)">
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showCarPreviewModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ previewCar?.nameEn || 'Car' }} - {{ carPreviewTab | titlecase }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeCarPreviewModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isCarPreviewLoading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!isCarPreviewLoading">
+          <div *ngIf="carPreviewTab === 'features'">
+            <div *ngIf="previewFeatures.length === 0" class="text-center text-muted py-3">No features found.</div>
+            <div class="table-responsive table-card mb-1" *ngIf="previewFeatures.length > 0">
+              <table class="table table-nowrap table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Feature</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of pagedPreviewFeatures">
+                    <td>{{ getFeatureName(item.featureId) }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                        {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewFeatures.length > 0">
+              <div class="col col-sm-6">
+                <div class="dataTables_info mb-2" role="status" aria-live="polite">
+                  Showing {{ previewFeaturePagination.startIndex }} to {{ previewFeaturePagination.endIndex }} of {{ previewFeatures.length }} entries
+                </div>
+              </div>
+              <div class="col col-sm-6">
+                <div class="text-sm-right float-sm-end listjs-pagination">
+                  <ngb-pagination [collectionSize]="previewFeatures.length" [(page)]="previewFeaturePagination.page"
+                    [pageSize]="previewFeaturePagination.pageSize" (pageChange)="onPreviewFeaturePageChange($event)">
+                  </ngb-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="carPreviewTab === 'colors'">
+            <div *ngIf="previewColors.length === 0" class="text-center text-muted py-3">No colors found.</div>
+            <div class="table-responsive table-card mb-1" *ngIf="previewColors.length > 0">
+              <table class="table table-nowrap table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Color</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of pagedPreviewColors">
+                    <td>{{ getColorById(item.colorId)?.colorNameEn || ('Color #' + item.colorId) }}</td>
+                    <td>{{ item.stockQuantity ?? '-' }}</td>
+                    <td>{{ item.pricingPerColor ?? '-' }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                        {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewColors.length > 0">
+              <div class="col col-sm-6">
+                <div class="dataTables_info mb-2" role="status" aria-live="polite">
+                  Showing {{ previewColorPagination.startIndex }} to {{ previewColorPagination.endIndex }} of {{ previewColors.length }} entries
+                </div>
+              </div>
+              <div class="col col-sm-6">
+                <div class="text-sm-right float-sm-end listjs-pagination">
+                  <ngb-pagination [collectionSize]="previewColors.length" [(page)]="previewColorPagination.page"
+                    [pageSize]="previewColorPagination.pageSize" (pageChange)="onPreviewColorPageChange($event)">
+                  </ngb-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="carPreviewTab === 'details'">
+            <div *ngIf="previewDetails.length === 0" class="text-center text-muted py-3">No details found.</div>
+            <div class="table-responsive table-card mb-1" *ngIf="previewDetails.length > 0">
+              <table class="table table-nowrap table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Name (EN)</th>
+                    <th>Name (AR)</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of pagedPreviewDetails">
+                    <td>{{ item.nameEn || '-' }}</td>
+                    <td dir="rtl">{{ item.nameAr || '-' }}</td>
+                    <td>{{ getExtraDetailTypeName(item.carExtraDetailsType || 1) }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                        {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewDetails.length > 0">
+              <div class="col col-sm-6">
+                <div class="dataTables_info mb-2" role="status" aria-live="polite">
+                  Showing {{ previewDetailsPagination.startIndex }} to {{ previewDetailsPagination.endIndex }} of {{ previewDetails.length }} entries
+                </div>
+              </div>
+              <div class="col col-sm-6">
+                <div class="text-sm-right float-sm-end listjs-pagination">
+                  <ngb-pagination [collectionSize]="previewDetails.length" [(page)]="previewDetailsPagination.page"
+                    [pageSize]="previewDetailsPagination.pageSize" (pageChange)="onPreviewDetailsPageChange($event)">
+                  </ngb-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="carPreviewTab === 'images'">
+            <div *ngIf="previewImages.length === 0" class="text-center text-muted py-3">No images found.</div>
+            <div class="row g-3" *ngIf="previewImages.length > 0">
+              <div class="col-md-4 col-lg-3" *ngFor="let image of pagedPreviewImages">
+                <div class="card border mb-0 h-100">
+                  <img [src]="getEntityImageUrl(image.imageUrl)" class="card-img-top" alt="Car image" style="height: 140px; object-fit: cover;">
+                  <div class="card-body py-2">
+                    <div class="small text-muted mb-1">{{ getImageTypeName(image.imageType) }}</div>
+                    <span class="badge" [ngClass]="image.isPrimary ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                      {{ image.isPrimary ? 'Primary' : 'Secondary' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewImages.length > 0">
+              <div class="col col-sm-6">
+                <div class="dataTables_info mb-2" role="status" aria-live="polite">
+                  Showing {{ previewImagesPagination.startIndex }} to {{ previewImagesPagination.endIndex }} of {{ previewImages.length }} entries
+                </div>
+              </div>
+              <div class="col col-sm-6">
+                <div class="text-sm-right float-sm-end listjs-pagination">
+                  <ngb-pagination [collectionSize]="previewImages.length" [(page)]="previewImagesPagination.page"
+                    [pageSize]="previewImagesPagination.pageSize" (pageChange)="onPreviewImagesPageChange($event)">
+                  </ngb-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeCarPreviewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showCarPreviewModal" class="modal-backdrop fade show" (click)="closeCarPreviewModal()"></div>
+
+<div *ngIf="showExtraDetailsAddModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered extra-details-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ editingPendingExtraDetailIndex !== null ? 'Edit Car Extra Details' : 'Add Car Extra Details' }}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeExtraDetailsAddModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-2">
+          <div class="col-12">
+            <label class="form-label">Type <span class="text-danger">*</span></label>
+            <ng-select
+              [items]="extraDetailTypeOptions"
+              bindValue="id"
+              [(ngModel)]="extraDetailDraft.carExtraDetailsType"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Select Type"
+              [searchable]="true"
+              [clearable]="true">
+              <ng-template ng-label-tmp let-item="item">
+                <span>{{ item.name }}</span>
+                <span class="text-muted"> - </span>
+                <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                <div class="d-flex align-items-center gap-1 flex-wrap">
+                  <span>{{ item.name }}</span>
+                  <span class="text-muted"> - </span>
+                  <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
+                </div>
+              </ng-template>
+            </ng-select>
+            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('type')">Type is required.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text"
+              [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameEn')"
+              [(ngModel)]="extraDetailDraft.nameEn"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g. Warranty">
+            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</small>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" dir="rtl"
+              [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameAr')"
+              [(ngModel)]="extraDetailDraft.nameAr"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="الاسم بالعربية">
+            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameAr')">Name (AR) is required.</small>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description (EN)</label>
+            <textarea class="form-control" rows="2"
+              [(ngModel)]="extraDetailDraft.descriptionEn"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="Description in English"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description (AR)</label>
+            <textarea class="form-control" rows="2" dir="rtl"
+              [(ngModel)]="extraDetailDraft.descriptionAr"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="الوصف بالعربية"></textarea>
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"
+                [(ngModel)]="extraDetailDraft.isAvailable"
+                [ngModelOptions]="{ standalone: true }" id="extraDetailAvailableModal">
+              <label class="form-check-label" for="extraDetailAvailableModal">Available</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeExtraDetailsAddModal()">Close</button>
+        <button type="button" class="btn btn-success" (click)="addExtraDetailToList()">
+          <i [class]="editingPendingExtraDetailIndex !== null ? 'ri-save-line me-1' : 'ri-add-line me-1'"></i>
+          {{ editingPendingExtraDetailIndex !== null ? 'Save Changes' : 'Add To List' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showExtraDetailsAddModal" class="modal-backdrop fade show" (click)="closeExtraDetailsAddModal()"></div>
+
+<div *ngIf="showExtraDetailsStatsModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Extra Details Statistics</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeExtraDetailsStatsModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-2">
+          <div class="col-12" *ngFor="let s of getExtraDetailsTypeStats()">
+            <div class="border rounded px-3 py-2">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span
+                    class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                    style="width: 34px; height: 34px;"
+                    [ngbTooltip]="s.nameAr ? (s.name + ' / ' + s.nameAr) : s.name"
+                    container="body">
+                    <i [class]="getExtraDetailTypeIcon(s.id) + ' fs-16'"></i>
+                  </span>
+                  <div class="fw-medium">
+                    <span>{{ s.name }}</span>
+                    <span *ngIf="s.nameAr" class="text-muted"> - </span>
+                    <span *ngIf="s.nameAr" dir="rtl" class="text-muted">{{ s.nameAr }}</span>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                  <span class="text-muted">All <span class="fw-semibold text-body">{{ s.allCount }}</span></span>
+                  <span class="text-muted">{{ isEditMode ? 'Assigned' : 'Pending' }} <span class="fw-semibold text-body">{{ s.assignedCount }}</span></span>
+                  <span class="text-muted">Available <span class="fw-semibold text-body">{{ s.availableCount }}</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeExtraDetailsStatsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showExtraDetailsStatsModal" class="modal-backdrop fade show" (click)="closeExtraDetailsStatsModal()"></div>
+
+<div *ngIf="showSelectedGalleryImagePreview" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Selected Image Preview</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeSelectedGalleryImagePreview()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-2 small text-muted" *ngIf="selectedImageFile">{{ selectedImageFile.name }}</div>
+        <img
+          *ngIf="imagePreviewUrl"
+          [src]="imagePreviewUrl"
+          [alt]="selectedImageFile?.name || 'Selected image preview'"
+          class="img-fluid rounded border">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeSelectedGalleryImagePreview()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showSelectedGalleryImagePreview" class="modal-backdrop fade show" (click)="closeSelectedGalleryImagePreview()"></div>
+
+<div *ngIf="showColorImagePreview" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Color Image Preview</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeColorImagePreview()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-2 small text-muted" *ngIf="colorImagePreviewName">{{ colorImagePreviewName }}</div>
+        <img
+          *ngIf="colorImagePreviewUrl"
+          [src]="colorImagePreviewUrl"
+          [alt]="colorImagePreviewName || 'Color image preview'"
+          class="img-fluid rounded border">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeColorImagePreview()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showColorImagePreview" class="modal-backdrop fade show" (click)="closeColorImagePreview()"></div>
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

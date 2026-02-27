@@ -96,7 +96,7 @@
                   <td>{{ extraDetail.nameAr }}</td>
                   <td>
                     <span *ngIf="carsMap.get(extraDetail.carId) as car; else unknownCar">
-                      {{ car.year }} - ${{ car.price?.toLocaleString() }}
+                      {{ car.year }} - {{ car.mileage?.toLocaleString() }} km
                     </span>
                     <ng-template #unknownCar>
                       <span class="text-muted">Unknown Car</span>

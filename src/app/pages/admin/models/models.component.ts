@@ -6,7 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { CarModel } from '../interfaces/car-model.interface';
 import { Brand } from '../interfaces/brand.interface';
-import { Car } from '../interfaces/gallery-image.interface';
+import { Car } from '../interfaces/car.interface';
 import { CarModelService } from '../services/car-model.service';
 import { BrandService } from '../services/brand.service';
 import { CarService } from '../services/car.service';
