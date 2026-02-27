@@ -1740,7 +1740,13 @@
                     [checked]="isAllCarsSelected()"
                     (change)="toggleSelectAllCars($any($event.target).checked)">
                 </th>
-                <th>Car</th>
+                <th>
+                  <button type="button" class="btn btn-sm btn-ghost-dark p-0" (click)="toggleCarSort()">
+                    Car
+                    <i class="ms-1" [ngClass]="carSortDirection === 'asc' ? 'ri-sort-asc' : 'ri-sort-desc'"></i>
+                  </button>
+                </th>
+                <th>Status</th>
                 <th class="text-end">Action</th>
               </tr>
             </thead>
@@ -1764,6 +1770,9 @@
                     <div class="flex-grow-1 ms-2">
                       <h6 class="fs-13 mb-1">{{ car.nameEn || '-' }} - {{ car.nameAr || '-' }}</h6>
                       <small class="text-muted d-block">
+                        ID: {{ car.id }}
+                      </small>
+                      <small class="text-muted d-block">
                         Branch: {{ getBranchName(car.branchId) || '-' }}
                       </small>
                       <small class="text-muted d-block">
@@ -1781,6 +1790,12 @@
                     </div>
                   </div>
                 </td>
+                <td>
+                  <span class="badge" [ngClass]="car.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    <i class="me-1" [ngClass]="car.isAvailable ? 'ri-checkbox-circle-line' : 'ri-close-circle-line'"></i>
+                    {{ car.isAvailable ? 'Available' : 'Unavailable' }}
+                  </span>
+                </td>
                 <td class="text-end" (click)="$event.stopPropagation()">
                   <div class="d-inline-flex align-items-center flex-wrap gap-1 justify-content-end">
                     <button class="btn btn-sm btn-soft-dark" *appHasPermission="'cars.view'" title="Info" (click)="openCarInfoModal(car)">
@@ -1789,25 +1804,41 @@
                     <button class="btn btn-sm btn-soft-primary" *appHasPermission="'cars.edit'" title="Edit" (click)="openCarTab(car, 1)">
                       <i class="ri-edit-line me-1"></i>Edit
                     </button>
-                    <button class="btn btn-sm btn-soft-info action-count-btn" *appHasPermission="'cars.view'" title="Features" (click)="openCarPreviewModal(car, 'features')">
-                      <i class="ri-settings-4-line me-1"></i>Features
-                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'features') }}</span>
+                    <button class="btn btn-sm btn-warning btn-label rounded-pill" *appHasPermission="'cars.view'" title="Price" (click)="openCarPreviewModal(car, 'colors')">
+                      <i class="ri-money-dollar-circle-line label-icon align-middle rounded-pill fs-16 me-1"></i>Price
+                      <span class="badge bg-light text-warning ms-1">{{ getCarActionCountLabel(car.id, 'colors') }}</span>
                     </button>
-                    <button class="btn btn-sm btn-soft-warning action-count-btn" *appHasPermission="'cars.view'" title="Colors" (click)="openCarPreviewModal(car, 'colors')">
-                      <i class="ri-palette-line me-1"></i>Colors
-                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'colors') }}</span>
-                    </button>
-                    <button class="btn btn-sm btn-soft-secondary action-count-btn" *appHasPermission="'cars.view'" title="Details" (click)="openCarPreviewModal(car, 'details')">
-                      <i class="ri-file-list-3-line me-1"></i>Details
-                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'details') }}</span>
-                    </button>
-                    <button class="btn btn-sm btn-soft-success action-count-btn" *appHasPermission="'cars.view'" title="Images" (click)="openCarPreviewModal(car, 'images')">
-                      <i class="ri-image-line me-1"></i>Images
-                      <span class="action-count-slot ms-1">{{ getCarActionCountLabel(car.id, 'images') }}</span>
-                    </button>
-                    <button class="btn btn-sm btn-soft-danger" *appHasPermission="'cars.delete'" title="Delete" (click)="deleteCar(car)">
-                      <i class="ri-delete-bin-line me-1"></i>Delete
-                    </button>
+                    <div ngbDropdown class="d-inline-block" placement="start-top" container="body">
+                      <button class="btn btn-sm btn-soft-secondary car-row-toggle" ngbDropdownToggle title="More actions">
+                        <i class="ri-more-fill"></i>
+                      </button>
+                      <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end car-row-menu">
+                        <button *appHasPermission="'cars.view'" ngbDropdownItem (click)="openCarPreviewModal(car, 'features')">
+                          <i class="ri-settings-4-line me-2 text-info"></i>
+                          Features
+                          <span class="badge bg-info-subtle text-info ms-auto">{{ getCarActionCountLabel(car.id, 'features') }}</span>
+                        </button>
+                        <button *appHasPermission="'cars.view'" ngbDropdownItem (click)="openCarPreviewModal(car, 'details')">
+                          <i class="ri-file-list-3-line me-2 text-secondary"></i>
+                          Details
+                          <span class="badge bg-secondary-subtle text-secondary ms-auto">{{ getCarActionCountLabel(car.id, 'details') }}</span>
+                        </button>
+                        <button *appHasPermission="'cars.view'" ngbDropdownItem (click)="openCarPreviewModal(car, 'images')">
+                          <i class="ri-image-line me-2 text-success"></i>
+                          Images
+                          <span class="badge bg-success-subtle text-success ms-auto">{{ getCarActionCountLabel(car.id, 'images') }}</span>
+                        </button>
+                        <button *appHasPermission="'cars.edit'" ngbDropdownItem (click)="toggleCarAvailability(car, !car.isAvailable)">
+                          <i class="me-2" [ngClass]="car.isAvailable ? 'ri-close-circle-line text-warning' : 'ri-checkbox-circle-line text-success'"></i>
+                          {{ car.isAvailable ? 'Mark Unavailable' : 'Mark Available' }}
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button *appHasPermission="'cars.delete'" ngbDropdownItem class="text-danger" (click)="deleteCar(car)">
+                          <i class="ri-delete-bin-line me-2"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -1907,7 +1938,7 @@
               <table class="table table-nowrap table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>Color</th>
+                    <th>Color Name</th>
                     <th>Stock</th>
                     <th>Price</th>
                     <th>Price Before</th>
@@ -1921,7 +1952,16 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of pagedPreviewColors">
-                    <td>{{ getColorById(item.colorId)?.colorNameEn || ('Color #' + item.colorId) }}</td>
+                    <td>
+                      <span class="d-inline-flex align-items-center gap-2">
+                        <span class="rounded-circle border" [style.background]="getColorById(item.colorId)?.colorCode" style="width:14px;height:14px;display:inline-block;"></span>
+                        <span>
+                          {{ getColorById(item.colorId)?.colorNameEn || ('Color #' + item.colorId) }}
+                          -
+                          {{ getColorById(item.colorId)?.colorNameAr || '-' }}
+                        </span>
+                      </span>
+                    </td>
                     <td>{{ item.stockQuantity ?? '-' }}</td>
                     <td>{{ item.pricingPerColor ?? '-' }}</td>
                     <td>{{ item.pricePefore ?? '-' }}</td>
@@ -2466,5 +2506,23 @@
   </div>
 </div>
 <div *ngIf="showColorImagePreview" class="modal-backdrop fade show" (click)="closeColorImagePreview()"></div>
+
+<ng-template #carRealtimeToastTpl>
+  <div class="d-flex align-items-start gap-2">
+    <div class="avatar-xs flex-shrink-0">
+      <span class="avatar-title rounded-circle bg-light">
+        <i [class]="getRealtimeIconClass()"></i>
+      </span>
+    </div>
+    <div class="small">
+      <div class="fw-semibold mb-1">{{ getRealtimeActionLabel() }} - #{{ latestRealtimeCar?.id }}</div>
+      <div>Brand: {{ getRealtimeBrandName() }}</div>
+      <div>Model: {{ getRealtimeModelName() }}</div>
+      <div>Name (EN): {{ latestRealtimeCar?.nameEn || '-' }}</div>
+      <div>Name (AR): {{ latestRealtimeCar?.nameAr || '-' }}</div>
+      <div>Year: {{ getRealtimeYear() }}</div>
+    </div>
+  </div>
+</ng-template>
 
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

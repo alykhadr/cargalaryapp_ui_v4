@@ -111,6 +111,10 @@ export class CarService {
     return this.http.put<void>(`${this.baseUrl}/${id}`, payload);
   }
 
+  updateAvailability(id: number, isAvailable: boolean): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}/availability`, { isAvailable });
+  }
+
   deleteCar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

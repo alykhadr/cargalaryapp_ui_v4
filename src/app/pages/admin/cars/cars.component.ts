@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -50,6 +50,7 @@ interface CarListActionCounts {
 export class CarsComponent implements OnInit, OnDestroy {
   @Input() mode: 'create' | 'list' | null = null;
   @ViewChild('nav') nav!: NgbNav;
+  @ViewChild('carRealtimeToastTpl') carRealtimeToastTpl!: TemplateRef<any>;
   
   breadCrumbItems!: Array<{}>;
   carForm!: UntypedFormGroup;
@@ -91,6 +92,14 @@ export class CarsComponent implements OnInit, OnDestroy {
   selectedYearFilter?: number;
   selectedBrandId?: number;
   selectedModelId?: number;
+  carSortDirection: 'asc' | 'desc' = 'asc';
+  latestRealtimeCar: Car | null = null;
+  latestRealtimeAction: 'created' | 'updated' | 'deleted' = 'created';
+  private readonly notificationSoundUrl = 'assets/sounds/car-notification.mp3';
+  private audioContext: AudioContext | null = null;
+  private isSoundUnlocked = false;
+  private soundHintShown = false;
+  private readonly unlockSoundHandler = () => this.unlockSound();
   selectedCarIds = new Set<number>();
   carListActionCounts = new Map<number, CarListActionCounts>();
 
@@ -368,6 +377,7 @@ export class CarsComponent implements OnInit, OnDestroy {
     if (this.canViewCar) {
       this.loadCars();
       if (this.isListPage) {
+        this.setupSoundUnlock();
         this.connectRealtime();
       }
     }
@@ -389,6 +399,7 @@ export class CarsComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     if (this.isListPage) {
+      this.removeSoundUnlockListeners();
       await this.carRealtimeService.stop();
     }
   }
@@ -1827,6 +1838,13 @@ export class CarsComponent implements OnInit, OnDestroy {
       data = data.filter(car => car.year.toString().includes(yearTerm));
     }
 
+    data.sort((a, b) => {
+      const left = `${a.nameEn || ''} ${a.nameAr || ''}`.trim().toLowerCase();
+      const right = `${b.nameEn || ''} ${b.nameAr || ''}`.trim().toLowerCase();
+      const result = left.localeCompare(right, undefined, { sensitivity: 'base' });
+      return this.carSortDirection === 'asc' ? result : -result;
+    });
+
     this.filteredCars = data;
     if (resetPage) {
       this.service.page = 1;
@@ -1863,6 +1881,11 @@ export class CarsComponent implements OnInit, OnDestroy {
     this.selectedBrandId = undefined;
     this.selectedModelId = undefined;
     this.filterCarModels = this.carModels;
+    this.applyFilters(true);
+  }
+
+  toggleCarSort() {
+    this.carSortDirection = this.carSortDirection === 'asc' ? 'desc' : 'asc';
     this.applyFilters(true);
   }
 
@@ -2684,6 +2707,41 @@ export class CarsComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleCarAvailability(car: Car, isAvailable: boolean) {
+    if (!this.canEditCar) {
+      this.showError('You do not have permission to edit cars.');
+      return;
+    }
+
+    if (car.isAvailable === isAvailable) {
+      this.showError(`Car is already ${isAvailable ? 'available' : 'unavailable'}.`);
+      return;
+    }
+
+    const actionLabel = isAvailable ? 'available' : 'unavailable';
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Mark this car as ${actionLabel}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: `Yes, Mark ${isAvailable ? 'Available' : 'Unavailable'}!`,
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.carService.updateAvailability(car.id, isAvailable).pipe(first()).subscribe({
+        next: () => {
+          this.showSuccess(`Car marked as ${actionLabel}.`);
+          this.loadCars();
+        },
+        error: (error) => this.showError(error)
+      });
+    });
+  }
+
   // Image handling
   onImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -3192,27 +3250,142 @@ export class CarsComponent implements OnInit, OnDestroy {
       this.loadCars();
     }
 
-    const label = car.nameEn || car.nameAr || '';
-    if (action === 'created') {
-      this.toastService.show(`Car created: #${car.id} ${label}`.trim(), {
-        classname: 'bg-success text-white',
-        delay: 3500
-      });
-      return;
-    }
-
-    if (action === 'updated') {
-      this.toastService.show(`Car updated: #${car.id} ${label}`.trim(), {
-        classname: 'bg-primary text-white',
-        delay: 3500
-      });
-      return;
-    }
-
-    this.toastService.show(`Car deleted: #${car.id} ${label}`.trim(), {
-      classname: 'bg-danger text-white',
-      delay: 3500
+    this.latestRealtimeCar = car;
+    this.latestRealtimeAction = action;
+    this.toastService.show(this.carRealtimeToastTpl, {
+      classname: this.getRealtimeToastClass(action),
+      delay: 4500
     });
+    this.playNotificationSound();
+  }
+
+  getRealtimeBrandName(): string {
+    if (!this.latestRealtimeCar?.modelId) return '-';
+    const brandId = this.getModelBrandId(this.latestRealtimeCar.modelId);
+    if (!brandId) return '-';
+    return this.getBrandName(brandId) || '-';
+  }
+
+  getRealtimeYear(): string {
+    return this.latestRealtimeCar?.year ? String(this.latestRealtimeCar.year) : '-';
+  }
+
+  getRealtimeModelName(): string {
+    if (!this.latestRealtimeCar?.modelId) return '-';
+    return this.getCarModelName(this.latestRealtimeCar.modelId) || '-';
+  }
+
+  getRealtimeActionLabel(): string {
+    if (this.latestRealtimeAction === 'created') return 'Car created';
+    if (this.latestRealtimeAction === 'updated') return 'Car updated';
+    return 'Car deleted';
+  }
+
+  getRealtimeIconClass(): string {
+    if (this.latestRealtimeAction === 'created') return 'ri-add-circle-line text-success';
+    if (this.latestRealtimeAction === 'updated') return 'ri-edit-circle-line text-primary';
+    return 'ri-delete-bin-5-line text-danger';
+  }
+
+  private getRealtimeToastClass(action: 'created' | 'updated' | 'deleted'): string {
+    if (action === 'created') return 'border-0 shadow-sm bg-success-subtle text-success-emphasis';
+    if (action === 'updated') return 'border-0 shadow-sm bg-primary-subtle text-primary-emphasis';
+    return 'border-0 shadow-sm bg-danger-subtle text-danger-emphasis';
+  }
+
+  private playNotificationSound() {
+    if (!this.isSoundUnlocked) {
+      if (!this.soundHintShown) {
+        this.soundHintShown = true;
+        this.toastService.show('Click anywhere once to enable notification sound.', {
+          classname: 'bg-warning text-dark',
+          delay: 3500
+        });
+      }
+      this.playFallbackBeep();
+      return;
+    }
+
+    try {
+      const audio = new Audio(this.notificationSoundUrl);
+      audio.volume = 0.65;
+      void audio.play().catch(() => this.playFallbackBeep());
+    } catch {
+      this.playFallbackBeep();
+    }
+  }
+
+  private playFallbackBeep() {
+    try {
+      const context = this.getAudioContext();
+      if (!context) return;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(830, context.currentTime);
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, context.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.22);
+
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.22);
+    } catch {
+      // Keep UI flow even if browser blocks autoplay audio.
+    }
+  }
+
+  private setupSoundUnlock() {
+    window.addEventListener('pointerdown', this.unlockSoundHandler, { passive: true });
+    window.addEventListener('keydown', this.unlockSoundHandler, { passive: true });
+    window.addEventListener('touchstart', this.unlockSoundHandler, { passive: true });
+  }
+
+  private removeSoundUnlockListeners() {
+    window.removeEventListener('pointerdown', this.unlockSoundHandler);
+    window.removeEventListener('keydown', this.unlockSoundHandler);
+    window.removeEventListener('touchstart', this.unlockSoundHandler);
+  }
+
+  private async unlockSound() {
+    const context = this.getAudioContext();
+    if (context?.state === 'suspended') {
+      try {
+        await context.resume();
+      } catch {
+        // Keep flow even if browser blocks resume once.
+      }
+    }
+
+    // Prime media playback permission on browsers requiring a direct user gesture.
+    try {
+      const primer = new Audio(this.notificationSoundUrl);
+      primer.volume = 0;
+      await primer.play();
+      primer.pause();
+      primer.currentTime = 0;
+    } catch {
+      // Custom file can be missing; fallback beep remains available.
+    }
+
+    this.isSoundUnlocked = true;
+    this.removeSoundUnlockListeners();
+  }
+
+  private getAudioContext(): AudioContext | null {
+    if (this.audioContext) {
+      return this.audioContext;
+    }
+
+    const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) {
+      return null;
+    }
+
+    this.audioContext = new AudioCtx();
+    return this.audioContext;
   }
 
   // Tab Navigation with Validation

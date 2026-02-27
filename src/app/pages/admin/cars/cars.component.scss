@@ -173,6 +173,21 @@
   box-shadow: 0 0.15rem 0.35rem rgba(0, 0, 0, 0.16);
 }
 
+.car-row-toggle {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+:host ::ng-deep .car-row-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .car-filter-panel {
   padding: 0.75rem;
   border: 1px dashed var(--bs-border-color);
