@@ -1,6 +1,5 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { PaginationService } from 'src/app/core/services/pagination.service';
@@ -22,6 +21,7 @@ import { QuotationRealtimeService } from '../services/quotation-realtime.service
 })
 export class QuotationComponent implements OnInit, OnDestroy {
   @Input() mode: 'create' | 'list' = 'list';
+  @ViewChild('realtimeToastTpl') realtimeToastTpl!: TemplateRef<any>;
 
   breadCrumbItems!: Array<{}>;
   quotationForm!: UntypedFormGroup;
@@ -37,6 +37,11 @@ export class QuotationComponent implements OnInit, OnDestroy {
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
   cityLookups: LookupDetail[] = [];
+  latestRealtimeQuotation: Quotation | null = null;
+  private readonly notificationSoundUrl = 'assets/sounds/quotation-notification.mp3';
+  private isSoundUnlocked = false;
+  private soundHintShown = false;
+  private readonly unlockSoundHandler = () => this.unlockSound();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -45,8 +50,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
     private quotationRealtimeService: QuotationRealtimeService,
     private carService: CarService,
     private lookupService: LookupService,
-    private toastService: ToastService,
-    private router: Router
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +75,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
     this.loadFormDependencies();
 
     if (this.mode === 'list') {
+      this.setupSoundUnlock();
       this.loadQuotations();
       this.connectRealtime();
     }
@@ -78,6 +83,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   async ngOnDestroy(): Promise<void> {
     if (this.mode === 'list') {
+      this.removeSoundUnlockListeners();
       await this.quotationRealtimeService.stop();
     }
   }
@@ -158,7 +164,6 @@ export class QuotationComponent implements OnInit, OnDestroy {
         this.showSuccess('Quotation created successfully');
         this.quotationForm.reset();
         this.submitted = false;
-        this.router.navigate(['/admin/quotation/list']);
       },
       error: (error) => {
         this.isSubmitting = false;
@@ -220,8 +225,9 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
         this.quotations = [quotation, ...this.quotations];
         this.applyFilters(true);
-        this.toastService.show(`New quotation received: #${quotation.id}`, {
-          classname: 'bg-info text-white',
+        this.latestRealtimeQuotation = quotation;
+        this.toastService.show(this.realtimeToastTpl, {
+          classname: 'border-0 shadow-sm quotation-realtime-toast',
           delay: 4000
         });
         this.playNotificationSound();
@@ -235,6 +241,27 @@ export class QuotationComponent implements OnInit, OnDestroy {
   }
 
   private playNotificationSound() {
+    if (!this.isSoundUnlocked) {
+      if (!this.soundHintShown) {
+        this.soundHintShown = true;
+        this.toastService.show('Click anywhere once to enable notification sound.', {
+          classname: 'bg-warning text-dark',
+          delay: 3500
+        });
+      }
+      return;
+    }
+
+    try {
+      const audio = new Audio(this.notificationSoundUrl);
+      audio.volume = 0.65;
+      void audio.play().catch(() => this.playFallbackBeep());
+    } catch {
+      this.playFallbackBeep();
+    }
+  }
+
+  private playFallbackBeep() {
     try {
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) return;
@@ -243,18 +270,35 @@ export class QuotationComponent implements OnInit, OnDestroy {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
 
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, context.currentTime);
+      oscillator.type = 'triangle';
+      oscillator.frequency.setValueAtTime(830, context.currentTime);
       gain.gain.setValueAtTime(0.0001, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.2, context.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.18, context.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.22);
 
       oscillator.connect(gain);
       gain.connect(context.destination);
       oscillator.start();
-      oscillator.stop(context.currentTime + 0.25);
+      oscillator.stop(context.currentTime + 0.22);
     } catch {
       // Keep UI flow even if browser blocks autoplay audio.
     }
+  }
+
+  private setupSoundUnlock() {
+    window.addEventListener('pointerdown', this.unlockSoundHandler, { passive: true });
+    window.addEventListener('keydown', this.unlockSoundHandler, { passive: true });
+    window.addEventListener('touchstart', this.unlockSoundHandler, { passive: true });
+  }
+
+  private removeSoundUnlockListeners() {
+    window.removeEventListener('pointerdown', this.unlockSoundHandler);
+    window.removeEventListener('keydown', this.unlockSoundHandler);
+    window.removeEventListener('touchstart', this.unlockSoundHandler);
+  }
+
+  private unlockSound() {
+    this.isSoundUnlocked = true;
+    this.removeSoundUnlockListeners();
   }
 }

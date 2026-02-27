@@ -205,4 +205,20 @@
   </div>
 </div>
 
+<ng-template #realtimeToastTpl>
+  <div class="d-flex align-items-start gap-2">
+    <div class="avatar-xs flex-shrink-0">
+      <span class="avatar-title rounded-circle bg-primary-subtle text-primary">
+        <i class="ri-notification-3-line"></i>
+      </span>
+    </div>
+    <div>
+      <div class="fw-semibold mb-1">New quotation received</div>
+      <div class="text-muted small">
+        #{{ latestRealtimeQuotation?.id }} - {{ latestRealtimeQuotation?.name || 'Unknown Customer' }}
+      </div>
+    </div>
+  </div>
+</ng-template>
+
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

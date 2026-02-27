@@ -2,3 +2,9 @@
 .table th {
   white-space: nowrap;
 }
+
+:host ::ng-deep .quotation-realtime-toast {
+  min-width: 300px;
+  background: #d7f3e3;
+  border-left: 4px solid #146c43;
+}
