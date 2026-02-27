@@ -19,6 +19,7 @@ import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
+import { DepartmentsComponent } from './departments/departments.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -53,6 +54,12 @@ const routes: Routes = [
     component: BranchesComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'branches.view' }
+  },
+  {
+    path: "departments",
+    component: DepartmentsComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'departments.view' }
   },
   {
     path: "brands",

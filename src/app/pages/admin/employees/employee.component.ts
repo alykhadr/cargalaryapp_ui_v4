@@ -13,6 +13,8 @@ import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
 import { BranchService } from '../services/branch.service';
 import { Branch } from '../interfaces/branch.interface';
+import { Department } from '../interfaces/department.interface';
+import { DepartmentService } from '../services/department.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -43,6 +45,7 @@ export class EmployeeComponent implements OnInit {
   pagedUsers: AdminEmployee[] = [];
   roles: Role[] = [];
   branches: Branch[] = [];
+  departments: Department[] = [];
   selectedRoles: string[] = [];
   editSelectedRoles: string[] = [];
   userNameFilter = '';
@@ -75,6 +78,7 @@ export class EmployeeComponent implements OnInit {
     private roleService: RoleService,
     private permissionService: PermissionService,
     private branchService: BranchService,
+    private departmentService: DepartmentService,
     private toastService: ToastService
   ) { }
 
@@ -94,7 +98,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: [''],
       nationalId: ['', Validators.required],
       jobTitle: [''],
-      department: ['', Validators.required],
+      departmentId: [null, Validators.required],
       hireDate: [''],
       terminationDate: [''],
       employmentStatus: ['Active'],
@@ -120,7 +124,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: [''],
       nationalId: [''],
       jobTitle: [''],
-      department: [''],
+      departmentId: [null, Validators.required],
       hireDate: [''],
       terminationDate: [''],
       employmentStatus: [''],
@@ -179,11 +183,19 @@ export class EmployeeComponent implements OnInit {
           this.showError(error);
           return of([] as Branch[]);
         })
+      ),
+      departments: this.departmentService.getDepartments().pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as Department[]);
+        })
       )
     }).subscribe({
-      next: ({ roles, branches }) => {
+      next: ({ roles, branches, departments }) => {
         this.roles = roles;
         this.branches = branches;
+        this.departments = departments;
         this.isLoading = false;
       },
       error: () => {
@@ -215,12 +227,20 @@ export class EmployeeComponent implements OnInit {
           this.showError(error);
           return of([] as Branch[]);
         })
+      ),
+      departments: this.departmentService.getDepartments().pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as Department[]);
+        })
       )
     }).subscribe({
-      next: ({ users, roles, branches }) => {
+      next: ({ users, roles, branches, departments }) => {
         this.users = users;
         this.roles = roles;
         this.branches = branches;
+        this.departments = departments;
         this.selectedUserIds.clear();
         this.applyFilters(true);
         this.isLoading = false;
@@ -286,7 +306,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: this.form['employeeNo'].value,
       nationalId: this.form['nationalId'].value,
       jobTitle: this.form['jobTitle'].value,
-      department: this.form['department'].value,
+      departmentId: this.form['departmentId'].value,
       hireDate: this.form['hireDate'].value,
       terminationDate: this.form['terminationDate'].value || undefined,
       employmentStatus: this.form['employmentStatus'].value || 'Active',
@@ -323,7 +343,7 @@ export class EmployeeComponent implements OnInit {
   openCreateModal() {
     this.submitted = false;
     this.isCreateModalOpen = true;
-    if (this.roles.length === 0 || this.branches.length === 0) {
+    if (this.roles.length === 0 || this.branches.length === 0 || this.departments.length === 0) {
       this.loadCreatePageData();
     }
   }
@@ -440,7 +460,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: user.employeeNo,
       nationalId: user.nationalId,
       jobTitle: user.jobTitle,
-      department: user.department,
+      departmentId: user.departmentId,
       hireDate: this.toDateInputValue(user.hireDate),
       terminationDate: this.toDateInputValue(user.terminationDate),
       employmentStatus: user.employmentStatus,
@@ -503,7 +523,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: this.editForm['employeeNo'].value || undefined,
       nationalId: this.editForm['nationalId'].value || undefined,
       jobTitle: this.editForm['jobTitle'].value || undefined,
-      department: this.editForm['department'].value || undefined,
+      departmentId: this.editForm['departmentId'].value || undefined,
       hireDate: this.editForm['hireDate'].value || undefined,
       terminationDate: this.editForm['terminationDate'].value || undefined,
       employmentStatus: this.editForm['employmentStatus'].value || undefined,
@@ -890,7 +910,7 @@ export class EmployeeComponent implements OnInit {
       employeeNo: '',
       nationalId: '',
       jobTitle: '',
-      department: '',
+      departmentId: null,
       hireDate: '',
       terminationDate: '',
       employmentStatus: 'Active',

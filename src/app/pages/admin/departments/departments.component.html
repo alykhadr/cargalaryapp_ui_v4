@@ -1,0 +1,226 @@
+<app-breadcrumbs title="Departments" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header border-bottom-dashed">
+        <div class="row g-4 align-items-center">
+          <div class="col-sm">
+            <h5 class="card-title mb-0">Department List</h5>
+          </div>
+          <div class="col-sm-auto">
+            <button *appHasPermission="'departments.create'" class="btn btn-success" type="button" (click)="openCreateModal()">
+              <i class="ri-add-line align-bottom me-1"></i> Add Department
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body border-bottom-dashed border-bottom">
+        <div class="row g-3">
+          <div class="col-sm-5">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input class="form-control" type="text" placeholder="Search by English name" [(ngModel)]="searchTermEn" (ngModelChange)="onSearch()">
+            </div>
+          </div>
+          <div class="col-sm-5">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input class="form-control" type="text" placeholder="ابحث بالاسم العربي" dir="rtl" [(ngModel)]="searchTermAr" (ngModelChange)="onSearch()">
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-soft-secondary w-100" type="button" (click)="clearSearch()">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i> Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!isLoading && filteredDepartments.length === 0" class="text-center py-5">
+          <h5 class="text-muted">No departments found</h5>
+        </div>
+
+        <div *ngIf="!isLoading && filteredDepartments.length > 0">
+          <div class="table-responsive table-card mb-1">
+            <table class="table align-middle table-nowrap table-hover mb-0">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th>Name (EN)</th>
+                  <th>Name (AR)</th>
+                  <th>Status</th>
+                  <th>Created By</th>
+                  <th style="width: 170px">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (department of pagedDepartments; track department.id) {
+                <tr>
+                  <td>{{ department.nameEn }}</td>
+                  <td>{{ department.nameAr }}</td>
+                  <td>
+                    <span class="badge text-uppercase" [ngClass]="department.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ department.isAvailable ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td>{{ department.createdBy || '-' }}</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button *appHasPermission="'employees.view'" class="btn btn-sm btn-soft-info" type="button"
+                        ngbTooltip="View Employees" placement="top" (click)="openDepartmentEmployeesModal(department)">
+                        <i class="ri-team-line"></i>
+                      </button>
+                      <button *appHasPermission="'departments.edit'" class="btn btn-sm btn-soft-primary" type="button" (click)="openEditModal(department)">
+                        <i class="ri-edit-line"></i>
+                      </button>
+                      <button *appHasPermission="'departments.delete'" class="btn btn-sm btn-soft-danger" type="button" (click)="deleteDepartment(department)">
+                        <i class="ri-delete-bin-line"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row justify-content-md-between align-items-md-center">
+            <div class="col col-sm-5">
+              <div class="dataTables_info mb-2">
+                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredDepartments.length }} entries
+              </div>
+            </div>
+            <div class="col col-sm-5">
+              <div class="text-sm-right float-sm-end listjs-pagination">
+                <ngb-pagination [collectionSize]="filteredDepartments.length" [(page)]="service.page"
+                  [pageSize]="service.pageSize" (pageChange)="onPageChange($event)">
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isModalOpen ? 'block' : 'none' }" *ngIf="isModalOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditMode ? 'Edit Department' : 'Create Department' }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="departmentForm">
+          <div class="mb-3">
+            <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameEn">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">Required</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
+            <input class="form-control" type="text" formControlName="nameAr" dir="rtl">
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">Required</div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="departmentAvailableSwitch">
+            <label class="form-check-label" for="departmentAvailableSwitch">Is Available</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveDepartment()">
+          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isModalOpen"></div>
+
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isEmployeesModalOpen ? 'block' : 'none' }" *ngIf="isEmployeesModalOpen">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Employees - {{ selectedDepartmentForEmployees?.nameEn }}</h5>
+        <button class="btn-close" type="button" (click)="closeDepartmentEmployeesModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isLoadingDepartmentEmployees" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!isLoadingDepartmentEmployees && departmentEmployees.length === 0" class="text-center py-4">
+          <h6 class="text-muted mb-0">No employees found in this department</h6>
+        </div>
+
+        <div *ngIf="!isLoadingDepartmentEmployees && departmentEmployees.length > 0">
+          <div class="table-responsive">
+            <table class="table align-middle table-nowrap table-hover mb-0">
+              <thead class="table-light text-muted">
+                <tr>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Employee No</th>
+                  <th>National ID</th>
+                  <th>Job Title</th>
+                  <th>Branch</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (employee of pagedDepartmentEmployees; track employee.id) {
+                <tr>
+                  <td>{{ employee.userName }}</td>
+                  <td>{{ employee.email }}</td>
+                  <td>{{ employee.employeeNo || '-' }}</td>
+                  <td>{{ employee.nationalId || '-' }}</td>
+                  <td>{{ employee.jobTitle || '-' }}</td>
+                  <td>{{ employee.branchName || '-' }}</td>
+                  <td>{{ employee.employmentStatus || '-' }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row justify-content-md-between align-items-md-center mt-3">
+            <div class="col col-sm-6">
+              <div class="dataTables_info mb-2">
+                Showing {{ employeePager.startIndex }} to {{ employeePager.endIndex }} of {{ departmentEmployees.length }} entries
+              </div>
+            </div>
+            <div class="col col-sm-6">
+              <div class="text-sm-right float-sm-end listjs-pagination">
+                <ngb-pagination
+                  [collectionSize]="departmentEmployees.length"
+                  [(page)]="employeePager.page"
+                  [pageSize]="employeePager.pageSize"
+                  (pageChange)="onDepartmentEmployeesPageChange($event)">
+                </ngb-pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeDepartmentEmployeesModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="isEmployeesModalOpen"></div>
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

@@ -1470,6 +1470,13 @@ export const MENU: MenuItem[] = [
         parentId: 180,
         permission: 'branches.view'
       },
+      {
+        id: 1821,
+        label: 'MENUITEMS.ADMIN.LIST.DEPARTMENT',
+        link: '/admin/departments',
+        parentId: 180,
+        permission: 'departments.view'
+      },
       
       {
         id: 183,

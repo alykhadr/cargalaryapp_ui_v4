@@ -22,6 +22,10 @@ export class AdminEmployeeService {
     return this.http.get<AdminEmployee[]>(`${this.employeesUrl}/branch/${branchId}`);
   }
 
+  getEmployeesByDepartment(departmentId: number): Observable<AdminEmployee[]> {
+    return this.http.get<AdminEmployee[]>(`${this.employeesUrl}/department/${departmentId}`);
+  }
+
   createEmployee(payload: CreateAdminEmployeeRequest): Observable<unknown> {
     const formData = new FormData();
     formData.append('email', payload.email);
@@ -33,7 +37,7 @@ export class AdminEmployeeService {
     if (payload.employeeNo?.trim()) formData.append('employeeNo', payload.employeeNo.trim());
     if (payload.nationalId?.trim()) formData.append('nationalId', payload.nationalId.trim());
     if (payload.jobTitle?.trim()) formData.append('jobTitle', payload.jobTitle.trim());
-    if (payload.department?.trim()) formData.append('department', payload.department.trim());
+    formData.append('departmentId', payload.departmentId.toString());
 
     const hireDate = this.normalizeDateForFormData(payload.hireDate);
     if (hireDate) formData.append('hireDate', hireDate);
@@ -73,7 +77,7 @@ export class AdminEmployeeService {
     employeeNo?: string;
     nationalId?: string;
     jobTitle?: string;
-    department?: string;
+    departmentId?: number;
     hireDate?: string | Date;
     terminationDate?: string | Date;
     employmentStatus?: string;
@@ -98,7 +102,7 @@ export class AdminEmployeeService {
     if (payload.employeeNo) formData.append('employeeNo', payload.employeeNo);
     if (payload.nationalId) formData.append('nationalId', payload.nationalId);
     if (payload.jobTitle) formData.append('jobTitle', payload.jobTitle);
-    if (payload.department) formData.append('department', payload.department);
+    if (payload.departmentId) formData.append('departmentId', payload.departmentId.toString());
 
     const hireDate = this.normalizeDateForFormData(payload.hireDate);
     if (hireDate) formData.append('hireDate', hireDate);

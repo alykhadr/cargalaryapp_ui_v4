@@ -14,7 +14,8 @@ export interface AdminEmployee {
   employeeNo: string;
   nationalId: string;
   jobTitle: string;
-  department: string;
+  departmentId: number;
+  departmentName: string;
   hireDate: string;
   terminationDate?: string;
   employmentStatus: string;
@@ -43,7 +44,7 @@ export interface CreateAdminEmployeeRequest {
   employeeNo: string;
   nationalId: string;
   jobTitle: string;
-  department: string;
+  departmentId: number;
   hireDate?: string | Date;
   terminationDate?: string | Date;
   employmentStatus?: string;

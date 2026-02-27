@@ -299,6 +299,7 @@
           "ROLE":"Roles",
           "PERMISSION":"Permissions",
           "BRANCH":"Branches",
+          "DEPARTMENT":"Departments",
           "BRAND":"Brands",
           "COLOR":"Colors",
           "GALLERYIMAGE":"Gallery Images",

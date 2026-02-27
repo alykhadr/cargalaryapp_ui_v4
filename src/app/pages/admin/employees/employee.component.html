@@ -114,9 +114,12 @@
             <label class="form-label">Department <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-              <input class="form-control" type="text" formControlName="department" />
+              <select class="form-select" formControlName="departmentId">
+                <option [ngValue]="null">Select department</option>
+                <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
+              </select>
             </div>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['department'].errors">Department is required.</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['departmentId'].errors">Department is required.</div>
           </div>
 
           <div class="mb-3">
@@ -528,9 +531,12 @@
               <label class="form-label">Department <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-                <input class="form-control" type="text" formControlName="department" />
+                <select class="form-select" formControlName="departmentId">
+                  <option [ngValue]="null">Select department</option>
+                  <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
+                </select>
               </div>
-              <div class="invalid-feedback d-block" *ngIf="submitted && form['department'].errors">Department is required.</div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['departmentId'].errors">Department is required.</div>
             </div>
 
             <div class="col-md-6">
@@ -779,11 +785,15 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Department</label>
+              <label class="form-label">Department <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-                <input class="form-control" type="text" formControlName="department" />
+                <select class="form-select" formControlName="departmentId">
+                  <option [ngValue]="null">Select department</option>
+                  <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
+                </select>
               </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['departmentId'].errors">Department is required.</div>
             </div>
 
             <div class="col-md-6">
