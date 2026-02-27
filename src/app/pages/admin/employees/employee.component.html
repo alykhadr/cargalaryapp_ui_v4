@@ -368,11 +368,11 @@
                 <td>
                   <span class="badge"
                     [ngClass]="{
-                      'bg-success-subtle text-success': user.employmentStatus === 'Active',
-                      'bg-warning-subtle text-warning': user.employmentStatus === 'OnLeave',
-                      'bg-danger-subtle text-danger': user.employmentStatus === 'Terminated'
+                      'bg-success-subtle text-success': user.employmentStatus === '1',
+                      'bg-warning-subtle text-warning': user.employmentStatus === '2',
+                      'bg-danger-subtle text-danger': user.employmentStatus === '3'
                     }">
-                    {{ user.employmentStatus || '-' }}
+                    {{ getEmploymentStatusLabel(user.employmentStatus) }}
                   </span>
                 </td>
                 <td>

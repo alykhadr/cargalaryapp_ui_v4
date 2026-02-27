@@ -106,7 +106,7 @@ export class EmployeeComponent implements OnInit {
       departmentId: [null, Validators.required],
       hireDate: [''],
       terminationDate: [''],
-      employmentStatus: ['Active'],
+      employmentStatus: ['1'],
       workEmail: [''],
       workPhone: [''],
       extension: [''],
@@ -346,7 +346,7 @@ export class EmployeeComponent implements OnInit {
       departmentId: this.form['departmentId'].value,
       hireDate: this.form['hireDate'].value,
       terminationDate: this.form['terminationDate'].value || undefined,
-      employmentStatus: this.form['employmentStatus'].value || 'Active',
+      employmentStatus: this.form['employmentStatus'].value || '1',
       workEmail: this.form['workEmail'].value || undefined,
       workPhone: this.form['workPhone'].value || undefined,
       extension: this.form['extension'].value || undefined,
@@ -668,7 +668,7 @@ export class EmployeeComponent implements OnInit {
     const emailTerm = this.emailFilter.trim().toLowerCase();
     const mobileNoTerm = this.mobileNoFilter.trim().toLowerCase();
     const branchNameTerm = this.branchNameFilter.trim().toLowerCase();
-    const employeeStatusTerm = this.employeeStatusFilter.trim().toLowerCase();
+    const employeeStatusTerm = this.employeeStatusFilter.trim();
 
     if (userNameTerm) {
       data = data.filter(user => (user.userName || '').toLowerCase().includes(userNameTerm));
@@ -690,7 +690,7 @@ export class EmployeeComponent implements OnInit {
     }
 
     if (employeeStatusTerm) {
-      data = data.filter(user => (user.employmentStatus || '').toLowerCase() === employeeStatusTerm);
+      data = data.filter(user => (user.employmentStatus || '') === employeeStatusTerm);
     }
 
     this.filteredUsers = data;
@@ -879,15 +879,15 @@ export class EmployeeComponent implements OnInit {
   }
 
   get activeEmployeesCount(): number {
-    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'active').length;
+    return this.filteredUsers.filter(user => (user.employmentStatus || '') === '1').length;
   }
 
   get onLeaveEmployeesCount(): number {
-    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'onleave').length;
+    return this.filteredUsers.filter(user => (user.employmentStatus || '') === '2').length;
   }
 
   get terminatedEmployeesCount(): number {
-    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'terminated').length;
+    return this.filteredUsers.filter(user => (user.employmentStatus || '') === '3').length;
   }
 
   bulkDeleteEmployees() {
@@ -950,7 +950,7 @@ export class EmployeeComponent implements OnInit {
       departmentId: null,
       hireDate: '',
       terminationDate: '',
-      employmentStatus: 'Active',
+      employmentStatus: '1',
       workEmail: '',
       workPhone: '',
       extension: '',
@@ -968,5 +968,12 @@ export class EmployeeComponent implements OnInit {
     this.profileImagePreview = null;
     this.showPassword = false;
     this.submitted = false;
+  }
+
+  getEmploymentStatusLabel(statusCode?: string): string {
+    if (!statusCode) return '-';
+    const status = this.employmentStatusLookups.find(item => item.detailCode === statusCode);
+    if (!status) return statusCode;
+    return status.nameAr && status.nameEn ? `${status.nameAr} - ${status.nameEn}` : (status.nameEn || status.nameAr || statusCode);
   }
 }
