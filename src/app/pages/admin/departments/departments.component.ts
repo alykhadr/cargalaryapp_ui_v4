@@ -9,6 +9,8 @@ import { DepartmentService } from '../services/department.service';
 import { getErrorMessage } from '../shared/error-message.util';
 import { AdminEmployee } from '../interfaces/employee-admin.interface';
 import { AdminEmployeeService } from '../services/admin-employee.service';
+import { LookupDetail } from '../interfaces/lookup.interface';
+import { LookupService } from '../services/lookup.service';
 
 @Component({
   selector: 'app-departments',
@@ -31,6 +33,7 @@ export class DepartmentsComponent implements OnInit {
   departmentEmployees: AdminEmployee[] = [];
   pagedDepartmentEmployees: AdminEmployee[] = [];
   employeePager = new PaginationService();
+  employmentStatusLookups: LookupDetail[] = [];
 
   departments: Department[] = [];
   filteredDepartments: Department[] = [];
@@ -43,6 +46,7 @@ export class DepartmentsComponent implements OnInit {
     public service: PaginationService,
     private departmentService: DepartmentService,
     private adminEmployeeService: AdminEmployeeService,
+    private lookupService: LookupService,
     private toastService: ToastService
   ) {}
 
@@ -59,6 +63,7 @@ export class DepartmentsComponent implements OnInit {
     });
 
     this.loadDepartments();
+    this.loadEmploymentStatusLookups();
   }
 
   get form() {
@@ -220,6 +225,21 @@ export class DepartmentsComponent implements OnInit {
     this.pagedDepartmentEmployees = this.employeePager.changePage(this.departmentEmployees);
   }
 
+  getEmploymentStatusLabel(statusCode?: string): string {
+    if (!statusCode) return '-';
+    const status = this.employmentStatusLookups.find(item =>
+      item.detailCode === statusCode || item.id.toString() === statusCode
+    );
+    if (!status) return statusCode;
+    return status.nameAr && status.nameEn ? `${status.nameAr} - ${status.nameEn}` : (status.nameEn || status.nameAr || statusCode);
+  }
+
+  getEmployeeNationalId(employee: AdminEmployee): string {
+    const employeeAny = employee as any;
+    const nationalId = employeeAny.nationalId ?? employeeAny.nationalID ?? employeeAny.nationalNumber ?? employeeAny.nationalNo;
+    return nationalId ? String(nationalId) : '-';
+  }
+
   private applyFilters(resetPage = false) {
     let data = [...this.departments];
     const termEn = this.searchTermEn.trim().toLowerCase();
@@ -236,6 +256,17 @@ export class DepartmentsComponent implements OnInit {
     this.filteredDepartments = data;
     if (resetPage) this.service.page = 1;
     this.pagedDepartments = this.service.changePage(this.filteredDepartments);
+  }
+
+  private loadEmploymentStatusLookups() {
+    this.lookupService.getByMasterCode('EMPLOYMENT_STATUS').pipe(first()).subscribe({
+      next: (statuses) => {
+        this.employmentStatusLookups = statuses;
+      },
+      error: () => {
+        this.employmentStatusLookups = [];
+      }
+    });
   }
 
   private showSuccess(message: string) {

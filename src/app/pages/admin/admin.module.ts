@@ -32,6 +32,9 @@ import { CarsListPageComponent } from './cars-list-page/cars-list-page.component
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { DepartmentsComponent } from './departments/departments.component';
+import { QuotationComponent } from './quotation/quotation.component';
+import { QuotationListPageComponent } from './quotation-list-page/quotation-list-page.component';
+import { QuotationCreatePageComponent } from './quotation-create-page/quotation-create-page.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -80,6 +83,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CarsListPageComponent,
     EmployeeListPageComponent,
     DepartmentsComponent,
+    QuotationComponent,
+    QuotationListPageComponent,
+    QuotationCreatePageComponent,
     CarByIdPipe
   ],
   imports: [

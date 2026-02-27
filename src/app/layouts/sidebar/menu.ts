@@ -1609,6 +1609,29 @@ export const MENU: MenuItem[] = [
             permission: 'cars.create'
           }
         ]
+      },
+      {
+        id: 199,
+        label: 'Quotation',
+        icon: 'ri-file-list-3-line',
+        parentId: 180,
+        isCollapsed: true,
+        subItems: [
+          {
+            id: 1991,
+            label: 'Quotation List',
+            link: '/admin/quotation/list',
+            parentId: 199,
+            icon: 'ri-list-check-2'
+          },
+          {
+            id: 1992,
+            label: 'Create Quotation',
+            link: '/admin/quotation/create',
+            parentId: 199,
+            icon: 'ri-add-circle-line'
+          }
+        ]
       }
       
       ,

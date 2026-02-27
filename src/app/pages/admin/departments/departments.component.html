@@ -186,10 +186,10 @@
                   <td>{{ employee.userName }}</td>
                   <td>{{ employee.email }}</td>
                   <td>{{ employee.employeeNo || '-' }}</td>
-                  <td>{{ employee.nationalId || '-' }}</td>
+                  <td>{{ getEmployeeNationalId(employee) }}</td>
                   <td>{{ employee.jobTitle || '-' }}</td>
                   <td>{{ employee.branchName || '-' }}</td>
-                  <td>{{ employee.employmentStatus || '-' }}</td>
+                  <td>{{ getEmploymentStatusLabel(employee.employmentStatus) }}</td>
                 </tr>
                 }
               </tbody>
