@@ -111,6 +111,10 @@ export class CarService {
     return this.http.put<void>(`${this.baseUrl}/${id}`, payload);
   }
 
+  copyCar(id: number): Observable<Car> {
+    return this.http.post<Car>(`${this.baseUrl}/${id}/copy`, {});
+  }
+
   updateAvailability(id: number, isAvailable: boolean): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/${id}/availability`, { isAvailable });
   }

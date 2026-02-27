@@ -2707,6 +2707,34 @@ export class CarsComponent implements OnInit, OnDestroy {
     });
   }
 
+  copyCar(car: Car) {
+    if (!this.canCreateCar) {
+      this.showError('You do not have permission to create cars.');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Create a copy of this car with all related details?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Copy!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#0ab39c',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.carService.copyCar(car.id).pipe(first()).subscribe({
+        next: () => {
+          this.showSuccess('Car copied successfully.');
+          this.loadCars();
+        },
+        error: (error) => this.showError(error)
+      });
+    });
+  }
+
   toggleCarAvailability(car: Car, isAvailable: boolean) {
     if (!this.canEditCar) {
       this.showError('You do not have permission to edit cars.');

@@ -1798,11 +1798,11 @@
                 </td>
                 <td class="text-end" (click)="$event.stopPropagation()">
                   <div class="d-inline-flex align-items-center flex-wrap gap-1 justify-content-end">
-                    <button class="btn btn-sm btn-soft-dark" *appHasPermission="'cars.view'" title="Info" (click)="openCarInfoModal(car)">
+                    <button class="btn btn-sm btn-soft-primary" *appHasPermission="'cars.view'" title="Info" (click)="openCarInfoModal(car)">
                       <i class="ri-information-line me-1"></i>Info
                     </button>
-                    <button class="btn btn-sm btn-soft-primary" *appHasPermission="'cars.edit'" title="Edit" (click)="openCarTab(car, 1)">
-                      <i class="ri-edit-line me-1"></i>Edit
+                    <button class="btn btn-sm btn-soft-success" *appHasPermission="'cars.create'" title="Copy" (click)="copyCar(car)">
+                      <i class="ri-file-copy-line me-1"></i>Copy
                     </button>
                     <button class="btn btn-sm btn-warning btn-label rounded-pill" *appHasPermission="'cars.view'" title="Price" (click)="openCarPreviewModal(car, 'colors')">
                       <i class="ri-money-dollar-circle-line label-icon align-middle rounded-pill fs-16 me-1"></i>Price
@@ -1813,6 +1813,10 @@
                         <i class="ri-more-fill"></i>
                       </button>
                       <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end car-row-menu">
+                        <button *appHasPermission="'cars.edit'" ngbDropdownItem (click)="openCarTab(car, 1)">
+                          <i class="ri-edit-line me-2 text-primary"></i>
+                          Edit
+                        </button>
                         <button *appHasPermission="'cars.view'" ngbDropdownItem (click)="openCarPreviewModal(car, 'features')">
                           <i class="ri-settings-4-line me-2 text-info"></i>
                           Features
