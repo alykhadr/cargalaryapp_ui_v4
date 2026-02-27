@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -31,6 +31,7 @@ import { CarCarColor } from '../interfaces/car-car-color.interface';
 import { CarCarColorService } from '../services/car-car-color.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { LookupService } from '../services/lookup.service';
+import { CarRealtimeService } from '../services/car-realtime.service';
 
 interface CarListActionCounts {
   features: number;
@@ -46,7 +47,7 @@ interface CarListActionCounts {
   styleUrl: './cars.component.scss',
   standalone: false
 })
-export class CarsComponent implements OnInit {
+export class CarsComponent implements OnInit, OnDestroy {
   @Input() mode: 'create' | 'list' | null = null;
   @ViewChild('nav') nav!: NgbNav;
   
@@ -289,7 +290,8 @@ export class CarsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private accessControlService: AccessControlService,
-    private lookupService: LookupService
+    private lookupService: LookupService,
+    private carRealtimeService: CarRealtimeService
   ) {}
 
   ngOnInit(): void {
@@ -365,6 +367,9 @@ export class CarsComponent implements OnInit {
 
     if (this.canViewCar) {
       this.loadCars();
+      if (this.isListPage) {
+        this.connectRealtime();
+      }
     }
     this.loadCarTypes();
     this.loadCarModels();
@@ -380,6 +385,12 @@ export class CarsComponent implements OnInit {
     this.loadFuelTypeOptions();
     this.loadExtraDetailTypeOptions();
     this.loadImageTypeOptions();
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    if (this.isListPage) {
+      await this.carRealtimeService.stop();
+    }
   }
 
   get form() {
@@ -3155,6 +3166,52 @@ export class CarsComponent implements OnInit {
     this.toastService.show(message, {
       classname: 'bg-success text-white',
       delay: 3000
+    });
+  }
+
+  private async connectRealtime() {
+    try {
+      await this.carRealtimeService.start(
+        (payload) => this.handleRealtimeCarEvent(payload, 'created'),
+        (payload) => this.handleRealtimeCarEvent(payload, 'updated'),
+        (payload) => this.handleRealtimeCarEvent(payload, 'deleted')
+      );
+    } catch {
+      this.toastService.show('Car realtime notifications unavailable right now.', {
+        classname: 'bg-warning text-dark',
+        delay: 3000
+      });
+    }
+  }
+
+  private handleRealtimeCarEvent(payload: any, action: 'created' | 'updated' | 'deleted') {
+    const car = payload as Car;
+    if (!car?.id) return;
+
+    if (this.canViewCar) {
+      this.loadCars();
+    }
+
+    const label = car.nameEn || car.nameAr || '';
+    if (action === 'created') {
+      this.toastService.show(`Car created: #${car.id} ${label}`.trim(), {
+        classname: 'bg-success text-white',
+        delay: 3500
+      });
+      return;
+    }
+
+    if (action === 'updated') {
+      this.toastService.show(`Car updated: #${car.id} ${label}`.trim(), {
+        classname: 'bg-primary text-white',
+        delay: 3500
+      });
+      return;
+    }
+
+    this.toastService.show(`Car deleted: #${car.id} ${label}`.trim(), {
+      classname: 'bg-danger text-white',
+      delay: 3500
     });
   }
 

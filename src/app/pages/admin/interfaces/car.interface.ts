@@ -24,6 +24,7 @@ export interface Car {
   enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
+  createdAt?: string;
   createdBy?: string;
   isAvailable: boolean;
 }

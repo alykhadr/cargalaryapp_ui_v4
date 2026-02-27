@@ -1775,6 +1775,9 @@
                       <small class="text-muted d-block">
                         Year: {{ car.year || '-' }}
                       </small>
+                      <small class="text-muted d-block">
+                        Created: {{ car.createdAt ? (car.createdAt | date:'yyyy-MM-dd') : '-' }}
+                      </small>
                     </div>
                   </div>
                 </td>
