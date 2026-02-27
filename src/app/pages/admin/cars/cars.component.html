@@ -315,6 +315,78 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
+                      <label class="form-label">Transmission Type <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-settings-3-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('transmisionType')" type="number" formControlName="transmisionType" placeholder="Enter transmission type">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('transmisionType')">
+                        {{ getControlError('transmisionType') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Drivetrain <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-roadster-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('drivetrain')" type="number" formControlName="drivetrain" placeholder="Enter drivetrain">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('drivetrain')">
+                        {{ getControlError('drivetrain') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Cylenders <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-speed-up-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('cylenders')" type="number" formControlName="cylenders" placeholder="Enter cylenders">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('cylenders')">
+                        {{ getControlError('cylenders') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Fuel Type <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-gas-station-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('fuelType')" type="number" formControlName="fuelType" placeholder="Enter fuel type">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('fuelType')">
+                        {{ getControlError('fuelType') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Plate Number <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-hashtag"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('plateNumber')" type="text" formControlName="plateNumber" placeholder="Enter plate number">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('plateNumber')">
+                        {{ getControlError('plateNumber') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Engine Number <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-car-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('enginNumber')" type="text" formControlName="enginNumber" placeholder="Enter engine number">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('enginNumber')">
+                        {{ getControlError('enginNumber') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
                       <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
                         <label class="form-check-label" for="isAvailable">

@@ -66,6 +66,12 @@ export class CarService {
     formData.append('fuelTankCapacityLiter', payload.fuelTankCapacityLiter.toString());
     formData.append('trimLevel', payload.trimLevel.toString());
     formData.append('vehicleClass', payload.vehicleClass.toString());
+    formData.append('plateNumber', payload.plateNumber);
+    formData.append('transmisionType', payload.transmisionType.toString());
+    formData.append('drivetrain', payload.drivetrain.toString());
+    formData.append('cylenders', payload.cylenders.toString());
+    formData.append('fuelType', payload.fuelType.toString());
+    formData.append('enginNumber', payload.enginNumber);
     if (payload.descriptionAr !== undefined && payload.descriptionAr !== null) {
       formData.append('descriptionAr', payload.descriptionAr);
     }

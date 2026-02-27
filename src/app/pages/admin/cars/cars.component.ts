@@ -65,7 +65,7 @@ export class CarsComponent implements OnInit {
   canDeleteCar = false;
   private requestedCarIdToOpen: number | null = null;
   private requestedTabToOpen: number = 1;
-  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'descriptionEn', 'descriptionAr'];
+  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'plateNumber', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
 
   // Lists
   cars: Car[] = [];
@@ -323,6 +323,12 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: [null, [Validators.required, Validators.min(0.01)]],
       trimLevel: [null, [Validators.required, Validators.min(1)]],
       vehicleClass: [null, [Validators.required, Validators.min(1)]],
+      plateNumber: ['', [Validators.required]],
+      transmisionType: [null, [Validators.required, Validators.min(1)]],
+      drivetrain: [null, [Validators.required, Validators.min(1)]],
+      cylenders: [null, [Validators.required, Validators.min(1)]],
+      fuelType: [null, [Validators.required, Validators.min(1)]],
+      enginNumber: ['', [Validators.required]],
       descriptionEn: ['', [Validators.required]],
       descriptionAr: ['', [Validators.required]],
       isAvailable: [true]
@@ -1697,6 +1703,12 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: null,
       trimLevel: null,
       vehicleClass: null,
+      plateNumber: '',
+      transmisionType: null,
+      drivetrain: null,
+      cylenders: null,
+      fuelType: null,
+      enginNumber: '',
       isAvailable: true
     });
     this.submitted = false;
@@ -1780,6 +1792,12 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: 60,
       trimLevel: 1,
       vehicleClass: 1,
+      plateNumber: 'ABC-1234',
+      transmisionType: 1,
+      drivetrain: 1,
+      cylenders: 4,
+      fuelType: 1,
+      enginNumber: 'EN-TEST-001',
       descriptionEn: 'Test mode car description (EN)',
       descriptionAr: 'وصف سيارة تجريبي',
       isAvailable: true
@@ -1991,6 +2009,12 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: car.fuelTankCapacityLiter,
       trimLevel: car.trimLevel,
       vehicleClass: car.vehicleClass,
+      plateNumber: car.plateNumber,
+      transmisionType: car.transmisionType,
+      drivetrain: car.drivetrain,
+      cylenders: car.cylenders,
+      fuelType: car.fuelType,
+      enginNumber: car.enginNumber,
       descriptionEn: car.descriptionEn,
       descriptionAr: car.descriptionAr,
       isAvailable: car.isAvailable
@@ -2203,6 +2227,12 @@ export class CarsComponent implements OnInit {
       fuelTankCapacityLiter: this.form['fuelTankCapacityLiter'].value,
       trimLevel: this.form['trimLevel'].value,
       vehicleClass: this.form['vehicleClass'].value,
+      plateNumber: this.form['plateNumber'].value,
+      transmisionType: this.form['transmisionType'].value,
+      drivetrain: this.form['drivetrain'].value,
+      cylenders: this.form['cylenders'].value,
+      fuelType: this.form['fuelType'].value,
+      enginNumber: this.form['enginNumber'].value,
       descriptionEn: this.form['descriptionEn'].value,
       descriptionAr: this.form['descriptionAr'].value,
       isAvailable: this.form['isAvailable'].value
@@ -3037,6 +3067,18 @@ export class CarsComponent implements OnInit {
           return 'Trim level is required.';
         case 'vehicleClass':
           return 'Vehicle class is required.';
+        case 'plateNumber':
+          return 'Plate number is required.';
+        case 'transmisionType':
+          return 'Transmission type is required.';
+        case 'drivetrain':
+          return 'Drivetrain is required.';
+        case 'cylenders':
+          return 'Cylenders is required.';
+        case 'fuelType':
+          return 'Fuel type is required.';
+        case 'enginNumber':
+          return 'Engine number is required.';
       }
     }
 
@@ -3065,6 +3107,18 @@ export class CarsComponent implements OnInit {
     }
     if (controlName === 'vehicleClass' && control.errors['min']) {
       return 'Vehicle class must be greater than 0.';
+    }
+    if (controlName === 'transmisionType' && control.errors['min']) {
+      return 'Transmission type must be greater than 0.';
+    }
+    if (controlName === 'drivetrain' && control.errors['min']) {
+      return 'Drivetrain must be greater than 0.';
+    }
+    if (controlName === 'cylenders' && control.errors['min']) {
+      return 'Cylenders must be greater than 0.';
+    }
+    if (controlName === 'fuelType' && control.errors['min']) {
+      return 'Fuel type must be greater than 0.';
     }
 
     return 'Invalid value.';

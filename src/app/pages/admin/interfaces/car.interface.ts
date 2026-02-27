@@ -14,6 +14,12 @@ export interface Car {
   fuelTankCapacityLiter: number;
   trimLevel: number;
   vehicleClass: number;
+  plateNumber: string;
+  transmisionType: number;
+  drivetrain: number;
+  cylenders: number;
+  fuelType: number;
+  enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
   createdBy?: string;
@@ -45,6 +51,12 @@ export interface CreateCarRequest {
   fuelTankCapacityLiter: number;
   trimLevel: number;
   vehicleClass: number;
+  plateNumber: string;
+  transmisionType: number;
+  drivetrain: number;
+  cylenders: number;
+  fuelType: number;
+  enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
 }
@@ -111,6 +123,12 @@ export interface UpdateCarRequest {
   fuelTankCapacityLiter: number;
   trimLevel: number;
   vehicleClass: number;
+  plateNumber: string;
+  transmisionType: number;
+  drivetrain: number;
+  cylenders: number;
+  fuelType: number;
+  enginNumber: string;
   descriptionAr?: string;
   descriptionEn?: string;
   isAvailable?: boolean;
