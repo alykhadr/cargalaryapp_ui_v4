@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { SharedModule } from '../../shared/shared.module';
 
-import { UserComponent } from './users/user.component';
+import { EmployeeComponent } from './employees/employee.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
@@ -29,6 +29,7 @@ import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsComponent } from './cars/cars.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
+import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
@@ -40,7 +41,7 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { NgxSliderModule } from 'ngx-slider-v2';
-import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbPaginationModule, NgbRatingModule, NgbTooltipModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbCollapseModule, NgbDropdownModule, NgbNavModule, NgbPaginationModule, NgbRatingModule, NgbTooltipModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { defineElement } from '@lordicon/element';
@@ -55,7 +56,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
 
 @NgModule({
   declarations: [
-    UserComponent,
+    EmployeeComponent,
     RolesComponent,
     PermissionsComponent,
     AdminToastsContainerComponent,
@@ -76,6 +77,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CarsComponent,
     CarsCreatePageComponent,
     CarsListPageComponent,
+    EmployeeListPageComponent,
     CarByIdPipe
   ],
   imports: [
@@ -89,6 +91,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     NgbDropdownModule,
     NgbNavModule,
     NgbAccordionModule,
+    NgbCollapseModule,
     NgbRatingModule,
     NgbTooltipModule,
     NgbToastModule,

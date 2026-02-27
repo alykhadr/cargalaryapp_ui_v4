@@ -29,21 +29,27 @@
           <div class="col-xl-12">
             <div class="row g-3">
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search by English name..."
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="onSearch()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by English name..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearch()">
+                </div>
               </div>
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="ابحث بالاسم العربي..."
-                  [(ngModel)]="searchTermAr"
-                  (ngModelChange)="onSearch()"
-                  dir="rtl">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ابحث بالاسم العربي..."
+                    [(ngModel)]="searchTermAr"
+                    (ngModelChange)="onSearch()"
+                    dir="rtl">
+                </div>
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -178,7 +184,10 @@
 
           <div class="mb-3">
             <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
               English name is required (max 100 characters).
             </div>
@@ -186,7 +195,10 @@
 
           <div class="mb-3">
             <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
               Arabic name is required (max 100 characters).
             </div>
@@ -194,30 +206,35 @@
 
           <div class="mb-3">
             <label class="form-label">Brand <span class="text-danger">*</span></label>
-            <ng-select
-              [items]="brands"
-              bindLabel="nameEn"
-              bindValue="id"
-              formControlName="brandId"
-              placeholder="Select Brand"
-              [searchable]="true"
-              [clearable]="true">
-              <ng-template ng-label-tmp let-item="item">
-                <div class="d-flex align-items-center gap-2">
-                  <img [src]="item.imageUrl" class="rounded-circle" style="width: 24px; height: 24px; object-fit: cover;">
-                  <span>{{ item.nameEn }} ({{ item.nameAr }})</span>
-                </div>
-              </ng-template>
-              <ng-template ng-option-tmp let-item="item" let-index="index">
-                <div class="d-flex align-items-center gap-3">
-                  <img [src]="item.imageUrl" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                  <div class="d-flex flex-column">
-                    <span class="fw-medium">{{ item.nameEn }}</span>
-                    <small class="text-muted">{{ item.nameAr }}</small>
-                  </div>
-                </div>
-              </ng-template>
-            </ng-select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
+              <div class="flex-grow-1">
+                <ng-select
+                  [items]="brands"
+                  bindLabel="nameEn"
+                  bindValue="id"
+                  formControlName="brandId"
+                  placeholder="Select Brand"
+                  [searchable]="true"
+                  [clearable]="true">
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="d-flex align-items-center gap-2">
+                      <img [src]="item.imageUrl" class="rounded-circle" style="width: 24px; height: 24px; object-fit: cover;">
+                      <span>{{ item.nameEn }} ({{ item.nameAr }})</span>
+                    </div>
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    <div class="d-flex align-items-center gap-3">
+                      <img [src]="item.imageUrl" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                      <div class="d-flex flex-column">
+                        <span class="fw-medium">{{ item.nameEn }}</span>
+                        <small class="text-muted">{{ item.nameAr }}</small>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['brandId'].errors">
               Brand is required.
             </div>

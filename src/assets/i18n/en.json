@@ -295,7 +295,7 @@
      "ADMIN":{
       "TEXT": "Admin",
       "LIST": {
-         "USER": "Users",
+         "USER": "Employees",
           "ROLE":"Roles",
           "PERMISSION":"Permissions",
           "BRANCH":"Branches",

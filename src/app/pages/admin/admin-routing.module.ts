@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserComponent } from './users/user.component';
 import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { BranchesComponent } from './branches/branches.component';
@@ -19,6 +18,7 @@ import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.
 import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
+import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -26,10 +26,15 @@ import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
 const routes: Routes = [
   {
-    path: "users",
-    component: UserComponent,
+    path: "employees",
+    component: EmployeeListPageComponent,
     canActivate: [AuthGuard, PermissionGuard],
-    data: { permission: 'users.view' }
+    data: { permission: 'employees.view' }
+  },
+  {
+    path: "users",
+    redirectTo: "employees",
+    pathMatch: "full"
   },
   {
     path: "roles",

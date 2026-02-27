@@ -27,7 +27,10 @@
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
           <div class="col-sm-10">
-            <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            </div>
           </div>
           <div class="col-sm-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -128,7 +131,10 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Service Name (English) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter service name in English" maxlength="200">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-service-line"></i></span>
+                <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter service name in English" maxlength="200">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
                 <span *ngIf="form['nameEn'].errors['required']">Service name in English is required.</span>
               </div>
@@ -136,7 +142,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Service Name (Arabic) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل اسم الخدمة بالعربية" maxlength="200" dir="rtl">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-service-line"></i></span>
+                <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل اسم الخدمة بالعربية" maxlength="200" dir="rtl">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
                 <span *ngIf="form['nameAr'].errors['required']">Service name in Arabic is required.</span>
               </div>
@@ -160,7 +169,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Discount <span class="text-danger">*</span></label>
-              <input class="form-control" type="number" formControlName="discount" placeholder="Enter discount value" min="0">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-percent-line"></i></span>
+                <input class="form-control" type="number" formControlName="discount" placeholder="Enter discount value" min="0">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['discount'].errors">
                 <span *ngIf="form['discount'].errors['required']">Discount is required.</span>
                 <span *ngIf="form['discount'].errors['min']">Discount must be 0 or greater.</span>
@@ -169,7 +181,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Image <span class="text-danger">*</span></label>
-              <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
+              </div>
               <div *ngIf="imagePreview" class="mt-2">
                 <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
               </div>

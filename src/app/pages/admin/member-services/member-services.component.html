@@ -27,7 +27,10 @@
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
           <div class="col-sm-10">
-            <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            </div>
           </div>
           <div class="col-sm-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -125,7 +128,10 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter name in English" maxlength="200">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-text"></i></span>
+                <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter name in English" maxlength="200">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
                 <span *ngIf="form['nameEn'].errors['required']">Name in English is required.</span>
               </div>
@@ -133,7 +139,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" maxlength="200" dir="rtl">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-text"></i></span>
+                <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" maxlength="200" dir="rtl">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
                 <span *ngIf="form['nameAr'].errors['required']">Name in Arabic is required.</span>
               </div>
@@ -141,7 +150,10 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Description (English)</label>
-              <textarea class="form-control" formControlName="descriptionEn" rows="4" maxlength="500" placeholder="Enter description in English"></textarea>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                <textarea class="form-control" formControlName="descriptionEn" rows="4" maxlength="500" placeholder="Enter description in English"></textarea>
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
                 <span *ngIf="form['descriptionEn'].errors['maxlength']">Max length is 500 characters.</span>
               </div>
@@ -149,7 +161,10 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Description (Arabic)</label>
-              <textarea class="form-control" formControlName="descriptionAr" rows="4" maxlength="500" placeholder="أدخل الوصف بالعربية" dir="rtl"></textarea>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                <textarea class="form-control" formControlName="descriptionAr" rows="4" maxlength="500" placeholder="أدخل الوصف بالعربية" dir="rtl"></textarea>
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
                 <span *ngIf="form['descriptionAr'].errors['maxlength']">Max length is 500 characters.</span>
               </div>
@@ -157,7 +172,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Image <span class="text-danger">*</span></label>
-              <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
+              </div>
               <div *ngIf="imagePreview" class="mt-2">
                 <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
               </div>

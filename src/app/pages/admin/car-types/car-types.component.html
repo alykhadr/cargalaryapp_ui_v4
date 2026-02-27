@@ -28,21 +28,27 @@
           <div class="col-xl-12">
             <div class="row g-3">
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search by English name..."
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="onSearch()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by English name..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearch()">
+                </div>
               </div>
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="ابحث بالاسم العربي..."
-                  [(ngModel)]="searchTermAr"
-                  (ngModelChange)="onSearch()"
-                  dir="rtl">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ابحث بالاسم العربي..."
+                    [(ngModel)]="searchTermAr"
+                    (ngModelChange)="onSearch()"
+                    dir="rtl">
+                </div>
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -146,7 +152,10 @@
         <form [formGroup]="carTypeForm">
           <div class="mb-3">
             <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
               English name is required (max 100 characters).
             </div>
@@ -154,7 +163,10 @@
 
           <div class="mb-3">
             <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
               Arabic name is required (max 100 characters).
             </div>

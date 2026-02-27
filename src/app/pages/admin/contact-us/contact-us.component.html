@@ -25,18 +25,24 @@
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
           <div class="col-sm-5">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search by contact value..."
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearch()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by contact value..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearch()">
+            </div>
           </div>
           <div class="col-sm-3">
-            <select class="form-select" [(ngModel)]="selectedTypeFilter" (ngModelChange)="onSearch()">
-              <option [value]="null">All Types</option>
-              <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
-            </select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-list-check-2"></i></span>
+              <select class="form-select" [(ngModel)]="selectedTypeFilter" (ngModelChange)="onSearch()">
+                <option [value]="null">All Types</option>
+                <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
+              </select>
+            </div>
           </div>
           <div class="col-sm-4">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -152,7 +158,10 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Contact Value <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="contactValue" placeholder="Enter contact value" maxlength="100">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-contacts-book-2-line"></i></span>
+                <input class="form-control" type="text" formControlName="contactValue" placeholder="Enter contact value" maxlength="100">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['contactValue'].errors">
                 <span *ngIf="form['contactValue'].errors['required']">Contact value is required.</span>
                 <span *ngIf="form['contactValue'].errors['maxlength']">Max length is 100 characters.</span>
@@ -161,9 +170,12 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Contact Type <span class="text-danger">*</span></label>
-              <select class="form-select" formControlName="contactType">
-                <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
-              </select>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-list-check-2"></i></span>
+                <select class="form-select" formControlName="contactType">
+                  <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
+                </select>
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['contactType'].errors">
                 Contact type is required.
               </div>
@@ -171,7 +183,10 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Message (Arabic) <span class="text-danger">*</span></label>
-              <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" placeholder="أدخل الرسالة بالعربية" dir="rtl"></textarea>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-message-2-line"></i></span>
+                <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" placeholder="أدخل الرسالة بالعربية" dir="rtl"></textarea>
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['messageAr'].errors">
                 <span *ngIf="form['messageAr'].errors['required']">Message in Arabic is required.</span>
                 <span *ngIf="form['messageAr'].errors['maxlength']">Max length is 500 characters.</span>
@@ -180,7 +195,10 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Message (English) <span class="text-danger">*</span></label>
-              <textarea class="form-control" formControlName="messageEn" rows="3" maxlength="500" placeholder="Enter message in English"></textarea>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-message-2-line"></i></span>
+                <textarea class="form-control" formControlName="messageEn" rows="3" maxlength="500" placeholder="Enter message in English"></textarea>
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['messageEn'].errors">
                 <span *ngIf="form['messageEn'].errors['required']">Message in English is required.</span>
                 <span *ngIf="form['messageEn'].errors['maxlength']">Max length is 500 characters.</span>
@@ -189,7 +207,10 @@
 
             <div class="col-md-12 mb-3">
               <label class="form-label">Icon Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
-              <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
+              </div>
               <div *ngIf="iconPreviewUrl" class="mt-2">
                 <img [src]="iconPreviewUrl" alt="Icon Preview" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
               </div>

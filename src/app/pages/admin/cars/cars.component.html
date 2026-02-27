@@ -28,23 +28,28 @@
                   <div class="row">
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Type <span class="text-danger">*</span></label>
-                      <ng-select
-                        [items]="carTypes"
-                        bindLabel="nameEn"
-                        bindValue="id"
-                        formControlName="typeId"
-                        placeholder="Select Type"
-                        [searchable]="true"
-                        [searchFn]="typeSearchFn"
-                        [clearable]="true"
-                        [ngClass]="{ 'is-invalid': isControlInvalid('typeId') }">
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="d-flex align-items-center gap-2">
-                            <span class="fw-medium">{{ item.nameEn }}</span>
-                            <small class="text-muted">({{ item.nameAr }})</small>
-                          </div>
-                        </ng-template>
-                      </ng-select>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-car-line"></i></span>
+                        <div class="flex-grow-1">
+                          <ng-select
+                            [items]="carTypes"
+                            bindLabel="nameEn"
+                            bindValue="id"
+                            formControlName="typeId"
+                            placeholder="Select Type"
+                            [searchable]="true"
+                            [searchFn]="typeSearchFn"
+                            [clearable]="true"
+                            [ngClass]="{ 'is-invalid': isControlInvalid('typeId') }">
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="d-flex align-items-center gap-2">
+                                <span class="fw-medium">{{ item.nameEn }}</span>
+                                <small class="text-muted">({{ item.nameAr }})</small>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </div>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('typeId')">
                         {{ getControlError('typeId') }}
                       </div>
@@ -52,23 +57,28 @@
 
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Branch <span class="text-danger">*</span></label>
-                      <ng-select
-                        [items]="branches"
-                        bindLabel="branchNameEn"
-                        bindValue="id"
-                        formControlName="branchId"
-                        placeholder="Select Branch"
-                        [searchable]="true"
-                        [searchFn]="branchSearchFn"
-                        [clearable]="true"
-                        [ngClass]="{ 'is-invalid': isControlInvalid('branchId') }">
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="d-flex align-items-center justify-content-between gap-2">
-                            <span class="fw-medium">{{ item.branchNameEn }}</span>
-                            <small class="text-muted">{{ item.branchNameAr }}</small>
-                          </div>
-                        </ng-template>
-                      </ng-select>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+                        <div class="flex-grow-1">
+                          <ng-select
+                            [items]="branches"
+                            bindLabel="branchNameEn"
+                            bindValue="id"
+                            formControlName="branchId"
+                            placeholder="Select Branch"
+                            [searchable]="true"
+                            [searchFn]="branchSearchFn"
+                            [clearable]="true"
+                            [ngClass]="{ 'is-invalid': isControlInvalid('branchId') }">
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="d-flex align-items-center justify-content-between gap-2">
+                                <span class="fw-medium">{{ item.branchNameEn }}</span>
+                                <small class="text-muted">{{ item.branchNameAr }}</small>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </div>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('branchId')">
                         {{ getControlError('branchId') }}
                       </div>
@@ -78,33 +88,38 @@
                   <div class="row">
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Brand <span class="text-danger">*</span></label>
-                      <ng-select
-                        [items]="brands"
-                        bindLabel="nameEn"
-                        bindValue="id"
-                        formControlName="brandFilterId"
-                        placeholder="Select Brand"
-                        [searchable]="true"
-                        [searchFn]="brandSearchFn"
-                        [clearable]="true"
-                        (change)="onFormBrandChange($event)"
-                        [ngClass]="{ 'is-invalid': isControlInvalid('brandFilterId') }">
-                        <ng-template ng-label-tmp let-item="item">
-                          <div class="d-flex align-items-center gap-2 py-1">
-                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
-                            <span class="fw-medium">{{ item.nameEn }}</span>
-                          </div>
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="d-flex align-items-center gap-2 py-1">
-                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
-                            <div class="d-flex flex-column">
-                              <span class="fw-medium">{{ item.nameEn }}</span>
-                              <small class="text-muted">{{ item.nameAr }}</small>
-                            </div>
-                          </div>
-                        </ng-template>
-                      </ng-select>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
+                        <div class="flex-grow-1">
+                          <ng-select
+                            [items]="brands"
+                            bindLabel="nameEn"
+                            bindValue="id"
+                            formControlName="brandFilterId"
+                            placeholder="Select Brand"
+                            [searchable]="true"
+                            [searchFn]="brandSearchFn"
+                            [clearable]="true"
+                            (change)="onFormBrandChange($event)"
+                            [ngClass]="{ 'is-invalid': isControlInvalid('brandFilterId') }">
+                            <ng-template ng-label-tmp let-item="item">
+                              <div class="d-flex align-items-center gap-2 py-1">
+                                <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
+                                <span class="fw-medium">{{ item.nameEn }}</span>
+                              </div>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="d-flex align-items-center gap-2 py-1">
+                                <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
+                                <div class="d-flex flex-column">
+                                  <span class="fw-medium">{{ item.nameEn }}</span>
+                                  <small class="text-muted">{{ item.nameAr }}</small>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </div>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('brandFilterId')">
                         {{ getControlError('brandFilterId') }}
                       </div>
@@ -112,34 +127,39 @@
 
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Model <span class="text-danger">*</span></label>
-                      <ng-select
-                        [items]="formCarModels"
-                        bindLabel="nameEn"
-                        bindValue="id"
-                        formControlName="modelId"
-                        placeholder="Select Model"
-                        [searchable]="true"
-                        [searchFn]="modelSearchFn"
-                        [clearable]="true"
-                        [disabled]="!carForm.get('brandFilterId')?.value"
-                        (change)="onFormModelChange($event)"
-                        [ngClass]="{ 'is-invalid': isControlInvalid('modelId') }">
-                        <ng-template ng-label-tmp let-item="item">
-                          <div class="d-flex align-items-center gap-2 py-1">
-                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
-                            <span class="fw-medium">{{ item.nameEn }}</span>
-                          </div>
-                        </ng-template>
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="d-flex align-items-center gap-2 py-1">
-                            <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
-                            <div class="d-flex flex-column">
-                              <span class="fw-medium">{{ item.nameEn }}</span>
-                              <small class="text-muted">{{ item.nameAr }}</small>
-                            </div>
-                          </div>
-                        </ng-template>
-                      </ng-select>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-roadster-line"></i></span>
+                        <div class="flex-grow-1">
+                          <ng-select
+                            [items]="formCarModels"
+                            bindLabel="nameEn"
+                            bindValue="id"
+                            formControlName="modelId"
+                            placeholder="Select Model"
+                            [searchable]="true"
+                            [searchFn]="modelSearchFn"
+                            [clearable]="true"
+                            [disabled]="!carForm.get('brandFilterId')?.value"
+                            (change)="onFormModelChange($event)"
+                            [ngClass]="{ 'is-invalid': isControlInvalid('modelId') }">
+                            <ng-template ng-label-tmp let-item="item">
+                              <div class="d-flex align-items-center gap-2 py-1">
+                                <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="24" height="24" style="object-fit: cover;">
+                                <span class="fw-medium">{{ item.nameEn }}</span>
+                              </div>
+                            </ng-template>
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="d-flex align-items-center gap-2 py-1">
+                                <img [src]="getEntityImageUrl(item.imageUrl)" alt="" class="rounded" width="28" height="28" style="object-fit: cover;">
+                                <div class="d-flex flex-column">
+                                  <span class="fw-medium">{{ item.nameEn }}</span>
+                                  <small class="text-muted">{{ item.nameAr }}</small>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ng-select>
+                        </div>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('modelId')">
                         {{ getControlError('modelId') }}
                       </div>
@@ -149,7 +169,10 @@
                   <div class="row">
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-                      <input class="form-control" [class.is-invalid]="isControlInvalid('nameEn')" type="text" formControlName="nameEn" placeholder="Enter English name">
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-text"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('nameEn')" type="text" formControlName="nameEn" placeholder="Enter English name">
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('nameEn')">
                         {{ getControlError('nameEn') }}
                       </div>
@@ -157,7 +180,10 @@
 
                     <div class="col-lg-6 mb-3">
                       <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-                      <input class="form-control" [class.is-invalid]="isControlInvalid('nameAr')" type="text" dir="rtl" formControlName="nameAr" placeholder="أدخل الاسم بالعربية">
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-text"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('nameAr')" type="text" dir="rtl" formControlName="nameAr" placeholder="أدخل الاسم بالعربية">
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('nameAr')">
                         {{ getControlError('nameAr') }}
                       </div>
@@ -167,7 +193,10 @@
                   <div class="row">
                     <div class="col-md-4 mb-3">
                       <label class="form-label">Year <span class="text-danger">*</span></label>
-                      <input class="form-control" [class.is-invalid]="isControlInvalid('year')" type="number" formControlName="year" placeholder="Enter year">
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('year')" type="number" formControlName="year" placeholder="Enter year">
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('year')">
                         {{ getControlError('year') }}
                       </div>
@@ -190,11 +219,98 @@
                     <div class="col-md-6 mb-3">
                       <label class="form-label">Mileage <span class="text-danger">*</span></label>
                       <div class="input-group">
+                        <span class="input-group-text"><i class="ri-dashboard-2-line"></i></span>
                         <input class="form-control" [class.is-invalid]="isControlInvalid('mileage')" type="number" formControlName="mileage" placeholder="Enter mileage">
                         <span class="input-group-text">km</span>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('mileage')">
                         {{ getControlError('mileage') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">VAT (%) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-percent-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('vat')" type="number" formControlName="vat" placeholder="Enter VAT" min="0" step="0.01">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('vat')">
+                        {{ getControlError('vat') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Condition Id <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-checkbox-circle-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('conditionId')" type="number" formControlName="conditionId" placeholder="Enter condition id">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('conditionId')">
+                        {{ getControlError('conditionId') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Seating Capacity <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-user-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('seatingCapacity')" type="number" formControlName="seatingCapacity" placeholder="Enter seating capacity">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('seatingCapacity')">
+                        {{ getControlError('seatingCapacity') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Wheel Size (Inch) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-disc-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('weelSizeInch')" type="text" formControlName="weelSizeInch" placeholder="Enter wheel size in inch">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('weelSizeInch')">
+                        {{ getControlError('weelSizeInch') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Fuel Tank Capacity (Liter) <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-gas-station-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('fuelTankCapacityLiter')" type="number" formControlName="fuelTankCapacityLiter" placeholder="Enter fuel tank capacity">
+                        <span class="input-group-text">L</span>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('fuelTankCapacityLiter')">
+                        {{ getControlError('fuelTankCapacityLiter') }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Trim Level <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-list-check"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('trimLevel')" type="number" formControlName="trimLevel" placeholder="Enter trim level">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('trimLevel')">
+                        {{ getControlError('trimLevel') }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Vehicle Class <span class="text-danger">*</span></label>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-steering-2-line"></i></span>
+                        <input class="form-control" [class.is-invalid]="isControlInvalid('vehicleClass')" type="number" formControlName="vehicleClass" placeholder="Enter vehicle class">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('vehicleClass')">
+                        {{ getControlError('vehicleClass') }}
                       </div>
                     </div>
 
@@ -211,7 +327,10 @@
                   <div class="row">
                     <div class="col-md-6 mb-3">
                       <label class="form-label">Description (English) <span class="text-danger">*</span></label>
-                      <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionEn')" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                        <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionEn')" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('descriptionEn')">
                         {{ getControlError('descriptionEn') }}
                       </div>
@@ -219,7 +338,10 @@
 
                     <div class="col-md-6 mb-3">
                       <label class="form-label">Description (Arabic) <span class="text-danger">*</span></label>
-                      <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionAr')" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+                      <div class="input-group">
+                        <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                        <textarea class="form-control" [class.is-invalid]="isControlInvalid('descriptionAr')" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+                      </div>
                       <div class="invalid-feedback d-block" *ngIf="isControlInvalid('descriptionAr')">
                         {{ getControlError('descriptionAr') }}
                       </div>
@@ -493,41 +615,6 @@
               </a>
               <ng-template ngbNavContent>
                 <div class="mb-4">
-                  <div class="alert alert-info">
-                    <i class="ri-information-line me-1"></i> 
-                    Car colors management. Select colors and add CarColor details (stock, image URL, pricing, availability).
-                  </div>
-
-                  <div class="card border mb-3">
-                    <div class="card-body">
-                      <div class="row g-2">
-                        <div class="col-md-4">
-                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
-                            <span class="text-muted">All Colors :</span>
-                            <span class="fw-semibold">{{ colors.length }}</span>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
-                            <span class="text-muted">{{ isEditMode ? 'Assigned To Car' : 'Pending For Car' }} :</span>
-                            <span class="fw-semibold">{{ pendingCarColors.length }}</span>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="border rounded px-3 py-2 d-flex align-items-center justify-content-between h-100">
-                            <span class="text-muted">Available To Assign :</span>
-                            <span class="fw-semibold">{{ (colors.length - pendingCarColors.length) < 0 ? 0 : (colors.length - pendingCarColors.length) }}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="alert alert-primary mb-3" *ngIf="!isEditMode">
-                    <i class="ri-information-line me-1"></i>
-                    Added colors are kept in a local list and will be saved when you click the main Create Car button.
-                  </div>
-
                   <div class="card border mb-3">
                     <div class="card-body">
                       <div class="d-flex align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light-subtle border">
@@ -560,7 +647,7 @@
                             <tr>
                               <th>Name (EN)</th>
                               <th class="text-center">Name (AR)</th>
-                              <th class="text-center">Color Code</th>
+                              <th class="text-center">Color</th>
                               <th class="text-center">Status</th>
                               <th class="text-center text-info">Select for Car</th>
                             </tr>
@@ -631,91 +718,135 @@
                         <p class="text-muted mt-2 mb-0">No colors selected yet</p>
                       </div>
 
-                      <div *ngIf="pendingCarColors.length > 0" class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0">
-                          <thead class="table-light">
-                            <tr>
-                              <th class="text-center">Color Code</th>
-                              <th class="text-center">Stock Qty</th>
-                              <th class="text-center">Pricing</th>
-                              <th>Color Image Upload</th>
-                              <th class="text-center">Available</th>
-                              <th class="text-end">Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let cc of pagedPendingCarColors">
-                              <td class="text-center">
+                      <div *ngIf="pendingCarColors.length > 0" ngbAccordion [closeOthers]="false" class="accordion custom-accordionwithicon">
+                        <div class="accordion-item" ngbAccordionItem *ngFor="let cc of pagedPendingCarColors; let i = index" [collapsed]="i !== 0 && !(colorTabSubmitted || invalidTabs.has(3))">
+                          <h2 class="accordion-header" ngbAccordionHeader>
+                            <div class="d-flex align-items-center">
+                              <button class="accordion-button flex-grow-1" type="button" ngbAccordionButton>
                                 <span class="d-inline-flex align-items-center gap-2">
                                   <span class="rounded-circle border" [style.background]="getColorById(cc.colorId)?.colorCode" style="width:14px;height:14px;display:inline-block;"></span>
+                                  <span class="fw-semibold">Color</span>
                                   <code class="fw-bold">{{ getColorById(cc.colorId)?.colorCode || '-' }}</code>
                                 </span>
-                              </td>
-                              <td class="text-center" style="min-width: 110px;">
-                                <input type="number" class="form-control form-control-sm"
-                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'stockQuantity')"
-                                  [(ngModel)]="cc.stockQuantity" [ngModelOptions]="{ standalone: true }" min="0">
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'stockQuantity')">
-                                  Stock Qty is required.
+                              </button>
+                              <button class="btn btn-sm btn-soft-danger me-2" type="button" (click)="$event.stopPropagation(); onColorAssignedToggle(getColorById(cc.colorId)!, false)">
+                                <i class="ri-delete-bin-line me-1"></i> Remove
+                              </button>
+                            </div>
+                          </h2>
+                          <div ngbAccordionCollapse>
+                            <div ngbAccordionBody>
+                              <div class="row g-3">
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Stock Qty</label>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-text"><i class="ri-box-3-line"></i></span>
+                                  <input type="number" class="form-control form-control-sm"
+                                    [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'stockQuantity')"
+                                    [(ngModel)]="cc.stockQuantity" [ngModelOptions]="{ standalone: true }" min="0">
                                 </div>
-                              </td>
-                              <td class="text-center" style="min-width: 130px;">
-                                <input type="number" class="form-control form-control-sm"
-                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')"
-                                  [(ngModel)]="cc.pricingPerColor" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')">
-                                  Pricing is required.
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'stockQuantity')">Required</div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Pricing</label>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-text"><i class="ri-money-dollar-circle-line"></i></span>
+                                  <input type="number" class="form-control form-control-sm"
+                                    [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')"
+                                    [(ngModel)]="cc.pricingPerColor" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
                                 </div>
-                              </td>
-                              <td style="min-width: 240px;">
-                                <input type="file" class="form-control form-control-sm"
-                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'colorImage')"
-                                  accept="image/*"
-                                  (change)="onPendingCarColorImageSelected(cc, $event)">
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')">Required</div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Price Before</label>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
+                                  <input type="number" class="form-control form-control-sm"
+                                    [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricePefore')"
+                                    [(ngModel)]="cc.pricePefore" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
+                                </div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricePefore')">Required</div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Discount</label>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-text"><i class="ri-coupon-3-line"></i></span>
+                                  <input type="number" class="form-control form-control-sm"
+                                    [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'discount')"
+                                    [(ngModel)]="cc.discount" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
+                                </div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discount')">Required</div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Type</label>
+                                <select class="form-select form-select-sm"
+                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'discountType')"
+                                  [(ngModel)]="cc.discountType" [ngModelOptions]="{ standalone: true }">
+                                  <option [ngValue]="null">Select type</option>
+                                  <option [ngValue]="0">Percentage</option>
+                                  <option [ngValue]="1">Fixed</option>
+                                </select>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discountType')">Required</div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">VAT Amount</label>
+                                <div class="form-control form-control-sm bg-light-subtle fw-semibold text-info">
+                                  {{ getPendingCarColorVatAmount(cc) ?? '-' }}
+                                </div>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-label mb-1">Total Price</label>
+                                <div class="form-control form-control-sm bg-light-subtle fw-semibold text-primary">
+                                  {{ getPendingCarColorTotalPrice(cc) ?? '-' }}
+                                </div>
+                              </div>
+                              <div class="col-md-8">
+                                <label class="form-label mb-1">Image Color</label>
+                                <div class="border rounded p-2 bg-light-subtle">
+                                  <div class="input-group input-group-sm">
+                                    <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                                    <input type="file" class="form-control form-control-sm"
+                                      [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'colorImage')"
+                                      accept="image/*"
+                                      (change)="onPendingCarColorImageSelected(cc, $event)">
+                                  </div>
+                                  <small class="text-muted d-block mt-1">Upload image for this color.</small>
+                                </div>
                                 <div class="d-flex align-items-center gap-2 mt-1" *ngIf="cc.colorImageFile">
                                   <small class="text-success mb-0">{{ cc.colorImageFile.name }}</small>
-                                  <button
-                                    type="button"
-                                    class="btn btn-sm btn-soft-info py-0 px-2"
-                                    (click)="previewPendingCarColorImage(cc.colorImageFile)">
+                                  <button type="button" class="btn btn-sm btn-soft-info py-0 px-2" (click)="previewPendingCarColorImage(cc.colorImageFile)">
                                     Preview
                                   </button>
                                 </div>
-                                <div class="invalid-feedback d-block" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorImage')">
-                                  Color image is required.
+                                <div class="invalid-feedback d-block" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorImage')">Required</div>
+                              </div>
+                              <div class="col-md-4">
+                                <label class="form-label d-block mb-1">Available</label>
+                                <div class="form-check form-switch mt-1">
+                                  <input class="form-check-input" type="checkbox" [(ngModel)]="cc.isAvailable" [ngModelOptions]="{ standalone: true }">
                                 </div>
-                              </td>
-                              <td class="text-center">
-                                <div class="form-check d-inline-block">
-                                  <input class="form-check-input" type="checkbox"
-                                    [(ngModel)]="cc.isAvailable" [ngModelOptions]="{ standalone: true }">
-                                </div>
-                              </td>
-                              <td class="text-end">
-                                <button class="btn btn-sm btn-soft-danger" (click)="onColorAssignedToggle(getColorById(cc.colorId)!, false)">
-                                  <i class="ri-delete-bin-line"></i>
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                              </div>
+                            </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
-                      <div *ngIf="pendingCarColors.length > 0" class="d-flex justify-content-end mt-3">
-                        <ngb-pagination
-                          [collectionSize]="pendingCarColors.length"
+                  <div *ngIf="pendingCarColors.length > 0" class="d-flex justify-content-end mt-3">
+                    <ngb-pagination
+                      [collectionSize]="pendingCarColors.length"
                           [(page)]="pendingColorPagination.page"
                           [pageSize]="pendingColorPagination.pageSize"
                           [size]="'sm'"
                           (pageChange)="onPendingColorPageChange($event)">
-                        </ngb-pagination>
-                      </div>
-                    </div>
+                    </ngb-pagination>
                   </div>
+                </div>
+              </div>
 
-                  <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowColorSelectionError()">
-                    Please select at least one color before proceeding to the next tab.
-                  </div>
+              <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowColorSelectionError()">
+                Required
+              </div>
 
                   <div class="d-flex align-items-start gap-3 mt-4">
                     <button type="button" class="btn btn-light btn-label" (click)="goToTab(2)">
@@ -916,9 +1047,12 @@
                       <div class="row g-2">
                         <div class="col-md-8">
                           <label class="form-label">Image File <span class="text-danger">*</span></label>
-                          <input class="form-control" type="file" accept="image/*"
-                            [class.is-invalid]="isImageFileInputInvalid()"
-                            (change)="onImageSelected($event)">
+                          <div class="input-group">
+                            <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                            <input class="form-control" type="file" accept="image/*"
+                              [class.is-invalid]="isImageFileInputInvalid()"
+                              (change)="onImageSelected($event)">
+                          </div>
                           <div class="d-flex align-items-center gap-2 mt-1" *ngIf="selectedImageFile">
                             <small class="text-success mb-0">{{ selectedImageFile.name }}</small>
                             <button type="button" class="btn btn-sm btn-soft-primary py-0 px-2"
@@ -953,17 +1087,22 @@
                       <div class="row g-2 align-items-start mt-0">
                         <div class="col-md-8">
                           <label class="form-label">Image Type <span class="text-danger">*</span></label>
-                          <ng-select
-                            class="image-type-select"
-                            [items]="imageTypeOptions"
-                            bindLabel="name"
-                            bindValue="id"
-                            [(ngModel)]="selectedImageType"
-                            [ngModelOptions]="{ standalone: true }"
-                            placeholder="Select Type"
-                            [clearable]="true"
-                            [searchable]="true">
-                          </ng-select>
+                          <div class="input-group">
+                            <span class="input-group-text"><i class="ri-gallery-line"></i></span>
+                            <div class="flex-grow-1">
+                              <ng-select
+                                class="image-type-select"
+                                [items]="imageTypeOptions"
+                                bindLabel="name"
+                                bindValue="id"
+                                [(ngModel)]="selectedImageType"
+                                [ngModelOptions]="{ standalone: true }"
+                                placeholder="Select Type"
+                                [clearable]="true"
+                                [searchable]="true">
+                              </ng-select>
+                            </div>
+                          </div>
                           <small class="d-block mt-1"
                             [ngClass]="isImageTypeInputInvalid() ? 'text-danger' : 'invisible'">
                             Image type is required.
@@ -1071,17 +1210,22 @@
                                 <small class="text-muted">{{ (img.file.size / 1024) | number:'1.0-0' }} KB</small>
                               </td>
                               <td style="min-width: 180px;">
-                                <ng-select
-                                  class="image-type-select"
-                                  [items]="imageTypeOptions"
-                                  bindLabel="name"
-                                  bindValue="id"
-                                  [(ngModel)]="img.imageType"
-                                  [ngModelOptions]="{ standalone: true }"
-                                  placeholder="Type"
-                                  [clearable]="true"
-                                  [searchable]="true">
-                                </ng-select>
+                                <div class="input-group input-group-sm">
+                                  <span class="input-group-text"><i class="ri-gallery-line"></i></span>
+                                  <div class="flex-grow-1">
+                                    <ng-select
+                                      class="image-type-select"
+                                      [items]="imageTypeOptions"
+                                      bindLabel="name"
+                                      bindValue="id"
+                                      [(ngModel)]="img.imageType"
+                                      [ngModelOptions]="{ standalone: true }"
+                                      placeholder="Type"
+                                      [clearable]="true"
+                                      [searchable]="true">
+                                    </ng-select>
+                                  </div>
+                                </div>
                               </td>
                               <td class="text-center">
                                 <input class="form-check-input" type="radio" name="pendingPrimaryImage"
@@ -1299,25 +1443,40 @@
           <div class="row g-3">
             <div class="col-md-4">
               <label class="form-label car-filter-label">Brand</label>
-              <ng-select [items]="brands" bindLabel="nameEn" bindValue="id"
-                [(ngModel)]="selectedBrandId" (change)="onBrandFilterChange($event)"
-                placeholder="Filter by Brand" [clearable]="true" [searchable]="true" class="car-filter-input">
-              </ng-select>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
+                <div class="flex-grow-1">
+                  <ng-select [items]="brands" bindLabel="nameEn" bindValue="id"
+                    [(ngModel)]="selectedBrandId" (change)="onBrandFilterChange($event)"
+                    placeholder="Filter by Brand" [clearable]="true" [searchable]="true" class="car-filter-input">
+                  </ng-select>
+                </div>
+              </div>
             </div>
             <div class="col-md-4">
               <label class="form-label car-filter-label">Model</label>
-              <ng-select [items]="filterCarModels" bindLabel="nameEn" bindValue="id"
-                [(ngModel)]="selectedModelId" (change)="applyFilters(true)"
-                placeholder="Filter by Model" [clearable]="true" [searchable]="true" class="car-filter-input"
-                [disabled]="!!selectedBrandId && filterCarModels.length === 0">
-              </ng-select>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-roadster-line"></i></span>
+                <div class="flex-grow-1">
+                  <ng-select [items]="filterCarModels" bindLabel="nameEn" bindValue="id"
+                    [(ngModel)]="selectedModelId" (change)="applyFilters(true)"
+                    placeholder="Filter by Model" [clearable]="true" [searchable]="true" class="car-filter-input"
+                    [disabled]="!!selectedBrandId && filterCarModels.length === 0">
+                  </ng-select>
+                </div>
+              </div>
             </div>
             <div class="col-md-4">
               <label class="form-label car-filter-label">Branch</label>
-              <ng-select [items]="branches" bindLabel="branchNameEn" bindValue="id"
-                [(ngModel)]="selectedBranchFilterId" (change)="applyFilters(true)"
-                placeholder="Filter by Branch" [clearable]="true" [searchable]="true" class="car-filter-input">
-              </ng-select>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+                <div class="flex-grow-1">
+                  <ng-select [items]="branches" bindLabel="branchNameEn" bindValue="id"
+                    [(ngModel)]="selectedBranchFilterId" (change)="applyFilters(true)"
+                    placeholder="Filter by Branch" [clearable]="true" [searchable]="true" class="car-filter-input">
+                  </ng-select>
+                </div>
+              </div>
             </div>
             <div class="col-md-4">
               <label class="form-label car-filter-label">Year</label>
@@ -1568,6 +1727,12 @@
                     <th>Color</th>
                     <th>Stock</th>
                     <th>Price</th>
+                    <th>Price Before</th>
+                    <th>VAT (%)</th>
+                    <th>VAT Amount</th>
+                    <th>Discount</th>
+                    <th>Type</th>
+                    <th>Total Price</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -1576,6 +1741,12 @@
                     <td>{{ getColorById(item.colorId)?.colorNameEn || ('Color #' + item.colorId) }}</td>
                     <td>{{ item.stockQuantity ?? '-' }}</td>
                     <td>{{ item.pricingPerColor ?? '-' }}</td>
+                    <td>{{ item.pricePefore ?? '-' }}</td>
+                    <td>{{ previewCar?.vat ?? '-' }}</td>
+                    <td>{{ item.vatAmount ?? '-' }}</td>
+                    <td>{{ item.discount ?? '-' }}</td>
+                    <td>{{ item.discountType === 0 ? 'Percentage' : item.discountType === 1 ? 'Fixed' : '-' }}</td>
+                    <td>{{ item.totalPrice ?? '-' }}</td>
                     <td>
                       <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
                         {{ item.isAvailable ? 'Available' : 'Unavailable' }}
@@ -1694,60 +1865,77 @@
         <div class="row g-2">
           <div class="col-12">
             <label class="form-label">Type <span class="text-danger">*</span></label>
-            <ng-select
-              [items]="extraDetailTypeOptions"
-              bindValue="id"
-              [(ngModel)]="extraDetailDraft.carExtraDetailsType"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="Select Type"
-              [searchable]="true"
-              [clearable]="true">
-              <ng-template ng-label-tmp let-item="item">
-                <span>{{ item.name }}</span>
-                <span class="text-muted"> - </span>
-                <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
-              </ng-template>
-              <ng-template ng-option-tmp let-item="item">
-                <div class="d-flex align-items-center gap-1 flex-wrap">
-                  <span>{{ item.name }}</span>
-                  <span class="text-muted"> - </span>
-                  <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
-                </div>
-              </ng-template>
-            </ng-select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-list-check-2"></i></span>
+              <div class="flex-grow-1">
+                <ng-select
+                  [items]="extraDetailTypeOptions"
+                  bindValue="id"
+                  [(ngModel)]="extraDetailDraft.carExtraDetailsType"
+                  [ngModelOptions]="{ standalone: true }"
+                  placeholder="Select Type"
+                  [searchable]="true"
+                  [clearable]="true">
+                  <ng-template ng-label-tmp let-item="item">
+                    <span>{{ item.name }}</span>
+                    <span class="text-muted"> - </span>
+                    <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="d-flex align-items-center gap-1 flex-wrap">
+                      <span>{{ item.name }}</span>
+                      <span class="text-muted"> - </span>
+                      <span dir="rtl" class="text-muted">{{ item.nameAr }}</span>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
             <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('type')">Type is required.</small>
           </div>
           <div class="col-md-6">
             <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text"
-              [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameEn')"
-              [(ngModel)]="extraDetailDraft.nameEn"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="e.g. Warranty">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text"
+                [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameEn')"
+                [(ngModel)]="extraDetailDraft.nameEn"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="e.g. Warranty">
+            </div>
             <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</small>
           </div>
           <div class="col-md-6">
             <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" dir="rtl"
-              [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameAr')"
-              [(ngModel)]="extraDetailDraft.nameAr"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="الاسم بالعربية">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" dir="rtl"
+                [class.is-invalid]="isExtraDetailDraftFieldInvalid('nameAr')"
+                [(ngModel)]="extraDetailDraft.nameAr"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="الاسم بالعربية">
+            </div>
             <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameAr')">Name (AR) is required.</small>
           </div>
           <div class="col-12">
             <label class="form-label">Description (EN)</label>
-            <textarea class="form-control" rows="2"
-              [(ngModel)]="extraDetailDraft.descriptionEn"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="Description in English"></textarea>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+              <textarea class="form-control" rows="2"
+                [(ngModel)]="extraDetailDraft.descriptionEn"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Description in English"></textarea>
+            </div>
           </div>
           <div class="col-12">
             <label class="form-label">Description (AR)</label>
-            <textarea class="form-control" rows="2" dir="rtl"
-              [(ngModel)]="extraDetailDraft.descriptionAr"
-              [ngModelOptions]="{ standalone: true }"
-              placeholder="الوصف بالعربية"></textarea>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+              <textarea class="form-control" rows="2" dir="rtl"
+                [(ngModel)]="extraDetailDraft.descriptionAr"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="الوصف بالعربية"></textarea>
+            </div>
           </div>
           <div class="col-12">
             <div class="form-check">

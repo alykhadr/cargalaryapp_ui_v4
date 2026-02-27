@@ -9,7 +9,7 @@ import { ToastService } from '../../icons/toast-service';
 import { Branch, CreateBranchRequest, UpdateBranchRequest } from '../interfaces/branch.interface';
 import { BranchService } from '../services/branch.service';
 import { ContactSalesService } from '../services/contact-sales.service';
-import { AdminUserService } from '../services/admin-user.service';
+import { AdminEmployeeService } from '../services/admin-employee.service';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
@@ -77,7 +77,7 @@ export class BranchesComponent {
     private branchService: BranchService,
     private toastService: ToastService,
     private contactSalesService: ContactSalesService,
-    private adminUserService: AdminUserService
+    private adminEmployeeService: AdminEmployeeService
   ) {}
 
   ngOnInit(): void {
@@ -110,8 +110,8 @@ export class BranchesComponent {
       descriptionAr: [''],
       descriptionEn: [''],
       mobileNo: ['', [Validators.required, Validators.pattern(/^05\d{8}$/)]],
-      whatsUpNo: [''],
-      email: ['', [Validators.email]],
+      whatsUpNo: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       address: ['', [Validators.required]],
       latitute: ['', [Validators.required]],
       longtute: ['', [Validators.required]],
@@ -572,7 +572,7 @@ export class BranchesComponent {
     this.usersPage = 1;
     this.modalService.open(modal, { size: 'lg', centered: true });
     
-    this.adminUserService.getUsersByBranch(branchId).pipe(first()).subscribe({
+    this.adminEmployeeService.getEmployeesByBranch(branchId).pipe(first()).subscribe({
       next: (users) => {
         this.branchUsers = users;
         this.updateUsersPagination();

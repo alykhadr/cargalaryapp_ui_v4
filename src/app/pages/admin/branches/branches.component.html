@@ -32,29 +32,38 @@
           <div class="col-xl-12">
             <div class="row g-3">
               <div class="col-sm-4">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Filter by branch name"
-                  [(ngModel)]="nameFilter"
-                  (ngModelChange)="nameFilterChanged()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-building-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Filter by branch name"
+                    [(ngModel)]="nameFilter"
+                    (ngModelChange)="nameFilterChanged()">
+                </div>
               </div>
               <div class="col-sm-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Filter by email"
-                  [(ngModel)]="emailFilter"
-                  (ngModelChange)="emailFilterChanged()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-mail-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Filter by email"
+                    [(ngModel)]="emailFilter"
+                    (ngModelChange)="emailFilterChanged()">
+                </div>
               </div>
              
               <div class="col-sm-3">
-                <select class="form-control" data-plugin="choices" data-choices data-choices-search-false
-                  name="choices-single-default" id="branchStatus" [(ngModel)]="status" (ngModelChange)="statusFilter()">
-                  <option value="" selected> Select Status</option>
-                  <option value="active">Active</option>
-                  <option value="blocked">Inactive</option>
-                </select>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-toggle-line"></i></span>
+                  <select class="form-select" data-plugin="choices" data-choices data-choices-search-false
+                    name="choices-single-default" id="branchStatus" [(ngModel)]="status" (ngModelChange)="statusFilter()">
+                    <option value="" selected> Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="blocked">Inactive</option>
+                  </select>
+                </div>
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearFilters()">
@@ -224,9 +233,12 @@
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">Branch Name (EN) <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Enter name in English"
-                  required formControlName="branchNameEn" maxlength="100"
-                  [ngClass]="{ 'is-invalid': submitted && form['branchNameEn'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-building-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Enter name in English"
+                    required formControlName="branchNameEn" maxlength="100"
+                    [ngClass]="{ 'is-invalid': submitted && form['branchNameEn'].errors }" />
+                </div>
                 <div class="invalid-feedback">
                   <span *ngIf="form['branchNameEn'].errors?.['required']">Branch name in English is required.</span>
                   <span *ngIf="form['branchNameEn'].errors?.['maxlength']">Maximum 100 characters allowed.</span>
@@ -234,9 +246,12 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label">Branch Name (AR) <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Enter name in Arabic"
-                  required formControlName="branchNameAr" maxlength="100"
-                  [ngClass]="{ 'is-invalid': submitted && form['branchNameAr'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-building-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Enter name in Arabic"
+                    required formControlName="branchNameAr" maxlength="100"
+                    [ngClass]="{ 'is-invalid': submitted && form['branchNameAr'].errors }" />
+                </div>
                 <div class="invalid-feedback">
                   <span *ngIf="form['branchNameAr'].errors?.['required']">Branch name in Arabic is required.</span>
                   <span *ngIf="form['branchNameAr'].errors?.['maxlength']">Maximum 100 characters allowed.</span>
@@ -244,49 +259,80 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label">Mobile <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="05XXXXXXXX" formControlName="mobileNo" maxlength="10"
-                  [ngClass]="{ 'is-invalid': submitted && form['mobileNo'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-phone-line"></i></span>
+                  <input type="text" class="form-control" placeholder="05XXXXXXXX" formControlName="mobileNo" maxlength="10"
+                    [ngClass]="{ 'is-invalid': submitted && form['mobileNo'].errors }" />
+                </div>
                 <div class="invalid-feedback">
                   <span *ngIf="form['mobileNo'].errors?.['required']">Mobile number is required.</span>
                   <span *ngIf="form['mobileNo'].errors?.['pattern']">Mobile must start with 05 and be 10 digits.</span>
                 </div>
               </div>
               <div class="col-md-4">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" placeholder="branch@email.com"
-                  formControlName="email"
-                  [ngClass]="{ 'is-invalid': submitted && form['email'].errors }" />
-                <div class="invalid-feedback">Enter a valid email.</div>
+                <label class="form-label">Email <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-mail-line"></i></span>
+                  <input type="email" class="form-control" placeholder="branch@email.com"
+                    formControlName="email"
+                    [ngClass]="{ 'is-invalid': submitted && form['email'].errors }" />
+                </div>
+                <div class="invalid-feedback">
+                  <span *ngIf="form['email'].errors?.['required']">Email is required.</span>
+                  <span *ngIf="form['email'].errors?.['email']">Enter a valid email.</span>
+                </div>
               </div>
               <div class="col-md-4">
-                <label class="form-label">WhatsApp</label>
-                <input type="text" class="form-control" placeholder="WhatsApp number" formControlName="whatsUpNo" />
+                <label class="form-label">WhatsApp <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-whatsapp-line"></i></span>
+                  <input type="text" class="form-control" placeholder="WhatsApp number" formControlName="whatsUpNo"
+                    [ngClass]="{ 'is-invalid': submitted && form['whatsUpNo'].errors }" />
+                </div>
+                <div class="invalid-feedback">
+                  <span *ngIf="form['whatsUpNo'].errors?.['required']">WhatsApp is required.</span>
+                </div>
               </div>
               <div class="col-md-4">
                 <label class="form-label">Address <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Address" formControlName="address"
-                  [ngClass]="{ 'is-invalid': submitted && form['address'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-map-pin-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Address" formControlName="address"
+                    [ngClass]="{ 'is-invalid': submitted && form['address'].errors }" />
+                </div>
                 <div class="invalid-feedback">Address is required.</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Latitude <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Latitude" formControlName="latitute"
-                  [ngClass]="{ 'is-invalid': submitted && form['latitute'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-map-2-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Latitude" formControlName="latitute"
+                    [ngClass]="{ 'is-invalid': submitted && form['latitute'].errors }" />
+                </div>
                 <div class="invalid-feedback">Latitude is required.</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Longitude <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Longitude" formControlName="longtute"
-                  [ngClass]="{ 'is-invalid': submitted && form['longtute'].errors }" />
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-map-2-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Longitude" formControlName="longtute"
+                    [ngClass]="{ 'is-invalid': submitted && form['longtute'].errors }" />
+                </div>
                 <div class="invalid-feedback">Longitude is required.</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Description (EN)</label>
-                <textarea class="form-control" rows="2" formControlName="descriptionEn"></textarea>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                  <textarea class="form-control" rows="2" formControlName="descriptionEn"></textarea>
+                </div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Description (AR)</label>
-                <textarea class="form-control" rows="2" formControlName="descriptionAr"></textarea>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                  <textarea class="form-control" rows="2" formControlName="descriptionAr"></textarea>
+                </div>
               </div>
               <div class="col-12">
                 <div class="form-check form-switch form-switch-lg" dir="ltr">

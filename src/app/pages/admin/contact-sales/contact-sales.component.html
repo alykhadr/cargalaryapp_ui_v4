@@ -25,12 +25,15 @@
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
           <div class="col-sm-10">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search by contact value..."
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearch()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Search by contact value..."
+                [(ngModel)]="searchTerm"
+                (ngModelChange)="onSearch()">
+            </div>
           </div>
           <div class="col-sm-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -145,7 +148,10 @@
         <form [formGroup]="contactForm">
           <div class="mb-3">
             <label class="form-label">Contact Value <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="contactValue" placeholder="Enter contact value" maxlength="100">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-contacts-book-2-line"></i></span>
+              <input class="form-control" type="text" formControlName="contactValue" placeholder="Enter contact value" maxlength="100">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['contactValue'].errors">
               <span *ngIf="form['contactValue'].errors['required']">Contact value is required.</span>
               <span *ngIf="form['contactValue'].errors['maxlength']">Contact value max length is 100 characters.</span>
@@ -154,9 +160,12 @@
 
           <div class="mb-3">
             <label class="form-label">Contact Type <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="contactType">
-              <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
-            </select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-list-check-2"></i></span>
+              <select class="form-select" formControlName="contactType">
+                <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
+              </select>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['contactType'].errors">
               Contact type is required.
             </div>
@@ -164,15 +173,20 @@
 
           <div class="mb-3">
             <label class="form-label">Branch <span class="text-danger">*</span></label>
-            <ng-select
-              [items]="branches"
-              bindLabel="branchNameEn"
-              bindValue="id"
-              formControlName="branchId"
-              placeholder="Select Branch"
-              [searchable]="true"
-              [clearable]="false">
-            </ng-select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+              <div class="flex-grow-1">
+                <ng-select
+                  [items]="branches"
+                  bindLabel="branchNameEn"
+                  bindValue="id"
+                  formControlName="branchId"
+                  placeholder="Select Branch"
+                  [searchable]="true"
+                  [clearable]="false">
+                </ng-select>
+              </div>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['branchId'].errors">
               Branch is required.
             </div>
@@ -180,7 +194,10 @@
 
           <div class="mb-3">
             <label class="form-label">Icon Image <span class="text-danger">*</span></label>
-            <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+              <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
+            </div>
             <div *ngIf="iconPreviewUrl" class="mt-2">
               <img [src]="iconPreviewUrl" alt="Icon Preview" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
             </div>

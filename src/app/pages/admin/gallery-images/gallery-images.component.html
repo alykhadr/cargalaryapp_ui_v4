@@ -30,31 +30,39 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label class="form-label">Car <span class="text-danger">*</span></label>
-                  <ng-select
-                    [(ngModel)]="galleryImageForm.carId"
-                    name="carId"
-                    [items]="cars"
-                    bindLabel="id"
-                    bindValue="id"
-                    [searchable]="true"
-                    placeholder="Select Car"
-                    required>
-                    <ng-template ng-label-tmp let-item="item">
-                      Car #{{ item.id }} - {{ item.year }}
-                    </ng-template>
-                    <ng-template ng-option-tmp let-item="item">
-                      Car #{{ item.id }} - Year: {{ item.year }} - Price: ${{ item.price }}
-                    </ng-template>
-                  </ng-select>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="ri-car-line"></i></span>
+                    <div class="flex-grow-1">
+                      <ng-select
+                        [(ngModel)]="galleryImageForm.carId"
+                        name="carId"
+                        [items]="cars"
+                        bindLabel="id"
+                        bindValue="id"
+                        [searchable]="true"
+                        placeholder="Select Car"
+                        required>
+                        <ng-template ng-label-tmp let-item="item">
+                          Car #{{ item.id }} - {{ item.year }}
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item">
+                          Car #{{ item.id }} - Year: {{ item.year }} - Price: ${{ item.price }}
+                        </ng-template>
+                      </ng-select>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
                   <label class="form-label">Image Type</label>
-                  <select class="form-select" [(ngModel)]="galleryImageForm.imageType" name="imageType">
-                    <option [ngValue]="null">Select Type</option>
-                    <option *ngFor="let type of imageTypes" [ngValue]="type.value">{{ type.label }}</option>
-                  </select>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="ri-gallery-line"></i></span>
+                    <select class="form-select" [(ngModel)]="galleryImageForm.imageType" name="imageType">
+                      <option [ngValue]="null">Select Type</option>
+                      <option *ngFor="let type of imageTypes" [ngValue]="type.value">{{ type.label }}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <div class="col-md-12">
@@ -70,7 +78,10 @@
               <div class="col-md-12">
                 <div class="mb-3">
                   <label class="form-label">Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
-                  <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                    <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                  </div>
                   <div *ngIf="imagePreview" class="mt-2">
                     <img [src]="imagePreview" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
                   </div>
@@ -102,15 +113,15 @@
           <form>
             <div class="row g-3">
               <div class="col-xxl-5 col-sm-6">
-                <div class="search-box">
-                  <input type="text" class="form-control search" placeholder="Search by Car ID..." [(ngModel)]="searchCarId" (ngModelChange)="applyFilters()" name="searchCarId">
-                  <i class="ri-search-line search-icon"></i>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Search by Car ID..." [(ngModel)]="searchCarId" (ngModelChange)="applyFilters()" name="searchCarId">
                 </div>
               </div>
               <div class="col-xxl-5 col-sm-6">
-                <div class="search-box">
-                  <input type="text" class="form-control search" placeholder="Search by Car Name..." [(ngModel)]="searchCarName" (ngModelChange)="applyFilters()" name="searchCarName">
-                  <i class="ri-search-line search-icon"></i>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input type="text" class="form-control" placeholder="Search by Car Name..." [(ngModel)]="searchCarName" (ngModelChange)="applyFilters()" name="searchCarName">
                 </div>
               </div>
             </div>

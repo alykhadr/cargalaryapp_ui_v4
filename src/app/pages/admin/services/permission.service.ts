@@ -29,7 +29,7 @@ export class PermissionService {
     return this.http.delete<void>(`${this.baseUrl}/roles/${roleId}/${encodeURIComponent(permission)}`);
   }
 
-  getUserPermissions(userId: string): Observable<string[]> {
-    return this.http.get<string[]>(`${this.baseUrl}/users/${userId}`);
+  getEmployeePermissions(userId: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/employees/${userId}`);
   }
 }

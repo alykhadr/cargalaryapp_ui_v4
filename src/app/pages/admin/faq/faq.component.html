@@ -32,7 +32,10 @@
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3">
           <div class="col-sm-10">
-            <input type="text" class="form-control" placeholder="Search FAQs..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-search-line"></i></span>
+              <input type="text" class="form-control" placeholder="Search FAQs..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+            </div>
           </div>
           <div class="col-sm-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -150,7 +153,10 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Title (English) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="titleEn" placeholder="Enter title in English" maxlength="200">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-question-line"></i></span>
+                <input class="form-control" type="text" formControlName="titleEn" placeholder="Enter title in English" maxlength="200">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['titleEn'].errors">
                 <span *ngIf="form['titleEn'].errors['required']">Title in English is required.</span>
                 <span *ngIf="form['titleEn'].errors['maxlength']">Max length is 200 characters.</span>
@@ -159,7 +165,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Title (Arabic) <span class="text-danger">*</span></label>
-              <input class="form-control" type="text" formControlName="titleAr" placeholder="أدخل العنوان بالعربية" maxlength="200" dir="rtl">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-question-line"></i></span>
+                <input class="form-control" type="text" formControlName="titleAr" placeholder="أدخل العنوان بالعربية" maxlength="200" dir="rtl">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['titleAr'].errors">
                 <span *ngIf="form['titleAr'].errors['required']">Title in Arabic is required.</span>
                 <span *ngIf="form['titleAr'].errors['maxlength']">Max length is 200 characters.</span>
@@ -184,7 +193,10 @@
 
             <div class="col-md-6 mb-3">
               <label class="form-label">Order <span class="text-danger">*</span></label>
-              <input class="form-control" type="number" formControlName="order" placeholder="Enter order" min="0">
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-sort-asc"></i></span>
+                <input class="form-control" type="number" formControlName="order" placeholder="Enter order" min="0">
+              </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['order'].errors">
                 <span *ngIf="form['order'].errors['required']">Order is required.</span>
                 <span *ngIf="form['order'].errors['min']">Order must be 0 or greater.</span>

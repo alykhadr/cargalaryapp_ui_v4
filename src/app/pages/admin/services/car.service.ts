@@ -59,6 +59,13 @@ export class CarService {
     formData.append('branchId', payload.branchId.toString());
     formData.append('year', payload.year.toString());
     formData.append('mileage', payload.mileage.toString());
+    formData.append('vat', payload.vat.toString());
+    formData.append('conditionId', payload.conditionId.toString());
+    formData.append('seatingCapacity', payload.seatingCapacity.toString());
+    formData.append('weelSizeInch', payload.weelSizeInch);
+    formData.append('fuelTankCapacityLiter', payload.fuelTankCapacityLiter.toString());
+    formData.append('trimLevel', payload.trimLevel.toString());
+    formData.append('vehicleClass', payload.vehicleClass.toString());
     if (payload.descriptionAr !== undefined && payload.descriptionAr !== null) {
       formData.append('descriptionAr', payload.descriptionAr);
     }

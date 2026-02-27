@@ -1481,9 +1481,10 @@ export const MENU: MenuItem[] = [
       {
         id: 184,
         label: 'MENUITEMS.ADMIN.LIST.USER',
-        link: '/admin/users',
+        link: '/admin/employees',
         parentId: 180,
-        permission: 'users.view'
+        icon: 'ri-team-line',
+        permission: 'employees.view'
       },
       {
         id: 185,

@@ -7,6 +7,13 @@ export interface Car {
   branchId: number;
   year: number;
   mileage: number;
+  vat: number;
+  conditionId: number;
+  seatingCapacity: number;
+  weelSizeInch: string;
+  fuelTankCapacityLiter: number;
+  trimLevel: number;
+  vehicleClass: number;
   descriptionAr?: string;
   descriptionEn?: string;
   createdBy?: string;
@@ -31,6 +38,13 @@ export interface CreateCarRequest {
   branchId: number;
   year: number;
   mileage: number;
+  vat: number;
+  conditionId: number;
+  seatingCapacity: number;
+  weelSizeInch: string;
+  fuelTankCapacityLiter: number;
+  trimLevel: number;
+  vehicleClass: number;
   descriptionAr?: string;
   descriptionEn?: string;
 }
@@ -45,6 +59,10 @@ export interface CreateCarWithDetailsColorItem {
   stockQuantity?: number | null;
   colorImageUrl?: string;
   pricingPerColor?: number | null;
+  pricePefore?: number | null;
+  vatAmount?: number | null;
+  discount?: number | null;
+  discountType?: number | null;
   isAvailable?: boolean;
 }
 
@@ -86,6 +104,13 @@ export interface UpdateCarRequest {
   branchId: number;
   year: number;
   mileage: number;
+  vat: number;
+  conditionId: number;
+  seatingCapacity: number;
+  weelSizeInch: string;
+  fuelTankCapacityLiter: number;
+  trimLevel: number;
+  vehicleClass: number;
   descriptionAr?: string;
   descriptionEn?: string;
   isAvailable?: boolean;

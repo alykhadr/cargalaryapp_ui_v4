@@ -65,7 +65,7 @@ export class CarsComponent implements OnInit {
   canDeleteCar = false;
   private requestedCarIdToOpen: number | null = null;
   private requestedTabToOpen: number = 1;
-  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'descriptionEn', 'descriptionAr'];
+  private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'descriptionEn', 'descriptionAr'];
 
   // Lists
   cars: Car[] = [];
@@ -189,6 +189,11 @@ export class CarsComponent implements OnInit {
     colorImageUrl?: string;
     colorImageFile?: File;
     pricingPerColor?: number | null;
+    pricePefore?: number | null;
+    vatAmount?: number | null;
+    discount?: number | null;
+    discountType?: number | null;
+    totalPrice?: number | null;
     createdAt?: string;
     isAvailable: boolean;
   }> = [];
@@ -198,6 +203,11 @@ export class CarsComponent implements OnInit {
     colorImageUrl?: string;
     colorImageFile?: File;
     pricingPerColor?: number | null;
+    pricePefore?: number | null;
+    vatAmount?: number | null;
+    discount?: number | null;
+    discountType?: number | null;
+    totalPrice?: number | null;
     createdAt?: string;
     isAvailable: boolean;
   }> = [];
@@ -306,6 +316,13 @@ export class CarsComponent implements OnInit {
       branchId: [null, [Validators.required]],
       year: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
       mileage: [0, [Validators.required, Validators.min(0)]],
+      vat: [0, [Validators.required, Validators.min(0)]],
+      conditionId: [null, [Validators.required, Validators.min(1)]],
+      seatingCapacity: [null, [Validators.required, Validators.min(1)]],
+      weelSizeInch: ['', [Validators.required]],
+      fuelTankCapacityLiter: [null, [Validators.required, Validators.min(0.01)]],
+      trimLevel: [null, [Validators.required, Validators.min(1)]],
+      vehicleClass: [null, [Validators.required, Validators.min(1)]],
       descriptionEn: ['', [Validators.required]],
       descriptionAr: ['', [Validators.required]],
       isAvailable: [true]
@@ -470,6 +487,11 @@ export class CarsComponent implements OnInit {
           colorImageUrl: item.colorImageUrl || '',
           colorImageFile: undefined,
           pricingPerColor: item.pricingPerColor ?? null,
+          pricePefore: item.pricePefore ?? null,
+          vatAmount: item.vatAmount ?? null,
+          discount: item.discount ?? null,
+          discountType: item.discountType ?? null,
+          totalPrice: item.totalPrice ?? null,
           createdAt: undefined,
           isAvailable: item.isAvailable
         }));
@@ -826,6 +848,11 @@ export class CarsComponent implements OnInit {
           colorImageUrl: '',
           colorImageFile: undefined,
           pricingPerColor: null,
+          pricePefore: null,
+          vatAmount: null,
+          discount: null,
+          discountType: null,
+          totalPrice: null,
           createdAt: new Date().toISOString(),
           isAvailable: true
         }
@@ -835,9 +862,22 @@ export class CarsComponent implements OnInit {
       return;
     }
 
-    this.pendingCarColors = this.pendingCarColors.filter(c => c.colorId !== color.id);
-    this.refreshPendingColorPagination();
-    this.showSuccess('Color removed from list');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Remove this car color details from the list?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Remove!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      this.pendingCarColors = this.pendingCarColors.filter(c => c.colorId !== color.id);
+      this.refreshPendingColorPagination();
+      this.showSuccess('Color removed from list');
+    });
   }
 
   selectAllColorsForCar() {
@@ -855,6 +895,11 @@ export class CarsComponent implements OnInit {
         colorImageUrl: '',
         colorImageFile: undefined,
         pricingPerColor: null,
+        pricePefore: null,
+        vatAmount: null,
+        discount: null,
+        discountType: null,
+        totalPrice: null,
         createdAt: new Date().toISOString(),
         isAvailable: true
       }));
@@ -1215,6 +1260,11 @@ export class CarsComponent implements OnInit {
       colorImageUrl?: string;
       colorImageFile?: File;
       pricingPerColor?: number | null;
+      pricePefore?: number | null;
+      vatAmount?: number | null;
+      discount?: number | null;
+      discountType?: number | null;
+      totalPrice?: number | null;
       createdAt?: string;
       isAvailable: boolean;
     },
@@ -1240,6 +1290,81 @@ export class CarsComponent implements OnInit {
     return item.pricingPerColor !== null && item.pricingPerColor !== undefined && item.pricingPerColor >= 0;
   }
 
+  private isPendingCarColorPriceBeforeValid(item: {
+    pricePefore?: number | null;
+  }): boolean {
+    if (item.pricePefore === null || item.pricePefore === undefined) {
+      return true;
+    }
+    return item.pricePefore >= 0;
+  }
+
+  private isPendingCarColorDiscountValid(item: {
+    discount?: number | null;
+  }): boolean {
+    return item.discount !== null && item.discount !== undefined && item.discount >= 0;
+  }
+
+  private isPendingCarColorDiscountTypeValid(item: {
+    discountType?: number | null;
+  }): boolean {
+    return item.discountType === 0 || item.discountType === 1;
+  }
+
+  private roundCurrencyAwayFromZero(value: number): number {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+
+    const sign = value < 0 ? -1 : 1;
+    return sign * Math.round((Math.abs(value) + Number.EPSILON) * 100) / 100;
+  }
+
+  private calculatePendingCarColorAmounts(item: {
+    pricingPerColor?: number | null;
+    pricePefore?: number | null;
+    discount?: number | null;
+    discountType?: number | null;
+  }): { vatAmount: number; totalPrice: number } | null {
+    const pricingPerColor = item.pricingPerColor ?? 0;
+    const pricePefore = item.pricePefore ?? item.pricingPerColor ?? 0;
+    const vat = Number(this.form['vat']?.value ?? 0);
+    const discount = item.discount ?? 0;
+    const discountType = item.discountType === 1 ? 1 : 0;
+
+    if (pricingPerColor < 0 || pricePefore < 0 || vat < 0 || discount < 0) {
+      return null;
+    }
+
+    const discountAmount = discountType === 0
+      ? pricePefore * (discount / 100)
+      : discount;
+    const safeDiscountAmount = Math.min(discountAmount, pricePefore);
+    const priceAfterDiscount = pricePefore - safeDiscountAmount;
+    const vatAmount = this.roundCurrencyAwayFromZero(priceAfterDiscount * (vat / 100));
+    const totalPrice = this.roundCurrencyAwayFromZero(priceAfterDiscount + vatAmount);
+
+    return { vatAmount, totalPrice };
+  }
+
+  getPendingCarColorVatAmount(item: {
+    pricingPerColor?: number | null;
+    pricePefore?: number | null;
+    discount?: number | null;
+    discountType?: number | null;
+  }): number | null {
+    return this.calculatePendingCarColorAmounts(item)?.vatAmount ?? null;
+  }
+
+  getPendingCarColorTotalPrice(item: {
+    pricingPerColor?: number | null;
+    pricePefore?: number | null;
+    discount?: number | null;
+    discountType?: number | null;
+  }): number | null {
+    return this.calculatePendingCarColorAmounts(item)?.totalPrice ?? null;
+  }
+
   private isPendingCarColorImageValid(item: {
     colorImageUrl?: string;
     colorImageFile?: File;
@@ -1251,14 +1376,20 @@ export class CarsComponent implements OnInit {
     item: {
       stockQuantity?: number | null;
       pricingPerColor?: number | null;
+      pricePefore?: number | null;
+      discount?: number | null;
+      discountType?: number | null;
       colorImageUrl?: string;
       colorImageFile?: File;
     },
-    field: 'stockQuantity' | 'pricingPerColor' | 'colorImage'
+    field: 'stockQuantity' | 'pricingPerColor' | 'pricePefore' | 'discount' | 'discountType' | 'colorImage'
   ): boolean {
     if (!(this.colorTabSubmitted || this.invalidTabs.has(3))) return false;
     if (field === 'stockQuantity') return !this.isPendingCarColorStockValid(item);
     if (field === 'pricingPerColor') return !this.isPendingCarColorPricingValid(item);
+    if (field === 'pricePefore') return !this.isPendingCarColorPriceBeforeValid(item);
+    if (field === 'discount') return !this.isPendingCarColorDiscountValid(item);
+    if (field === 'discountType') return !this.isPendingCarColorDiscountTypeValid(item);
     return !this.isPendingCarColorImageValid(item);
   }
 
@@ -1559,6 +1690,13 @@ export class CarsComponent implements OnInit {
       branchId: null,
       year: new Date().getFullYear(),
       mileage: 0,
+      vat: 0,
+      conditionId: null,
+      seatingCapacity: null,
+      weelSizeInch: '',
+      fuelTankCapacityLiter: null,
+      trimLevel: null,
+      vehicleClass: null,
       isAvailable: true
     });
     this.submitted = false;
@@ -1635,6 +1773,13 @@ export class CarsComponent implements OnInit {
       modelId: selectedBrandModel.id,
       year: new Date().getFullYear(),
       mileage: 1000,
+      vat: 15,
+      conditionId: 1,
+      seatingCapacity: 5,
+      weelSizeInch: '18',
+      fuelTankCapacityLiter: 60,
+      trimLevel: 1,
+      vehicleClass: 1,
       descriptionEn: 'Test mode car description (EN)',
       descriptionAr: 'وصف سيارة تجريبي',
       isAvailable: true
@@ -1688,6 +1833,11 @@ export class CarsComponent implements OnInit {
     if (existing) {
       existing.stockQuantity = existing.stockQuantity ?? 5;
       existing.pricingPerColor = existing.pricingPerColor ?? 0;
+      existing.pricePefore = existing.pricePefore ?? 0;
+      existing.vatAmount = this.getPendingCarColorVatAmount(existing);
+      existing.discount = existing.discount ?? 0;
+      existing.discountType = existing.discountType ?? 0;
+      existing.totalPrice = this.getPendingCarColorTotalPrice(existing);
       existing.isAvailable = true;
     } else {
       this.pendingCarColors = [
@@ -1698,6 +1848,11 @@ export class CarsComponent implements OnInit {
           colorImageUrl: '',
           colorImageFile: undefined,
           pricingPerColor: 0,
+          pricePefore: 0,
+          vatAmount: 0,
+          discount: 0,
+          discountType: 0,
+          totalPrice: 0,
           createdAt: new Date().toISOString(),
           isAvailable: true
         }
@@ -1829,6 +1984,13 @@ export class CarsComponent implements OnInit {
       branchId: car.branchId,
       year: car.year,
       mileage: car.mileage,
+      vat: car.vat,
+      conditionId: car.conditionId,
+      seatingCapacity: car.seatingCapacity,
+      weelSizeInch: car.weelSizeInch,
+      fuelTankCapacityLiter: car.fuelTankCapacityLiter,
+      trimLevel: car.trimLevel,
+      vehicleClass: car.vehicleClass,
       descriptionEn: car.descriptionEn,
       descriptionAr: car.descriptionAr,
       isAvailable: car.isAvailable
@@ -2034,6 +2196,13 @@ export class CarsComponent implements OnInit {
       branchId: this.form['branchId'].value,
       year: this.form['year'].value,
       mileage: this.form['mileage'].value,
+      vat: this.form['vat'].value,
+      conditionId: this.form['conditionId'].value,
+      seatingCapacity: this.form['seatingCapacity'].value,
+      weelSizeInch: this.form['weelSizeInch'].value,
+      fuelTankCapacityLiter: this.form['fuelTankCapacityLiter'].value,
+      trimLevel: this.form['trimLevel'].value,
+      vehicleClass: this.form['vehicleClass'].value,
       descriptionEn: this.form['descriptionEn'].value,
       descriptionAr: this.form['descriptionAr'].value,
       isAvailable: this.form['isAvailable'].value
@@ -2072,6 +2241,9 @@ export class CarsComponent implements OnInit {
           stockQuantity: c.stockQuantity ?? null,
           colorImageUrl: c.colorImageFile ? '' : (c.colorImageUrl || ''),
           pricingPerColor: c.pricingPerColor ?? null,
+          pricePefore: c.pricePefore ?? null,
+          discount: c.discount ?? null,
+          discountType: c.discountType ?? null,
           isAvailable: c.isAvailable
         })),
         carColorImageFiles: this.pendingCarColors
@@ -2720,11 +2892,7 @@ export class CarsComponent implements OnInit {
   validateCarColorsTab(): boolean {
     this.colorTabSubmitted = true;
     if (!this.pendingCarColors.length) return false;
-    return this.pendingCarColors.every(item =>
-      this.isPendingCarColorStockValid(item) &&
-      this.isPendingCarColorPricingValid(item) &&
-      this.isPendingCarColorImageValid(item)
-    );
+    return !this.hasInvalidPendingCarColorDetails();
   }
 
   validateExtraDetailsTab(): boolean {
@@ -2757,6 +2925,16 @@ export class CarsComponent implements OnInit {
 
   shouldShowColorSelectionError(): boolean {
     return this.pendingCarColors.length === 0 && (this.colorTabSubmitted || this.invalidTabs.has(3));
+  }
+
+  private hasInvalidPendingCarColorDetails(): boolean {
+    return this.pendingCarColors.some(item =>
+      !this.isPendingCarColorStockValid(item) ||
+      !this.isPendingCarColorPricingValid(item) ||
+      !this.isPendingCarColorDiscountValid(item) ||
+      !this.isPendingCarColorDiscountTypeValid(item) ||
+      !this.isPendingCarColorImageValid(item)
+    );
   }
 
   shouldShowExtraDetailsSelectionError(): boolean {
@@ -2798,7 +2976,10 @@ export class CarsComponent implements OnInit {
       return 'Please select at least one feature before proceeding to the next tab.';
     }
     if (tabId === 3) {
-      return 'Please select at least one color before proceeding to the next tab.';
+      if (this.pendingCarColors.length === 0) {
+        return 'Please select at least one color before proceeding to the next tab.';
+      }
+      return 'Please complete all required fields in car color details.';
     }
     if (tabId === 4) {
       return 'Please add at least one extra detail before proceeding to the next tab.';
@@ -2838,10 +3019,24 @@ export class CarsComponent implements OnInit {
           return 'Branch is required.';
         case 'mileage':
           return 'Mileage is required.';
+        case 'vat':
+          return 'VAT is required.';
         case 'descriptionEn':
           return 'Description (English) is required.';
         case 'descriptionAr':
           return 'Description (Arabic) is required.';
+        case 'conditionId':
+          return 'Condition is required.';
+        case 'seatingCapacity':
+          return 'Seating capacity is required.';
+        case 'weelSizeInch':
+          return 'Wheel size is required.';
+        case 'fuelTankCapacityLiter':
+          return 'Fuel tank capacity is required.';
+        case 'trimLevel':
+          return 'Trim level is required.';
+        case 'vehicleClass':
+          return 'Vehicle class is required.';
       }
     }
 
@@ -2852,6 +3047,24 @@ export class CarsComponent implements OnInit {
 
     if (controlName === 'mileage' && control.errors['min']) {
       return 'Mileage must be 0 or greater.';
+    }
+    if (controlName === 'vat' && control.errors['min']) {
+      return 'VAT must be 0 or greater.';
+    }
+    if (controlName === 'conditionId' && control.errors['min']) {
+      return 'Condition must be greater than 0.';
+    }
+    if (controlName === 'seatingCapacity' && control.errors['min']) {
+      return 'Seating capacity must be greater than 0.';
+    }
+    if (controlName === 'fuelTankCapacityLiter' && control.errors['min']) {
+      return 'Fuel tank capacity must be greater than 0.';
+    }
+    if (controlName === 'trimLevel' && control.errors['min']) {
+      return 'Trim level must be greater than 0.';
+    }
+    if (controlName === 'vehicleClass' && control.errors['min']) {
+      return 'Vehicle class must be greater than 0.';
     }
 
     return 'Invalid value.';

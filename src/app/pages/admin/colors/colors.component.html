@@ -29,21 +29,27 @@
           <div class="col-xl-12">
             <div class="row g-3">
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search by English name..."
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="onSearch()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by English name..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearch()">
+                </div>
               </div>
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="ابحث بالاسم العربي..."
-                  [(ngModel)]="searchTermAr"
-                  (ngModelChange)="onSearch()"
-                  dir="rtl">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ابحث بالاسم العربي..."
+                    [(ngModel)]="searchTermAr"
+                    (ngModelChange)="onSearch()"
+                    dir="rtl">
+                </div>
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -147,7 +153,10 @@
         <form [formGroup]="colorForm">
           <div class="mb-3">
             <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="colorNameEn" placeholder="Enter English name">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="colorNameEn" placeholder="Enter English name">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['colorNameEn'].errors">
               English name is required (max 100 characters).
             </div>
@@ -155,7 +164,10 @@
 
           <div class="mb-3">
             <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="colorNameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="colorNameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['colorNameAr'].errors">
               Arabic name is required (max 100 characters).
             </div>
@@ -164,6 +176,7 @@
           <div class="mb-3">
             <label class="form-label">Color Code <span class="text-danger">*</span></label>
             <div class="input-group">
+              <span class="input-group-text"><i class="ri-palette-line"></i></span>
               <input class="form-control" type="text" formControlName="colorCode" placeholder="#000000">
               <span class="input-group-text p-0" style="width: 50px;">
                 <input type="color" class="form-control form-control-color border-0 h-100 w-100" 

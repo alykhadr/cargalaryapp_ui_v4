@@ -1,0 +1,919 @@
+<app-breadcrumbs [title]="mode === 'create' ? 'Create Employee' : 'Employee List'" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="row">
+  <ng-container *ngIf="mode === 'create'">
+  <div class="col-xl-4" *appHasPermission="'employees.create'">
+    <div class="card">
+      <div class="card-header border-bottom-dashed">
+        <h5 class="card-title mb-0">Create Employee</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="createUserForm" (ngSubmit)="createEmployee()">
+          <div class="mb-3 text-center">
+            <div class="position-relative d-inline-block">
+              <img [src]="profileImagePreview || 'https://ui-avatars.com/api/?name=User&size=120&background=405189&color=fff'" 
+                   class="rounded-circle avatar-xl" alt="Profile">
+              <label for="profileImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                <span class="avatar-xs d-inline-block">
+                  <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                    <i class="ri-camera-fill"></i>
+                  </span>
+                </span>
+              </label>
+              <input type="file" id="profileImageInput" class="d-none" 
+                     accept="image/*" (change)="onProfileImageSelected($event)">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-mail-line"></i></span>
+              <input class="form-control" type="email" formControlName="email" />
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">Valid email is required.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-3-line"></i></span>
+              <input class="form-control" type="text" formControlName="userName" />
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['userName'].errors">Username is required.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
+              <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password" />
+              <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()">
+                <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['password'].errors">Password min length is 6.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Name En</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+              <input class="form-control" type="text" formControlName="firstName" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Name Ar</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+              <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Branch <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+              <select class="form-select" formControlName="branchId">
+                <option [ngValue]="null">Select Branch</option>
+                <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
+              </select>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['branchId'].errors">Branch is required.</div>
+          </div>
+
+          <h6 class="text-uppercase text-muted fs-12 mt-4 mb-3">Employee Details</h6>
+
+          <div class="mb-3">
+            <label class="form-label">Employee No</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-id-card-line"></i></span>
+              <input class="form-control" type="text" formControlName="employeeNo" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">National ID <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-fingerprint-line"></i></span>
+              <input class="form-control" type="text" formControlName="nationalId" />
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nationalId'].errors">National ID is required.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Job Title</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-briefcase-4-line"></i></span>
+              <input class="form-control" type="text" formControlName="jobTitle" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Department <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-building-4-line"></i></span>
+              <input class="form-control" type="text" formControlName="department" />
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['department'].errors">Department is required.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Hire Date</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+              <input
+                class="form-control flatpickr-input"
+                type="text"
+                mwlFlatpickr
+                formControlName="hireDate"
+                [altInput]="true"
+                [convertModelValue]="true"
+                dateFormat="Y-m-d"
+                altFormat="d M, Y"
+                placeholder="Select hire date" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Employment Status</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
+              <select class="form-select" formControlName="employmentStatus">
+                <option value="Active">Active</option>
+                <option value="OnLeave">On Leave</option>
+                <option value="Terminated">Terminated</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Work Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-at-line"></i></span>
+              <input class="form-control" type="email" formControlName="workEmail" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Work Phone</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-phone-line"></i></span>
+              <input class="form-control" type="text" formControlName="workPhone" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Assign Roles</label>
+            <div class="d-flex flex-column gap-1">
+              @for (role of roles; track role.id) {
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [id]="'create-role-' + role.id"
+                  [checked]="selectedRoles.includes(role.name)"
+                  (change)="toggleCreateRole(role.name, $any($event.target).checked)">
+                <label class="form-check-label" [for]="'create-role-' + role.id">{{ role.name }}</label>
+              </div>
+              }
+            </div>
+            <div class="text-muted mt-2" *ngIf="roles.length === 0">No roles available.</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && selectedRoles.length === 0">
+              At least one role is required.
+            </div>
+          </div>
+
+          <button class="btn btn-success w-100" type="submit" [disabled]="isCreating">
+            <span *ngIf="isCreating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isCreating ? 'Creating...' : 'Create Employee' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  </ng-container>
+
+  <div class="col-xl-12" *ngIf="mode === 'list'">
+    <div class="card">
+      <div class="card-header border-bottom-dashed">
+        <div class="d-flex flex-wrap gap-2 justify-content-end">
+          <button class="btn btn-soft-secondary" type="button" (click)="clearFilters()">
+            <i class="ri-restart-line align-bottom me-1"></i>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-3-line"></i></span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by username"
+                [(ngModel)]="userNameFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-mail-line"></i></span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by email"
+                [(ngModel)]="emailFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-phone-line"></i></span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by mobile"
+                [(ngModel)]="mobileNoFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Filter by branch"
+                [(ngModel)]="branchNameFilter"
+                (ngModelChange)="onFiltersChanged()">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
+              <select class="form-select" [(ngModel)]="employeeStatusFilter" (ngModelChange)="onFiltersChanged()">
+                <option value="">Status</option>
+                <option value="Active">Active</option>
+                <option value="OnLeave">On Leave</option>
+                <option value="Terminated">Terminated</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header border-bottom-dashed">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
+              <i class="ri-list-check-2 me-1"></i>Total: {{ totalEmployeesCount }}
+            </span>
+            <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+              <i class="ri-user-smile-line me-1"></i>Active: {{ activeEmployeesCount }}
+            </span>
+            <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis">
+              <i class="ri-user-shared-line me-1"></i>On Leave: {{ onLeaveEmployeesCount }}
+            </span>
+            <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">
+              <i class="ri-user-unfollow-line me-1"></i>Terminated: {{ terminatedEmployeesCount }}
+            </span>
+            <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
+              <i class="ri-check-double-line me-1"></i>Selected: {{ selectedUserIds.size }}
+            </span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button *appHasPermission="'employees.create'" class="btn btn-primary btn-sm" type="button" (click)="openCreateModal()">
+              <i class="ri-user-add-line align-bottom me-1"></i>
+              Create Employee
+            </button>
+            <button *appHasPermission="'employees.delete'" class="btn btn-danger btn-sm"
+                    [disabled]="selectedUserIds.size === 0" (click)="bulkDeleteUsers()">
+              <i class="ri-delete-bin-line align-bottom me-1"></i>
+              Delete Selected
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div class="table-responsive table-card mb-1" *ngIf="!isLoading">
+          <table class="table align-middle table-nowrap table-hover mb-0">
+            <thead class="table-light text-muted">
+              <tr>
+                <th style="width: 40px;">
+                  <input class="form-check-input" type="checkbox"
+                         [checked]="isAllSelected()"
+                         (change)="toggleSelectAll($any($event.target).checked)">
+                </th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Mobile No</th>
+                <th>Branch Name</th>
+                <th>Status</th>
+                <th style="width: 320px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of pagedUsers; track user.id) {
+              <tr>
+                <td>
+                  <input class="form-check-input" type="checkbox"
+                         [checked]="selectedUserIds.has(user.id)"
+                         (change)="toggleUserSelection(user.id, $any($event.target).checked)">
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-xs position-relative me-2" style="cursor: pointer;" (click)="previewImage(getProfileImageUrl(user.profileImageUrl))">
+                      <img [src]="getProfileImageUrl(user.profileImageUrl)"
+                           class="rounded-circle img-fluid" alt="Profile">
+                      <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded-circle opacity-0 hover-overlay">
+                        <i class="ri-eye-line text-white fs-6"></i>
+                      </div>
+                    </div>
+                    <span>{{ user.userName }}</span>
+                  </div>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.mobileNo || '-' }}</td>
+                <td>{{ user.branchName || getBranchName(user.branchId) }}</td>
+                <td>
+                  <span class="badge"
+                    [ngClass]="{
+                      'bg-success-subtle text-success': user.employmentStatus === 'Active',
+                      'bg-warning-subtle text-warning': user.employmentStatus === 'OnLeave',
+                      'bg-danger-subtle text-danger': user.employmentStatus === 'Terminated'
+                    }">
+                    {{ user.employmentStatus || '-' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button *appHasPermission="'employees.edit'" class="btn btn-sm btn-soft-secondary" (click)="openEditModal(user)">Edit</button>
+                    <button *appHasPermission="'employees.edit'" class="btn btn-sm btn-soft-dark" (click)="openPasswordModal(user)">Password</button>
+                    <button class="btn btn-sm" [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-warning'" (click)="lockUnlock(user)">
+                      {{ user.isLocked ? 'Unlock' : 'Lock' }}
+                    </button>
+                    <div ngbDropdown class="d-inline-block" placement="start-top" container="body">
+                      <button class="btn btn-sm btn-soft-info" ngbDropdownToggle>
+                        More
+                      </button>
+                      <div ngbDropdownMenu>
+                        <button *appHasPermission="'employees.view'" ngbDropdownItem (click)="openPermissionsModal(user)">
+                          <i class="ri-shield-keyhole-line me-2"></i>Permissions
+                        </button>
+                        <button *appHasPermission="'employees.delete'" ngbDropdownItem class="text-danger" (click)="deleteEmployee(user)">
+                          <i class="ri-delete-bin-line me-2"></i>Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row align-items-center mt-2" *ngIf="!isLoading && filteredUsers.length > 0">
+          <div class="col-sm-6">
+            <div class="text-muted small">
+              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredUsers.length }} entries
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex justify-content-sm-end mt-2 mt-sm-0">
+              <ngb-pagination
+                [collectionSize]="filteredUsers.length"
+                [(page)]="service.page"
+                [pageSize]="service.pageSize"
+                (pageChange)="onPageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center text-muted py-4" *ngIf="!isLoading && filteredUsers.length === 0">
+          <div class="mb-2">
+            <i class="ri-team-line" style="font-size: 44px; color: #b8c1ce;"></i>
+          </div>
+          <h6 class="mb-1 text-muted">No employees found for selected filters.</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show create-employee-modal" tabindex="-1" [ngStyle]="{ display: isCreateModalOpen ? 'block' : 'none' }" *ngIf="mode === 'list' && isCreateModalOpen">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header create-employee-modal-header">
+        <h5 class="modal-title">Create Employee</h5>
+        <button class="btn-close" type="button" (click)="closeCreateModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="createUserForm" (ngSubmit)="createEmployee()">
+          <div class="row g-3">
+            <div class="col-12 text-center">
+              <div class="position-relative d-inline-block">
+                <img [src]="profileImagePreview || 'https://ui-avatars.com/api/?name=User&size=120&background=405189&color=fff'"
+                     class="rounded-circle avatar-xl" alt="Profile">
+                <label for="createEmployeeModalImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                  <span class="avatar-xs d-inline-block">
+                    <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                      <i class="ri-camera-fill"></i>
+                    </span>
+                  </span>
+                </label>
+                <input type="file" id="createEmployeeModalImageInput" class="d-none"
+                       accept="image/*" (change)="onProfileImageSelected($event)">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-mail-line"></i></span>
+                <input class="form-control" type="email" formControlName="email" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">Valid email is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-3-line"></i></span>
+                <input class="form-control" type="text" formControlName="userName" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['userName'].errors">Username is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
+                <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password" />
+                <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()">
+                  <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['password'].errors">Password min length is 6.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Branch <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+                <select class="form-select" formControlName="branchId">
+                  <option [ngValue]="null">Select Branch</option>
+                  <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
+                </select>
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['branchId'].errors">Branch is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Name En</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+                <input class="form-control" type="text" formControlName="firstName" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Name Ar</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+                <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <h6 class="text-uppercase text-muted fs-12 mt-1 mb-0">Employee Details</h6>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Employee No</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-id-card-line"></i></span>
+                <input class="form-control" type="text" formControlName="employeeNo" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">National ID <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-fingerprint-line"></i></span>
+                <input class="form-control" type="text" formControlName="nationalId" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['nationalId'].errors">National ID is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Job Title</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-briefcase-4-line"></i></span>
+                <input class="form-control" type="text" formControlName="jobTitle" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Department <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-building-4-line"></i></span>
+                <input class="form-control" type="text" formControlName="department" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['department'].errors">Department is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Hire Date</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                <input
+                  class="form-control flatpickr-input"
+                  type="text"
+                  mwlFlatpickr
+                  formControlName="hireDate"
+                  [altInput]="true"
+                  [convertModelValue]="true"
+                  dateFormat="Y-m-d"
+                  altFormat="d M, Y"
+                  placeholder="Select hire date" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Employment Status</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
+                <select class="form-select" formControlName="employmentStatus">
+                  <option value="Active">Active</option>
+                  <option value="OnLeave">On Leave</option>
+                  <option value="Terminated">Terminated</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Work Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-at-line"></i></span>
+                <input class="form-control" type="email" formControlName="workEmail" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Work Phone</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-phone-line"></i></span>
+                <input class="form-control" type="text" formControlName="workPhone" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Assign Roles</label>
+              <div class="d-flex flex-column gap-1">
+                @for (role of roles; track role.id) {
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [id]="'create-modal-role-' + role.id"
+                    [checked]="selectedRoles.includes(role.name)"
+                    (change)="toggleCreateRole(role.name, $any($event.target).checked)">
+                  <label class="form-check-label" [for]="'create-modal-role-' + role.id">{{ role.name }}</label>
+                </div>
+                }
+              </div>
+              <div class="text-muted mt-2" *ngIf="roles.length === 0">No roles available.</div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && selectedRoles.length === 0">
+                At least one role is required.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeCreateModal()">Close</button>
+        <button *appHasPermission="'employees.create'" class="btn btn-success" type="button" [disabled]="isCreating" (click)="createEmployee()">
+          <span *ngIf="isCreating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isCreating ? 'Creating...' : 'Create Employee' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show create-employee-backdrop" *ngIf="mode === 'list' && isCreateModalOpen"></div>
+
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isPermissionModalOpen ? 'block' : 'none' }" *ngIf="mode === 'list' && isPermissionModalOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Effective Permissions: {{ selectedUser?.userName }}</h5>
+        <button class="btn-close" type="button" (click)="closePermissionsModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="selectedUserPermissions.length === 0" class="text-muted">No permissions found.</div>
+        <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="userPermissionGroups.length > 0">
+          <table class="table table-sm align-middle mb-0 permission-table">
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pageGroup of pagedUserPermissionGroups; track pageGroup.page) {
+              <tr>
+                <td>
+                  <button class="btn btn-sm btn-ghost-primary p-0 me-2" type="button" (click)="togglePermissionGroup(pageGroup.page)">
+                    <i [class]="isPermissionGroupExpanded(pageGroup.page) ? 'ri-arrow-down-s-line' : 'ri-arrow-right-s-line'"></i>
+                  </button>
+                  <span class="fw-semibold">{{ pageGroup.page }}</span>
+                </td>
+                <td>
+                  <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
+                </td>
+              </tr>
+              @if (isPermissionGroupExpanded(pageGroup.page)) {
+              @for (action of pageGroup.actions; track action) {
+              <tr>
+                <td class="ps-4">
+                  <i class="ri-corner-down-right-line text-muted me-2"></i>{{ pageGroup.page }}
+                </td>
+                <td>{{ action }}</td>
+              </tr>
+              }
+              }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-2" *ngIf="userPermissionGroups.length > permissionsPager.pageSize">
+          <ngb-pagination
+            [collectionSize]="userPermissionGroups.length"
+            [pageSize]="permissionsPager.pageSize"
+            [(page)]="permissionsPager.page"
+            (pageChange)="onPermissionPageChange($event)"
+            [maxSize]="3"
+            [rotate]="true"
+            size="sm">
+          </ngb-pagination>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closePermissionsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="mode === 'list' && isPermissionModalOpen"></div>
+
+<div class="modal fade show create-employee-modal" tabindex="-1" [ngStyle]="{ display: isEditModalOpen ? 'block' : 'none' }" *ngIf="mode === 'list' && isEditModalOpen">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header create-employee-modal-header">
+        <h5 class="modal-title">Edit Employee</h5>
+        <button class="btn-close" type="button" (click)="closeEditModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editUserForm">
+          <div class="row g-3">
+            <div class="col-12 text-center">
+              <div class="position-relative d-inline-block">
+                <img [src]="getEditImageUrl()"
+                     class="rounded-circle avatar-xl" alt="Profile">
+                <label for="editProfileImageInput" class="position-absolute bottom-0 end-0 mb-1 me-1">
+                  <span class="avatar-xs d-inline-block">
+                    <span class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
+                      <i class="ri-camera-fill"></i>
+                    </span>
+                  </span>
+                </label>
+                <input type="file" id="editProfileImageInput" class="d-none"
+                       accept="image/*" (change)="onEditProfileImageSelected($event)">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-mail-line"></i></span>
+                <input class="form-control" type="email" formControlName="email" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['email'].errors">Valid email is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-3-line"></i></span>
+                <input class="form-control" type="text" formControlName="userName" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['userName'].errors">Username is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Branch <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
+                <select class="form-select" formControlName="branchId">
+                  <option [ngValue]="null">Select Branch</option>
+                  <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
+                </select>
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['branchId'].errors">Branch is required.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Name En</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+                <input class="form-control" type="text" formControlName="firstName" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Name Ar</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
+                <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <h6 class="text-uppercase text-muted fs-12 mt-1 mb-0">Employee Details</h6>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Employee No</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-id-card-line"></i></span>
+                <input class="form-control" type="text" formControlName="employeeNo" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">National ID</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-fingerprint-line"></i></span>
+                <input class="form-control" type="text" formControlName="nationalId" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Job Title</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-briefcase-4-line"></i></span>
+                <input class="form-control" type="text" formControlName="jobTitle" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Department</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-building-4-line"></i></span>
+                <input class="form-control" type="text" formControlName="department" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Hire Date</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-calendar-line"></i></span>
+                <input
+                  class="form-control flatpickr-input"
+                  type="text"
+                  mwlFlatpickr
+                  formControlName="hireDate"
+                  [altInput]="true"
+                  [convertModelValue]="true"
+                  dateFormat="Y-m-d"
+                  altFormat="d M, Y"
+                  placeholder="Select hire date" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Employment Status</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-settings-line"></i></span>
+                <select class="form-select" formControlName="employmentStatus">
+                  <option value="">Select Status</option>
+                  <option value="Active">Active</option>
+                  <option value="OnLeave">On Leave</option>
+                  <option value="Terminated">Terminated</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Work Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-at-line"></i></span>
+                <input class="form-control" type="email" formControlName="workEmail" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Work Phone</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-phone-line"></i></span>
+                <input class="form-control" type="text" formControlName="workPhone" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Assign Roles</label>
+              <div class="d-flex flex-column gap-1">
+                @for (role of roles; track role.id) {
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [id]="'edit-role-' + role.id"
+                    [checked]="editSelectedRoles.includes(role.name)"
+                    (change)="toggleEditRole(role.name, $any($event.target).checked)">
+                  <label class="form-check-label" [for]="'edit-role-' + role.id">{{ role.name }}</label>
+                </div>
+                }
+              </div>
+              <div class="text-muted mt-2" *ngIf="roles.length === 0">No roles available.</div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closeEditModal()">Close</button>
+        <button *appHasPermission="'employees.edit'" class="btn btn-success" type="button" [disabled]="isUpdatingUser" (click)="updateEmployeeDetails()">
+          <span *ngIf="isUpdatingUser" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isUpdatingUser ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show create-employee-backdrop" *ngIf="mode === 'list' && isEditModalOpen"></div>
+
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: isPasswordModalOpen ? 'block' : 'none' }" *ngIf="mode === 'list' && isPasswordModalOpen">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Change Password: {{ selectedUser?.userName }}</h5>
+        <button class="btn-close" type="button" (click)="closePasswordModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="changePasswordForm">
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
+              <input class="form-control" [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" />
+              <button class="btn btn-outline-secondary" type="button" (click)="showNewPassword = !showNewPassword">
+                <i [class]="showNewPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="passwordSubmitted && passwordForm['newPassword'].errors">
+              New password must be at least 6 characters.
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-light" type="button" (click)="closePasswordModal()">Close</button>
+        <button *appHasPermission="'employees.edit'" class="btn btn-primary" type="button" [disabled]="isChangingPassword" (click)="changeEmployeePassword()">
+          <span *ngIf="isChangingPassword" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="mode === 'list' && isPasswordModalOpen"></div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{ display: previewImageUrl ? 'block' : 'none' }" *ngIf="mode === 'list' && previewImageUrl">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Profile Image Preview</h5>
+        <button type="button" class="btn-close" (click)="closePreview()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img [src]="previewImageUrl" alt="Profile Preview" class="img-fluid" style="max-height: 500px;">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="mode === 'list' && previewImageUrl"></div>
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

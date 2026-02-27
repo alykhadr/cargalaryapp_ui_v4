@@ -60,7 +60,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Company Name (English) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameEn" name="companyNameEn" maxlength="200" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-building-line"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameEn" name="companyNameEn" maxlength="200" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.companyNameEn">
                       Company name in English is required
                     </div>
@@ -69,7 +72,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Company Name (Arabic) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameAr" name="companyNameAr" maxlength="200" dir="rtl" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-building-line"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameAr" name="companyNameAr" maxlength="200" dir="rtl" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.companyNameAr">
                       Company name in Arabic is required
                     </div>
@@ -78,7 +84,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">CR Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="companyInfoForm.crNumber" name="crNumber" maxlength="50" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-file-list-3-line"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="companyInfoForm.crNumber" name="crNumber" maxlength="50" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.crNumber">
                       CR Number is required
                     </div>
@@ -87,7 +96,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Email <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" [(ngModel)]="companyInfoForm.email" name="email" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-mail-line"></i></span>
+                      <input type="email" class="form-control" [(ngModel)]="companyInfoForm.email" name="email" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.email">
                       Email is required
                     </div>
@@ -99,7 +111,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="companyInfoForm.mobileNo" name="mobileNo" maxlength="10" placeholder="05XXXXXXXX" pattern="[0-9]*" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-phone-line"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="companyInfoForm.mobileNo" name="mobileNo" maxlength="10" placeholder="05XXXXXXXX" pattern="[0-9]*" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.mobileNo">
                       Mobile number is required
                     </div>
@@ -114,7 +129,10 @@
                 <div class="col-md-4">
                   <div class="mb-3">
                     <label class="form-label">Telephone Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" [(ngModel)]="companyInfoForm.telNo" name="telNo" maxlength="30" pattern="[0-9]*" required>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-phone-line"></i></span>
+                      <input type="text" class="form-control" [(ngModel)]="companyInfoForm.telNo" name="telNo" maxlength="30" pattern="[0-9]*" required>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.telNo">
                       Telephone number is required
                     </div>
@@ -126,7 +144,10 @@
                 <div class="col-md-12">
                   <div class="mb-3">
                     <label class="form-label">Logo <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-image-2-line"></i></span>
+                      <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                    </div>
                     <small class="text-muted">Maximum file size: 5 MB</small>
                     <div *ngIf="logoPreview" class="mt-2">
                       <img [src]="logoPreview" alt="Logo Preview" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
@@ -149,7 +170,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">About Us (English) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsEn" name="aboutUsEn" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsEn" name="aboutUsEn" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.aboutUsEn">
                       About Us in English is required
                     </div>
@@ -158,7 +182,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">About Us (Arabic) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsAr" name="aboutUsAr" dir="rtl" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsAr" name="aboutUsAr" dir="rtl" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.aboutUsAr">
                       About Us in Arabic is required
                     </div>
@@ -177,7 +204,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Our Mission (English) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionEn" name="ourMissionEn" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-focus-2-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionEn" name="ourMissionEn" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourMissionEn">
                       Our Mission in English is required
                     </div>
@@ -186,7 +216,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Our Mission (Arabic) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionAr" name="ourMissionAr" dir="rtl" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-focus-2-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionAr" name="ourMissionAr" dir="rtl" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourMissionAr">
                       Our Mission in Arabic is required
                     </div>
@@ -205,7 +238,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Our Goals (English) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsEn" name="ourGoalsEn" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-flag-2-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsEn" name="ourGoalsEn" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourGoalsEn">
                       Our Goals in English is required
                     </div>
@@ -214,7 +250,10 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Our Goals (Arabic) <span class="text-danger">*</span></label>
-                    <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsAr" name="ourGoalsAr" dir="rtl" required></textarea>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="ri-flag-2-line"></i></span>
+                      <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsAr" name="ourGoalsAr" dir="rtl" required></textarea>
+                    </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourGoalsAr">
                       Our Goals in Arabic is required
                     </div>

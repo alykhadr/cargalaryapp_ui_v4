@@ -11,7 +11,7 @@ import { GlobalComponent } from "src/app/global-component";
 
 
 const API_URL = GlobalComponent.API_URL;
-const AUTH_API = GlobalComponent.AUTH_API;
+const EMPLOYEES_API = API_URL + "/api/employees";
 
 @Injectable({
     providedIn: "root",
@@ -52,12 +52,12 @@ export class RoleService {
     }
 
     getUserRoles(userId: string): Observable<string[]> {
-        return this.http.get<string[]>(`${AUTH_API}/users/${userId}/roles`);
+        return this.http.get<string[]>(`${EMPLOYEES_API}/${userId}/roles`);
     }
 
     //   assignRoleToUser(userId: string, roleName: string): Observable<string> {
     //     return this.http.post(
-    //       `${AUTH_API}/users/${userId}/roles/${encodeURIComponent(roleName)}`,
+    //       `${AUTH_API}/employees/${userId}/roles/${encodeURIComponent(roleName)}`,
     //       {},
     //       { ...this.getHttpOptions(), responseType: "text" }
     //     );
@@ -65,7 +65,7 @@ export class RoleService {
 
     //   removeRoleFromUser(userId: string, roleName: string): Observable<string> {
     //     return this.http.delete(
-    //       `${AUTH_API}/users/${userId}/roles/${encodeURIComponent(roleName)}`,
+    //       `${AUTH_API}/employees/${userId}/roles/${encodeURIComponent(roleName)}`,
     //       { ...this.getHttpOptions(), responseType: "text" }
     //     );
     //   }

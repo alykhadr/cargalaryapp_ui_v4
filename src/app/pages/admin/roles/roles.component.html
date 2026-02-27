@@ -31,7 +31,8 @@
                     <div class="col-xl-12">
                         <div class="row g-3">
                             <div class="col-sm-3">
-                                <div>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ri-shield-user-line"></i></span>
                                     <input
                                         type="text"
                                         class="form-control"
@@ -41,7 +42,8 @@
                                 </div>
                             </div>
                             <div class="col-sm-3">
-                                <div class="">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ri-calendar-line"></i></span>
                                     <input class="form-control flatpickr-input" type="text" mwlFlatpickr
                                         [altInput]="true" [convertModelValue]="true" placeholder="Select date"
                                         id="isDate" [(ngModel)]="filterDate" (change)="dateFilter()" mode="range">
@@ -49,8 +51,9 @@
                             </div>
                             <!--end col-->
                             <div class="col-sm-3">
-                                <div>
-                                    <select class="form-control" data-plugin="choices" data-choices
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ri-toggle-line"></i></span>
+                                    <select class="form-select" data-plugin="choices" data-choices
                                         data-choices-search-false name="choices-single-default" id="idStatus"
                                         [(ngModel)]="status" (ngModelChange)="statusFilter()">
                                         <option value="" selected> Select Status</option>
@@ -185,20 +188,26 @@
                             <input type="hidden" name="id" value="" formControlName="_id" />
                             <div class="mb-3">
                                 <label for="customername-field" class="form-label">Role Name</label>
-                                <input type="text" id="roleName-field" class="form-control" placeholder="Enter Name"
-                                    required formControlName="roleName"
-                                    [ngClass]="{ 'is-invalid': submitted && form['roleName'].errors }" />
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="ri-shield-user-line"></i></span>
+                                    <input type="text" id="roleName-field" class="form-control" placeholder="Enter Name"
+                                        required formControlName="roleName"
+                                        [ngClass]="{ 'is-invalid': submitted && form['roleName'].errors }" />
+                                </div>
                                 <div class="invalid-feedback">Please enter a role name.</div>
 
                             </div>
                             <div class="mb-3">
                                 <label for="status-field" class="form-label">Is Active</label>
-                                <div class="form-check form-switch form-switch-lg" dir="ltr">
-
-                                  <input type="checkbox" class="form-check-input" id="Switchsizelg" 
-                                    [checked]="roleForm.get('isActive')?.value" 
-                                    (change)="roleForm.get('isActive')?.setValue($event.target.checked)">
-
+                                <div class="input-group">
+                                  <span class="input-group-text"><i class="ri-toggle-line"></i></span>
+                                  <div class="form-control d-flex align-items-center">
+                                    <div class="form-check form-switch form-switch-lg mb-0" dir="ltr">
+                                      <input type="checkbox" class="form-check-input" id="Switchsizelg"
+                                        [checked]="roleForm.get('isActive')?.value"
+                                        (change)="roleForm.get('isActive')?.setValue($event.target.checked)">
+                                    </div>
+                                  </div>
                                 </div>
                             </div>
 

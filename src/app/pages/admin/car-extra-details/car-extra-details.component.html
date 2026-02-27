@@ -28,21 +28,27 @@
           <div class="col-xl-12">
             <div class="row g-3">
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Search by English name..."
-                  [(ngModel)]="searchTerm"
-                  (ngModelChange)="onSearch()">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search by English name..."
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearch()">
+                </div>
               </div>
               <div class="col-sm-5">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="ابحث بالاسم العربي..."
-                  [(ngModel)]="searchTermAr"
-                  (ngModelChange)="onSearch()"
-                  dir="rtl">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-search-line"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ابحث بالاسم العربي..."
+                    [(ngModel)]="searchTermAr"
+                    (ngModelChange)="onSearch()"
+                    dir="rtl">
+                </div>
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
@@ -155,7 +161,10 @@
         <form [formGroup]="extraDetailsForm">
           <div class="mb-3">
             <label class="form-label">Name (English) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
               English name is required (max 200 characters).
             </div>
@@ -163,7 +172,10 @@
 
           <div class="mb-3">
             <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
               Arabic name is required (max 200 characters).
             </div>
@@ -171,7 +183,10 @@
 
           <div class="mb-3">
             <label class="form-label">Description (English)</label>
-            <textarea class="form-control" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+              <textarea class="form-control" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
               Description must be max 500 characters.
             </div>
@@ -179,7 +194,10 @@
 
           <div class="mb-3">
             <label class="form-label">Description (Arabic)</label>
-            <textarea class="form-control" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-file-text-line"></i></span>
+              <textarea class="form-control" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
               الوصف يجب أن يكون كحد أقصى 500 حرف.
             </div>
@@ -187,25 +205,30 @@
 
           <div class="mb-3">
             <label class="form-label">Car <span class="text-danger">*</span></label>
-            <ng-select
-              [items]="cars"
-              bindLabel="year"
-              bindValue="id"
-              formControlName="carId"
-              placeholder="Select a car"
-              [searchable]="true"
-              [clearable]="true"
-              [loading]="cars.length === 0">
-              <ng-template ng-label-tmp let-item="item">
-                {{ item.year }} - ${{ item.price?.toLocaleString() }} - {{ item.isAvailable ? 'Available' : 'Unavailable' }}
-              </ng-template>
-              <ng-template ng-option-tmp let-item="item" let-index="index">
-                <div class="d-flex flex-column">
-                  <span><strong>Year:</strong> {{ item.year }} | <strong>Price:</strong> ${{ item.price?.toLocaleString() }}</span>
-                  <small class="text-muted">ID: {{ item.id }} | Status: {{ item.isAvailable ? 'Available' : 'Unavailable' }}</small>
-                </div>
-              </ng-template>
-            </ng-select>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-car-line"></i></span>
+              <div class="flex-grow-1">
+                <ng-select
+                  [items]="cars"
+                  bindLabel="year"
+                  bindValue="id"
+                  formControlName="carId"
+                  placeholder="Select a car"
+                  [searchable]="true"
+                  [clearable]="true"
+                  [loading]="cars.length === 0">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.year }} - ${{ item.price?.toLocaleString() }} - {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    <div class="d-flex flex-column">
+                      <span><strong>Year:</strong> {{ item.year }} | <strong>Price:</strong> ${{ item.price?.toLocaleString() }}</span>
+                      <small class="text-muted">ID: {{ item.id }} | Status: {{ item.isAvailable ? 'Available' : 'Unavailable' }}</small>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">
               Car is required.
             </div>

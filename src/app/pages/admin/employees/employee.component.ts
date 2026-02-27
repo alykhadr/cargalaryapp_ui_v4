@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -7,8 +7,8 @@ import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { Role } from '../interfaces/role.interface';
-import { AdminUser } from '../interfaces/user-admin.interface';
-import { AdminUserService } from '../services/admin-user.service';
+import { AdminEmployee } from '../interfaces/employee-admin.interface';
+import { AdminEmployeeService } from '../services/admin-employee.service';
 import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
 import { BranchService } from '../services/branch.service';
@@ -16,12 +16,14 @@ import { Branch } from '../interfaces/branch.interface';
 import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
-  selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrl: './user.component.scss',
+  selector: 'app-employee',
+  templateUrl: './employee.component.html',
+  styleUrl: './employee.component.scss',
   standalone: false
 })
-export class UserComponent implements OnInit {
+export class EmployeeComponent implements OnInit {
+  @Input() mode: 'create' | 'list' = 'list';
+  @Input() openCreateOnInit = false;
   breadCrumbItems!: Array<{}>;
   createUserForm!: UntypedFormGroup;
   editUserForm!: UntypedFormGroup;
@@ -36,16 +38,18 @@ export class UserComponent implements OnInit {
   showPassword = false;
   showNewPassword = false;
 
-  users: AdminUser[] = [];
-  filteredUsers: AdminUser[] = [];
-  pagedUsers: AdminUser[] = [];
+  users: AdminEmployee[] = [];
+  filteredUsers: AdminEmployee[] = [];
+  pagedUsers: AdminEmployee[] = [];
   roles: Role[] = [];
   branches: Branch[] = [];
   selectedRoles: string[] = [];
   editSelectedRoles: string[] = [];
   userNameFilter = '';
   emailFilter = '';
-  statusFilter: '' | 'active' | 'locked' = '';
+  mobileNoFilter = '';
+  branchNameFilter = '';
+  employeeStatusFilter = '';
   selectedProfileImage: File | null = null;
   selectedEditProfileImage: File | null = null;
   profileImagePreview: string | null = null;
@@ -53,12 +57,13 @@ export class UserComponent implements OnInit {
   previewImageUrl: string | null = null;
   selectedUserIds = new Set<string>();
 
-  selectedUser?: AdminUser;
+  selectedUser?: AdminEmployee;
   selectedUserPermissions: string[] = [];
   userPermissionGroups: Array<{ page: string; actions: string[] }> = [];
   pagedUserPermissionGroups: Array<{ page: string; actions: string[] }> = [];
   expandedUserPermissionPages = new Set<string>();
   isPermissionModalOpen = false;
+  isCreateModalOpen = false;
   isEditModalOpen = false;
   isPasswordModalOpen = false;
   public permissionsPager = new PaginationService();
@@ -66,7 +71,7 @@ export class UserComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
-    private adminUserService: AdminUserService,
+    private adminEmployeeService: AdminEmployeeService,
     private roleService: RoleService,
     private permissionService: PermissionService,
     private branchService: BranchService,
@@ -76,7 +81,7 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: 'Admin' },
-      { label: 'Users', active: true }
+      { label: this.mode === 'create' ? 'Create Employee' : 'Employee List', active: true }
     ];
 
     this.createUserForm = this.formBuilder.group({
@@ -85,7 +90,25 @@ export class UserComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       firstName: [''],
       lastName: [''],
-      branchId: [null, Validators.required]
+      branchId: [null, Validators.required],
+      employeeNo: [''],
+      nationalId: ['', Validators.required],
+      jobTitle: [''],
+      department: ['', Validators.required],
+      hireDate: [''],
+      terminationDate: [''],
+      employmentStatus: ['Active'],
+      workEmail: [''],
+      workPhone: [''],
+      extension: [''],
+      dateOfBirth: [''],
+      gender: [''],
+      nationality: [''],
+      addressLine1: [''],
+      addressLine2: [''],
+      city: [''],
+      region: [''],
+      postalCode: ['']
     });
 
     this.editUserForm = this.formBuilder.group({
@@ -93,14 +116,39 @@ export class UserComponent implements OnInit {
       userName: ['', [Validators.required, Validators.minLength(3)]],
       firstName: [''],
       lastName: [''],
-      branchId: [null, Validators.required]
+      branchId: [null, Validators.required],
+      employeeNo: [''],
+      nationalId: [''],
+      jobTitle: [''],
+      department: [''],
+      hireDate: [''],
+      terminationDate: [''],
+      employmentStatus: [''],
+      workEmail: [''],
+      workPhone: [''],
+      extension: [''],
+      dateOfBirth: [''],
+      gender: [''],
+      nationality: [''],
+      addressLine1: [''],
+      addressLine2: [''],
+      city: [''],
+      region: [''],
+      postalCode: ['']
     });
 
     this.changePasswordForm = this.formBuilder.group({
       newPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    this.loadUsersAndRoles();
+    if (this.mode === 'create') {
+      this.loadCreatePageData();
+      return;
+    }
+    this.loadListPageData();
+    if (this.openCreateOnInit) {
+      this.openCreateModal();
+    }
   }
 
   get form() {
@@ -115,14 +163,43 @@ export class UserComponent implements OnInit {
     return this.changePasswordForm.controls;
   }
 
-  loadUsersAndRoles() {
+  private loadCreatePageData() {
     this.isLoading = true;
     forkJoin({
-      users: this.adminUserService.getUsers().pipe(
+      roles: this.roleService.getRoles().pipe(
         first(),
         catchError((error) => {
           this.showError(error);
-          return of([] as AdminUser[]);
+          return of([] as Role[]);
+        })
+      ),
+      branches: this.branchService.getBranches().pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as Branch[]);
+        })
+      )
+    }).subscribe({
+      next: ({ roles, branches }) => {
+        this.roles = roles;
+        this.branches = branches;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private loadListPageData() {
+    this.isLoading = true;
+    forkJoin({
+      users: this.adminEmployeeService.getEmployees().pipe(
+        first(),
+        catchError((error) => {
+          this.showError(error);
+          return of([] as AdminEmployee[]);
         })
       ),
       roles: this.roleService.getRoles().pipe(
@@ -144,6 +221,7 @@ export class UserComponent implements OnInit {
         this.users = users;
         this.roles = roles;
         this.branches = branches;
+        this.selectedUserIds.clear();
         this.applyFilters(true);
         this.isLoading = false;
       },
@@ -176,7 +254,9 @@ export class UserComponent implements OnInit {
   clearFilters() {
     this.userNameFilter = '';
     this.emailFilter = '';
-    this.statusFilter = '';
+    this.mobileNoFilter = '';
+    this.branchNameFilter = '';
+    this.employeeStatusFilter = '';
     this.applyFilters(true);
   }
 
@@ -184,7 +264,7 @@ export class UserComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  createUser() {
+  createEmployee() {
     this.submitted = true;
     if (this.createUserForm.invalid) {
       return;
@@ -194,7 +274,7 @@ export class UserComponent implements OnInit {
     }
 
     this.isCreating = true;
-    this.adminUserService.createUser({
+    this.adminEmployeeService.createEmployee({
       email: this.form['email'].value,
       userName: this.form['userName'].value,
       password: this.form['password'].value,
@@ -202,17 +282,36 @@ export class UserComponent implements OnInit {
       lastName: this.form['lastName'].value,
       roles: this.selectedRoles,
       branchId: this.form['branchId'].value,
-      profileImage: this.selectedProfileImage || undefined
+      profileImage: this.selectedProfileImage || undefined,
+      employeeNo: this.form['employeeNo'].value,
+      nationalId: this.form['nationalId'].value,
+      jobTitle: this.form['jobTitle'].value,
+      department: this.form['department'].value,
+      hireDate: this.form['hireDate'].value,
+      terminationDate: this.form['terminationDate'].value || undefined,
+      employmentStatus: this.form['employmentStatus'].value || 'Active',
+      workEmail: this.form['workEmail'].value || undefined,
+      workPhone: this.form['workPhone'].value || undefined,
+      extension: this.form['extension'].value || undefined,
+      dateOfBirth: this.form['dateOfBirth'].value || undefined,
+      gender: this.form['gender'].value || undefined,
+      nationality: this.form['nationality'].value || undefined,
+      addressLine1: this.form['addressLine1'].value || undefined,
+      addressLine2: this.form['addressLine2'].value || undefined,
+      city: this.form['city'].value || undefined,
+      region: this.form['region'].value || undefined,
+      postalCode: this.form['postalCode'].value || undefined
     }).pipe(first()).subscribe({
       next: () => {
         this.isCreating = false;
-        this.createUserForm.reset();
-        this.submitted = false;
-        this.selectedRoles = [];
-        this.selectedProfileImage = null;
-        this.profileImagePreview = null;
-        this.showSuccess('User created successfully');
-        this.loadUsersAndRoles();
+        this.resetCreateForm();
+        this.showSuccess('Employee created successfully');
+        if (this.mode === 'list') {
+          this.isCreateModalOpen = false;
+          this.loadListPageData();
+          return;
+        }
+        this.loadCreatePageData();
       },
       error: (error) => {
         this.isCreating = false;
@@ -221,7 +320,20 @@ export class UserComponent implements OnInit {
     });
   }
 
-  async deleteUser(user: AdminUser) {
+  openCreateModal() {
+    this.submitted = false;
+    this.isCreateModalOpen = true;
+    if (this.roles.length === 0 || this.branches.length === 0) {
+      this.loadCreatePageData();
+    }
+  }
+
+  closeCreateModal() {
+    this.isCreateModalOpen = false;
+    this.resetCreateForm();
+  }
+
+  async deleteEmployee(user: AdminEmployee) {
     const result = await Swal.fire({
       title: `Delete ${user.userName}?`,
       text: 'This action cannot be undone.',
@@ -234,32 +346,32 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    this.adminUserService.deleteUser(user.id).pipe(first()).subscribe({
+    this.adminEmployeeService.deleteEmployee(user.id).pipe(first()).subscribe({
       next: () => {
         this.showSuccess('User deleted successfully');
-        this.loadUsersAndRoles();
+        this.loadListPageData();
       },
       error: (error) => this.showError(error)
     });
   }
 
-  lockUnlock(user: AdminUser) {
+  lockUnlock(user: AdminEmployee) {
     const request = user.isLocked
-      ? this.adminUserService.unlockUser(user.id)
-      : this.adminUserService.lockUser(user.id);
+      ? this.adminEmployeeService.unlockEmployee(user.id)
+      : this.adminEmployeeService.lockEmployee(user.id);
 
     request.pipe(first()).subscribe({
       next: () => {
         this.showSuccess(user.isLocked ? 'User unlocked' : 'User locked');
-        this.loadUsersAndRoles();
+        this.loadListPageData();
       },
       error: (error) => this.showError(error)
     });
   }
 
   private applyRoleChanges(userId: string, toAdd: string[], toRemove: string[], onSuccess: () => void) {
-    const addRequests = toAdd.map(role => this.adminUserService.assignRole(userId, role));
-    const removeRequests = toRemove.map(role => this.adminUserService.removeRole(userId, role));
+    const addRequests = toAdd.map(role => this.adminEmployeeService.assignRole(userId, role));
+    const removeRequests = toRemove.map(role => this.adminEmployeeService.removeRole(userId, role));
     const requests = [...addRequests, ...removeRequests];
 
     if (requests.length === 0) {
@@ -288,13 +400,13 @@ export class UserComponent implements OnInit {
     });
   }
 
-  openPermissionsModal(user: AdminUser) {
+  openPermissionsModal(user: AdminEmployee) {
     this.selectedUser = user;
     this.isPermissionModalOpen = true;
     this.selectedUserPermissions = [];
     this.userPermissionGroups = [];
     this.pagedUserPermissionGroups = [];
-    this.permissionService.getUserPermissions(user.id).pipe(first()).subscribe({
+    this.permissionService.getEmployeePermissions(user.id).pipe(first()).subscribe({
       next: (permissions) => {
         this.selectedUserPermissions = permissions;
         this.refreshUserPermissionGroups(true);
@@ -312,7 +424,7 @@ export class UserComponent implements OnInit {
     this.expandedUserPermissionPages.clear();
   }
 
-  openEditModal(user: AdminUser) {
+  openEditModal(user: AdminEmployee) {
     this.selectedUser = user;
     this.editSubmitted = false;
     this.isEditModalOpen = true;
@@ -324,10 +436,28 @@ export class UserComponent implements OnInit {
       userName: user.userName,
       firstName: user.firstName,
       lastName: user.lastName,
-      branchId: user.branchId
+      branchId: user.branchId,
+      employeeNo: user.employeeNo,
+      nationalId: user.nationalId,
+      jobTitle: user.jobTitle,
+      department: user.department,
+      hireDate: this.toDateInputValue(user.hireDate),
+      terminationDate: this.toDateInputValue(user.terminationDate),
+      employmentStatus: user.employmentStatus,
+      workEmail: user.workEmail,
+      workPhone: user.workPhone,
+      extension: user.extension,
+      dateOfBirth: this.toDateInputValue(user.dateOfBirth),
+      gender: user.gender,
+      nationality: user.nationality,
+      addressLine1: user.addressLine1,
+      addressLine2: user.addressLine2,
+      city: user.city,
+      region: user.region,
+      postalCode: user.postalCode
     });
 
-    this.adminUserService.getUserRoles(user.id).pipe(first()).subscribe({
+    this.adminEmployeeService.getEmployeeRoles(user.id).pipe(first()).subscribe({
       next: (roles) => {
         this.editSelectedRoles = roles;
       },
@@ -356,31 +486,54 @@ export class UserComponent implements OnInit {
     this.editSelectedRoles = this.editSelectedRoles.filter(r => r !== roleName);
   }
 
-  updateUserDetails() {
+  updateEmployeeDetails() {
     this.editSubmitted = true;
     if (!this.selectedUser || this.editUserForm.invalid) {
       return;
     }
 
     this.isUpdatingUser = true;
-    this.adminUserService.updateUser(this.selectedUser.id, {
+    this.adminEmployeeService.updateEmployee(this.selectedUser.id, {
       email: this.editForm['email'].value,
       userName: this.editForm['userName'].value,
       firstName: this.editForm['firstName'].value,
       lastName: this.editForm['lastName'].value,
       branchId: this.editForm['branchId'].value,
-      profileImage: this.selectedEditProfileImage || undefined
+      profileImage: this.selectedEditProfileImage || undefined,
+      employeeNo: this.editForm['employeeNo'].value || undefined,
+      nationalId: this.editForm['nationalId'].value || undefined,
+      jobTitle: this.editForm['jobTitle'].value || undefined,
+      department: this.editForm['department'].value || undefined,
+      hireDate: this.editForm['hireDate'].value || undefined,
+      terminationDate: this.editForm['terminationDate'].value || undefined,
+      employmentStatus: this.editForm['employmentStatus'].value || undefined,
+      workEmail: this.editForm['workEmail'].value || undefined,
+      workPhone: this.editForm['workPhone'].value || undefined,
+      extension: this.editForm['extension'].value || undefined,
+      dateOfBirth: this.editForm['dateOfBirth'].value || undefined,
+      gender: this.editForm['gender'].value || undefined,
+      nationality: this.editForm['nationality'].value || undefined,
+      addressLine1: this.editForm['addressLine1'].value || undefined,
+      addressLine2: this.editForm['addressLine2'].value || undefined,
+      city: this.editForm['city'].value || undefined,
+      region: this.editForm['region'].value || undefined,
+      postalCode: this.editForm['postalCode'].value || undefined
     }).pipe(first()).subscribe({
       next: () => {
-        this.adminUserService.getUserRoles(this.selectedUser!.id).pipe(first()).subscribe({
+        this.adminEmployeeService.getEmployeeRoles(this.selectedUser!.id).pipe(first()).subscribe({
           next: (currentRoles) => {
             const toAdd = this.editSelectedRoles.filter(r => !currentRoles.includes(r));
             const toRemove = currentRoles.filter(r => !this.editSelectedRoles.includes(r));
             this.applyRoleChanges(this.selectedUser!.id, toAdd, toRemove, () => {
               this.isUpdatingUser = false;
-              this.showSuccess('User and roles updated successfully');
+              Swal.fire({
+                title: 'Updated',
+                text: 'Employee and roles updated successfully',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              });
               this.closeEditModal();
-              this.loadUsersAndRoles();
+              this.loadListPageData();
             });
           },
           error: (error) => {
@@ -396,7 +549,7 @@ export class UserComponent implements OnInit {
     });
   }
 
-  openPasswordModal(user: AdminUser) {
+  openPasswordModal(user: AdminEmployee) {
     this.selectedUser = user;
     this.passwordSubmitted = false;
     this.showNewPassword = false;
@@ -412,14 +565,14 @@ export class UserComponent implements OnInit {
     this.selectedUser = undefined;
   }
 
-  changeUserPassword() {
+  changeEmployeePassword() {
     this.passwordSubmitted = true;
     if (!this.selectedUser || this.changePasswordForm.invalid) {
       return;
     }
 
     this.isChangingPassword = true;
-    this.adminUserService.changeUserPassword(
+    this.adminEmployeeService.changeEmployeePassword(
       this.selectedUser.id,
       this.passwordForm['newPassword'].value
     ).pipe(first()).subscribe({
@@ -456,6 +609,9 @@ export class UserComponent implements OnInit {
     let data = [...this.users];
     const userNameTerm = this.userNameFilter.trim().toLowerCase();
     const emailTerm = this.emailFilter.trim().toLowerCase();
+    const mobileNoTerm = this.mobileNoFilter.trim().toLowerCase();
+    const branchNameTerm = this.branchNameFilter.trim().toLowerCase();
+    const employeeStatusTerm = this.employeeStatusFilter.trim().toLowerCase();
 
     if (userNameTerm) {
       data = data.filter(user => (user.userName || '').toLowerCase().includes(userNameTerm));
@@ -465,9 +621,19 @@ export class UserComponent implements OnInit {
       data = data.filter(user => (user.email || '').toLowerCase().includes(emailTerm));
     }
 
-    if (this.statusFilter) {
-      const isLocked = this.statusFilter === 'locked';
-      data = data.filter(user => user.isLocked === isLocked);
+    if (mobileNoTerm) {
+      data = data.filter(user => (user.mobileNo || '').toLowerCase().includes(mobileNoTerm));
+    }
+
+    if (branchNameTerm) {
+      data = data.filter(user => {
+        const name = (user.branchName || this.getBranchName(user.branchId) || '').toLowerCase();
+        return name.includes(branchNameTerm);
+      });
+    }
+
+    if (employeeStatusTerm) {
+      data = data.filter(user => (user.employmentStatus || '').toLowerCase() === employeeStatusTerm);
     }
 
     this.filteredUsers = data;
@@ -651,12 +817,28 @@ export class UserComponent implements OnInit {
     return this.pagedUsers.length > 0 && this.pagedUsers.every(user => this.selectedUserIds.has(user.id));
   }
 
-  bulkDeleteUsers() {
+  get totalEmployeesCount(): number {
+    return this.filteredUsers.length;
+  }
+
+  get activeEmployeesCount(): number {
+    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'active').length;
+  }
+
+  get onLeaveEmployeesCount(): number {
+    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'onleave').length;
+  }
+
+  get terminatedEmployeesCount(): number {
+    return this.filteredUsers.filter(user => (user.employmentStatus || '').toLowerCase() === 'terminated').length;
+  }
+
+  bulkDeleteEmployees() {
     if (this.selectedUserIds.size === 0) return;
 
     Swal.fire({
       title: 'Are you sure?',
-      text: `Delete ${this.selectedUserIds.size} selected user(s)?`,
+      text: `Delete ${this.selectedUserIds.size} selected employee(s)?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delete!',
@@ -666,19 +848,68 @@ export class UserComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         const userIds = Array.from(this.selectedUserIds);
-        this.adminUserService.bulkDeleteUsers(userIds).pipe(first()).subscribe({
+        this.adminEmployeeService.bulkDeleteEmployees(userIds).pipe(first()).subscribe({
           next: (response) => {
             this.selectedUserIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} users. Failed to delete ${response.failedIds.length} users.` });
+              this.showError({ message: `Deleted ${response.deletedCount} employees. Failed to delete ${response.failedIds.length} employees.` });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} user(s)`);
+              this.showSuccess(`Successfully deleted ${response.deletedCount} employee(s)`);
             }
-            this.loadUsersAndRoles();
+            this.loadListPageData();
           },
           error: (error) => this.showError(error)
         });
       }
     });
+  }
+
+  bulkDeleteUsers() {
+    this.bulkDeleteEmployees();
+  }
+
+  private toDateInputValue(value?: string): string {
+    if (!value) {
+      return '';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+    return date.toISOString().slice(0, 10);
+  }
+
+  private resetCreateForm() {
+    this.createUserForm.reset({
+      email: '',
+      userName: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      branchId: null,
+      employeeNo: '',
+      nationalId: '',
+      jobTitle: '',
+      department: '',
+      hireDate: '',
+      terminationDate: '',
+      employmentStatus: 'Active',
+      workEmail: '',
+      workPhone: '',
+      extension: '',
+      dateOfBirth: '',
+      gender: '',
+      nationality: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      region: '',
+      postalCode: ''
+    });
+    this.selectedRoles = [];
+    this.selectedProfileImage = null;
+    this.profileImagePreview = null;
+    this.showPassword = false;
+    this.submitted = false;
   }
 }

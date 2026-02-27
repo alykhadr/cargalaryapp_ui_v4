@@ -1,0 +1,112 @@
+.modal {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.create-employee-modal .modal-dialog {
+  animation: createEmployeeModalIn 0.28s ease-out;
+}
+
+.create-employee-modal .modal-content {
+  animation: createEmployeeModalContentIn 0.32s ease-out;
+}
+
+.create-employee-modal-header {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--vz-primary-rgb), 0.16) 0%,
+      rgba(var(--vz-primary-rgb), 0.08) 55%,
+      rgba(var(--vz-secondary-rgb), 0.12) 100%
+    );
+  border-bottom: 1px solid rgba(var(--vz-primary-rgb), 0.18);
+}
+
+.create-employee-modal-header .modal-title {
+  color: var(--vz-heading-color);
+  font-weight: 600;
+}
+
+.create-employee-modal-header .btn-close {
+  opacity: 0.75;
+}
+
+.create-employee-modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+.create-employee-backdrop {
+  animation: createEmployeeBackdropIn 0.22s ease-out;
+}
+
+@keyframes createEmployeeModalIn {
+  from {
+    transform: translateY(18px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes createEmployeeModalContentIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes createEmployeeBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+.permission-table-wrap {
+  background-color: var(--vz-card-bg-custom);
+  border-color: var(--vz-border-color) !important;
+}
+
+.permission-table thead th {
+  background-color: var(--vz-secondary-bg);
+  color: var(--vz-secondary-color);
+  border-bottom: 1px solid var(--vz-border-color);
+}
+
+.permission-table tbody td {
+  color: var(--vz-body-color);
+  border-bottom: 1px solid var(--vz-border-color);
+}
+
+.permission-table tbody tr:hover td {
+  background-color: rgba(var(--vz-primary-rgb), 0.06);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.avatar-xl {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.avatar-xs {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.hover-overlay {
+  transition: opacity 0.3s ease;
+}
+
+.avatar-xs:hover .hover-overlay {
+  opacity: 1 !important;
+}

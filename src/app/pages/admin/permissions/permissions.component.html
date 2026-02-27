@@ -42,20 +42,26 @@
       <div class="card-body">
         <div class="row g-2 mb-3">
           <div class="col-md-5">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Page (e.g. users)"
-              [(ngModel)]="pageInput"
-              (keyup.enter)="addPermission()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-file-list-3-line"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Page (e.g. users)"
+                [(ngModel)]="pageInput"
+                (keyup.enter)="addPermission()">
+            </div>
           </div>
           <div class="col-md-5">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Action (e.g. create)"
-              [(ngModel)]="actionInput"
-              (keyup.enter)="addPermission()">
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-key-2-line"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Action (e.g. create)"
+                [(ngModel)]="actionInput"
+                (keyup.enter)="addPermission()">
+            </div>
           </div>
           <div class="col-md-2 d-grid">
             <button *appHasPermission="'permissions.create'" class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
@@ -78,12 +84,15 @@
                   <span class="badge permission-page-badge">{{ assignedPageCount }} pages</span>
                 </div>
               </div>
-              <input
-                type="text"
-                class="form-control form-control-sm mb-2"
-                placeholder="Search assigned permissions"
-                [(ngModel)]="permissionSearch"
-                (ngModelChange)="onAssignedSearchChange()">
+              <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search assigned permissions"
+                  [(ngModel)]="permissionSearch"
+                  (ngModelChange)="onAssignedSearchChange()">
+              </div>
 
               <div *ngIf="assignedGroups.length === 0" class="text-muted small p-2 border rounded-3 bg-body-secondary">
                 No permissions assigned.
@@ -163,12 +172,15 @@
                   <span class="badge permission-page-badge">{{ availablePageCount }} pages</span>
                 </div>
               </div>
-              <input
-                type="text"
-                class="form-control form-control-sm mb-2"
-                placeholder="Search available permissions"
-                [(ngModel)]="availableSearch"
-                (ngModelChange)="onAvailableSearchChange()">
+              <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text"><i class="ri-search-line"></i></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search available permissions"
+                  [(ngModel)]="availableSearch"
+                  (ngModelChange)="onAvailableSearchChange()">
+              </div>
 
               <div *ngIf="availableGroups.length === 0" class="text-muted small p-2 border rounded-3 bg-body-secondary">
                 No available permissions.
