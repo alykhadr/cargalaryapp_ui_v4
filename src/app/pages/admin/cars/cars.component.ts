@@ -3166,15 +3166,18 @@ export class CarsComponent implements OnInit {
       return;
     }
 
-    if (!this.validateTab(event.activeId)) {
+    const movingForward = Number(event.nextId) > Number(event.activeId);
+    if (movingForward && !this.validateTab(event.activeId)) {
       event.preventDefault();
       this.invalidTabs.add(event.activeId);
       this.showError(this.getTabValidationErrorMessage(event.activeId));
       return;
     }
 
-    this.invalidTabs.delete(event.activeId);
-    this.validatedTabs.add(event.activeId);
+    if (movingForward) {
+      this.invalidTabs.delete(event.activeId);
+      this.validatedTabs.add(event.activeId);
+    }
 
     if (event.nextId === 2) {
       this.reloadFeatureCatalog();
@@ -3185,16 +3188,17 @@ export class CarsComponent implements OnInit {
   }
 
   goToTab(tabId: number) {
-    // Validate current tab before navigating
-    if (!this.validateTab(this.activeTab)) {
+    const movingForward = Number(tabId) > Number(this.activeTab);
+    if (movingForward && !this.validateTab(this.activeTab)) {
       this.invalidTabs.add(this.activeTab);
       this.showError(this.getTabValidationErrorMessage(this.activeTab));
       return;
     }
-    
-    // Clear invalid state for current tab if valid
-    this.invalidTabs.delete(this.activeTab);
-    this.validatedTabs.add(this.activeTab);
+
+    if (movingForward) {
+      this.invalidTabs.delete(this.activeTab);
+      this.validatedTabs.add(this.activeTab);
+    }
 
     if (tabId === 2) {
       this.reloadFeatureCatalog();
@@ -3265,9 +3269,7 @@ export class CarsComponent implements OnInit {
   }
 
   isTabNavigationDisabled(tabId: number): boolean {
-    if (!this.carForm) return false;
-    if (tabId === this.activeTab) return false;
-    return this.activeTab === 1 && this.mainInfoFields.some((field) => this.carForm.get(field)?.invalid);
+    return false;
   }
 
   shouldShowFeatureSelectionError(): boolean {
