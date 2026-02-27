@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -12,6 +12,7 @@ import { CarService } from '../services/car.service';
 import { LookupService } from '../services/lookup.service';
 import { QuotationService } from '../services/quotation.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { QuotationRealtimeService } from '../services/quotation-realtime.service';
 
 @Component({
   selector: 'app-quotation',
@@ -19,7 +20,7 @@ import { getErrorMessage } from '../shared/error-message.util';
   styleUrl: './quotation.component.scss',
   standalone: false
 })
-export class QuotationComponent implements OnInit {
+export class QuotationComponent implements OnInit, OnDestroy {
   @Input() mode: 'create' | 'list' = 'list';
 
   breadCrumbItems!: Array<{}>;
@@ -36,12 +37,12 @@ export class QuotationComponent implements OnInit {
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
   cityLookups: LookupDetail[] = [];
-  filteredCityLookups: LookupDetail[] = [];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private quotationService: QuotationService,
+    private quotationRealtimeService: QuotationRealtimeService,
     private carService: CarService,
     private lookupService: LookupService,
     private toastService: ToastService,
@@ -67,14 +68,17 @@ export class QuotationComponent implements OnInit {
       notes: ['', [Validators.maxLength(1000)]]
     });
 
-    this.quotationForm.get('regionId')?.valueChanges.subscribe(() => {
-      this.filterCitiesByRegion();
-    });
-
     this.loadFormDependencies();
 
     if (this.mode === 'list') {
       this.loadQuotations();
+      this.connectRealtime();
+    }
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    if (this.mode === 'list') {
+      await this.quotationRealtimeService.stop();
     }
   }
 
@@ -96,7 +100,6 @@ export class QuotationComponent implements OnInit {
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
         this.cityLookups = cities;
-        this.filterCitiesByRegion();
       },
       error: (error) => this.showError(error)
     });
@@ -175,24 +178,6 @@ export class QuotationComponent implements OnInit {
     return found.nameAr && found.nameEn ? `${found.nameAr} - ${found.nameEn}` : (found.displayName || found.nameEn || found.nameAr || String(id));
   }
 
-  private filterCitiesByRegion() {
-    const selectedRegion = this.form['regionId'].value;
-    if (!selectedRegion) {
-      this.filteredCityLookups = [...this.cityLookups];
-      return;
-    }
-
-    const regionCode = String(selectedRegion);
-    this.filteredCityLookups = this.cityLookups.filter(
-      c => !c.mappedCode || c.mappedCode === regionCode
-    );
-
-    const selectedCity = this.form['cityId'].value;
-    if (selectedCity && !this.filteredCityLookups.some(c => c.id === selectedCity)) {
-      this.form['cityId'].setValue(null);
-    }
-  }
-
   private applyFilters(resetPage = false) {
     let data = [...this.quotations];
     const term = this.searchTerm.trim().toLowerCase();
@@ -224,5 +209,52 @@ export class QuotationComponent implements OnInit {
       classname: 'bg-danger text-white',
       delay: 3000
     });
+  }
+
+  private async connectRealtime() {
+    try {
+      await this.quotationRealtimeService.start((payload) => {
+        const quotation = payload as Quotation;
+        if (!quotation?.id) return;
+        if (this.quotations.some(q => q.id === quotation.id)) return;
+
+        this.quotations = [quotation, ...this.quotations];
+        this.applyFilters(true);
+        this.toastService.show(`New quotation received: #${quotation.id}`, {
+          classname: 'bg-info text-white',
+          delay: 4000
+        });
+        this.playNotificationSound();
+      });
+    } catch {
+      this.toastService.show('Realtime notifications unavailable right now.', {
+        classname: 'bg-warning text-dark',
+        delay: 3000
+      });
+    }
+  }
+
+  private playNotificationSound() {
+    try {
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      const context = new AudioCtx();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, context.currentTime);
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.2, context.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.25);
+
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.25);
+    } catch {
+      // Keep UI flow even if browser blocks autoplay audio.
+    }
   }
 }
