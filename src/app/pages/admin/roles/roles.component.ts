@@ -35,7 +35,9 @@ export class RolesComponent {
   role?: Role;
   selectedRoleName: string = '';
   roleUsers: RoleUser[] = [];
+  pagedRoleUsers: RoleUser[] = [];
   isRoleUsersLoading: boolean = false;
+  roleUsersPaginationService = new PaginationService();
 
 
   // Table data
@@ -467,7 +469,9 @@ export class RolesComponent {
   openRoleUsersModal(content: any, role: Role) {
     this.selectedRoleName = role.name;
     this.roleUsers = [];
+    this.pagedRoleUsers = [];
     this.isRoleUsersLoading = true;
+    this.roleUsersPaginationService.page = 1;
 
     this.modalService.open(content, { size: 'lg', centered: true });
 
@@ -477,6 +481,7 @@ export class RolesComponent {
         next: (users: RoleUser[]) => {
           this.isRoleUsersLoading = false;
           this.roleUsers = users;
+          this.pagedRoleUsers = this.roleUsersPaginationService.changePage(this.roleUsers);
         },
         error: (error) => {
           this.isRoleUsersLoading = false;
@@ -487,6 +492,11 @@ export class RolesComponent {
           });
         }
       });
+  }
+
+  onRoleUsersPageChange(page: number) {
+    this.roleUsersPaginationService.page = page;
+    this.pagedRoleUsers = this.roleUsersPaginationService.changePage(this.roleUsers);
   }
 
 
