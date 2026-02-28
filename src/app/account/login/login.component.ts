@@ -36,15 +36,16 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute, public toastService: ToastService,
     private myAuthService: MyAuthService,
     private tokenStorageService: TokenStorageService) {
-    // redirect to home if already logged in
+    // Redirect authenticated users to requested deep link if provided.
+    this.returnUrl = this.resolveReturnUrl(this.route.snapshot.queryParams['returnUrl']);
     if (this.myAuthService.currentUserValue) {
-      this.router.navigate(['/']);
+      this.router.navigateByUrl(this.returnUrl);
     }
   }
 
   ngOnInit(): void {
     if (this.tokenStorageService.getUser()) {
-      this.router.navigate(['/']);
+      this.router.navigateByUrl(this.returnUrl);
     }
     /**
      * Form Validatyion
@@ -55,7 +56,7 @@ export class LoginComponent implements OnInit {
       rememberMe: [false],
     });
     // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.resolveReturnUrl(this.route.snapshot.queryParams['returnUrl']);
   }
 
   // convenience getter for easy access to form fields
@@ -79,7 +80,7 @@ export class LoginComponent implements OnInit {
             this.submitted = false;
 
             sessionStorage.setItem('toast', 'true');
-            this.router.navigate(['/']);
+            this.router.navigateByUrl(this.returnUrl);
           },
           error: (error) => {
             this.submitted = false;
@@ -93,6 +94,10 @@ export class LoginComponent implements OnInit {
           }
         });
     }
+  }
+
+  private resolveReturnUrl(returnUrl?: string): string {
+    return returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
   }
 
     /**

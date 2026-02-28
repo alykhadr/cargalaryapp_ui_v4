@@ -21,7 +21,9 @@ export class JwtInterceptor implements HttpInterceptor {
 
         if (token && this.isTokenExpired(token)) {
             this.myAuthService.logout();
-            this.router.navigate(['/auth/login']);
+            this.router.navigate(['/auth/login'], {
+                queryParams: { returnUrl: this.router.url }
+            });
             return next.handle(request);
         }
 
