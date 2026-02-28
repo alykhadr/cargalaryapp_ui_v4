@@ -9,6 +9,8 @@ export interface Quotation {
   paymentMethod: number;
   regionId: number;
   cityId: number;
+  currentStatus: number;
+  currentStatusDate?: string | null;
   notes?: string | null;
   createdAt: string;
   isAvailable: boolean;
@@ -25,4 +27,18 @@ export interface CreateQuotationRequest {
   regionId: number;
   cityId: number;
   notes?: string | null;
+}
+
+export interface UpdateQuotationStatusRequest {
+  currentStatus: number;
+  notes?: string | null;
+}
+
+export interface QuotationHistory {
+  id: number;
+  quotationId: number;
+  status: number;
+  statusDate: string;
+  notes?: string | null;
+  createdAt: string;
 }

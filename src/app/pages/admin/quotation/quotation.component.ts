@@ -6,7 +6,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { Car } from '../interfaces/car.interface';
 import { LookupDetail } from '../interfaces/lookup.interface';
-import { Quotation } from '../interfaces/quotation.interface';
+import { Quotation, QuotationHistory } from '../interfaces/quotation.interface';
 import { CarService } from '../services/car.service';
 import { LookupService } from '../services/lookup.service';
 import { QuotationService } from '../services/quotation.service';
@@ -20,8 +20,9 @@ import { QuotationRealtimeService } from '../services/quotation-realtime.service
   standalone: false
 })
 export class QuotationComponent implements OnInit, OnDestroy {
-  @Input() mode: 'create' | 'list' = 'list';
+  @Input() mode: 'create' | 'list' | 'track' = 'list';
   @ViewChild('realtimeToastTpl') realtimeToastTpl!: TemplateRef<any>;
+  @ViewChild('statusRealtimeToastTpl') statusRealtimeToastTpl!: TemplateRef<any>;
 
   breadCrumbItems!: Array<{}>;
   quotationForm!: UntypedFormGroup;
@@ -29,6 +30,14 @@ export class QuotationComponent implements OnInit, OnDestroy {
   isLoading = false;
   isSubmitting = false;
   searchTerm = '';
+  selectedStatusFilter: number | null = null;
+  createdFromDate = '';
+  createdToDate = '';
+  idSortDirection: 'asc' | 'desc' = 'desc';
+  trackQuotationId: number | null = null;
+  isTracking = false;
+  trackedQuotation: Quotation | null = null;
+  trackedTimeline: QuotationHistory[] = [];
   filteredQuotations: Quotation[] = [];
   quotations: Quotation[] = [];
   pagedQuotations: Quotation[] = [];
@@ -37,7 +46,12 @@ export class QuotationComponent implements OnInit, OnDestroy {
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
   cityLookups: LookupDetail[] = [];
+  quotationStatusLookups: LookupDetail[] = [];
   latestRealtimeQuotation: Quotation | null = null;
+  latestRealtimeStatusQuotation: Quotation | null = null;
+  statusUpdatingByQuotationId = new Set<number>();
+  showMoreInfoModal = false;
+  selectedQuotationForMore: Quotation | null = null;
   private readonly notificationSoundUrl = 'assets/sounds/quotation-notification.mp3';
   private isSoundUnlocked = false;
   private soundHintShown = false;
@@ -56,7 +70,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: 'Admin' },
-      { label: 'Quotation', active: true }
+      { label: this.mode === 'track' ? 'Track Quotation' : 'Quotation', active: true }
     ];
 
     this.quotationForm = this.formBuilder.group({
@@ -98,14 +112,16 @@ export class QuotationComponent implements OnInit, OnDestroy {
       paymentMethods: this.lookupService.getByMasterCode('PAYMENT_METHOD').pipe(first()),
       ownerTypes: this.lookupService.getByMasterCode('VEHICLE_OWNER_TYPE').pipe(first()),
       regions: this.lookupService.getByMasterCode('REGION').pipe(first()),
-      cities: this.lookupService.getByMasterCode('CITY').pipe(first())
+      cities: this.lookupService.getByMasterCode('CITY').pipe(first()),
+      statuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(first())
     }).subscribe({
-      next: ({ cars, paymentMethods, ownerTypes, regions, cities }) => {
+      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses }) => {
         this.cars = cars.filter(c => c.isAvailable);
         this.paymentMethodLookups = paymentMethods;
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
         this.cityLookups = cities;
+        this.quotationStatusLookups = statuses;
       },
       error: (error) => this.showError(error)
     });
@@ -132,12 +148,29 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   clearSearch() {
     this.searchTerm = '';
+    this.selectedStatusFilter = null;
+    this.createdFromDate = '';
+    this.createdToDate = '';
+    this.applyFilters(true);
+  }
+
+  onStatusFilterChange(value: any) {
+    this.selectedStatusFilter = value !== null && value !== '' ? Number(value) : null;
+    this.applyFilters(true);
+  }
+
+  onDateFilterChange() {
     this.applyFilters(true);
   }
 
   onPageChange(page: number) {
     this.service.page = page;
     this.pagedQuotations = this.service.changePage(this.filteredQuotations);
+  }
+
+  toggleIdSort() {
+    this.idSortDirection = this.idSortDirection === 'asc' ? 'desc' : 'asc';
+    this.applyFilters(true);
   }
 
   createQuotation() {
@@ -183,6 +216,122 @@ export class QuotationComponent implements OnInit, OnDestroy {
     return found.nameAr && found.nameEn ? `${found.nameAr} - ${found.nameEn}` : (found.displayName || found.nameEn || found.nameAr || String(id));
   }
 
+  getQuotationStatusLabel(statusId?: number): string {
+    if (!statusId) return '-';
+    return this.getLookupLabel(this.quotationStatusLookups, statusId);
+  }
+
+  getQuotationStatusBadgeClass(statusId?: number): string {
+    const statusCode = this.getQuotationStatusCode(statusId);
+    switch (statusCode) {
+      case '1':
+        return 'badge bg-primary-subtle text-primary';
+      case '2':
+        return 'badge bg-warning-subtle text-warning';
+      case '3':
+        return 'badge bg-info-subtle text-info';
+      case '4':
+        return 'badge bg-success-subtle text-success';
+      case '5':
+        return 'badge bg-danger-subtle text-danger';
+      default:
+        return 'badge bg-secondary-subtle text-secondary';
+    }
+  }
+
+  getQuotationStatusIcon(statusId?: number): string {
+    const statusCode = this.getQuotationStatusCode(statusId);
+    switch (statusCode) {
+      case '1':
+        return 'ri-add-circle-line';
+      case '2':
+        return 'ri-time-line';
+      case '3':
+        return 'ri-phone-line';
+      case '4':
+        return 'ri-checkbox-circle-line';
+      case '5':
+        return 'ri-close-circle-line';
+      default:
+        return 'ri-information-line';
+    }
+  }
+
+  getTimelineStatusTime(statusDate?: string): string {
+    if (!statusDate) return '-';
+    const parsed = new Date(statusDate);
+    if (isNaN(parsed.getTime())) return '-';
+    return parsed.toLocaleString();
+  }
+
+  isStatusUpdating(quotationId: number): boolean {
+    return this.statusUpdatingByQuotationId.has(quotationId);
+  }
+
+  updateQuotationStatus(item: Quotation, statusId: number) {
+    if (!statusId || this.isStatusUpdating(item.id)) return;
+
+    this.statusUpdatingByQuotationId.add(item.id);
+    this.quotationService.updateStatus(item.id, { currentStatus: statusId }).pipe(first()).subscribe({
+      next: (updated) => {
+        const idx = this.quotations.findIndex(q => q.id === item.id);
+        if (idx >= 0) {
+          this.quotations[idx] = { ...this.quotations[idx], ...updated };
+        }
+        this.applyFilters(false);
+        this.showSuccess('Quotation status updated successfully');
+        this.statusUpdatingByQuotationId.delete(item.id);
+      },
+      error: (error) => {
+        this.statusUpdatingByQuotationId.delete(item.id);
+        this.showError(error);
+      }
+    });
+  }
+
+  trackByQuotationId() {
+    if (!this.trackQuotationId || this.trackQuotationId <= 0) {
+      this.showError('Please enter a valid quotation id');
+      return;
+    }
+
+    this.isTracking = true;
+    this.trackedQuotation = null;
+    this.trackedTimeline = [];
+
+    forkJoin({
+      quotation: this.quotationService.getById(this.trackQuotationId).pipe(first()),
+      timeline: this.quotationService.getHistory(this.trackQuotationId).pipe(first())
+    }).subscribe({
+      next: ({ quotation, timeline }) => {
+        this.trackedQuotation = quotation;
+        this.trackedTimeline = timeline || [];
+        this.isTracking = false;
+      },
+      error: (error) => {
+        this.isTracking = false;
+        this.showError(error);
+      }
+    });
+  }
+
+  openMoreInfoModal(item: Quotation) {
+    this.selectedQuotationForMore = item;
+    this.showMoreInfoModal = true;
+  }
+
+  closeMoreInfoModal() {
+    this.showMoreInfoModal = false;
+    this.selectedQuotationForMore = null;
+  }
+
+  private getQuotationStatusCode(statusId?: number): string {
+    if (!statusId) return '';
+    const statusLookup = this.quotationStatusLookups.find(x => x.id === statusId || x.detailCode === String(statusId));
+    if (!statusLookup) return String(statusId);
+    return statusLookup.detailCode || String(statusLookup.id);
+  }
+
   private applyFilters(resetPage = false) {
     let data = [...this.quotations];
     const term = this.searchTerm.trim().toLowerCase();
@@ -195,6 +344,30 @@ export class QuotationComponent implements OnInit, OnDestroy {
         String(q.id).includes(term)
       );
     }
+
+    if (this.selectedStatusFilter) {
+      data = data.filter(q => q.currentStatus === this.selectedStatusFilter);
+    }
+
+    if (this.createdFromDate) {
+      const from = new Date(this.createdFromDate);
+      from.setHours(0, 0, 0, 0);
+      data = data.filter(q => {
+        const created = new Date(q.createdAt);
+        return !isNaN(created.getTime()) && created >= from;
+      });
+    }
+
+    if (this.createdToDate) {
+      const to = new Date(this.createdToDate);
+      to.setHours(23, 59, 59, 999);
+      data = data.filter(q => {
+        const created = new Date(q.createdAt);
+        return !isNaN(created.getTime()) && created <= to;
+      });
+    }
+
+    data.sort((a, b) => this.idSortDirection === 'asc' ? a.id - b.id : b.id - a.id);
 
     this.filteredQuotations = data;
     if (resetPage) this.service.page = 1;
@@ -218,20 +391,38 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   private async connectRealtime() {
     try {
-      await this.quotationRealtimeService.start((payload) => {
-        const quotation = payload as Quotation;
-        if (!quotation?.id) return;
-        if (this.quotations.some(q => q.id === quotation.id)) return;
+      await this.quotationRealtimeService.start(
+        (payload) => {
+          const quotation = payload as Quotation;
+          if (!quotation?.id) return;
+          if (this.quotations.some(q => q.id === quotation.id)) return;
 
-        this.quotations = [quotation, ...this.quotations];
-        this.applyFilters(true);
-        this.latestRealtimeQuotation = quotation;
-        this.toastService.show(this.realtimeToastTpl, {
-          classname: 'border-0 shadow-sm quotation-realtime-toast',
-          delay: 4000
-        });
-        this.playNotificationSound();
-      });
+          this.quotations = [quotation, ...this.quotations];
+          this.applyFilters(true);
+          this.latestRealtimeQuotation = quotation;
+          this.toastService.show(this.realtimeToastTpl, {
+            classname: 'border-0 shadow-sm quotation-realtime-toast',
+            delay: 4000
+          });
+          this.playNotificationSound();
+        },
+        (payload) => {
+          const updated = payload as Quotation;
+          if (!updated?.id) return;
+
+          const idx = this.quotations.findIndex(x => x.id === updated.id);
+          if (idx < 0) return;
+
+          this.quotations[idx] = { ...this.quotations[idx], ...updated };
+          this.applyFilters(false);
+          this.latestRealtimeStatusQuotation = updated;
+          this.toastService.show(this.statusRealtimeToastTpl, {
+            classname: 'border-0 shadow-sm quotation-realtime-toast',
+            delay: 4000
+          });
+          this.playNotificationSound();
+        }
+      );
     } catch {
       this.toastService.show('Realtime notifications unavailable right now.', {
         classname: 'bg-warning text-dark',

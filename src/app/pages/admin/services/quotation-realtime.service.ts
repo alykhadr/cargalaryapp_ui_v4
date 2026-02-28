@@ -16,14 +16,21 @@ export class QuotationRealtimeService {
     private tokenStorageService: TokenStorageService
   ) {}
 
-  async start(onQuotationCreated: (payload: any) => void): Promise<void> {
+  async start(
+    onQuotationCreated: (payload: any) => void,
+    onQuotationStatusUpdated?: (payload: any) => void
+  ): Promise<void> {
     if (this.connection && this.connection.state !== HubConnectionState.Disconnected) {
       return;
     }
 
     this.connection = this.buildConnection(true);
     this.connection.off('quotationCreated');
+    this.connection.off('quotationStatusUpdated');
     this.connection.on('quotationCreated', onQuotationCreated);
+    if (onQuotationStatusUpdated) {
+      this.connection.on('quotationStatusUpdated', onQuotationStatusUpdated);
+    }
 
     try {
       await this.connection.start();
@@ -31,7 +38,11 @@ export class QuotationRealtimeService {
       await this.connection.stop();
       this.connection = this.buildConnection(false);
       this.connection.off('quotationCreated');
+      this.connection.off('quotationStatusUpdated');
       this.connection.on('quotationCreated', onQuotationCreated);
+      if (onQuotationStatusUpdated) {
+        this.connection.on('quotationStatusUpdated', onQuotationStatusUpdated);
+      }
       await this.connection.start();
     }
   }

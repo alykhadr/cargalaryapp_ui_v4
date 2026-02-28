@@ -1630,6 +1630,13 @@ export const MENU: MenuItem[] = [
             link: '/admin/quotation/create',
             parentId: 199,
             icon: 'ri-add-circle-line'
+          },
+          {
+            id: 1993,
+            label: 'Track Quotation',
+            link: '/admin/quotation/track',
+            parentId: 199,
+            icon: 'ri-route-line'
           }
         ]
       }

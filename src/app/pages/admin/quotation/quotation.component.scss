@@ -8,3 +8,81 @@
   background: #d7f3e3;
   border-left: 4px solid #146c43;
 }
+
+.track-current-status-badge {
+  font-size: 0.95rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.quotation-empty-animation {
+  max-width: 360px;
+  margin: 0 auto;
+  position: relative;
+  padding-top: 8px;
+}
+
+.quotation-empty-animation .street {
+  position: relative;
+  height: 58px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #6c757d 0%, #495057 100%);
+  overflow: hidden;
+  border: 1px solid #5c636a;
+}
+
+.quotation-empty-animation .lane-markings {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f8f9fa 0 20px,
+    transparent 20px 34px
+  );
+  animation: laneMove 1.1s linear infinite;
+}
+
+.quotation-empty-animation .car-track {
+  position: relative;
+  height: 100%;
+}
+
+.quotation-empty-animation .car-icon {
+  position: absolute;
+  top: 8px;
+  left: -40px;
+  font-size: 30px;
+  color: #ffd166;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+  animation: carDrive 3.2s linear infinite;
+}
+
+@keyframes laneMove {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: -34px;
+  }
+}
+
+@keyframes carDrive {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  45% {
+    transform: translateX(185px) translateY(-1px);
+  }
+  50% {
+    transform: translateX(205px) translateY(0);
+  }
+  95% {
+    transform: translateX(330px) translateY(1px);
+  }
+  100% {
+    transform: translateX(360px) translateY(0);
+  }
+}
