@@ -16,7 +16,8 @@ export class TokenStorageService {
   }
 
   public saveToken(token: string, rememberMe = false): void {
-    const storage = rememberMe ? window.localStorage : window.sessionStorage;
+    // Keep auth shared across browser tabs (sessionStorage is tab-scoped).
+    const storage = window.localStorage;
     window.localStorage.setItem(REMEMBER_ME_KEY, String(rememberMe));
     window.localStorage.removeItem(TOKEN_KEY);
     window.sessionStorage.removeItem(TOKEN_KEY);
@@ -28,7 +29,8 @@ export class TokenStorageService {
   }
 
   public saveUser(user: any, rememberMe = false): void {
-    const storage = rememberMe ? window.localStorage : window.sessionStorage;
+    // Keep auth shared across browser tabs (sessionStorage is tab-scoped).
+    const storage = window.localStorage;
     window.localStorage.setItem(REMEMBER_ME_KEY, String(rememberMe));
     window.localStorage.removeItem(USER_KEY);
     window.sessionStorage.removeItem(USER_KEY);
