@@ -14,6 +14,35 @@
   padding: 0.5rem 0.8rem;
 }
 
+:host ::ng-deep .acitivity-timeline.acitivity-main .acitivity-item {
+  position: relative;
+  padding-bottom: 1.6rem;
+}
+
+:host ::ng-deep .acitivity-timeline.acitivity-main .acitivity-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 0.95rem;
+  top: 2.3rem;
+  width: 2px;
+  height: calc(100% - 0.5rem);
+  background: #ced4da;
+}
+
+:host ::ng-deep .acitivity-timeline.acitivity-main .acitivity-item .acitivity-avatar .avatar-title {
+  width: 2.1rem;
+  height: 2.1rem;
+  font-size: 1rem;
+}
+
+:host ::ng-deep .acitivity-timeline.acitivity-main .acitivity-item h6 {
+  font-size: 1rem;
+}
+
+:host ::ng-deep .acitivity-timeline.acitivity-main .acitivity-item p {
+  font-size: 0.92rem;
+}
+
 .quotation-empty-animation {
   max-width: 360px;
   margin: 0 auto;
