@@ -7,6 +7,7 @@ import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
 import { ToastService } from '../../icons/toast-service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-permissions',
@@ -43,7 +44,8 @@ export class PermissionsComponent implements OnInit {
   constructor(
     private roleService: RoleService,
     private permissionService: PermissionService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -163,13 +165,16 @@ export class PermissionsComponent implements OnInit {
     }
 
     const result = await Swal.fire({
-      title: 'Delete permission?',
-      text: `Are you sure you want to remove "${permission}" from role "${this.selectedRole.name}"?`,
+      title: this.translate.instant('PERMISSIONS_PAGE.DELETE_TITLE'),
+      text: this.translate.instant('PERMISSIONS_PAGE.DELETE_TEXT', {
+        permission,
+        role: this.selectedRole.name
+      }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, remove',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('PERMISSIONS_PAGE.DELETE_CONFIRM'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#dc3545'
     });
 

@@ -2,6 +2,7 @@ export interface Brand {
   id: number;
   nameAr: string;
   nameEn: string;
+  isAvailable?: boolean;
   imageUrl?: string;
   createdBy?: string;
 }

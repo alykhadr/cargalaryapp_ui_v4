@@ -7,18 +7,20 @@
         <div class="row g-4 align-items-center">
           <div class="col-sm">
             <div>
-              <h5 class="card-title mb-0">Brand List</h5>
+              <h5 class="card-title mb-0">{{ 'BRAND_PAGE.LIST_TITLE' | translate }}</h5>
             </div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
-              <button *appHasPermission="'brands.delete'" type="button" class="btn btn-danger"
-                [disabled]="selectedBrandIds.size === 0" (click)="bulkDeleteBrands()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedBrandIds.size }})
-              </button>
               <button *appHasPermission="'brands.create'" type="button" class="btn btn-success add-btn"
-                (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Brand
+                (click)="openCreateModal()"
+                [ngbTooltip]="'COMMON.ADD' | translate" placement="top">
+                <i class="ri-add-line align-bottom me-1"></i> {{ 'BRAND_PAGE.ADD_BUTTON' | translate }}
+              </button>
+              <button *appHasPermission="'brands.delete'" type="button" class="btn btn-danger"
+                [disabled]="selectedBrandIds.size === 0" (click)="bulkDeleteBrands()"
+                [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> {{ 'BRAND_PAGE.DELETE_SELECTED' | translate }} ({{ selectedBrandIds.size }})
               </button>
             </div>
           </div>
@@ -34,7 +36,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Search by English name..."
+                    [placeholder]="'BRAND_PAGE.SEARCH_EN' | translate"
                     [(ngModel)]="searchTerm"
                     (ngModelChange)="onSearch()">
                 </div>
@@ -45,7 +47,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="ابحث بالاسم العربي..."
+                    [placeholder]="'BRAND_PAGE.SEARCH_AR' | translate"
                     [(ngModel)]="searchTermAr"
                     (ngModelChange)="onSearch()"
                     dir="rtl">
@@ -53,13 +55,16 @@
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-                  <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+                  <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.REMOVE_FILTERS' | translate }}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="card" id="brandGridCard">
       <div class="card-body">
         <div *ngIf="isLoading" class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
@@ -70,8 +75,8 @@
           <div class="mb-3">
             <i class="ri-folder-open-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No brands found</h5>
-          <p class="text-muted">Click "Add Brand" to create your first brand</p>
+          <h5 class="text-muted">{{ 'BRAND_PAGE.NO_BRANDS_FOUND' | translate }}</h5>
+          <p class="text-muted">{{ 'BRAND_PAGE.NO_BRANDS_HINT' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredBrands.length > 0">
           <div class="table-responsive table-card mb-1">
@@ -83,9 +88,10 @@
                            [checked]="isAllBrandsSelected()"
                            (change)="toggleSelectAllBrands($any($event.target).checked)">
                   </th>
-                  <th scope="col" style="width: 60px;">Image</th>
-                  <th scope="col">Name (English)</th>
-                  <th scope="col">Name (Arabic)</th>
+                  <th scope="col" style="width: 60px;">{{ 'BRAND_PAGE.IMAGE' | translate }}</th>
+                  <th scope="col">{{ 'BRAND_PAGE.NAME_EN' | translate }}</th>
+                  <th scope="col">{{ 'BRAND_PAGE.NAME_AR' | translate }}</th>
+                  <th scope="col">{{ 'COMMON.STATUS' | translate }}</th>
                   <th scope="col">{{ 'COMMON.CREATED_BY' | translate }}</th>
                   <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
                 </tr>
@@ -100,25 +106,34 @@
                   </td>
                   <td>
                     <div *ngIf="brand.imageUrl" class="position-relative d-inline-block">
-                      <img [src]="getImageUrl(brand.imageUrl)" alt="Brand" class="avatar-xs rounded" />
+                      <img [src]="getImageUrl(brand.imageUrl)" [alt]="'MENUITEMS.ADMIN.LIST.BRAND' | translate" class="avatar-xs rounded" />
                       <div class="hover-overlay" (click)="previewImage(getImageUrl(brand.imageUrl))">
                         <i class="ri-eye-line text-white" style="font-size: 16px;"></i>
                       </div>
                     </div>
-                    <span *ngIf="!brand.imageUrl">-</span>
+                    <span *ngIf="!brand.imageUrl">{{ 'COMMON.NOT_AVAILABLE' | translate }}</span>
                   </td>
                   <td>{{ brand.nameEn }}</td>
                   <td>{{ brand.nameAr }}</td>
-                  <td>{{ brand.createdBy || 'N/A' }}</td>
+                  <td>
+                    <span class="badge"
+                      [ngClass]="(brand.isAvailable !== false) ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ (brand.isAvailable !== false) ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                    </span>
+                  </td>
+                  <td>{{ brand.createdBy || ('COMMON.NOT_AVAILABLE' | translate) }}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button class="btn btn-sm btn-soft-info" (click)="viewBrandModels(brand.id, brandModelsModal)" title="View Models">
+                      <button class="btn btn-sm btn-soft-info" (click)="viewBrandModels(brand.id, brandModelsModal)"
+                        [ngbTooltip]="'BRAND_PAGE.VIEW_MODELS' | translate" placement="top">
                         <i class="ri-car-line"></i>
                       </button>
-                      <button *appHasPermission="'brands.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(brand)">
+                      <button *appHasPermission="'brands.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(brand)"
+                        [ngbTooltip]="'COMMON.EDIT' | translate" placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button *appHasPermission="'brands.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteBrand(brand)">
+                      <button *appHasPermission="'brands.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteBrand(brand)"
+                        [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -152,7 +167,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Brand' : 'Create Brand' }}</h5>
+        <h5 class="modal-title">{{ isEditMode ? ('BRAND_PAGE.EDIT_TITLE' | translate) : ('BRAND_PAGE.CREATE_TITLE' | translate) }}</h5>
         <button class="btn-close" type="button" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
@@ -170,29 +185,29 @@
               <input type="file" id="brandImageInput" class="d-none" accept="image/*" (change)="onImageSelected($event)" required>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && !selectedImage && !isEditMode">
-              Brand image is required.
+              {{ 'BRAND_PAGE.IMAGE_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'BRAND_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+              <input class="form-control" type="text" formControlName="nameEn" [placeholder]="'BRAND_PAGE.ENTER_EN_NAME' | translate">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
-              English name is required (max 100 characters).
+              {{ 'BRAND_PAGE.NAME_EN_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'BRAND_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+              <input class="form-control" type="text" formControlName="nameAr" [placeholder]="'BRAND_PAGE.ENTER_AR_NAME' | translate" dir="rtl">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
-              Arabic name is required (max 100 characters).
+              {{ 'BRAND_PAGE.NAME_AR_REQUIRED' | translate }}
             </div>
           </div>
         </form>
@@ -201,7 +216,7 @@
         <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveBrand()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('BRAND_PAGE.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>
@@ -214,11 +229,11 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Brand Image Preview</h5>
+        <h5 class="modal-title">{{ 'BRAND_PAGE.IMAGE_PREVIEW' | translate }}</h5>
         <button type="button" class="btn-close" (click)="closePreview()"></button>
       </div>
       <div class="modal-body text-center">
-        <img [src]="previewImageUrl" alt="Brand Preview" class="img-fluid" style="max-height: 500px;">
+        <img [src]="previewImageUrl" [alt]="'BRAND_PAGE.IMAGE_PREVIEW' | translate" class="img-fluid" style="max-height: 500px;">
       </div>
     </div>
   </div>
@@ -229,7 +244,7 @@
 
 <ng-template #brandModelsModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Car Models</h5>
+    <h5 class="modal-title">{{ 'BRAND_PAGE.CAR_MODELS' | translate }}</h5>
     <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
   </div>
   <div class="modal-body">
@@ -240,16 +255,16 @@
     </div>
     <div *ngIf="!loadingModels && brandModels.length === 0" class="text-center py-4">
       <i class="ri-car-line" style="font-size: 48px; color: #ccc;"></i>
-      <h6 class="text-muted mt-3">No car models found for this brand</h6>
+      <h6 class="text-muted mt-3">{{ 'BRAND_PAGE.NO_MODELS_FOUND' | translate }}</h6>
     </div>
     <div *ngIf="!loadingModels && brandModels.length > 0" class="table-responsive">
       <table class="table table-sm table-hover">
         <thead class="table-light">
           <tr>
-            <th>Name (English)</th>
-            <th>Name (Arabic)</th>
+            <th>{{ 'BRAND_PAGE.NAME_EN' | translate }}</th>
+            <th>{{ 'BRAND_PAGE.NAME_AR' | translate }}</th>
             <th>{{ 'COMMON.STATUS' | translate }}</th>
-            <th>Created At</th>
+            <th>{{ 'BRAND_PAGE.CREATED_AT' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -258,7 +273,7 @@
             <td>{{ model.nameAr }}</td>
             <td>
               <span class="badge" [ngClass]="model.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                {{ model.isAvailable ? 'Available' : 'Unavailable' }}
+                {{ model.isAvailable ? ('BRAND_PAGE.AVAILABLE' | translate) : ('BRAND_PAGE.UNAVAILABLE' | translate) }}
               </span>
             </td>
             <td>{{ model.createdAt | date:'short' }}</td>

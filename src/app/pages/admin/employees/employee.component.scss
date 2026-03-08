@@ -110,3 +110,8 @@
 .avatar-xs:hover .hover-overlay {
   opacity: 1 !important;
 }
+
+/* Keep ng-select dropdown visible above Bootstrap modals/popups */
+:host ::ng-deep .ng-dropdown-panel {
+  z-index: 2000 !important;
+}

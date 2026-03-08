@@ -18,6 +18,7 @@ import { DepartmentService } from '../services/department.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { LookupService } from '../services/lookup.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-employee',
@@ -84,13 +85,14 @@ export class EmployeeComponent implements OnInit {
     private branchService: BranchService,
     private departmentService: DepartmentService,
     private lookupService: LookupService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: 'Admin' },
-      { label: this.mode === 'create' ? 'Create Employee' : 'Employee List', active: true }
+      { label: this.mode === 'create' ? this.translate.instant('EMPLOYEE_PAGE.CREATE_TITLE') : this.translate.instant('EMPLOYEE_PAGE.LIST_TITLE'), active: true }
     ];
 
     this.createUserForm = this.formBuilder.group({
@@ -362,7 +364,7 @@ export class EmployeeComponent implements OnInit {
       next: () => {
         this.isCreating = false;
         this.resetCreateForm();
-        this.showSuccess('Employee created successfully');
+        this.showSuccess(this.translate.instant('EMPLOYEE_PAGE.CREATE_SUCCESS'));
         if (this.mode === 'list') {
           this.isCreateModalOpen = false;
           this.loadListPageData();
@@ -392,12 +394,13 @@ export class EmployeeComponent implements OnInit {
 
   async deleteEmployee(user: AdminEmployee) {
     const result = await Swal.fire({
-      title: `Delete ${user.userName}?`,
-      text: 'This action cannot be undone.',
+      title: this.translate.instant('EMPLOYEE_PAGE.DELETE_USER_TITLE', { userName: user.userName }),
+      text: this.translate.instant('EMPLOYEE_PAGE.DELETE_USER_TEXT'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Delete'
+      confirmButtonText: this.translate.instant('COMMON.DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL')
     });
 
     if (!result.isConfirmed) {
@@ -406,7 +409,7 @@ export class EmployeeComponent implements OnInit {
 
     this.adminEmployeeService.deleteEmployee(user.id).pipe(first()).subscribe({
       next: () => {
-        this.showSuccess('User deleted successfully');
+        this.showSuccess(this.translate.instant('EMPLOYEE_PAGE.DELETE_SUCCESS'));
         this.loadListPageData();
       },
       error: (error) => this.showError(error)
@@ -420,7 +423,7 @@ export class EmployeeComponent implements OnInit {
 
     request.pipe(first()).subscribe({
       next: () => {
-        this.showSuccess(user.isLocked ? 'User unlocked' : 'User locked');
+        this.showSuccess(user.isLocked ? this.translate.instant('EMPLOYEE_PAGE.UNLOCK_SUCCESS') : this.translate.instant('EMPLOYEE_PAGE.LOCK_SUCCESS'));
         this.loadListPageData();
       },
       error: (error) => this.showError(error)
@@ -585,10 +588,10 @@ export class EmployeeComponent implements OnInit {
             this.applyRoleChanges(this.selectedUser!.id, toAdd, toRemove, () => {
               this.isUpdatingUser = false;
               Swal.fire({
-                title: 'Updated',
-                text: 'Employee and roles updated successfully',
+                title: this.translate.instant('COMMON.UPDATE'),
+                text: this.translate.instant('EMPLOYEE_PAGE.UPDATE_SUCCESS'),
                 icon: 'success',
-                confirmButtonText: 'OK'
+                confirmButtonText: this.translate.instant('AUTH.PASS_RESET.OK')
               });
               this.closeEditModal();
               this.loadListPageData();
@@ -636,7 +639,7 @@ export class EmployeeComponent implements OnInit {
     ).pipe(first()).subscribe({
       next: () => {
         this.isChangingPassword = false;
-        this.showSuccess('Password changed successfully');
+        this.showSuccess(this.translate.instant('EMPLOYEE_PAGE.PASSWORD_CHANGED_SUCCESS'));
         this.closePasswordModal();
       },
       error: (error) => {
@@ -745,7 +748,7 @@ export class EmployeeComponent implements OnInit {
     const map = new Map<string, string[]>();
     for (const permission of permissions) {
       const { page, action } = this.parsePermission(permission);
-      const key = page || 'General';
+      const key = page || this.translate.instant('COMMON.GENERAL');
       if (!map.has(key)) {
         map.set(key, []);
       }
@@ -766,7 +769,7 @@ export class EmployeeComponent implements OnInit {
   private parsePermission(permission: string): { page: string; action: string } {
     const parts = (permission || '').split('.');
     if (parts.length < 2) {
-      return { page: 'General', action: permission || '' };
+      return { page: this.translate.instant('COMMON.GENERAL'), action: permission || '' };
     }
     return {
       page: parts[0],
@@ -776,7 +779,7 @@ export class EmployeeComponent implements OnInit {
 
   getBranchName(branchId: number): string {
     const branch = this.branches.find(b => b.id === branchId);
-    return branch ? branch.branchNameEn : 'N/A';
+    return branch ? branch.branchNameEn : this.translate.instant('COMMON.NOT_AVAILABLE');
   }
 
   onProfileImageSelected(event: any) {
@@ -786,7 +789,7 @@ export class EmployeeComponent implements OnInit {
     }
     
     if (!file.type.startsWith('image/')) {
-      this.showError({ message: 'Please select only image files' });
+      this.showError({ message: this.translate.instant('EMPLOYEE_PAGE.IMAGE_ONLY_ERROR') });
       event.target.value = '';
       this.selectedProfileImage = null;
       this.profileImagePreview = null;
@@ -799,7 +802,7 @@ export class EmployeeComponent implements OnInit {
       this.profileImagePreview = e.target.result as string;
     };
     reader.onerror = () => {
-      this.showError({ message: 'Failed to read image file' });
+      this.showError({ message: this.translate.instant('EMPLOYEE_PAGE.IMAGE_READ_ERROR') });
       this.selectedProfileImage = null;
       this.profileImagePreview = null;
     };
@@ -813,7 +816,7 @@ export class EmployeeComponent implements OnInit {
     }
     
     if (!file.type.startsWith('image/')) {
-      this.showError({ message: 'Please select only image files' });
+      this.showError({ message: this.translate.instant('EMPLOYEE_PAGE.IMAGE_ONLY_ERROR') });
       event.target.value = '';
       this.selectedEditProfileImage = null;
       return;
@@ -825,7 +828,7 @@ export class EmployeeComponent implements OnInit {
       this.editProfileImagePreview = e.target.result as string;
     };
     reader.onerror = () => {
-      this.showError({ message: 'Failed to read image file' });
+      this.showError({ message: this.translate.instant('EMPLOYEE_PAGE.IMAGE_READ_ERROR') });
       this.selectedEditProfileImage = null;
     };
     reader.readAsDataURL(file);
@@ -895,13 +898,13 @@ export class EmployeeComponent implements OnInit {
     if (this.selectedUserIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedUserIds.size} selected employee(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('EMPLOYEE_PAGE.BULK_DELETE_TEXT', { count: this.selectedUserIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -911,9 +914,9 @@ export class EmployeeComponent implements OnInit {
           next: (response) => {
             this.selectedUserIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} employees. Failed to delete ${response.failedIds.length} employees.` });
+              this.showError({ message: this.translate.instant('EMPLOYEE_PAGE.BULK_DELETE_PARTIAL', { deleted: response.deletedCount, failed: response.failedIds.length }) });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} employee(s)`);
+              this.showSuccess(this.translate.instant('EMPLOYEE_PAGE.BULK_DELETE_SUCCESS', { count: response.deletedCount }));
             }
             this.loadListPageData();
           },

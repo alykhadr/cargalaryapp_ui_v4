@@ -59,7 +59,10 @@
     "PAGE": "الصفحة",
     "LOCKED": "مقفل",
     "SELECT_DATE": "اختر التاريخ",
-    "SELECT_HIRE_DATE": "اختر تاريخ التعيين"
+    "SELECT_HIRE_DATE": "اختر تاريخ التعيين",
+    "MORE": "المزيد",
+    "GENERAL": "عام",
+    "NOT_AVAILABLE": "غير متاح"
   },
   "AUTH": {
     "LOGIN": {
@@ -501,7 +504,7 @@
     }
   },
   "EMPLOYEE_PAGE": {
-    "CREATE_TITLE": "إنشاء موظف",
+    "CREATE_TITLE": "إضافة موظف",
     "LIST_TITLE": "قائمة الموظفين",
     "VALID_EMAIL_REQUIRED": "مطلوب بريد إلكتروني صحيح.",
     "USERNAME_REQUIRED": "اسم المستخدم مطلوب.",
@@ -520,7 +523,41 @@
     "EMPLOYEE_DETAILS": "تفاصيل الموظف",
     "MOBILE_NO": "رقم الجوال",
     "BRANCH_NAME": "اسم الفرع",
-    "ACTIONS": "الإجراءات"
+    "ACTIONS": "الإجراءات",
+    "SELECT_NATIONALITY": "اختر الجنسية",
+    "ROLE_REQUIRED": "مطلوب اختيار دور واحد على الأقل.",
+    "CREATING": "جارٍ الإنشاء...",
+    "FILTER_BY_USERNAME": "تصفية حسب اسم المستخدم",
+    "FILTER_BY_EMAIL": "تصفية حسب البريد الإلكتروني",
+    "FILTER_BY_MOBILE": "تصفية حسب الجوال",
+    "FILTER_BY_BRANCH": "تصفية حسب الفرع",
+    "TOTAL": "الإجمالي",
+    "ON_LEAVE": "في إجازة",
+    "TERMINATED": "منتهي الخدمة",
+    "SELECTED": "المحدد",
+    "DELETE_SELECTED": "حذف المحدد",
+    "UNLOCK": "إلغاء القفل",
+    "LOCK": "قفل",
+    "PERMISSIONS": "الصلاحيات",
+    "EFFECTIVE_PERMISSIONS": "الصلاحيات الفعالة",
+    "SAVING": "جارٍ الحفظ...",
+    "SAVE_CHANGES": "حفظ التغييرات",
+    "CHANGE_PASSWORD": "تغيير كلمة المرور",
+    "UPDATING": "جارٍ التحديث...",
+    "UPDATE_PASSWORD": "تحديث كلمة المرور",
+    "CREATE_SUCCESS": "تم إنشاء الموظف بنجاح",
+    "DELETE_USER_TITLE": "حذف {{userName}}؟",
+    "DELETE_USER_TEXT": "لا يمكن التراجع عن هذا الإجراء.",
+    "DELETE_SUCCESS": "تم حذف المستخدم بنجاح",
+    "LOCK_SUCCESS": "تم قفل المستخدم",
+    "UNLOCK_SUCCESS": "تم إلغاء قفل المستخدم",
+    "UPDATE_SUCCESS": "تم تحديث الموظف والأدوار بنجاح",
+    "PASSWORD_CHANGED_SUCCESS": "تم تغيير كلمة المرور بنجاح",
+    "IMAGE_ONLY_ERROR": "يرجى اختيار ملفات صور فقط",
+    "IMAGE_READ_ERROR": "فشل في قراءة ملف الصورة",
+    "BULK_DELETE_TEXT": "حذف {{count}} موظف/موظفين محددين؟",
+    "BULK_DELETE_PARTIAL": "تم حذف {{deleted}} موظفًا. تعذر حذف {{failed}} موظفًا.",
+    "BULK_DELETE_SUCCESS": "تم حذف {{count}} موظف/موظفين بنجاح"
   },
   "PERMISSIONS_PAGE": {
     "ROLES": "الأدوار",
@@ -542,7 +579,10 @@
     "USE": "استخدام",
     "GROUP": "مجموعة",
     "CLICK_USE_HINT": "اضغط استخدام لتعبئة حقلي الصفحة + الإجراء.",
-    "SELECT_ROLE_HINT": "اختر دورًا لإدارة الصلاحيات."
+    "SELECT_ROLE_HINT": "اختر دورًا لإدارة الصلاحيات.",
+    "DELETE_TITLE": "حذف الصلاحية؟",
+    "DELETE_TEXT": "هل أنت متأكد أنك تريد إزالة \"{{permission}}\" من الدور \"{{role}}\"؟",
+    "DELETE_CONFIRM": "نعم، إزالة"
   },
   "DEPARTMENT_PAGE": {
     "LIST_TITLE": "قائمة الأقسام",
@@ -617,5 +657,41 @@
     "USERS": "المستخدمون"
   },
   "COMPANYINFO": "معلومات الشركة",
-  "GALLERYIMAGE": "صور المعرض"
+  "GALLERYIMAGE": "صور المعرض",
+  "BRAND_PAGE": {
+    "LIST_TITLE": "قائمة العلامات التجارية",
+    "ADD_BUTTON": "إضافة علامة تجارية",
+    "DELETE_SELECTED": "حذف المحدد",
+    "VIEW_MODELS": "عرض الموديلات",
+    "EDIT_TITLE": "تعديل العلامة التجارية",
+    "CREATE_TITLE": "إنشاء علامة تجارية",
+    "CAR_MODELS": "موديلات السيارات",
+    "SEARCH_EN": "ابحث بالاسم الإنجليزي...",
+    "SEARCH_AR": "ابحث بالاسم العربي...",
+    "NO_BRANDS_FOUND": "لا توجد علامات تجارية",
+    "NO_BRANDS_HINT": "اضغط \"إضافة علامة تجارية\" لإنشاء أول علامة",
+    "IMAGE": "الصورة",
+    "NAME_EN": "الاسم (إنجليزي)",
+    "NAME_AR": "الاسم (عربي)",
+    "IMAGE_REQUIRED": "صورة العلامة التجارية مطلوبة.",
+    "ENTER_EN_NAME": "أدخل الاسم بالإنجليزية",
+    "ENTER_AR_NAME": "أدخل الاسم بالعربية",
+    "NAME_EN_REQUIRED": "الاسم الإنجليزي مطلوب (بحد أقصى 100 حرف).",
+    "NAME_AR_REQUIRED": "الاسم العربي مطلوب (بحد أقصى 100 حرف).",
+    "SAVING": "جارٍ الحفظ...",
+    "IMAGE_PREVIEW": "معاينة صورة العلامة التجارية",
+    "NO_MODELS_FOUND": "لا توجد موديلات سيارات لهذه العلامة",
+    "CREATED_AT": "تاريخ الإنشاء",
+    "AVAILABLE": "متاح",
+    "UNAVAILABLE": "غير متاح",
+    "IMAGE_ONLY_ERROR": "يرجى اختيار ملفات صور فقط",
+    "IMAGE_READ_ERROR": "فشل في قراءة ملف الصورة",
+    "CREATE_SUCCESS": "تم إنشاء العلامة التجارية بنجاح",
+    "UPDATE_SUCCESS": "تم تحديث العلامة التجارية بنجاح",
+    "DELETE_SUCCESS": "تم حذف العلامة التجارية بنجاح",
+    "BULK_DELETE_TEXT": "حذف {{count}} علامة/علامات تجارية محددة؟",
+    "BULK_DELETE_PARTIAL": "تم حذف {{deleted}} علامة. تعذر حذف {{failed}} علامة.",
+    "BULK_DELETE_SUCCESS": "تم حذف {{count}} علامة/علامات تجارية بنجاح",
+    "SELECTED": "المحدد"
+  }
 }

@@ -8,6 +8,7 @@ import { ToastService } from '../../icons/toast-service';
 import { Brand } from '../interfaces/brand.interface';
 import { BrandService } from '../services/brand.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-brands',
@@ -47,13 +48,14 @@ export class BrandsComponent implements OnInit {
     public service: PaginationService,
     private brandService: BrandService,
     private toastService: ToastService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: 'Admin' },
-      { label: 'Brands', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.BRAND'), active: true }
     ];
 
     this.brandForm = this.formBuilder.group({
@@ -155,7 +157,7 @@ export class BrandsComponent implements OnInit {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      this.showError({ message: 'Please select only image files' });
+      this.showError({ message: this.translate.instant('BRAND_PAGE.IMAGE_ONLY_ERROR') });
       event.target.value = '';
       this.selectedImage = null;
       this.imagePreview = null;
@@ -168,7 +170,7 @@ export class BrandsComponent implements OnInit {
       this.imagePreview = e.target.result as string;
     };
     reader.onerror = () => {
-      this.showError({ message: 'Failed to read image file' });
+      this.showError({ message: this.translate.instant('BRAND_PAGE.IMAGE_READ_ERROR') });
       this.selectedImage = null;
       this.imagePreview = null;
     };
@@ -191,7 +193,7 @@ export class BrandsComponent implements OnInit {
       this.brandService.updateBrand(this.selectedBrand.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Brand updated successfully');
+          this.showSuccess(this.translate.instant('BRAND_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadBrands();
         },
@@ -204,7 +206,7 @@ export class BrandsComponent implements OnInit {
       this.brandService.createBrand(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Brand created successfully');
+          this.showSuccess(this.translate.instant('BRAND_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadBrands();
         },
@@ -218,20 +220,20 @@ export class BrandsComponent implements OnInit {
 
   deleteBrand(brand: Brand) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.brandService.deleteBrand(brand.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Brand deleted successfully');
+            this.showSuccess(this.translate.instant('BRAND_PAGE.DELETE_SUCCESS'));
             this.loadBrands();
           },
           error: (error) => this.showError(error)
@@ -301,13 +303,13 @@ export class BrandsComponent implements OnInit {
     if (this.selectedBrandIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedBrandIds.size} selected brand(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('BRAND_PAGE.BULK_DELETE_TEXT', { count: this.selectedBrandIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -317,9 +319,9 @@ export class BrandsComponent implements OnInit {
           next: (response) => {
             this.selectedBrandIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} brands. Failed to delete ${response.failedIds.length} brands.` });
+              this.showError({ message: this.translate.instant('BRAND_PAGE.BULK_DELETE_PARTIAL', { deleted: response.deletedCount, failed: response.failedIds.length }) });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} brand(s)`);
+              this.showSuccess(this.translate.instant('BRAND_PAGE.BULK_DELETE_SUCCESS', { count: response.deletedCount }));
             }
             this.loadBrands();
           },

@@ -27,18 +27,20 @@
 
           <div class="mb-3">
             <label class="form-label">{{ 'COMMON.EMAIL' | translate }}</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="ri-mail-line"></i></span>
-              <input class="form-control" type="email" formControlName="email" />
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-mail-line"></i></span>
+              <input class="form-control" type="email" formControlName="email"
+                [ngClass]="{ 'is-invalid': submitted && form['email'].errors }" />
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">{{ 'EMPLOYEE_PAGE.VALID_EMAIL_REQUIRED' | translate }}</div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">{{ 'COMMON.USERNAME' | translate }}</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="ri-user-3-line"></i></span>
-              <input class="form-control" type="text" formControlName="userName" />
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-user-3-line"></i></span>
+              <input class="form-control" type="text" formControlName="userName"
+                [ngClass]="{ 'is-invalid': submitted && form['userName'].errors }" />
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['userName'].errors">{{ 'EMPLOYEE_PAGE.USERNAME_REQUIRED' | translate }}</div>
           </div>
@@ -47,7 +49,8 @@
             <label class="form-label">{{ 'COMMON.PASSWORD' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
-              <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password" />
+              <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                [ngClass]="{ 'is-invalid': submitted && form['password'].errors }" />
               <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()">
                 <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
               </button>
@@ -75,7 +78,8 @@
             <label class="form-label">{{ 'COMMON.BRANCH' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
-              <select class="form-select" formControlName="branchId">
+              <select class="form-select" formControlName="branchId"
+                [ngClass]="{ 'is-invalid': submitted && form['branchId'].errors }">
                 <option [ngValue]="null">{{ 'EMPLOYEE_PAGE.SELECT_BRANCH' | translate }}</option>
                 <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
               </select>
@@ -97,7 +101,8 @@
             <label class="form-label">{{ 'COMMON.NATIONAL_ID' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-fingerprint-line"></i></span>
-              <input class="form-control" type="text" formControlName="nationalId" />
+              <input class="form-control" type="text" formControlName="nationalId"
+                [ngClass]="{ 'is-invalid': submitted && form['nationalId'].errors }" />
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nationalId'].errors">{{ 'EMPLOYEE_PAGE.NATIONAL_ID_REQUIRED' | translate }}</div>
           </div>
@@ -114,7 +119,8 @@
             <label class="form-label">{{ 'COMMON.DEPARTMENT' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-              <select class="form-select" formControlName="departmentId">
+              <select class="form-select" formControlName="departmentId"
+                [ngClass]="{ 'is-invalid': submitted && form['departmentId'].errors }">
                 <option [ngValue]="null">{{ 'DEPARTMENT_PAGE.SELECT_DEPARTMENT' | translate }}</option>
                 <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
               </select>
@@ -169,19 +175,14 @@
 
           <div class="mb-3">
             <label class="form-label">{{ 'COMMON.NATIONALITY' | translate }}</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="ri-earth-line"></i></span>
-              <ng-select
-                class="flex-grow-1"
-                [items]="countryLookups"
-                bindLabel="displayName"
-                bindValue="detailCode"
-                formControlName="nationality"
-                placeholder="Select nationality"
-                [searchable]="true"
-                [clearable]="true"
-                [appendTo]="'body'">
-              </ng-select>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-earth-line"></i></span>
+                <select class="form-select" formControlName="nationality">
+                  <option value="">{{ 'EMPLOYEE_PAGE.SELECT_NATIONALITY' | translate }}</option>
+                  <option *ngFor="let country of countryLookups" [value]="country.detailCode">
+                    {{ country.displayName }}
+                  </option>
+                </select>
             </div>
           </div>
 
@@ -202,13 +203,13 @@
             </div>
             <div class="text-muted mt-2" *ngIf="roles.length === 0">{{ 'EMPLOYEE_PAGE.NO_ROLES' | translate }}</div>
             <div class="invalid-feedback d-block" *ngIf="submitted && selectedRoles.length === 0">
-              At least one role is required.
+              {{ 'EMPLOYEE_PAGE.ROLE_REQUIRED' | translate }}
             </div>
           </div>
 
           <button class="btn btn-success w-100" type="submit" [disabled]="isCreating">
             <span *ngIf="isCreating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            {{ isCreating ? 'Creating...' : 'Create Employee' }}
+            {{ isCreating ? ('EMPLOYEE_PAGE.CREATING' | translate) : ('EMPLOYEE_PAGE.CREATE_TITLE' | translate) }}
           </button>
         </form>
       </div>
@@ -220,9 +221,13 @@
     <div class="card">
       <div class="card-header border-bottom-dashed">
         <div class="d-flex flex-wrap gap-2 justify-content-end">
+          <button *appHasPermission="'employees.create'" class="btn btn-success add-btn" type="button" (click)="openCreateModal()">
+            <i class="ri-user-add-line align-bottom me-1"></i>
+            {{ 'EMPLOYEE_PAGE.CREATE_TITLE' | translate }}
+          </button>
           <button class="btn btn-soft-secondary" type="button" (click)="clearFilters()">
             <i class="ri-restart-line align-bottom me-1"></i>
-            Clear Filters
+            {{ 'COMMON.REMOVE_FILTERS' | translate }}
           </button>
         </div>
       </div>
@@ -234,7 +239,7 @@
               <input
                 class="form-control"
                 type="text"
-                placeholder="Filter by username"
+                [placeholder]="'EMPLOYEE_PAGE.FILTER_BY_USERNAME' | translate"
                 [(ngModel)]="userNameFilter"
                 (ngModelChange)="onFiltersChanged()">
             </div>
@@ -245,7 +250,7 @@
               <input
                 class="form-control"
                 type="text"
-                placeholder="Filter by email"
+                [placeholder]="'EMPLOYEE_PAGE.FILTER_BY_EMAIL' | translate"
                 [(ngModel)]="emailFilter"
                 (ngModelChange)="onFiltersChanged()">
             </div>
@@ -256,7 +261,7 @@
               <input
                 class="form-control"
                 type="text"
-                placeholder="Filter by mobile"
+                [placeholder]="'EMPLOYEE_PAGE.FILTER_BY_MOBILE' | translate"
                 [(ngModel)]="mobileNoFilter"
                 (ngModelChange)="onFiltersChanged()">
             </div>
@@ -267,7 +272,7 @@
               <input
                 class="form-control"
                 type="text"
-                placeholder="Filter by branch"
+                [placeholder]="'EMPLOYEE_PAGE.FILTER_BY_BRANCH' | translate"
                 [(ngModel)]="branchNameFilter"
                 (ngModelChange)="onFiltersChanged()">
             </div>
@@ -292,30 +297,26 @@
         <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
           <div class="d-flex align-items-center flex-wrap gap-2">
             <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
-              <i class="ri-list-check-2 me-1"></i>Total: {{ totalEmployeesCount }}
+              <i class="ri-list-check-2 me-1"></i>{{ 'EMPLOYEE_PAGE.TOTAL' | translate }}: {{ totalEmployeesCount }}
             </span>
             <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
-              <i class="ri-user-smile-line me-1"></i>Active: {{ activeEmployeesCount }}
+              <i class="ri-user-smile-line me-1"></i>{{ 'COMMON.ACTIVE' | translate }}: {{ activeEmployeesCount }}
             </span>
             <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis">
-              <i class="ri-user-shared-line me-1"></i>On Leave: {{ onLeaveEmployeesCount }}
+              <i class="ri-user-shared-line me-1"></i>{{ 'EMPLOYEE_PAGE.ON_LEAVE' | translate }}: {{ onLeaveEmployeesCount }}
             </span>
             <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">
-              <i class="ri-user-unfollow-line me-1"></i>Terminated: {{ terminatedEmployeesCount }}
+              <i class="ri-user-unfollow-line me-1"></i>{{ 'EMPLOYEE_PAGE.TERMINATED' | translate }}: {{ terminatedEmployeesCount }}
             </span>
             <span class="badge rounded-pill bg-info-subtle text-info-emphasis">
-              <i class="ri-check-double-line me-1"></i>Selected: {{ selectedUserIds.size }}
+              <i class="ri-check-double-line me-1"></i>{{ 'EMPLOYEE_PAGE.SELECTED' | translate }}: {{ selectedUserIds.size }}
             </span>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <button *appHasPermission="'employees.create'" class="btn btn-primary btn-sm" type="button" (click)="openCreateModal()">
-              <i class="ri-user-add-line align-bottom me-1"></i>
-              Create Employee
-            </button>
             <button *appHasPermission="'employees.delete'" class="btn btn-danger btn-sm"
                     [disabled]="selectedUserIds.size === 0" (click)="bulkDeleteUsers()">
               <i class="ri-delete-bin-line align-bottom me-1"></i>
-              Delete Selected
+              {{ 'EMPLOYEE_PAGE.DELETE_SELECTED' | translate }}
             </button>
           </div>
         </div>
@@ -380,18 +381,18 @@
                     <button *appHasPermission="'employees.edit'" class="btn btn-sm btn-soft-secondary" (click)="openEditModal(user)">{{ 'COMMON.EDIT' | translate }}</button>
                     <button *appHasPermission="'employees.edit'" class="btn btn-sm btn-soft-dark" (click)="openPasswordModal(user)">{{ 'COMMON.PASSWORD' | translate }}</button>
                     <button class="btn btn-sm" [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-warning'" (click)="lockUnlock(user)">
-                      {{ user.isLocked ? 'Unlock' : 'Lock' }}
+                      {{ user.isLocked ? ('EMPLOYEE_PAGE.UNLOCK' | translate) : ('EMPLOYEE_PAGE.LOCK' | translate) }}
                     </button>
                     <div ngbDropdown class="d-inline-block" placement="start-top" container="body">
                       <button class="btn btn-sm btn-soft-info" ngbDropdownToggle>
-                        More
+                        {{ 'COMMON.MORE' | translate }}
                       </button>
                       <div ngbDropdownMenu>
                         <button *appHasPermission="'employees.view'" ngbDropdownItem (click)="openPermissionsModal(user)">
-                          <i class="ri-shield-keyhole-line me-2"></i>Permissions
+                          <i class="ri-shield-keyhole-line me-2"></i>{{ 'EMPLOYEE_PAGE.PERMISSIONS' | translate }}
                         </button>
                         <button *appHasPermission="'employees.delete'" ngbDropdownItem class="text-danger" (click)="deleteEmployee(user)">
-                          <i class="ri-delete-bin-line me-2"></i>Delete
+                          <i class="ri-delete-bin-line me-2"></i>{{ 'COMMON.DELETE' | translate }}
                         </button>
                       </div>
                     </div>
@@ -462,7 +463,8 @@
               <label class="form-label">{{ 'COMMON.EMAIL' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-mail-line"></i></span>
-                <input class="form-control" type="email" formControlName="email" />
+                <input class="form-control" type="email" formControlName="email"
+                  [ngClass]="{ 'is-invalid': submitted && form['email'].errors }" />
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">{{ 'EMPLOYEE_PAGE.VALID_EMAIL_REQUIRED' | translate }}</div>
             </div>
@@ -471,7 +473,8 @@
               <label class="form-label">{{ 'COMMON.USERNAME' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-3-line"></i></span>
-                <input class="form-control" type="text" formControlName="userName" />
+                <input class="form-control" type="text" formControlName="userName"
+                  [ngClass]="{ 'is-invalid': submitted && form['userName'].errors }" />
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['userName'].errors">{{ 'EMPLOYEE_PAGE.USERNAME_REQUIRED' | translate }}</div>
             </div>
@@ -480,7 +483,8 @@
               <label class="form-label">{{ 'COMMON.PASSWORD' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
-                <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password" />
+                <input class="form-control" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                  [ngClass]="{ 'is-invalid': submitted && form['password'].errors }" />
                 <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()">
                   <i [class]="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
                 </button>
@@ -492,7 +496,8 @@
               <label class="form-label">{{ 'COMMON.BRANCH' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
-                <select class="form-select" formControlName="branchId">
+                <select class="form-select" formControlName="branchId"
+                  [ngClass]="{ 'is-invalid': submitted && form['branchId'].errors }">
                   <option [ngValue]="null">{{ 'EMPLOYEE_PAGE.SELECT_BRANCH' | translate }}</option>
                   <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
                 </select>
@@ -532,7 +537,8 @@
               <label class="form-label">{{ 'COMMON.NATIONAL_ID' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-fingerprint-line"></i></span>
-                <input class="form-control" type="text" formControlName="nationalId" />
+                <input class="form-control" type="text" formControlName="nationalId"
+                  [ngClass]="{ 'is-invalid': submitted && form['nationalId'].errors }" />
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nationalId'].errors">{{ 'EMPLOYEE_PAGE.NATIONAL_ID_REQUIRED' | translate }}</div>
             </div>
@@ -549,7 +555,8 @@
               <label class="form-label">{{ 'COMMON.DEPARTMENT' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-                <select class="form-select" formControlName="departmentId">
+                <select class="form-select" formControlName="departmentId"
+                  [ngClass]="{ 'is-invalid': submitted && form['departmentId'].errors }">
                   <option [ngValue]="null">{{ 'DEPARTMENT_PAGE.SELECT_DEPARTMENT' | translate }}</option>
                   <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
                 </select>
@@ -606,17 +613,12 @@
               <label class="form-label">{{ 'COMMON.NATIONALITY' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-earth-line"></i></span>
-                <ng-select
-                  class="flex-grow-1"
-                  [items]="countryLookups"
-                  bindLabel="displayName"
-                  bindValue="detailCode"
-                  formControlName="nationality"
-                  placeholder="Select nationality"
-                  [searchable]="true"
-                  [clearable]="true"
-                  [appendTo]="'body'">
-                </ng-select>
+                <select class="form-select" formControlName="nationality">
+                  <option value="">{{ 'EMPLOYEE_PAGE.SELECT_NATIONALITY' | translate }}</option>
+                  <option *ngFor="let country of countryLookups" [value]="country.detailCode">
+                    {{ country.displayName }}
+                  </option>
+                </select>
               </div>
             </div>
 
@@ -637,7 +639,7 @@
               </div>
               <div class="text-muted mt-2" *ngIf="roles.length === 0">{{ 'EMPLOYEE_PAGE.NO_ROLES' | translate }}</div>
               <div class="invalid-feedback d-block" *ngIf="submitted && selectedRoles.length === 0">
-                At least one role is required.
+                {{ 'EMPLOYEE_PAGE.ROLE_REQUIRED' | translate }}
               </div>
             </div>
           </div>
@@ -647,7 +649,7 @@
         <button class="btn btn-light" type="button" (click)="closeCreateModal()">{{ 'COMMON.CLOSE' | translate }}</button>
         <button *appHasPermission="'employees.create'" class="btn btn-success" type="button" [disabled]="isCreating" (click)="createEmployee()">
           <span *ngIf="isCreating" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          {{ isCreating ? 'Creating...' : 'Create Employee' }}
+          {{ isCreating ? ('EMPLOYEE_PAGE.CREATING' | translate) : ('EMPLOYEE_PAGE.CREATE_TITLE' | translate) }}
         </button>
       </div>
     </div>
@@ -659,7 +661,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Effective Permissions: {{ selectedUser?.userName }}</h5>
+        <h5 class="modal-title">{{ 'EMPLOYEE_PAGE.EFFECTIVE_PERMISSIONS' | translate }}: {{ selectedUser?.userName }}</h5>
         <button class="btn-close" type="button" (click)="closePermissionsModal()"></button>
       </div>
       <div class="modal-body">
@@ -682,7 +684,7 @@
                   <span class="fw-semibold">{{ pageGroup.page }}</span>
                 </td>
                 <td>
-                  <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
+                  <span class="text-muted">{{ pageGroup.actions.length }} {{ 'PERMISSIONS_PAGE.ACTIONS' | translate }}</span>
                 </td>
               </tr>
               @if (isPermissionGroupExpanded(pageGroup.page)) {
@@ -750,7 +752,8 @@
               <label class="form-label">{{ 'COMMON.EMAIL' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-mail-line"></i></span>
-                <input class="form-control" type="email" formControlName="email" />
+                <input class="form-control" type="email" formControlName="email"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['email'].errors }" />
               </div>
               <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['email'].errors">{{ 'EMPLOYEE_PAGE.VALID_EMAIL_REQUIRED' | translate }}</div>
             </div>
@@ -759,7 +762,8 @@
               <label class="form-label">{{ 'COMMON.USERNAME' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-3-line"></i></span>
-                <input class="form-control" type="text" formControlName="userName" />
+                <input class="form-control" type="text" formControlName="userName"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['userName'].errors }" />
               </div>
               <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['userName'].errors">{{ 'EMPLOYEE_PAGE.USERNAME_REQUIRED' | translate }}</div>
             </div>
@@ -768,7 +772,8 @@
               <label class="form-label">{{ 'COMMON.BRANCH' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
-                <select class="form-select" formControlName="branchId">
+                <select class="form-select" formControlName="branchId"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['branchId'].errors }">
                   <option [ngValue]="null">{{ 'EMPLOYEE_PAGE.SELECT_BRANCH' | translate }}</option>
                   <option *ngFor="let branch of branches" [ngValue]="branch.id">{{ branch.branchNameEn }}</option>
                 </select>
@@ -824,7 +829,8 @@
               <label class="form-label">{{ 'COMMON.DEPARTMENT' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-building-4-line"></i></span>
-                <select class="form-select" formControlName="departmentId">
+                <select class="form-select" formControlName="departmentId"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['departmentId'].errors }">
                   <option [ngValue]="null">{{ 'DEPARTMENT_PAGE.SELECT_DEPARTMENT' | translate }}</option>
                   <option *ngFor="let department of departments" [ngValue]="department.id">{{ department.nameEn }}</option>
                 </select>
@@ -882,17 +888,12 @@
               <label class="form-label">{{ 'COMMON.NATIONALITY' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-earth-line"></i></span>
-                <ng-select
-                  class="flex-grow-1"
-                  [items]="countryLookups"
-                  bindLabel="displayName"
-                  bindValue="detailCode"
-                  formControlName="nationality"
-                  placeholder="Select nationality"
-                  [searchable]="true"
-                  [clearable]="true"
-                  [appendTo]="'body'">
-                </ng-select>
+                <select class="form-select" formControlName="nationality">
+                  <option value="">{{ 'EMPLOYEE_PAGE.SELECT_NATIONALITY' | translate }}</option>
+                  <option *ngFor="let country of countryLookups" [value]="country.detailCode">
+                    {{ country.displayName }}
+                  </option>
+                </select>
               </div>
             </div>
 
@@ -920,7 +921,7 @@
         <button class="btn btn-light" type="button" (click)="closeEditModal()">{{ 'COMMON.CLOSE' | translate }}</button>
         <button *appHasPermission="'employees.edit'" class="btn btn-success" type="button" [disabled]="isUpdatingUser" (click)="updateEmployeeDetails()">
           <span *ngIf="isUpdatingUser" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          {{ isUpdatingUser ? 'Saving...' : 'Save Changes' }}
+          {{ isUpdatingUser ? ('EMPLOYEE_PAGE.SAVING' | translate) : ('EMPLOYEE_PAGE.SAVE_CHANGES' | translate) }}
         </button>
       </div>
     </div>
@@ -932,7 +933,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Change Password: {{ selectedUser?.userName }}</h5>
+        <h5 class="modal-title">{{ 'EMPLOYEE_PAGE.CHANGE_PASSWORD' | translate }}: {{ selectedUser?.userName }}</h5>
         <button class="btn-close" type="button" (click)="closePasswordModal()"></button>
       </div>
       <div class="modal-body">
@@ -941,13 +942,14 @@
             <label class="form-label">{{ 'EMPLOYEE_PAGE.NEW_PASSWORD' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-lock-password-line"></i></span>
-              <input class="form-control" [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" />
+              <input class="form-control" [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword"
+                [ngClass]="{ 'is-invalid': passwordSubmitted && passwordForm['newPassword'].errors }" />
               <button class="btn btn-outline-secondary" type="button" (click)="showNewPassword = !showNewPassword">
                 <i [class]="showNewPassword ? 'ri-eye-off-line' : 'ri-eye-line'"></i>
               </button>
             </div>
             <div class="invalid-feedback d-block" *ngIf="passwordSubmitted && passwordForm['newPassword'].errors">
-              New password must be at least 6 characters.
+              {{ 'AUTH.PASS_RESET.NEW_PASSWORD_MIN' | translate }}
             </div>
           </div>
         </form>
@@ -956,7 +958,7 @@
         <button class="btn btn-light" type="button" (click)="closePasswordModal()">{{ 'COMMON.CLOSE' | translate }}</button>
         <button *appHasPermission="'employees.edit'" class="btn btn-primary" type="button" [disabled]="isChangingPassword" (click)="changeEmployeePassword()">
           <span *ngIf="isChangingPassword" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
+          {{ isChangingPassword ? ('EMPLOYEE_PAGE.UPDATING' | translate) : ('EMPLOYEE_PAGE.UPDATE_PASSWORD' | translate) }}
         </button>
       </div>
     </div>
@@ -973,7 +975,7 @@
         <button type="button" class="btn-close" (click)="closePreview()"></button>
       </div>
       <div class="modal-body text-center">
-        <img [src]="previewImageUrl" alt="Profile Preview" class="img-fluid" style="max-height: 500px;">
+        <img [src]="previewImageUrl" [alt]="'EMPLOYEE_PAGE.PROFILE_IMAGE_PREVIEW' | translate" class="img-fluid" style="max-height: 500px;">
       </div>
     </div>
   </div>
