@@ -128,8 +128,8 @@ File: Main Css File
 
 // RTL Set
 [dir="ltr"] {
-  --bs-body-font-family: "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
-  --vz-font-sans-serif: "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
+  --bs-body-font-family: "Poppins", "Segoe UI", Tahoma, Arial, sans-serif;
+  --vz-font-sans-serif: "Poppins", "Segoe UI", Tahoma, Arial, sans-serif;
 
   body,
   h1, h2, h3, h4, h5, h6,
@@ -137,7 +137,7 @@ File: Main Css File
   label, input, textarea, select, button,
   .form-control, .form-select, .dropdown-item, .nav-link,
   .card-title, .table, .btn, .breadcrumb {
-    font-family: "Inter", "Segoe UI", Tahoma, Arial, sans-serif !important;
+    font-family: "Poppins", "Segoe UI", Tahoma, Arial, sans-serif !important;
   }
 }
 
