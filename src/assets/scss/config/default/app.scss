@@ -127,6 +127,20 @@ File: Main Css File
 @import "../../pages/blog";
 
 // RTL Set
+[dir="ltr"] {
+  --bs-body-font-family: "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
+  --vz-font-sans-serif: "Inter", "Segoe UI", Tahoma, Arial, sans-serif;
+
+  body,
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, a, li, ul, ol,
+  label, input, textarea, select, button,
+  .form-control, .form-select, .dropdown-item, .nav-link,
+  .card-title, .table, .btn, .breadcrumb {
+    font-family: "Inter", "Segoe UI", Tahoma, Arial, sans-serif !important;
+  }
+}
+
 [dir="rtl"] {
   --bs-body-font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
   --vz-font-sans-serif: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
