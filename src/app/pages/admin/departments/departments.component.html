@@ -122,14 +122,24 @@
       <div class="modal-body">
         <form [formGroup]="departmentForm">
           <div class="mb-3">
-            <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameEn">
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">Required</div>
+            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
+              English name is required (max 100 characters).
+            </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" formControlName="nameAr" dir="rtl">
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">Required</div>
+            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="ri-text"></i></span>
+              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
+              Arabic name is required (max 100 characters).
+            </div>
           </div>
           <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="departmentAvailableSwitch">
