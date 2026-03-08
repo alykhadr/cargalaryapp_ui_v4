@@ -31,10 +31,9 @@ export class TopbarComponent implements OnInit {
   notificationCount = 0;
   isLoadingNotifications = false;
   notificationsLoadFailed = false;
-  flagvalue: any;
-  valueset: any;
-  countryName: any;
-  cookieValue: any;
+  flagvalue = 'assets/images/flags/sa.svg';
+  countryName = 'العربية';
+  cookieValue = 'ar';
   userData: any;
   isDropdownOpen = false;
 
@@ -49,14 +48,10 @@ export class TopbarComponent implements OnInit {
     this.element = document.documentElement;
 
     // Cookies wise Language set
-    this.cookieValue = this._cookiesService.get('lang');
-    const val = this.listLang.filter(x => x.lang === this.cookieValue);
-    this.countryName = val.map(element => element.text);
-    if (val.length === 0) {
-      if (this.flagvalue === undefined) { this.valueset = 'assets/images/flags/sa.svg'; }
-    } else {
-      this.flagvalue = val.map(element => element.flag);
-    }
+    this.cookieValue = (this._cookiesService.get('lang') || 'ar').toLowerCase();
+    const selected = this.listLang.find(x => x.lang === this.cookieValue) || this.listLang.find(x => x.lang === 'ar');
+    this.countryName = selected?.text || 'العربية';
+    this.flagvalue = selected?.flag || 'assets/images/flags/sa.svg';
 
     this.loadQuotationNotifications();
   }
@@ -130,7 +125,7 @@ export class TopbarComponent implements OnInit {
    */
   listLang = [
     { text: 'English', flag: 'assets/images/flags/us.svg', lang: 'en' },
-    { text: 'Arabic', flag: 'assets/images/flags/sa.svg', lang: 'ar' },
+    { text: 'العربية', flag: 'assets/images/flags/sa.svg', lang: 'ar' },
   ];
 
   /***
@@ -139,7 +134,7 @@ export class TopbarComponent implements OnInit {
   setLanguage(text: string, lang: string, flag: string) {
     this.countryName = text;
     this.flagvalue = flag;
-    this.cookieValue = lang;
+    this.cookieValue = (lang || 'ar').toLowerCase();
     this.languageService.setLanguage(lang);
   }
 
