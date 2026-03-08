@@ -5,7 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
 
-  public languages: string[] = ['en', 'ar', 'es', 'de', 'it', 'ru'];
+  public languages: string[] = ['en', 'ar'];
 
   constructor(public translate: TranslateService, private cookieService: CookieService) {
 
@@ -20,15 +20,33 @@ export class LanguageService {
     else {
       browserLang = translate.getBrowserLang();
     }
-    translate.use(browserLang.match(/en|ar|es|de|it|ru/) ? browserLang : 'en');
+    const initialLang = browserLang.match(/en|ar/) ? browserLang : 'en';
+    this.applyLanguage(initialLang);
   }
 
   /***
    * Cookie Language set
    */
   public setLanguage(lang: any) {
-    this.translate.use(lang);
-    this.cookieService.set('lang', lang);
+    this.applyLanguage(lang);
+  }
+
+  public getCurrentLanguage(): string {
+    return (this.cookieService.get('lang') || this.translate.currentLang || 'en').toLowerCase();
+  }
+
+  private applyLanguage(lang: string) {
+    const normalized = (lang || 'en').toLowerCase();
+    const safeLang = normalized.match(/en|ar/) ? normalized : 'en';
+    const isArabic = safeLang === 'ar';
+
+    this.translate.use(safeLang);
+    this.cookieService.set('lang', safeLang);
+    document.documentElement.setAttribute('lang', safeLang);
+    document.documentElement.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+    if (document.body) {
+      document.body.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+    }
   }
 
 }

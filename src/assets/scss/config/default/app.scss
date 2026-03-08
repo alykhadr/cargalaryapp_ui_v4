@@ -127,7 +127,9 @@ File: Main Css File
 @import "../../pages/blog";
 
 // RTL Set
-// @import "../../rtl/components-rtl";
-// @import "../../rtl/layouts-rtl";
-// @import "../../rtl/pages-rtl";
-// @import "../../rtl/plugins-rtl";
+[dir="rtl"] {
+  @import "../../rtl/components-rtl";
+  @import "../../rtl/layouts-rtl";
+  @import "../../rtl/pages-rtl";
+  @import "../../rtl/plugins-rtl";
+}
