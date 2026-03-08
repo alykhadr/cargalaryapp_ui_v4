@@ -325,4 +325,40 @@
       }
     }
   }
+  ,
+  "QUOTATION_PAGE": {
+    "TRACK": {
+      "TIMELINE_TITLE": "Track Quotation Timeline",
+      "QUOTATION_ID": "Quotation ID",
+      "ENTER_ID": "Enter quotation id",
+      "TRACK_BTN": "Track",
+      "TIMELINE": "Timeline",
+      "STATUS_UPDATED": "Status updated",
+      "NO_TIMELINE": "No timeline records found for this quotation.",
+      "EMPTY_TITLE": "No tracking search yet",
+      "EMPTY_DESC": "Enter quotation ID and click Track to view details."
+    },
+    "LIST": {
+      "SEARCH_PLACEHOLDER": "Search by name, email, mobile or id...",
+      "ALL_STATUS": "All Status",
+      "FROM": "From",
+      "TO": "To",
+      "CLEAR_FILTER": "Clear Filter",
+      "CREATE_QUOTATION": "Create Quotation",
+      "ID": "ID",
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "MOBILE": "Mobile",
+      "CAR": "Car",
+      "OWNER_TYPE": "Owner Type",
+      "CURRENT_STATUS": "Current Status",
+      "STATUS_DATE": "Status Date",
+      "STATUS": "Status",
+      "MORE": "More",
+      "CREATED": "Created",
+      "CHANGE_STATUS": "Change Status",
+      "CURRENT": "Current",
+      "MORE_BTN": "More.."
+    }
+  }
 }

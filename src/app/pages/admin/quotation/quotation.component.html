@@ -118,24 +118,24 @@
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header border-bottom-dashed">
-        <h5 class="card-title mb-0">Track Quotation Timeline</h5>
+        <h5 class="card-title mb-0">{{ 'QUOTATION_PAGE.TRACK.TIMELINE_TITLE' | translate }}</h5>
       </div>
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label class="form-label">Quotation ID</label>
+            <label class="form-label">{{ 'QUOTATION_PAGE.TRACK.QUOTATION_ID' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-hashtag"></i></span>
               <input
                 type="number"
                 class="form-control"
-                placeholder="Enter quotation id"
+                [placeholder]="'QUOTATION_PAGE.TRACK.ENTER_ID' | translate"
                 [(ngModel)]="trackQuotationId">
             </div>
           </div>
           <div class="col-md-3">
             <button type="button" class="btn btn-primary w-100" [disabled]="isTracking" (click)="trackByQuotationId()">
-              <span *ngIf="!isTracking"><i class="ri-search-line me-1"></i> Track</span>
+              <span *ngIf="!isTracking"><i class="ri-search-line me-1"></i> {{ 'QUOTATION_PAGE.TRACK.TRACK_BTN' | translate }}</span>
               <span *ngIf="isTracking" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             </button>
           </div>
@@ -160,7 +160,7 @@
 
     <div *ngIf="trackedQuotation" class="card">
       <div class="card-header border-bottom-dashed">
-        <h5 class="card-title mb-0">Timeline</h5>
+        <h5 class="card-title mb-0">{{ 'QUOTATION_PAGE.TRACK.TIMELINE' | translate }}</h5>
       </div>
       <div class="card-body">
         <div class="acitivity-timeline acitivity-main">
@@ -170,16 +170,16 @@
                 <i [class]="getQuotationStatusIcon(item.status)"></i>
               </div>
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div class="flex-grow-1 quotation-track-timeline-content">
               <h6 class="mb-1 lh-base">{{ getQuotationStatusLabel(item.status) }}</h6>
-              <p class="text-muted mb-1">{{ item.notes || 'Status updated' }}</p>
+              <p class="text-muted mb-1">{{ item.notes || ('QUOTATION_PAGE.TRACK.STATUS_UPDATED' | translate) }}</p>
               <small class="mb-0 text-muted">{{ getTimelineStatusTime(item.statusDate) }}</small>
             </div>
           </div>
         </div>
 
         <div *ngIf="trackedTimeline.length === 0" class="text-center text-muted py-3">
-          No timeline records found for this quotation.
+          {{ 'QUOTATION_PAGE.TRACK.NO_TIMELINE' | translate }}
         </div>
       </div>
     </div>
@@ -187,8 +187,8 @@
     <div *ngIf="!isTracking && !trackedQuotation" class="card">
       <div class="card-body text-center py-5">
         <i class="ri-search-eye-line display-5 text-muted mb-3 d-inline-block"></i>
-        <h6 class="mb-1">No tracking search yet</h6>
-        <p class="text-muted mb-0">Enter quotation ID and click Track to view details.</p>
+        <h6 class="mb-1">{{ 'QUOTATION_PAGE.TRACK.EMPTY_TITLE' | translate }}</h6>
+        <p class="text-muted mb-0">{{ 'QUOTATION_PAGE.TRACK.EMPTY_DESC' | translate }}</p>
       </div>
     </div>
   </div>
@@ -202,14 +202,14 @@
           <div class="col-lg-4">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" placeholder="Search by name, email, mobile or id..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'QUOTATION_PAGE.LIST.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-lg-2">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-toggle-line"></i></span>
               <select class="form-select" [ngModel]="selectedStatusFilter" (ngModelChange)="onStatusFilterChange($event)">
-                <option [ngValue]="null">All Status</option>
+                <option [ngValue]="null">{{ 'QUOTATION_PAGE.LIST.ALL_STATUS' | translate }}</option>
                 <option *ngFor="let status of quotationStatusLookups" [ngValue]="status.id">
                   {{ status.nameAr }} - {{ status.nameEn }}
                 </option>
@@ -224,7 +224,7 @@
                 class="form-control"
                 [(ngModel)]="createdFromDate"
                 (ngModelChange)="onDateFilterChange()"
-                placeholder="From">
+                [placeholder]="'QUOTATION_PAGE.LIST.FROM' | translate">
             </div>
           </div>
           <div class="col-lg-2">
@@ -235,17 +235,17 @@
                 class="form-control"
                 [(ngModel)]="createdToDate"
                 (ngModelChange)="onDateFilterChange()"
-                placeholder="To">
+                [placeholder]="'QUOTATION_PAGE.LIST.TO' | translate">
             </div>
           </div>
           <div class="col-lg-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i> Clear Filter
+              <i class="ri-filter-off-line mx-2 align-bottom"></i> {{ 'QUOTATION_PAGE.LIST.CLEAR_FILTER' | translate }}
             </button>
           </div>
           <div class="col-lg-2">
             <a class="btn btn-primary w-100" routerLink="/admin/quotation/create">
-              <i class="ri-add-circle-line me-1 align-bottom"></i> Create Quotation
+              <i class="ri-add-circle-line me-1 align-bottom"></i> {{ 'QUOTATION_PAGE.LIST.CREATE_QUOTATION' | translate }}
             </a>
           </div>
         </div>
@@ -277,19 +277,19 @@
               <tr>
                 <th>
                   <button type="button" class="btn btn-sm btn-ghost-dark p-0" (click)="toggleIdSort()">
-                    ID <i [class]="idSortDirection === 'asc' ? 'ri-sort-asc align-bottom' : 'ri-sort-desc align-bottom'"></i>
+                    {{ 'QUOTATION_PAGE.LIST.ID' | translate }} <i [class]="idSortDirection === 'asc' ? 'ri-sort-asc align-bottom' : 'ri-sort-desc align-bottom'"></i>
                   </button>
                 </th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Car</th>
-                <th>Owner Type</th>
-                <th>Current Status</th>
-                <th>Status Date</th>
-                <th>Status</th>
-                <th>More</th>
-                <th>Created</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.NAME' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.EMAIL' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.MOBILE' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.CAR' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.OWNER_TYPE' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.CURRENT_STATUS' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.STATUS_DATE' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.STATUS' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.MORE' | translate }}</th>
+                <th>{{ 'QUOTATION_PAGE.LIST.CREATED' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -311,11 +311,11 @@
                 <td>
                   <div ngbDropdown container="body" class="d-inline-block">
                     <button class="btn btn-sm btn-soft-primary" ngbDropdownToggle>
-                      <span *ngIf="!isStatusUpdating(item.id)">Change Status</span>
+                      <span *ngIf="!isStatusUpdating(item.id)">{{ 'QUOTATION_PAGE.LIST.CHANGE_STATUS' | translate }}</span>
                       <span *ngIf="isStatusUpdating(item.id)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
                     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
-                      <h6 class="dropdown-header">Current: {{ getQuotationStatusLabel(item.currentStatus) }}</h6>
+                      <h6 class="dropdown-header">{{ 'QUOTATION_PAGE.LIST.CURRENT' | translate }}: {{ getQuotationStatusLabel(item.currentStatus) }}</h6>
                       <button
                         ngbDropdownItem
                         type="button"
@@ -332,7 +332,7 @@
                 </td>
                 <td>
                   <button type="button" class="btn btn-sm btn-soft-info" (click)="openMoreInfoModal(item)">
-                    <i class="ri-more-2-fill align-bottom me-1"></i> More..
+                    <i class="ri-more-2-fill align-bottom me-1"></i> {{ 'QUOTATION_PAGE.LIST.MORE_BTN' | translate }}
                   </button>
                 </td>
                 <td>{{ item.createdAt | date: 'short' }}</td>
