@@ -128,10 +128,22 @@ File: Main Css File
 
 // RTL Set
 [dir="rtl"] {
+  --bs-body-font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
+  --vz-font-sans-serif: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif;
+
   @import "../../rtl/components-rtl";
   @import "../../rtl/layouts-rtl";
   @import "../../rtl/pages-rtl";
   @import "../../rtl/plugins-rtl";
+
+  body,
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, a, li, ul, ol,
+  label, input, textarea, select, button,
+  .form-control, .form-select, .dropdown-item, .nav-link,
+  .card-title, .table, .btn, .breadcrumb {
+    font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif !important;
+  }
 
   // Prevent leftover LTR spacing on Arabic layout content area.
   .main-content {
