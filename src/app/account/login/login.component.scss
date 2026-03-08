@@ -4,18 +4,42 @@
 
 .login-language-switcher {
   margin-inline-start: auto;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
 }
 
 .login-language-switcher .btn-group .btn {
-  border-color: var(--vz-border-color);
+  border-color: transparent;
+  border-radius: 999px !important;
+  padding: 0.35rem 0.7rem;
+  color: #495057;
+  background: transparent;
+  font-weight: 500;
+}
+
+.login-language-switcher .btn-group .btn:hover,
+.login-language-switcher .btn-group .btn:focus {
+  background-color: rgba(var(--vz-primary-rgb), 0.08);
+  color: var(--vz-body-color);
 }
 
 .login-language-switcher .btn-group .btn.active {
   background-color: var(--vz-primary);
   border-color: var(--vz-primary);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(var(--vz-primary-rgb), 0.28);
 }
 
 [dir="rtl"] .login-language-switcher .btn-group {
   flex-direction: row-reverse;
+}
+
+[data-bs-theme="dark"] .login-language-switcher {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-bs-theme="dark"] .login-language-switcher .btn-group .btn {
+  color: #ced4da;
 }

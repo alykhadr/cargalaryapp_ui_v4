@@ -164,6 +164,53 @@
     min-width: 42px;
     height: 42px;
     white-space: nowrap;
+    border: 1px solid var(--#{$prefix}border-color);
+    background-color: var(--#{$prefix}secondary-bg);
+    color: var(--#{$prefix}body-color);
+    padding-inline: 0.6rem !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: rgba(var(--#{$prefix}primary-rgb), 0.45);
+        background-color: rgba(var(--#{$prefix}primary-rgb), 0.08);
+        color: var(--#{$prefix}body-color);
+    }
+}
+
+.language-flag {
+    border: 1px solid var(--#{$prefix}border-color);
+}
+
+.language-menu {
+    min-width: 170px;
+    border-radius: 0.85rem;
+}
+
+.language-menu .dropdown-item.language {
+    margin-bottom: 0.2rem;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.language-menu .dropdown-item.language:last-child {
+    margin-bottom: 0;
+}
+
+.language-menu .dropdown-item.language:hover,
+.language-menu .dropdown-item.language:focus {
+    background-color: rgba(var(--#{$prefix}primary-rgb), 0.08);
+    border-color: rgba(var(--#{$prefix}primary-rgb), 0.28);
+}
+
+.language-menu .dropdown-item.language.active {
+    background-color: rgba(var(--#{$prefix}primary-rgb), 0.14);
+    border-color: rgba(var(--#{$prefix}primary-rgb), 0.35);
+}
+
+.language-item-flag {
+    margin-inline-end: 0.55rem;
+    border: 1px solid var(--#{$prefix}border-color);
 }
 
 .header-profile-user {

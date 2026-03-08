@@ -142,18 +142,18 @@
                     <button type="button" class="btn btn-topbar btn-ghost-secondary language-toggle-btn d-flex align-items-center gap-2 px-2 rounded-pill" dir="ltr" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
                         @if (cookieValue === 'ar') {
                           <span class="fw-medium d-none d-md-inline" dir="ltr">English</span>
-                          <img src="assets/images/flags/us.svg" alt="English" height="20" class="rounded">
+                          <img src="assets/images/flags/us.svg" alt="English" height="20" class="rounded language-flag">
                         } @else {
-                          <img src="assets/images/flags/sa.svg" alt="العربية" height="20" class="rounded">
+                          <img src="assets/images/flags/sa.svg" alt="العربية" height="20" class="rounded language-flag">
                           <span class="fw-medium d-none d-md-inline" dir="rtl">العربية</span>
                         }
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                    <div class="dropdown-menu dropdown-menu-end language-menu p-2" ngbDropdownMenu>
 
                         <!-- item-->
                         @for(item of listLang;track $index){
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language py-2" data-lang="eng" (click)="setLanguage(item.text, item.lang, item.flag)" [ngClass]="{'active': cookieValue === item.lang}">
-                            <img src="{{item.flag}}" alt="user-image" class="me-2 rounded" height="18"> <span class="align-middle" [attr.dir]="item.lang === 'ar' ? 'rtl' : 'ltr'">{{item.text}}</span>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item language py-2 rounded-3 d-flex align-items-center" data-lang="eng" (click)="setLanguage(item.text, item.lang, item.flag)" [ngClass]="{'active': cookieValue === item.lang}">
+                            <img src="{{item.flag}}" alt="user-image" class="language-item-flag rounded" height="18"> <span class="align-middle fw-medium" [attr.dir]="item.lang === 'ar' ? 'rtl' : 'ltr'">{{item.text}}</span>
                         </a>
                         }
                     </div>
