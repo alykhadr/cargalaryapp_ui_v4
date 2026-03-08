@@ -327,6 +327,30 @@
   }
   ,
   "QUOTATION_PAGE": {
+    "CREATE": {
+      "PAGE_TITLE": "Create Quotation",
+      "BACK_TO_LIST": "Back To List",
+      "VEHICLE_OWNER_TYPE": "Vehicle Owner Type",
+      "SELECT_TYPE": "Select type",
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "MOBILE_NO": "Mobile No",
+      "CAR": "Car",
+      "SEARCH_CAR": "Search car",
+      "PAYMENT_METHOD": "Payment Method",
+      "SELECT_PAYMENT_METHOD": "Select payment method",
+      "REGION": "Region",
+      "SEARCH_REGION": "Search region",
+      "CITY": "City",
+      "SEARCH_CITY": "Search city",
+      "USER_ID_OPTIONAL": "User Id (Optional)",
+      "USER_ID_PLACEHOLDER": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "NOTES": "Notes",
+      "REQUIRED": "Required",
+      "VALID_EMAIL": "Valid email required",
+      "SAVING": "Saving...",
+      "SUBMIT": "Create Quotation"
+    },
     "TRACK": {
       "TIMELINE_TITLE": "Track Quotation Timeline",
       "QUOTATION_ID": "Quotation ID",
@@ -339,6 +363,7 @@
       "EMPTY_DESC": "Enter quotation ID and click Track to view details."
     },
     "LIST": {
+      "PAGE_TITLE": "Quotations",
       "SEARCH_PLACEHOLDER": "Search by name, email, mobile or id...",
       "ALL_STATUS": "All Status",
       "FROM": "From",

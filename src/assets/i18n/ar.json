@@ -326,6 +326,30 @@
   }
   ,
   "QUOTATION_PAGE": {
+    "CREATE": {
+      "PAGE_TITLE": "إنشاء عرض سعر",
+      "BACK_TO_LIST": "العودة إلى القائمة",
+      "VEHICLE_OWNER_TYPE": "نوع مالك المركبة",
+      "SELECT_TYPE": "اختر النوع",
+      "NAME": "الاسم",
+      "EMAIL": "البريد الإلكتروني",
+      "MOBILE_NO": "رقم الجوال",
+      "CAR": "السيارة",
+      "SEARCH_CAR": "ابحث عن سيارة",
+      "PAYMENT_METHOD": "طريقة الدفع",
+      "SELECT_PAYMENT_METHOD": "اختر طريقة الدفع",
+      "REGION": "المنطقة",
+      "SEARCH_REGION": "ابحث عن منطقة",
+      "CITY": "المدينة",
+      "SEARCH_CITY": "ابحث عن مدينة",
+      "USER_ID_OPTIONAL": "معرّف المستخدم (اختياري)",
+      "USER_ID_PLACEHOLDER": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "NOTES": "ملاحظات",
+      "REQUIRED": "مطلوب",
+      "VALID_EMAIL": "يرجى إدخال بريد إلكتروني صحيح",
+      "SAVING": "جارٍ الحفظ...",
+      "SUBMIT": "إنشاء عرض سعر"
+    },
     "TRACK": {
       "TIMELINE_TITLE": "تتبع تسلسل عرض السعر",
       "QUOTATION_ID": "رقم عرض السعر",
@@ -338,6 +362,7 @@
       "EMPTY_DESC": "أدخل رقم عرض السعر ثم اضغط تتبع لعرض التفاصيل."
     },
     "LIST": {
+      "PAGE_TITLE": "عروض الأسعار",
       "SEARCH_PLACEHOLDER": "ابحث بالاسم أو البريد أو الجوال أو الرقم...",
       "ALL_STATUS": "كل الحالات",
       "FROM": "من",
