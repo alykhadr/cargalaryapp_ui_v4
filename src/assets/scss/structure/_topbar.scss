@@ -195,6 +195,25 @@
     }
 }
 
+.dropdown-head {
+    .notification-close-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        color: $white;
+        background-color: rgba($white, 0.12);
+        border: 1px solid rgba($white, 0.2);
+
+        &:hover,
+        &:focus,
+        &:active {
+            color: $white;
+            background-color: rgba($white, 0.22);
+            border-color: rgba($white, 0.35);
+        }
+    }
+}
+
 // Dropdown with Icons
 .dropdown-icon-item {
     display: block;

@@ -30,6 +30,7 @@ export class GalleryImagesComponent implements OnInit {
   selectedFile: File | null = null;
   imagePreview: string | null = null;
   Math = Math;
+  submitAttempted = false;
 
   imageTypes: Array<{ value: number; label: string }> = [];
   imageTypeLookups: LookupDetail[] = [];
@@ -134,10 +135,14 @@ export class GalleryImagesComponent implements OnInit {
         this.imagePreview = e.target.result;
       };
       reader.readAsDataURL(file);
+      return;
     }
+    this.selectedFile = null;
+    this.imagePreview = null;
   }
 
   onSubmit(): void {
+    this.submitAttempted = true;
     if (this.isEditMode) {
       this.updateGalleryImage();
     } else {
@@ -242,6 +247,19 @@ export class GalleryImagesComponent implements OnInit {
     };
     this.selectedFile = null;
     this.imagePreview = null;
+    this.submitAttempted = false;
+  }
+
+  get isCarRequiredError(): boolean {
+    return this.submitAttempted && !this.galleryImageForm.carId;
+  }
+
+  get isImageTypeRequiredError(): boolean {
+    return this.submitAttempted && !this.galleryImageForm.imageType;
+  }
+
+  get isImageRequiredError(): boolean {
+    return this.submitAttempted && !this.isEditMode && !this.selectedFile;
   }
 
   getCarDisplay(carId: number): string {

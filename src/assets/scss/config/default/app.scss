@@ -233,4 +233,17 @@ File: Main Css File
     transform: none !important;
     visibility: visible !important;
   }
+
+  // Fix header notifications dropdown alignment/content direction in Arabic.
+  .dropdown-menu[aria-labelledby="page-header-notifications-dropdown"] {
+    left: 0 !important;
+    right: auto !important;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .dropdown-menu[aria-labelledby="page-header-notifications-dropdown"] .avatar-xs.me-3 {
+    margin-left: 1rem !important;
+    margin-right: 0 !important;
+  }
 }

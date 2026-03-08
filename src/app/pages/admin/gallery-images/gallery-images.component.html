@@ -25,7 +25,7 @@
         </div>
 
         <div class="card-body">
-          <form (ngSubmit)="onSubmit()">
+          <form #galleryImageNgForm="ngForm" (ngSubmit)="onSubmit()">
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
@@ -36,11 +36,13 @@
                       <ng-select
                         [(ngModel)]="galleryImageForm.carId"
                         name="carId"
+                        #carIdModel="ngModel"
                         [items]="cars"
                         bindLabel="id"
                         bindValue="id"
                         [searchable]="true"
                         placeholder="Select Car"
+                        [ngClass]="{ 'is-invalid': isCarRequiredError }"
                         required>
                         <ng-template ng-label-tmp let-item="item">
                           #{{ item.id }} - {{ item.nameEn || '-' }} / {{ item.nameAr || '-' }}
@@ -54,36 +56,52 @@
                       </ng-select>
                     </div>
                   </div>
+                  <div *ngIf="isCarRequiredError" class="invalid-feedback d-block">
+                    Car is required.
+                  </div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label class="form-label">Image Type</label>
+                  <label class="form-label">Image Type <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <span class="input-group-text"><i class="ri-gallery-line"></i></span>
-                    <select class="form-select" [(ngModel)]="galleryImageForm.imageType" name="imageType">
+                    <select class="form-select"
+                            [(ngModel)]="galleryImageForm.imageType"
+                            name="imageType"
+                            #imageTypeModel="ngModel"
+                            [ngClass]="{ 'is-invalid': isImageTypeRequiredError }"
+                            required>
                       <option [ngValue]="null">Select Type</option>
                       <option *ngFor="let type of imageTypes" [ngValue]="type.value">{{ type.label }}</option>
                     </select>
                   </div>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mb-3">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" [(ngModel)]="galleryImageForm.isPrimary" name="isPrimary" id="isPrimary">
-                    <label class="form-check-label" for="isPrimary">
-                      Set as Primary Image
-                    </label>
+                  <div *ngIf="isImageTypeRequiredError" class="invalid-feedback d-block">
+                    Image type is required.
                   </div>
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="mb-3">
-                  <label class="form-label">Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="form-label mb-0">Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
+                    <div class="form-check mb-0">
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="galleryImageForm.isPrimary" name="isPrimary" id="isPrimary">
+                      <label class="form-check-label" for="isPrimary">
+                        Set as Primary Image
+                      </label>
+                    </div>
+                  </div>
                   <div class="input-group">
                     <span class="input-group-text"><i class="ri-image-2-line"></i></span>
-                    <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
+                    <input type="file"
+                           class="form-control"
+                           [ngClass]="{ 'is-invalid': isImageRequiredError }"
+                           (change)="onFileSelected($event)"
+                           accept="image/*">
+                  </div>
+                  <div *ngIf="isImageRequiredError" class="invalid-feedback d-block">
+                    Image is required.
                   </div>
                   <div *ngIf="imagePreview" class="mt-2">
                     <img [src]="imagePreview" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
