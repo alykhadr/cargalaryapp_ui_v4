@@ -913,7 +913,7 @@
                                     [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'stockQuantity')"
                                     [(ngModel)]="cc.stockQuantity" [ngModelOptions]="{ standalone: true }" min="0">
                                 </div>
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'stockQuantity')">Required</div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'stockQuantity')">Stock quantity is required.</div>
                               </div>
                               <div class="col-md-3">
                                 <label class="form-label mb-1">Pricing</label>
@@ -923,7 +923,7 @@
                                     [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')"
                                     [(ngModel)]="cc.pricingPerColor" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
                                 </div>
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')">Required</div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricingPerColor')">Pricing is required.</div>
                               </div>
                               <div class="col-md-3">
                                 <label class="form-label mb-1">Price Before</label>
@@ -933,7 +933,7 @@
                                     [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'pricePefore')"
                                     [(ngModel)]="cc.pricePefore" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
                                 </div>
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricePefore')">Required</div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'pricePefore')">Price before is required.</div>
                               </div>
                               <div class="col-md-3">
                                 <label class="form-label mb-1">Discount</label>
@@ -943,7 +943,7 @@
                                     [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'discount')"
                                     [(ngModel)]="cc.discount" [ngModelOptions]="{ standalone: true }" min="0" step="0.01">
                                 </div>
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discount')">Required</div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discount')">Discount is required.</div>
                               </div>
                               <div class="col-md-3">
                                 <label class="form-label mb-1">Type</label>
@@ -954,7 +954,7 @@
                                   <option [ngValue]="0">Percentage</option>
                                   <option [ngValue]="1">Fixed</option>
                                 </select>
-                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discountType')">Required</div>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'discountType')">Discount type is required.</div>
                               </div>
                               <div class="col-md-3">
                                 <label class="form-label mb-1">VAT Amount</label>
@@ -986,7 +986,7 @@
                                     Preview
                                   </button>
                                 </div>
-                                <div class="invalid-feedback d-block" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorImage')">Required</div>
+                                <div class="invalid-feedback d-block" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorImage')">Image color is required.</div>
                               </div>
                               <div class="col-md-4">
                                 <label class="form-label d-block mb-1">Available</label>
@@ -1013,7 +1013,7 @@
               </div>
 
               <div class="invalid-feedback d-block mt-2" *ngIf="shouldShowColorSelectionError()">
-                Required
+                Please select at least one color before proceeding to the next tab.
               </div>
 
                   <div class="d-flex align-items-start gap-3 mt-4">
@@ -1230,10 +1230,10 @@
                               Preview
                             </button>
                           </div>
-                          <small class="d-block mt-1"
-                            [ngClass]="isImageFileInputInvalid() ? 'text-danger' : 'invisible'">
+                          <div class="invalid-feedback d-block mt-1"
+                            [class.invisible]="!isImageFileInputInvalid()">
                             {{ getImageFileInputErrorMessage() }}
-                          </small>
+                          </div>
                         </div>
                         <div class="col-md-4">
                           <label class="form-label d-block invisible mb-1">Spacer</label>
@@ -1267,14 +1267,15 @@
                                 [ngModelOptions]="{ standalone: true }"
                                 placeholder="Select Type"
                                 [clearable]="true"
-                                [searchable]="true">
+                                [searchable]="true"
+                                [ngClass]="{ 'is-invalid': isImageTypeInputInvalid() }">
                               </ng-select>
                             </div>
                           </div>
-                          <small class="d-block mt-1"
-                            [ngClass]="isImageTypeInputInvalid() ? 'text-danger' : 'invisible'">
+                          <div class="invalid-feedback d-block mt-1"
+                            [class.invisible]="!isImageTypeInputInvalid()">
                             Image type is required.
-                          </small>
+                          </div>
                         </div>
                         <div class="col-md-4">
                           <label class="form-label d-block invisible mb-1">Spacer</label>
@@ -2337,7 +2338,8 @@
                   [ngModelOptions]="{ standalone: true }"
                   placeholder="Select Type"
                   [searchable]="true"
-                  [clearable]="true">
+                  [clearable]="true"
+                  [ngClass]="{ 'is-invalid': isExtraDetailDraftFieldInvalid('type') }">
                   <ng-template ng-label-tmp let-item="item">
                     <span>{{ item.name }}</span>
                     <span class="text-muted"> - </span>
@@ -2353,7 +2355,7 @@
                 </ng-select>
               </div>
             </div>
-            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('type')">Type is required.</small>
+            <div class="invalid-feedback d-block" *ngIf="isExtraDetailDraftFieldInvalid('type')">Type is required.</div>
           </div>
           <div class="col-12">
             <label class="form-label">Name (AR) <span class="text-danger">*</span></label>
@@ -2365,7 +2367,7 @@
                 [ngModelOptions]="{ standalone: true }"
                 placeholder="الاسم بالعربية">
             </div>
-            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameAr')">Name (AR) is required.</small>
+            <div class="invalid-feedback d-block" *ngIf="isExtraDetailDraftFieldInvalid('nameAr')">Name (AR) is required.</div>
           </div>
           <div class="col-12">
             <label class="form-label">Name (EN) <span class="text-danger">*</span></label>
@@ -2377,7 +2379,7 @@
                 [ngModelOptions]="{ standalone: true }"
                 placeholder="e.g. Warranty">
             </div>
-            <small class="text-danger" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</small>
+            <div class="invalid-feedback d-block" *ngIf="isExtraDetailDraftFieldInvalid('nameEn')">Name (EN) is required.</div>
           </div>
           <div class="col-12">
             <label class="form-label">Description (EN)</label>
