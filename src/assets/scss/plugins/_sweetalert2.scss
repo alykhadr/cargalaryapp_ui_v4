@@ -61,6 +61,75 @@
   }
 }
 
+// Improve warning/delete dialog clarity when using custom lord-icon in `iconHtml`.
+.swal2-popup {
+  min-width: 22rem;
+  border: 1px solid var(--#{$prefix}border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  .swal2-title {
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.2px;
+  }
+
+  .swal2-html-container {
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .swal2-icon.swal2-warning {
+    border: 0;
+    background: transparent;
+    width: 7.25rem;
+    height: 7.25rem;
+    margin: 0.5rem auto 1rem;
+
+    .swal2-icon-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: initial;
+
+      lord-icon {
+        width: 100px !important;
+        height: 100px !important;
+      }
+    }
+  }
+
+  .swal2-actions {
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .swal2-styled.swal2-confirm,
+  .swal2-styled.swal2-cancel {
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-weight: $font-weight-medium;
+    min-width: 7.5rem;
+  }
+
+  .swal2-styled.swal2-confirm {
+    background-color: #f06548 !important;
+    color: #fff !important;
+  }
+
+  .swal2-styled.swal2-cancel {
+    background-color: #74788d !important;
+    color: #fff !important;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .swal2-popup {
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
 .swal2-loader{
   border-color: $primary transparent $primary transparent;
 }

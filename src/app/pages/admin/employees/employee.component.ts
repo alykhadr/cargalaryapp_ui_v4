@@ -395,6 +395,7 @@ export class EmployeeComponent implements OnInit {
       title: `Delete ${user.userName}?`,
       text: 'This action cannot be undone.',
       icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonText: 'Delete'
     });
@@ -897,6 +898,7 @@ export class EmployeeComponent implements OnInit {
       title: 'Are you sure?',
       text: `Delete ${this.selectedUserIds.size} selected employee(s)?`,
       icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delete!',
       cancelButtonText: 'Cancel',

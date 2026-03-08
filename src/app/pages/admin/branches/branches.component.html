@@ -18,7 +18,7 @@
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
               <button *appHasPermission="'branches.delete'" class="btn btn-soft-danger" id="remove-actions" style="display: none"
-                (click)="deleteMultiple(deleteModel)"><i class="ri-delete-bin-2-line"></i></button>
+                (click)="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
               <button *appHasPermission="'branches.create'" type="button" class="btn btn-success add-btn" data-bs-toggle="modal"
                 id="create-btn" data-bs-target="#showModal" (click)="openModal(content)">
                 <i class="ri-add-line align-bottom me-1"></i> Add Branch
@@ -150,8 +150,7 @@
                       </a>
                     </li>
                     <li class="list-inline-item me-0" ngbTooltip="Remove" placement="top" *appHasPermission="'branches.delete'">
-                      <a href="javascript:void(0);" class="text-danger d-inline-block remove-item-btn"
-                        data-bs-toggle="modal" data-bs-target="#deleteRecordModal" (click)="confirm(deleteModel, branch.id)">
+                      <a href="javascript:void(0);" class="text-danger d-inline-block remove-item-btn" (click)="confirm(branch.id)">
                         <i class="ri-delete-bin-5-fill fs-16"></i>
                       </a>
                     </li>

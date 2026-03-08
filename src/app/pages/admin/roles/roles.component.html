@@ -16,7 +16,7 @@
                     <div class="col-sm-auto">
                         <div class="d-flex flex-wrap align-items-start gap-2">
                             <button *appHasPermission="'roles.delete'" class="btn btn-soft-danger" id="remove-actions" style="display: none"
-                                (click)="deleteMultiple(deleteModel)"><i class="ri-delete-bin-2-line"></i></button>
+                                (click)="deleteMultiple()"><i class="ri-delete-bin-2-line"></i></button>
                             <button *appHasPermission="'roles.create'" type="button" class="btn btn-success add-btn" data-bs-toggle="modal" id="create-btn"
                                 data-bs-target="#showModal" (click)="openModal(content)"><i
                                     class="ri-add-line align-bottom me-1"></i> Add Role</button>
@@ -129,7 +129,7 @@
                                             <li class="list-inline-item edit" ngbTooltip="Edit" placement="top" *appHasPermission="'roles.edit'">
                                                 <a href="javascript:void(0);" data-bs-toggle="modal"
                                                     class="text-primary d-inline-block edit-item-btn"
-                                                    (click)="editDataGet($index,content)">
+                                                    (click)="editDataGet(role, content)">
                                                     <i class="ri-pencil-fill fs-16"></i>
                                                 </a>
                                             </li>
@@ -141,10 +141,8 @@
                                                 </a>
                                             </li>
                                             <li class="list-inline-item me-0" ngbTooltip="Remove" placement="top" *appHasPermission="'roles.delete'">
-                                                <a href="javascript:void(0);"
-                                                    class="text-danger d-inline-block remove-item-btn"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteRecordModal"
-                                                    (click)="confirm(deleteModel,role.id)">
+                                                <a href="javascript:void(0);" class="text-danger d-inline-block remove-item-btn"
+                                                    (click)="confirm(role.id)">
                                                     <i class="ri-delete-bin-5-fill fs-16"></i>
                                                 </a>
                                             </li>
@@ -179,7 +177,7 @@
                 <!-- Customer Create Model -->
                 <ng-template #content role="document" let-modal>
                     <div class="modal-header bg-light p-3">
-                        <h5 class="modal-title" id="exampleModalLabel">Add Role</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">{{ isEditMode ? 'Edit Role' : 'Add Role' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             id="close-modal" (click)="closeModal()"></button>
                     </div>
@@ -204,8 +202,7 @@
                                   <div class="form-control d-flex align-items-center">
                                     <div class="form-check form-switch form-switch-lg mb-0" dir="ltr">
                                       <input type="checkbox" class="form-check-input" id="Switchsizelg"
-                                        [checked]="roleForm.get('isActive')?.value"
-                                        (change)="roleForm.get('isActive')?.setValue($event.target.checked)">
+                                        formControlName="isActive">
                                     </div>
                                   </div>
                                 </div>
@@ -244,7 +241,7 @@
                                         </span>
 
                                         <span class="flex-grow-1 ms-2">
-                                            {{ isLoading ? 'Adding...' : 'Add Role' }}
+                                            {{ isLoading ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Role' : 'Add Role') }}
                                         </span>
 
                                     </span>

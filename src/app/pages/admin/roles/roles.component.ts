@@ -29,6 +29,7 @@ export class RolesComponent {
   checkedList: any;
   content?: any;
   active: boolean = true;
+  isEditMode = false;
 
   deleteId: string = '';
 
@@ -79,7 +80,7 @@ export class RolesComponent {
     this.roleForm = this.formBuilder.group({
       _id: [''],
       roleName: ['', [Validators.required]],
-      isActive: [this.active]
+      isActive: [true]
     });
   }
   getRoles() {
@@ -272,9 +273,22 @@ export class RolesComponent {
 
 
 
-  confirm(content: any, id: string) {
-    this.deleteId = id;
-    this.modalService.open(content, { centered: true });
+  async confirm(id: string) {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you sure you want to remove this record?',
+      icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete It!',
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    });
+
+    if (result.isConfirmed) {
+      this.deleteData(id);
+    }
   }
 
   // Delete Data
@@ -288,7 +302,6 @@ export class RolesComponent {
             this.isLoading = false;
 
 
-            this.modalService.dismissAll();
             this.openSuccessModal('deleted');
 
 
@@ -334,23 +347,29 @@ export class RolesComponent {
   * Multiple Delete
   */
   checkedValGet: any[] = [];
-  deleteMultiple(content: any) {
-    var checkboxes: any = document.getElementsByName('checkAll');
-    var result
-    var checkedVal: any[] = [];
-    for (var i = 0; i < checkboxes.length; i++) {
-      if (checkboxes[i].checked) {
-        result = checkboxes[i].value;
-        checkedVal.push(result);
-      }
-    }
-    if (checkedVal.length > 0) {
-      this.modalService.open(content, { centered: true });
-    }
-    else {
+  async deleteMultiple() {
+    const checkedVal = this.roles.filter(r => r.state).map(r => r.id);
+    if (checkedVal.length === 0) {
       Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+      return;
     }
+
     this.checkedValGet = checkedVal;
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Are you sure you want to remove this record?',
+      icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Delete It!',
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#f06548',
+      cancelButtonColor: '#74788d'
+    });
+
+    if (result.isConfirmed) {
+      this.deleteData('');
+    }
   }
 
   /**
@@ -359,6 +378,13 @@ export class RolesComponent {
 */
   openModal(content: any) {
     this.submitted = false;
+    this.isEditMode = false;
+    this.role = undefined;
+    this.roleForm.patchValue({
+      _id: '',
+      roleName: '',
+      isActive: true
+    });
     this.modalService.open(content, { size: 'md', centered: true });
   }
 
@@ -412,13 +438,16 @@ export class RolesComponent {
       return;
     }
     this.isLoading = true;
-    const roleIds = this.checkedValGet;
+    const roleIds = this.checkedValGet.map((x: any) => typeof x === 'string' ? x : x?.id).filter(Boolean);
+    if (roleIds.length === 0) {
+      this.isLoading = false;
+      return;
+    }
     this.roleService.deleteRoles(roleIds)
       .pipe(first())
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.modalService.dismissAll();
           this.openSuccessModal('deleted');
 
         },
@@ -445,25 +474,31 @@ export class RolesComponent {
    * Open Edit modal
    * @param content modal content
    */
-  editDataGet(id: any, content: any) {
+  editDataGet(role: Role, content: any) {
 
     this.submitted = false;
+    this.isEditMode = true;
     this.modalService.open(content, { size: 'md', centered: true });
-
-    var modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
-    modelTitle.innerHTML = 'Edit Role';
-    var updateBtn = document.getElementById('add-btn') as HTMLAreaElement;
-    updateBtn.innerHTML = "Update";
-    this.role = this.rolesList[id];
-    this.roleForm.controls['roleName'].setValue(this.role.name);
-    this.roleForm.controls['_id'].setValue(this.role.id);
-    this.roleForm.controls['isActive'].setValue(!!this.role.isActive);
+    this.role = role;
+    this.roleForm.patchValue({
+      roleName: role.name ?? '',
+      _id: role.id ?? '',
+      isActive: !!role.isActive
+    });
 
   }
 
   closeModal() {
     this.modalService.dismissAll();
-    this.roleForm.reset();
+    this.isEditMode = false;
+    this.role = undefined;
+    this.roleForm.patchValue({
+      _id: '',
+      roleName: '',
+      isActive: true
+    });
+    this.roleForm.markAsPristine();
+    this.roleForm.markAsUntouched();
   }
 
   openRoleUsersModal(content: any, role: Role) {

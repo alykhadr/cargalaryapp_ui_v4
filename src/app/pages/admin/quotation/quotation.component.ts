@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@an
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { first } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
 import { Car } from '../interfaces/car.interface';
@@ -280,12 +281,12 @@ export class QuotationComponent implements OnInit, OnDestroy {
           this.quotations[idx] = { ...this.quotations[idx], ...updated };
         }
         this.applyFilters(false);
-        this.showSuccess('Quotation status updated successfully');
+        this.showStatusUpdateSuccess();
         this.statusUpdatingByQuotationId.delete(item.id);
       },
       error: (error) => {
         this.statusUpdatingByQuotationId.delete(item.id);
-        this.showError(error);
+        this.showStatusUpdateError(error);
       }
     });
   }
@@ -387,6 +388,28 @@ export class QuotationComponent implements OnInit, OnDestroy {
     this.toastService.show(message, {
       classname: 'bg-danger text-white',
       delay: 3000
+    });
+  }
+
+  private showStatusUpdateSuccess() {
+    void Swal.fire({
+      icon: 'success',
+      title: 'Status Updated',
+      text: 'Quotation status updated successfully',
+      confirmButtonText: 'OK'
+    });
+  }
+
+  private showStatusUpdateError(error: any) {
+    const raw = this.errorMessageService.getMessage(error);
+    const match = raw.match(/^(\d+)\s*-\s*(.+)$/);
+    const message = match ? match[2] : raw;
+    const codeLine = match ? `<div style="margin-top:8px;font-size:12px;color:#6c757d;">Code: ${match[1]}</div>` : '';
+    void Swal.fire({
+      icon: 'error',
+      title: 'Status Update Failed',
+      html: `<div>${message}</div>${codeLine}`,
+      confirmButtonText: 'OK'
     });
   }
 

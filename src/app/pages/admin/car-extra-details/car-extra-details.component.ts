@@ -281,8 +281,9 @@ export class CarExtraDetailsComponent implements OnInit {
   deleteExtraDetail(extraDetail: CarExtraDetails) {
     Swal.fire({
       title: 'Are you sure?',
-      text: 'Are you sure you want to remove this extra detail?',
+      text: 'Are you sure you want to remove this record?',
       icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delete It!',
       cancelButtonText: 'Close',
@@ -343,6 +344,7 @@ export class CarExtraDetailsComponent implements OnInit {
       title: 'Are you sure?',
       text: `Delete ${this.selectedExtraDetailIds.size} selected extra detail(s)?`,
       icon: 'warning',
+      iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonText: 'Yes, Delete!',
       cancelButtonText: 'Cancel',
