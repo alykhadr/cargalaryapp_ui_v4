@@ -9,6 +9,7 @@ import { CarModelService } from '../services/car-model.service';
 import { CarModel } from '../interfaces/car-model.interface';
 import { BrandService } from '../services/brand.service';
 import { Brand } from '../interfaces/brand.interface';
+import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
   selector: 'app-gallery-images',
@@ -164,7 +165,7 @@ export class GalleryImagesComponent implements OnInit {
         this.loadGalleryImages();
       },
       error: (error) => {
-        const errorMsg = error.error?.join(', ') || 'Error creating gallery image';
+        const errorMsg = getErrorMessage(error, 'Error creating gallery image');
         Swal.fire('Error', errorMsg, 'error');
       }
     });
@@ -190,7 +191,7 @@ export class GalleryImagesComponent implements OnInit {
         this.loadGalleryImages();
       },
       error: (error) => {
-        const errorMsg = error.error?.join(', ') || 'Error updating gallery image';
+        const errorMsg = getErrorMessage(error, 'Error updating gallery image');
         Swal.fire('Error', errorMsg, 'error');
       }
     });

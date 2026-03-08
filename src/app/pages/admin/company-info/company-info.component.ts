@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CompanyInfoService } from '../services/company-info.service';
 import { CompanyInfo, CreateCompanyInfoRequest, UpdateCompanyInfoRequest } from '../interfaces/company-info.interface';
 import Swal from 'sweetalert2';
+import { getErrorMessage } from '../shared/error-message.util';
 
 @Component({
   selector: 'app-company-info',
@@ -198,7 +199,7 @@ export class CompanyInfoComponent implements OnInit {
         this.loadCompanyInfos();
       },
       error: (error) => {
-        const errorMsg = error.error?.join(', ') || 'Error creating company info';
+        const errorMsg = getErrorMessage(error, 'Error creating company info');
         Swal.fire('Error', errorMsg, 'error');
       }
     });
@@ -219,7 +220,7 @@ export class CompanyInfoComponent implements OnInit {
         this.loadCompanyInfos();
       },
       error: (error) => {
-        const errorMsg = error.error?.join(', ') || 'Error updating company info';
+        const errorMsg = getErrorMessage(error, 'Error updating company info');
         Swal.fire('Error', errorMsg, 'error');
       }
     });

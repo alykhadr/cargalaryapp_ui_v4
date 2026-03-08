@@ -10,8 +10,8 @@ import { Quotation, QuotationHistory } from '../interfaces/quotation.interface';
 import { CarService } from '../services/car.service';
 import { LookupService } from '../services/lookup.service';
 import { QuotationService } from '../services/quotation.service';
-import { getErrorMessage } from '../shared/error-message.util';
 import { QuotationRealtimeService } from '../services/quotation-realtime.service';
+import { ErrorMessageService } from '../shared/error-message.service';
 
 @Component({
   selector: 'app-quotation',
@@ -64,7 +64,8 @@ export class QuotationComponent implements OnInit, OnDestroy {
     private quotationRealtimeService: QuotationRealtimeService,
     private carService: CarService,
     private lookupService: LookupService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private errorMessageService: ErrorMessageService
   ) {}
 
   ngOnInit(): void {
@@ -382,7 +383,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   }
 
   private showError(error: any) {
-    const message = getErrorMessage(error);
+    const message = this.errorMessageService.getMessage(error);
     this.toastService.show(message, {
       classname: 'bg-danger text-white',
       delay: 3000

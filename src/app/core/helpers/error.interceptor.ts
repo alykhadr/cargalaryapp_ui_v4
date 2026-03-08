@@ -30,7 +30,13 @@ export class ErrorInterceptor implements HttpInterceptor {
                     ? apiErrors.join(', ')
                     : err?.error?.message || err?.error?.error || err?.message || err?.statusText || 'Something went wrong';
 
-            return throwError(() => message);
+            // Keep structured backend payload (errorCode/messageAr/messageEn) for UI localization.
+            if (err?.error && typeof err.error === 'object') {
+                err.error.message = message;
+                return throwError(() => err);
+            }
+
+            return throwError(() => ({ message }));
         }))
     }
 }
