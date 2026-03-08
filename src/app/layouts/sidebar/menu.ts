@@ -41,13 +41,6 @@ export const MENU: MenuItem[] = [
     isTitle: true
   },
   {
-    id: 181,
-    label: 'MENUITEMS.ADMIN.LIST.ROLE',
-    link: '/admin/roles',
-    icon: 'ri-shield-user-line',
-    permission: 'roles.view'
-  },
-  {
     id: 182,
     label: 'MENUITEMS.ADMIN.LIST.BRANCH',
     link: '/admin/branches',
@@ -60,6 +53,13 @@ export const MENU: MenuItem[] = [
     link: '/admin/departments',
     icon: 'ri-building-4-line',
     permission: 'departments.view'
+  },
+  {
+    id: 181,
+    label: 'MENUITEMS.ADMIN.LIST.ROLE',
+    link: '/admin/roles',
+    icon: 'ri-shield-user-line',
+    permission: 'roles.view'
   },
   {
     id: 183,
@@ -83,6 +83,13 @@ export const MENU: MenuItem[] = [
     permission: 'brands.view'
   },
   {
+    id: 195,
+    label: 'MENUITEMS.ADMIN.LIST.MODEL',
+    link: '/admin/models',
+    icon: 'ri-shapes-line',
+    permission: 'models.view'
+  },
+  {
     id: 186,
     label: 'MENUITEMS.ADMIN.LIST.COLOR',
     link: '/admin/colors',
@@ -90,11 +97,46 @@ export const MENU: MenuItem[] = [
     permission: 'colors.view'
   },
   {
-    id: 187,
-    label: 'MENUITEMS.ADMIN.LIST.GALLERYIMAGE',
-    link: '/admin/gallery-images',
-    icon: 'ri-image-line',
-    permission: 'galleryimages.view'
+    id: 196,
+    label: 'MENUITEMS.ADMIN.LIST.CAREXTRADETAILS',
+    link: '/admin/car-extra-details',
+    icon: 'ri-file-list-3-line',
+    permission: 'carextradetails.view'
+  },
+  {
+    id: 197,
+    label: 'MENUITEMS.ADMIN.LIST.CARTYPE',
+    link: '/admin/car-types',
+    icon: 'ri-list-check-2',
+    permission: 'types.view'
+  },
+  {
+    id: 1981,
+    label: 'Cars',
+    link: '/admin/cars/list',
+    icon: 'ri-car-line',
+    permission: 'cars.view'
+  },
+  {
+    id: 194,
+    label: 'MENUITEMS.ADMIN.LIST.SERVICE',
+    link: '/admin/services',
+    icon: 'ri-settings-3-line',
+    permission: 'services.view'
+  },
+  {
+    id: 192,
+    label: 'MENUITEMS.ADMIN.LIST.MEMBERSERVICE',
+    link: '/admin/member-services',
+    icon: 'ri-service-line',
+    permission: 'memberservices.view'
+  },
+  {
+    id: 193,
+    label: 'MENUITEMS.ADMIN.LIST.OFFER',
+    link: '/admin/offers',
+    icon: 'ri-price-tag-3-line',
+    permission: 'offers.view'
   },
   {
     id: 188,
@@ -125,52 +167,10 @@ export const MENU: MenuItem[] = [
     permission: 'faq.view'
   },
   {
-    id: 192,
-    label: 'MENUITEMS.ADMIN.LIST.MEMBERSERVICE',
-    link: '/admin/member-services',
-    icon: 'ri-service-line',
-    permission: 'memberservices.view'
-  },
-  {
-    id: 193,
-    label: 'MENUITEMS.ADMIN.LIST.OFFER',
-    link: '/admin/offers',
-    icon: 'ri-price-tag-3-line',
-    permission: 'offers.view'
-  },
-  {
-    id: 194,
-    label: 'MENUITEMS.ADMIN.LIST.SERVICE',
-    link: '/admin/services',
-    icon: 'ri-settings-3-line',
-    permission: 'services.view'
-  },
-  {
-    id: 195,
-    label: 'MENUITEMS.ADMIN.LIST.MODEL',
-    link: '/admin/models',
-    icon: 'ri-shapes-line',
-    permission: 'models.view'
-  },
-  {
-    id: 196,
-    label: 'MENUITEMS.ADMIN.LIST.CAREXTRADETAILS',
-    link: '/admin/car-extra-details',
-    icon: 'ri-file-list-3-line',
-    permission: 'carextradetails.view'
-  },
-  {
-    id: 197,
-    label: 'MENUITEMS.ADMIN.LIST.CARTYPE',
-    link: '/admin/car-types',
-    icon: 'ri-list-check-2',
-    permission: 'types.view'
-  },
-  {
-    id: 1981,
-    label: 'Cars',
-    link: '/admin/cars/list',
-    icon: 'ri-car-line',
-    permission: 'cars.view'
+    id: 187,
+    label: 'MENUITEMS.ADMIN.LIST.GALLERYIMAGE',
+    link: '/admin/gallery-images',
+    icon: 'ri-image-line',
+    permission: 'galleryimages.view'
   }
 ];
