@@ -450,7 +450,8 @@ export class QuotationComponent implements OnInit, OnDestroy {
     } catch {
       this.toastService.show('Realtime notifications unavailable right now.', {
         classname: 'bg-warning text-dark',
-        delay: 3000
+        delay: 3000,
+        nativeToast: true
       });
     }
   }

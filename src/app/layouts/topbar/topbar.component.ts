@@ -30,6 +30,7 @@ export class TopbarComponent implements OnInit {
   quotationNotifications: QuotationNotificationItem[] = [];
   notificationCount = 0;
   isLoadingNotifications = false;
+  notificationsLoadFailed = false;
   flagvalue: any;
   valueset: any;
   countryName: any;
@@ -220,6 +221,7 @@ export class TopbarComponent implements OnInit {
 
   private loadQuotationNotifications() {
     this.isLoadingNotifications = true;
+    this.notificationsLoadFailed = false;
     this.http.get<QuotationNotificationsResponse>(`${GlobalComponent.API_URL}/api/Quotations/notifications`)
       .pipe(first())
       .subscribe({
@@ -227,11 +229,13 @@ export class TopbarComponent implements OnInit {
           this.notificationCount = response?.count ?? 0;
           this.quotationNotifications = response?.items ?? [];
           this.isLoadingNotifications = false;
+          this.notificationsLoadFailed = false;
         },
         error: () => {
           this.notificationCount = 0;
           this.quotationNotifications = [];
           this.isLoadingNotifications = false;
+          this.notificationsLoadFailed = true;
         }
       });
   }

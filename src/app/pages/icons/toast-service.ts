@@ -6,6 +6,14 @@ export class ToastService {
   toasts: any[] = [];
 
   show(textOrTpl: string | TemplateRef<any>, options: any = {}) {
+    const classname = String(options?.classname || '').toLowerCase();
+    const forceNativeForError = classname.includes('danger') || classname.includes('error');
+
+    if (options?.nativeToast || forceNativeForError) {
+      this.toasts.push({ textOrTpl, ...options });
+      return;
+    }
+
     if (typeof textOrTpl !== 'string') {
       // Keep template-based notifications working (realtime cards).
       this.toasts.push({ textOrTpl, ...options });

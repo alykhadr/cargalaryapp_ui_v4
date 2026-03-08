@@ -197,6 +197,13 @@
                           <ngx-simplebar style="max-height: 300px;">
                             @if (isLoadingNotifications) {
                               <div class="text-center py-4 text-muted">Loading...</div>
+                            } @else if (notificationsLoadFailed) {
+                              <div class="text-center py-4">
+                                <div class="mb-2">
+                                  <i class="bx bx-error-circle fs-1 text-warning"></i>
+                                </div>
+                                <h6 class="fs-16 fw-semibold lh-base mb-0">Realtime notifications unavailable right now.</h6>
+                              </div>
                             } @else if (notificationCount === 0) {
                               <div class="text-center py-4">
                                 <div class="mb-2">

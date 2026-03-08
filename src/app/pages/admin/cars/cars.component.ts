@@ -3277,7 +3277,8 @@ export class CarsComponent implements OnInit, OnDestroy {
     } catch {
       this.toastService.show('Car realtime notifications unavailable right now.', {
         classname: 'bg-warning text-dark',
-        delay: 3000
+        delay: 3000,
+        nativeToast: true
       });
     }
   }
