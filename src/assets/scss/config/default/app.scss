@@ -132,4 +132,25 @@ File: Main Css File
   @import "../../rtl/layouts-rtl";
   @import "../../rtl/pages-rtl";
   @import "../../rtl/plugins-rtl";
+
+  // Prevent leftover LTR spacing on Arabic layout content area.
+  .main-content {
+    margin-left: 0 !important;
+  }
+
+  [data-layout="vertical"] .main-content,
+  [data-layout="twocolumn"] .main-content,
+  [data-layout="horizontal"] .main-content {
+    margin-left: 0 !important;
+  }
+
+  // Keep top header aligned in Arabic without leftover left gap.
+  #page-topbar {
+    left: 0 !important;
+  }
+
+  .navbar-header {
+    padding-left: calc(#{$grid-gutter-width} * 0.5) !important;
+    padding-right: $grid-gutter-width !important;
+  }
 }
