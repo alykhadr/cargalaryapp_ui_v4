@@ -121,29 +121,23 @@
                                         </span>
                                     </td>
                                     <td>
-
-                                        <ul class="list-inline hstack gap-2 mb-0">
-                                            <li class="list-inline-item edit" [ngbTooltip]="'COMMON.EDIT' | translate" placement="top" *appHasPermission="'roles.edit'">
-                                                <a href="javascript:void(0);" data-bs-toggle="modal"
-                                                    class="text-primary d-inline-block edit-item-btn"
-                                                    (click)="editDataGet(role, content)">
-                                                    <i class="ri-pencil-fill fs-16"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item" [ngbTooltip]="'COMMON.VIEW' | translate" placement="top" *appHasPermission="'roles.view'">
-                                                <a href="javascript:void(0);"
-                                                    class="text-info d-inline-block"
-                                                    (click)="openRoleUsersModal(roleUsersModal, role)">
-                                                    <i class="ri-group-line fs-16"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item me-0" [ngbTooltip]="'COMMON.DELETE' | translate" placement="top" *appHasPermission="'roles.delete'">
-                                                <a href="javascript:void(0);" class="text-danger d-inline-block remove-item-btn"
-                                                    (click)="confirm(role.id)">
-                                                    <i class="ri-delete-bin-5-fill fs-16"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <div class="d-flex gap-2">
+                                            <button *appHasPermission="'roles.edit'" class="btn btn-sm btn-soft-primary" type="button"
+                                                [ngbTooltip]="'COMMON.EDIT' | translate" placement="top"
+                                                (click)="editDataGet(role, content)">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button *appHasPermission="'roles.view'" class="btn btn-sm btn-soft-info" type="button"
+                                                [ngbTooltip]="'COMMON.VIEW' | translate" placement="top"
+                                                (click)="openRoleUsersModal(roleUsersModal, role)">
+                                                <i class="ri-group-line"></i>
+                                            </button>
+                                            <button *appHasPermission="'roles.delete'" class="btn btn-sm btn-soft-danger" type="button"
+                                                [ngbTooltip]="'COMMON.DELETE' | translate" placement="top"
+                                                (click)="confirm(role.id)">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 }

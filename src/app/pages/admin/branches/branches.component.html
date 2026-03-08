@@ -127,34 +127,33 @@
                   </span>
                 </td>
                 <td>
-                  <ul class="list-inline hstack gap-2 mb-0">
-                    <li class="list-inline-item" [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_WORKING_DAYS' | translate" placement="top">
-                      <a href="javascript:void(0);" class="text-info d-inline-block" (click)="toggleWorkingDays(branch.id)">
-                        <i class="ri-calendar-line fs-16"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item" [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_CONTACT_SALES' | translate" placement="top">
-                      <a href="javascript:void(0);" class="text-success d-inline-block" (click)="viewContactSales(branch.id, contactSalesModal)">
-                        <i class="ri-contacts-line fs-16"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item" [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_USERS' | translate" placement="top">
-                      <a href="javascript:void(0);" class="text-warning d-inline-block" (click)="viewBranchUsers(branch.id, branchUsersModal)">
-                        <i class="ri-user-line fs-16"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item edit" [ngbTooltip]="'COMMON.EDIT' | translate" placement="top" *appHasPermission="'branches.edit'">
-                      <a href="javascript:void(0);" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn"
-                        (click)="editDataGet(filteredBranches.indexOf(branch), content)">
-                        <i class="ri-pencil-fill fs-16"></i>
-                      </a>
-                    </li>
-                    <li class="list-inline-item me-0" [ngbTooltip]="'COMMON.DELETE' | translate" placement="top" *appHasPermission="'branches.delete'">
-                      <a href="javascript:void(0);" class="text-danger d-inline-block remove-item-btn" (click)="confirm(branch.id)">
-                        <i class="ri-delete-bin-5-fill fs-16"></i>
-                      </a>
-                    </li>
-                  </ul>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-soft-info" type="button"
+                      [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_WORKING_DAYS' | translate" placement="top"
+                      (click)="toggleWorkingDays(branch.id)">
+                      <i class="ri-calendar-line"></i>
+                    </button>
+                    <button class="btn btn-sm btn-soft-success" type="button"
+                      [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_CONTACT_SALES' | translate" placement="top"
+                      (click)="viewContactSales(branch.id, contactSalesModal)">
+                      <i class="ri-contacts-line"></i>
+                    </button>
+                    <button class="btn btn-sm btn-soft-warning" type="button"
+                      [ngbTooltip]="'BRANCH_PAGE.TOOLTIP_VIEW_USERS' | translate" placement="top"
+                      (click)="viewBranchUsers(branch.id, branchUsersModal)">
+                      <i class="ri-user-line"></i>
+                    </button>
+                    <button *appHasPermission="'branches.edit'" class="btn btn-sm btn-soft-primary" type="button"
+                      [ngbTooltip]="'COMMON.EDIT' | translate" placement="top"
+                      (click)="editDataGet(filteredBranches.indexOf(branch), content)">
+                      <i class="ri-edit-line"></i>
+                    </button>
+                    <button *appHasPermission="'branches.delete'" class="btn btn-sm btn-soft-danger" type="button"
+                      [ngbTooltip]="'COMMON.DELETE' | translate" placement="top"
+                      (click)="confirm(branch.id)">
+                      <i class="ri-delete-bin-line"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr *ngIf="expandedBranchId === branch.id" class="bg-light">
