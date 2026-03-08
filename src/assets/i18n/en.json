@@ -4,6 +4,9 @@
       "TEXT": "More"
     }
   },
+  "COMMON": {
+    "PAGINATION_SUMMARY": "Showing {{start}} to {{end}} of {{total}} entries"
+  },
   "MENUITEMS": {
     "MENU": {
       "TEXT": "MENU"
@@ -383,7 +386,14 @@
       "CREATED": "Created",
       "CHANGE_STATUS": "Change Status",
       "CURRENT": "Current",
-      "MORE_BTN": "More.."
+      "MORE_BTN": "More..",
+      "INFO_MODAL": {
+        "TITLE": "Quotation #{{id}} Details",
+        "PAYMENT": "Payment",
+        "REGION": "Region",
+        "CITY": "City",
+        "CLOSE": "Close"
+      }
     }
   }
 }

@@ -204,7 +204,7 @@
           <div class="row justify-content-between align-items-center mt-3" *ngIf="filteredGalleryImages.length > 0">
             <div class="col-sm-6">
               <div class="dataTables_info">
-                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, filteredGalleryImages.length) }} of {{ filteredGalleryImages.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: ((currentPage - 1) * itemsPerPage + 1), end: (Math.min(currentPage * itemsPerPage, filteredGalleryImages.length)), total: (filteredGalleryImages.length) } }}
               </div>
             </div>
             <div class="col-sm-6">

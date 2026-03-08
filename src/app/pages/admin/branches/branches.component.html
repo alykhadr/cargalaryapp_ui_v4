@@ -207,7 +207,7 @@
         <div *ngIf="!isLoading" class="row justify-content-md-between align-items-md-center">
           <div class="col col-sm-5">
             <div class="dataTables_info mb-2" id="branch-table_info" role="status" aria-live="polite">
-              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredBranches.length }} entries
+              {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredBranches.length) } }}
             </div>
           </div>
           <div class="col col-sm-5">
@@ -490,7 +490,7 @@
       <div class="row justify-content-between align-items-center mt-3">
         <div class="col-sm-6">
           <div class="dataTables_info">
-            Showing {{ (contactSalesPage - 1) * contactSalesPageSize + 1 }} to {{ Math.min(contactSalesPage * contactSalesPageSize, branchContactSales.length) }} of {{ branchContactSales.length }} entries
+            {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: ((contactSalesPage - 1) * contactSalesPageSize + 1), end: (Math.min(contactSalesPage * contactSalesPageSize, branchContactSales.length)), total: (branchContactSales.length) } }}
           </div>
         </div>
         <div class="col-sm-6">
@@ -549,7 +549,7 @@
       <div class="row justify-content-between align-items-center mt-3">
         <div class="col-sm-6">
           <div class="dataTables_info">
-            Showing {{ (usersPage - 1) * usersPageSize + 1 }} to {{ Math.min(usersPage * usersPageSize, branchUsers.length) }} of {{ branchUsers.length }} entries
+            {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: ((usersPage - 1) * usersPageSize + 1), end: (Math.min(usersPage * usersPageSize, branchUsers.length)), total: (branchUsers.length) } }}
           </div>
         </div>
         <div class="col-sm-6">

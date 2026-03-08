@@ -156,10 +156,7 @@
                     <div class="row justify-content-md-between align-items-md-center">
                         <div class="col col-sm-5">
                             <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">
-                                Showing
-                                {{service.startIndex}} to
-                                {{service.endIndex}} of {{filteredRoles.length}}
-                                entries
+                                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredRoles.length) } }}
                             </div>
                         </div>
                         <!-- Pagination -->
@@ -307,7 +304,7 @@
             <div class="row justify-content-md-between align-items-md-center">
                 <div class="col col-sm-6">
                     <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                        Showing {{ roleUsersPaginationService.startIndex }} to {{ roleUsersPaginationService.endIndex }} of {{ roleUsers.length }} entries
+                        {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (roleUsersPaginationService.startIndex), end: (roleUsersPaginationService.endIndex), total: (roleUsers.length) } }}
                     </div>
                 </div>
                 <div class="col col-sm-6">

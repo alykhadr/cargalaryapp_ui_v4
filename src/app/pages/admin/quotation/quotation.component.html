@@ -345,7 +345,7 @@
         <div class="row justify-content-md-between align-items-md-center mt-3">
           <div class="col col-sm-6">
             <div class="dataTables_info mb-2">
-              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredQuotations.length }} entries
+              {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredQuotations.length) } }}
             </div>
           </div>
           <div class="col col-sm-6">
@@ -408,16 +408,16 @@
       <div class="modal-header bg-info-subtle border-bottom">
         <h5 class="modal-title mb-0">
           <i class="ri-file-list-3-line me-1 text-info"></i>
-          Quotation #{{ selectedQuotationForMore.id }} Details
+          {{ 'QUOTATION_PAGE.LIST.INFO_MODAL.TITLE' | translate:{ id: selectedQuotationForMore.id } }}
         </h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeMoreInfoModal()"></button>
+        <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate" (click)="closeMoreInfoModal()"></button>
       </div>
       <div class="modal-body">
         <div class="vstack gap-3">
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-bank-card-line text-primary"></i>
-              <span class="fw-semibold">Payment</span>
+              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.PAYMENT' | translate }}</span>
             </div>
             <div class="text-muted">{{ getLookupLabel(paymentMethodLookups, selectedQuotationForMore.paymentMethod) }}</div>
           </div>
@@ -425,7 +425,7 @@
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-map-pin-2-line text-warning"></i>
-              <span class="fw-semibold">Region</span>
+              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.REGION' | translate }}</span>
             </div>
             <div class="text-muted">{{ getLookupLabel(regionLookups, selectedQuotationForMore.regionId) }}</div>
           </div>
@@ -433,14 +433,14 @@
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-community-line text-success"></i>
-              <span class="fw-semibold">City</span>
+              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.CITY' | translate }}</span>
             </div>
             <div class="text-muted">{{ getLookupLabel(cityLookups, selectedQuotationForMore.cityId) }}</div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeMoreInfoModal()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeMoreInfoModal()">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>

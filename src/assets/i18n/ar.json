@@ -4,6 +4,9 @@
       "TEXT": "أكثر"
     }
   },
+  "COMMON": {
+    "PAGINATION_SUMMARY": "عرض {{start}} إلى {{end}} من إجمالي {{total}} سجل"
+  },
   "MENUITEMS": {
     "MENU": {
       "TEXT": "قائمة"
@@ -382,7 +385,14 @@
       "CREATED": "تاريخ الإنشاء",
       "CHANGE_STATUS": "تغيير الحالة",
       "CURRENT": "الحالي",
-      "MORE_BTN": "المزيد.."
+      "MORE_BTN": "المزيد..",
+      "INFO_MODAL": {
+        "TITLE": "تفاصيل عرض السعر رقم {{id}}",
+        "PAYMENT": "الدفع",
+        "REGION": "المنطقة",
+        "CITY": "المدينة",
+        "CLOSE": "إغلاق"
+      }
     }
   }
 }

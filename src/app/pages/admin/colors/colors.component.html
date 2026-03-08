@@ -125,7 +125,7 @@
           <div class="row justify-content-md-between align-items-md-center">
             <div class="col col-sm-5">
               <div class="dataTables_info mb-2" id="color-table_info" role="status" aria-live="polite">
-                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredColors.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredColors.length) } }}
               </div>
             </div>
             <div class="col col-sm-5">

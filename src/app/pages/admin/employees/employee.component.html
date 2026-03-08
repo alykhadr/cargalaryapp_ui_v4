@@ -406,7 +406,7 @@
         <div class="row align-items-center mt-2" *ngIf="!isLoading && filteredUsers.length > 0">
           <div class="col-sm-6">
             <div class="text-muted small">
-              Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredUsers.length }} entries
+              {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredUsers.length) } }}
             </div>
           </div>
           <div class="col-sm-6">

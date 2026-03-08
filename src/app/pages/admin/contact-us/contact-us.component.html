@@ -129,7 +129,7 @@
           <div class="row justify-content-md-between align-items-md-center">
             <div class="col col-sm-5">
               <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredContacts.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredContacts.length) } }}
               </div>
             </div>
             <div class="col col-sm-5">

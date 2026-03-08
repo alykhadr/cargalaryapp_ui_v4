@@ -1855,7 +1855,7 @@
           <div class="row justify-content-md-between align-items-md-center mt-3">
             <div class="col col-sm-6">
               <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredCars.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredCars.length) } }}
               </div>
             </div>
             <div class="col col-sm-6">
@@ -1924,7 +1924,7 @@
             <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewFeatures.length > 0">
               <div class="col col-sm-6">
                 <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                  Showing {{ previewFeaturePagination.startIndex }} to {{ previewFeaturePagination.endIndex }} of {{ previewFeatures.length }} entries
+                  {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (previewFeaturePagination.startIndex), end: (previewFeaturePagination.endIndex), total: (previewFeatures.length) } }}
                 </div>
               </div>
               <div class="col col-sm-6">
@@ -1987,7 +1987,7 @@
             <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewColors.length > 0">
               <div class="col col-sm-6">
                 <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                  Showing {{ previewColorPagination.startIndex }} to {{ previewColorPagination.endIndex }} of {{ previewColors.length }} entries
+                  {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (previewColorPagination.startIndex), end: (previewColorPagination.endIndex), total: (previewColors.length) } }}
                 </div>
               </div>
               <div class="col col-sm-6">
@@ -2029,7 +2029,7 @@
             <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewDetails.length > 0">
               <div class="col col-sm-6">
                 <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                  Showing {{ previewDetailsPagination.startIndex }} to {{ previewDetailsPagination.endIndex }} of {{ previewDetails.length }} entries
+                  {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (previewDetailsPagination.startIndex), end: (previewDetailsPagination.endIndex), total: (previewDetails.length) } }}
                 </div>
               </div>
               <div class="col col-sm-6">
@@ -2060,7 +2060,7 @@
             <div class="row justify-content-md-between align-items-md-center mt-3" *ngIf="previewImages.length > 0">
               <div class="col col-sm-6">
                 <div class="dataTables_info mb-2" role="status" aria-live="polite">
-                  Showing {{ previewImagesPagination.startIndex }} to {{ previewImagesPagination.endIndex }} of {{ previewImages.length }} entries
+                  {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (previewImagesPagination.startIndex), end: (previewImagesPagination.endIndex), total: (previewImages.length) } }}
                 </div>
               </div>
               <div class="col col-sm-6">

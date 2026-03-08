@@ -95,7 +95,7 @@
           <div class="row justify-content-md-between align-items-md-center">
             <div class="col col-sm-5">
               <div class="dataTables_info mb-2">
-                Showing {{ service.startIndex }} to {{ service.endIndex }} of {{ filteredDepartments.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredDepartments.length) } }}
               </div>
             </div>
             <div class="col col-sm-5">
@@ -209,7 +209,7 @@
           <div class="row justify-content-md-between align-items-md-center mt-3">
             <div class="col col-sm-6">
               <div class="dataTables_info mb-2">
-                Showing {{ employeePager.startIndex }} to {{ employeePager.endIndex }} of {{ departmentEmployees.length }} entries
+                {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (employeePager.startIndex), end: (employeePager.endIndex), total: (departmentEmployees.length) } }}
               </div>
             </div>
             <div class="col col-sm-6">
