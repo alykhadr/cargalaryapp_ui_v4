@@ -1,4 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Inject, ViewChild, TemplateRef, DOCUMENT } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { first } from 'rxjs/operators';
 
 import { EventService } from '../../core/services/event.service';
 
@@ -11,11 +13,9 @@ import { TokenStorageService } from '../../core/services/token-storage.service';
 import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
-import { allNotification, messages } from './data'
-import { CartModel } from './topbar.model';
-import { cartData } from './data';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
+import { GlobalComponent } from 'src/app/global-component';
+import { QuotationNotificationItem, QuotationNotificationsResponse } from './topbar.model';
 
 @Component({
     selector: 'app-topbar',
@@ -24,30 +24,24 @@ import { MyAuthService } from 'src/app/core/services/my-auth.service';
     standalone: false
 })
 export class TopbarComponent implements OnInit {
-  messages: any
   element: any;
   mode: string | undefined;
   @Output() mobileMenuButtonClicked = new EventEmitter();
-  allnotifications: any
+  quotationNotifications: QuotationNotificationItem[] = [];
+  notificationCount = 0;
+  isLoadingNotifications = false;
   flagvalue: any;
   valueset: any;
   countryName: any;
   cookieValue: any;
   userData: any;
-  cartData!: CartModel[];
-  total = 0;
-  cart_length: any = 0;
-  totalNotify: number = 0;
-  newNotify: number = 0;
-  readNotify: number = 0;
   isDropdownOpen = false;
-  @ViewChild('removenotification') removenotification !: TemplateRef<any>;
-  notifyId: any;
 
-  constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService, private modalService: NgbModal,
+  constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService,
     public _cookiesService: CookieService, public translate: TranslateService,
      private authService: MyAuthService,
-    private router: Router, private TokenStorageService: TokenStorageService) { }
+    private router: Router, private TokenStorageService: TokenStorageService,
+    private http: HttpClient) { }
 
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
@@ -63,16 +57,7 @@ export class TopbarComponent implements OnInit {
       this.flagvalue = val.map(element => element.flag);
     }
 
-    // Fetch Data
-    this.allnotifications = allNotification;
-
-    this.messages = messages;
-    this.cartData = cartData;
-    this.cart_length = this.cartData.length;
-    this.cartData.forEach((item) => {
-      var item_price = item.quantity * item.price
-      this.total += item_price
-    });
+    this.loadQuotationNotifications();
   }
 
   /**
@@ -119,15 +104,6 @@ export class TopbarComponent implements OnInit {
       }
     }
   }
-  /**
-* Open modal
-* @param content modal content
-*/
-  openModal(content: any) {
-    // this.submitted = false;
-    this.modalService.open(content, { centered: true });
-  }
-
   /**
   * Topbar Light-Dark Mode Change
   */
@@ -182,16 +158,6 @@ export class TopbarComponent implements OnInit {
       (document.getElementById("back-to-top") as HTMLElement).style.display = "none";
       document.getElementById('page-topbar')?.classList.remove('topbar-shadow');
     }
-  }
-
-  // Delete Item
-  deleteItem(event: any, id: any) {
-    var price = event.target.closest('.dropdown-item').querySelector('.item_price').innerHTML;
-    var Total_price = this.total - price;
-    this.total = Total_price;
-    this.cart_length = this.cart_length - 1;
-    this.total > 1 ? (document.getElementById("empty-cart") as HTMLElement).style.display = "none" : (document.getElementById("empty-cart") as HTMLElement).style.display = "block";
-    document.getElementById('item_' + id)?.remove();
   }
 
   toggleDropdown(event: Event) {
@@ -252,62 +218,21 @@ export class TopbarComponent implements OnInit {
     searchInputReponsive.value = "";
   }
 
-  // Remove Notification
-  checkedValGet: any[] = [];
-  onCheckboxChange(event: any, id: any) {
-    this.notifyId = id
-    var result;
-    if (id == '1') {
-      var checkedVal: any[] = [];
-      for (var i = 0; i < this.allnotifications.length; i++) {
-        if (this.allnotifications[i].state == true) {
-          result = this.allnotifications[i].id;
-          checkedVal.push(result);
+  private loadQuotationNotifications() {
+    this.isLoadingNotifications = true;
+    this.http.get<QuotationNotificationsResponse>(`${GlobalComponent.API_URL}/api/Quotations/notifications`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.notificationCount = response?.count ?? 0;
+          this.quotationNotifications = response?.items ?? [];
+          this.isLoadingNotifications = false;
+        },
+        error: () => {
+          this.notificationCount = 0;
+          this.quotationNotifications = [];
+          this.isLoadingNotifications = false;
         }
-      }
-      this.checkedValGet = checkedVal;
-    } else {
-      var checkedVal: any[] = [];
-      for (var i = 0; i < this.messages.length; i++) {
-        if (this.messages[i].state == true) {
-          result = this.messages[i].id;
-          checkedVal.push(result);
-        }
-      }
-      this.checkedValGet = checkedVal;
-    }
-    checkedVal.length > 0 ? (document.getElementById("notification-actions") as HTMLElement).style.display = 'block' : (document.getElementById("notification-actions") as HTMLElement).style.display = 'none';
-  }
-
-  notificationDelete() {
-    if (this.notifyId == '1') {
-      for (var i = 0; i < this.checkedValGet.length; i++) {
-        for (var j = 0; j < this.allnotifications.length; j++) {
-          if (this.allnotifications[j].id == this.checkedValGet[i]) {
-            this.allnotifications.splice(j, 1)
-          }
-        }
-      }
-    } else {
-      for (var i = 0; i < this.checkedValGet.length; i++) {
-        for (var j = 0; j < this.messages.length; j++) {
-          if (this.messages[j].id == this.checkedValGet[i]) {
-            this.messages.splice(j, 1)
-          }
-        }
-      }
-    }
-    this.calculatenotification()
-    this.modalService.dismissAll();
-  }
-
-  calculatenotification() {
-    this.totalNotify = 0;
-    this.checkedValGet = []
-
-    this.checkedValGet.length > 0 ? (document.getElementById("notification-actions") as HTMLElement).style.display = 'block' : (document.getElementById("notification-actions") as HTMLElement).style.display = 'none';
-    if (this.totalNotify == 0) {
-      document.querySelector('.empty-notification-elem')?.classList.remove('d-none')
-    }
+      });
   }
 }
