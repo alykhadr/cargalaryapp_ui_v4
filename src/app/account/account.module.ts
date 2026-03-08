@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Load Icons
 import { defineElement } from "@lordicon/element";
@@ -28,6 +29,7 @@ import { LoginComponent } from './login/login.component';
     ReactiveFormsModule,
     FormsModule,
     NgbToastModule,
+    TranslateModule,
     AccountRoutingModule,
     SigninModule
   ],

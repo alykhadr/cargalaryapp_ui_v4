@@ -7,6 +7,27 @@
   "COMMON": {
     "PAGINATION_SUMMARY": "Showing {{start}} to {{end}} of {{total}} entries"
   },
+  "AUTH": {
+    "LOGIN": {
+      "TAGLINE": "Premium Admin & Dashboard Template",
+      "WELCOME": "Welcome Back!",
+      "SUBTITLE": "Sign in to continue to Velzon.",
+      "USERNAME": "User Name",
+      "USERNAME_PLACEHOLDER": "Enter user name",
+      "USERNAME_REQUIRED": "User Name is required",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "PASSWORD": "Password",
+      "PASSWORD_PLACEHOLDER": "Enter password",
+      "PASSWORD_REQUIRED": "Password is required",
+      "REMEMBER_ME": "Remember me",
+      "LOADING": "Loading...",
+      "SIGNING_IN": "Signing in...",
+      "SIGN_IN": "Sign in",
+      "INVALID_CREDENTIALS": "Invalid user name or password",
+      "FOOTER_TEXT": "Crafted with",
+      "FOOTER_BY": "by"
+    }
+  },
   "MENUITEMS": {
     "MENU": {
       "TEXT": "MENU"

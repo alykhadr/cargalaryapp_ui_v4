@@ -22,7 +22,7 @@
                                 <img src="assets/images/logo-light.png" alt="" height="20">
                             </a>
                         </div>
-                        <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                        <p class="mt-3 fs-15 fw-medium">{{ 'AUTH.LOGIN.TAGLINE' | translate }}</p>
                     </div>
                 </div>
             </div>
@@ -34,22 +34,22 @@
 
                         <div class="card-body p-4">
                             <div class="text-center mt-2">
-                                <h5 class="text-primary">Welcome Back !</h5>
-                                <p class="text-muted">Sign in to continue to Velzon.</p>
+                                <h5 class="text-primary">{{ 'AUTH.LOGIN.WELCOME' | translate }}</h5>
+                                <p class="text-muted">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
                             </div>
                             <div class="p-2 mt-4">
                                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
                                     <div class="mb-3">
-                                        <label class="form-label" for="userName">User Name</label>
+                                        <label class="form-label" for="userName">{{ 'AUTH.LOGIN.USERNAME' | translate }}</label>
                                         <input type="userName" class="form-control" id="userName"
                                             formControlName="userName"
                                             [ngClass]="{ 'is-invalid': submitted && f['userName'].errors }"
-                                            placeholder="Enter user name">
+                                            [placeholder]="'AUTH.LOGIN.USERNAME_PLACEHOLDER' | translate">
                                         @if (submitted && f['userName'].errors) {
                                         <div class="invalid-feedback">
                                             @if(f['userName'].errors['required']){
-                                            <div>User Name is required</div>}
+                                            <div>{{ 'AUTH.LOGIN.USERNAME_REQUIRED' | translate }}</div>}
                                             <!-- @if(f['userName'].errors['userName']){
                                             <div>User Name must be a valid email address
                                             </div>
@@ -60,13 +60,12 @@
 
                                     <div class="mb-3">
                                         <div class="float-end">
-                                            <a routerLink="/auth/pass-reset/basic" class="text-muted">Forgot
-                                                password?</a>
+                                            <a routerLink="/auth/pass-reset/basic" class="text-muted">{{ 'AUTH.LOGIN.FORGOT_PASSWORD' | translate }}</a>
                                         </div>
-                                        <label class="form-label" for="password-input">Password</label>
+                                        <label class="form-label" for="password-input">{{ 'AUTH.LOGIN.PASSWORD' | translate }}</label>
                                         <div class="position-relative auth-pass-inputgroup mb-3">
                                             <input [type]="fieldTextType ? 'text' : 'password'"
-                                                class="form-control pe-5" placeholder="Enter password"
+                                                class="form-control pe-5" [placeholder]="'AUTH.LOGIN.PASSWORD_PLACEHOLDER' | translate"
                                                 id="password-input" formControlName="password"
                                                 [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
                                             <button
@@ -76,17 +75,17 @@
                                             @if (submitted && f['password'].errors) {
                                             <div class="invalid-feedback">
                                                 @if(f['password'].errors['required']){
-                                                <span>Password is required</span>
+                                                <span>{{ 'AUTH.LOGIN.PASSWORD_REQUIRED' | translate }}</span>
                                                 }
                                             </div>
                                             }
                                         </div>
                                     </div>
 
-                                    <div class="form-check">
+                                    <div class="form-check remember-me-check">
                                         <input class="form-check-input" type="checkbox" value=""
                                             id="auth-remember-check" formControlName="rememberMe">
-                                        <label class="form-check-label" for="auth-remember-check">Remember me</label>
+                                        <label class="form-check-label" for="auth-remember-check">{{ 'AUTH.LOGIN.REMEMBER_ME' | translate }}</label>
                                     </div>
 
                                     <div class="mt-4">
@@ -97,11 +96,11 @@
                                                 <span *ngIf="submitted"
                                                     class="spinner-border spinner-border-sm flex-shrink-0"
                                                     role="status">
-                                                    <span class="visually-hidden">Loading...</span>
+                                                    <span class="visually-hidden">{{ 'AUTH.LOGIN.LOADING' | translate }}</span>
                                                 </span>
 
                                                 <span class="flex-grow-1 ms-2">
-                                                    {{ submitted ? 'Signing in...' : 'Sign in' }}
+                                                    {{ submitted ? ('AUTH.LOGIN.SIGNING_IN' | translate) : ('AUTH.LOGIN.SIGN_IN' | translate) }}
                                                 </span>
 
                                             </span>
@@ -144,8 +143,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; {{year}} Velzon. Crafted with <i
-                                class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                        <p class="mb-0 text-muted">&copy; {{year}} Velzon. {{ 'AUTH.LOGIN.FOOTER_TEXT' | translate }} <i
+                                class="mdi mdi-heart text-danger"></i> {{ 'AUTH.LOGIN.FOOTER_BY' | translate }} Themesbrand</p>
                     </div>
                 </div>
             </div>

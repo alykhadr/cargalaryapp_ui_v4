@@ -7,6 +7,27 @@
   "COMMON": {
     "PAGINATION_SUMMARY": "عرض {{start}} إلى {{end}} من إجمالي {{total}} سجل"
   },
+  "AUTH": {
+    "LOGIN": {
+      "TAGLINE": "لوحة تحكم وإدارة متميزة",
+      "WELCOME": "مرحباً بعودتك!",
+      "SUBTITLE": "سجّل الدخول للمتابعة إلى Velzon.",
+      "USERNAME": "اسم المستخدم",
+      "USERNAME_PLACEHOLDER": "أدخل اسم المستخدم",
+      "USERNAME_REQUIRED": "اسم المستخدم مطلوب",
+      "FORGOT_PASSWORD": "هل نسيت كلمة المرور؟",
+      "PASSWORD": "كلمة المرور",
+      "PASSWORD_PLACEHOLDER": "أدخل كلمة المرور",
+      "PASSWORD_REQUIRED": "كلمة المرور مطلوبة",
+      "REMEMBER_ME": "تذكرني",
+      "LOADING": "جارٍ التحميل...",
+      "SIGNING_IN": "جارٍ تسجيل الدخول...",
+      "SIGN_IN": "تسجيل الدخول",
+      "INVALID_CREDENTIALS": "اسم المستخدم أو كلمة المرور غير صحيحة",
+      "FOOTER_TEXT": "صُنع بـ",
+      "FOOTER_BY": "بواسطة"
+    }
+  },
   "MENUITEMS": {
     "MENU": {
       "TEXT": "قائمة"

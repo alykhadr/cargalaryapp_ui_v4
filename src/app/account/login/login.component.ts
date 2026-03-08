@@ -7,6 +7,8 @@ import { ToastService } from './toast-service';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { User } from 'src/app/store/Authentication/auth.models';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +37,9 @@ export class LoginComponent implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService,
     private myAuthService: MyAuthService,
-    private tokenStorageService: TokenStorageService) {
+    private tokenStorageService: TokenStorageService,
+    private translate: TranslateService,
+    private languageService: LanguageService) {
     // Redirect authenticated users to requested deep link if provided.
     this.returnUrl = this.resolveReturnUrl(this.route.snapshot.queryParams['returnUrl']);
     if (this.myAuthService.currentUserValue) {
@@ -44,6 +48,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Always open login page in Arabic.
+    this.languageService.setLanguage('ar');
+
     if (this.tokenStorageService.getUser()) {
       this.router.navigateByUrl(this.returnUrl);
     }
@@ -85,7 +92,7 @@ export class LoginComponent implements OnInit {
           error: (error) => {
             this.submitted = false;
 
-            this.error = error ? error : 'Invalid user name or password';
+            this.error = error ? error : this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
 
             this.toastService.show(this.error, {
               classname: 'bg-danger text-white',
