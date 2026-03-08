@@ -1,0 +1,13 @@
+:host-context([dir='rtl']) .roles-header-actions {
+  direction: rtl;
+}
+
+:host-context([dir='rtl']) th.sort {
+  text-align: right;
+}
+
+:host-context([dir='rtl']) th.sort::after {
+  margin-inline-start: 0;
+  margin-inline-end: 0.375rem;
+  float: left;
+}

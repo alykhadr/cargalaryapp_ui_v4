@@ -1,10 +1,10 @@
-<app-breadcrumbs title="Permissions" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs  [title]="'MENUITEMS.ADMIN.LIST.PERMISSION' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-4">
     <div class="card">
       <div class="card-header">
-        <h5 class="card-title mb-0">Roles</h5>
+        <h5 class="card-title mb-0">{{ 'PERMISSIONS_PAGE.ROLES' | translate }}</h5>
       </div>
       <div class="card-body">
         <div *ngIf="isLoading && roles.length === 0" class="text-center py-3">
@@ -12,7 +12,7 @@
         </div>
 
         <div *ngIf="!isLoading && roles.length === 0" class="text-muted text-center py-3">
-          No roles found.
+          {{ 'PERMISSIONS_PAGE.NO_ROLES_FOUND' | translate }}
         </div>
 
         <div class="list-group">
@@ -23,7 +23,7 @@
             [class.active]="selectedRole?.id === role.id"
             (click)="selectRole(role)">
             <span>{{ role.name }}</span>
-            <span class="badge bg-secondary-subtle text-secondary">{{ role.isActive ? 'Active' : 'Blocked' }}</span>
+            <span class="badge bg-secondary-subtle text-secondary">{{ role.isActive ? ('COMMON.ACTIVE' | translate) : ('COMMON.BLOCKED' | translate) }}</span>
           </button>
           }
         </div>
@@ -34,9 +34,9 @@
   <div class="col-lg-8">
     <div class="card" *ngIf="selectedRole; else selectRoleHint">
       <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <h5 class="card-title mb-0">Role Permissions: {{ selectedRole.name }}</h5>
+        <h5 class="card-title mb-0">{{ 'PERMISSIONS_PAGE.ROLE_PERMISSIONS' | translate }}: {{ selectedRole.name }}</h5>
         <span class="badge bg-primary-subtle text-primary">
-          {{ rolePermissions.length }} assigned
+          {{ rolePermissions.length }} {{ 'PERMISSIONS_PAGE.ASSIGNED' | translate }}
         </span>
       </div>
       <div class="card-body">
@@ -47,7 +47,7 @@
               <input
                 type="text"
                 class="form-control"
-                placeholder="Page (e.g. users)"
+                [placeholder]="'PERMISSIONS_PAGE.PAGE_PLACEHOLDER' | translate"
                 [(ngModel)]="pageInput"
                 (keyup.enter)="addPermission()">
             </div>
@@ -58,7 +58,7 @@
               <input
                 type="text"
                 class="form-control"
-                placeholder="Action (e.g. create)"
+                [placeholder]="'PERMISSIONS_PAGE.ACTION_PLACEHOLDER' | translate"
                 [(ngModel)]="actionInput"
                 (keyup.enter)="addPermission()">
             </div>
@@ -66,22 +66,22 @@
           <div class="col-md-2 d-grid">
             <button *appHasPermission="'permissions.create'" class="btn btn-primary" type="button" [disabled]="isAddingPermission" (click)="addPermission()">
               <span *ngIf="isAddingPermission" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              {{ isAddingPermission ? 'Adding...' : 'Add' }}
+              {{ isAddingPermission ? ('PERMISSIONS_PAGE.ADDING' | translate) : ('COMMON.ADD' | translate) }}
             </button>
           </div>
         </div>
         <div class="invalid-feedback d-block mb-3" *ngIf="permissionSubmitted && (!pageInput.trim() || !actionInput.trim())">
-          Page and action are required.
+          {{ 'PERMISSIONS_PAGE.PAGE_ACTION_REQUIRED' | translate }}
         </div>
 
         <div class="row g-3">
           <div class="col-md-6">
             <div class="border rounded-3 p-3 permission-panel-box">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0">Assigned Permissions</h6>
+                <h6 class="mb-0">{{ 'PERMISSIONS_PAGE.ASSIGNED_PERMISSIONS' | translate }}</h6>
                 <div class="d-flex align-items-center gap-1">
-                  <span class="badge bg-danger-subtle text-danger">{{ filteredAssignedPermissions.length }} actions</span>
-                  <span class="badge permission-page-badge">{{ assignedPageCount }} pages</span>
+                  <span class="badge bg-danger-subtle text-danger">{{ filteredAssignedPermissions.length }} {{ 'PERMISSIONS_PAGE.ACTIONS' | translate }}</span>
+                  <span class="badge permission-page-badge">{{ assignedPageCount }} {{ 'PERMISSIONS_PAGE.PAGES' | translate }}</span>
                 </div>
               </div>
               <div class="input-group input-group-sm mb-2">
@@ -89,22 +89,22 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search assigned permissions"
+                  [placeholder]="'PERMISSIONS_PAGE.SEARCH_ASSIGNED' | translate"
                   [(ngModel)]="permissionSearch"
                   (ngModelChange)="onAssignedSearchChange()">
               </div>
 
               <div *ngIf="assignedGroups.length === 0" class="text-muted small p-2 border rounded-3 bg-body-secondary">
-                No permissions assigned.
+                {{ 'PERMISSIONS_PAGE.NO_ASSIGNED' | translate }}
               </div>
 
               <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="assignedGroups.length > 0">
                 <table class="table table-sm align-middle mb-0 permission-table">
                   <thead>
                     <tr>
-                      <th>Page</th>
-                      <th>Action</th>
-                      <th class="text-end" style="width: 100px;">Delete</th>
+                      <th>{{ 'COMMON.PAGE' | translate }}</th>
+                      <th>{{ 'COMMON.ACTION' | translate }}</th>
+                      <th class="text-end" style="width: 100px;">{{ 'COMMON.DELETE' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -117,10 +117,10 @@
                         <span class="fw-semibold">{{ pageGroup.page }}</span>
                       </td>
                       <td>
-                        <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
+                        <span class="text-muted">{{ pageGroup.actions.length }} {{ 'PERMISSIONS_PAGE.ACTIONS' | translate }}</span>
                       </td>
                       <td class="text-end">
-                        <span class="badge permission-group-badge">Group</span>
+                        <span class="badge permission-group-badge">{{ 'PERMISSIONS_PAGE.GROUP' | translate }}</span>
                       </td>
                     </tr>
                     @if (isAssignedGroupExpanded(pageGroup.page)) {
@@ -166,10 +166,10 @@
           <div class="col-md-6">
             <div class="border rounded-3 p-3 permission-panel-box">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0">Available Permissions</h6>
+                <h6 class="mb-0">{{ 'PERMISSIONS_PAGE.AVAILABLE_PERMISSIONS' | translate }}</h6>
                 <div class="d-flex align-items-center gap-1">
-                  <span class="badge bg-primary-subtle text-primary">{{ filteredAvailablePermissions.length }} actions</span>
-                  <span class="badge permission-page-badge">{{ availablePageCount }} pages</span>
+                  <span class="badge bg-primary-subtle text-primary">{{ filteredAvailablePermissions.length }} {{ 'PERMISSIONS_PAGE.ACTIONS' | translate }}</span>
+                  <span class="badge permission-page-badge">{{ availablePageCount }} {{ 'PERMISSIONS_PAGE.PAGES' | translate }}</span>
                 </div>
               </div>
               <div class="input-group input-group-sm mb-2">
@@ -177,22 +177,22 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Search available permissions"
+                  [placeholder]="'PERMISSIONS_PAGE.SEARCH_AVAILABLE' | translate"
                   [(ngModel)]="availableSearch"
                   (ngModelChange)="onAvailableSearchChange()">
               </div>
 
               <div *ngIf="availableGroups.length === 0" class="text-muted small p-2 border rounded-3 bg-body-secondary">
-                No available permissions.
+                {{ 'PERMISSIONS_PAGE.NO_AVAILABLE' | translate }}
               </div>
 
               <div class="table-responsive border rounded-3 permission-table-wrap" *ngIf="availableGroups.length > 0">
                 <table class="table table-sm align-middle mb-0 permission-table">
                   <thead>
                     <tr>
-                      <th>Page</th>
-                      <th>Action</th>
-                      <th class="text-end" style="width: 100px;">Use</th>
+                      <th>{{ 'COMMON.PAGE' | translate }}</th>
+                      <th>{{ 'COMMON.ACTION' | translate }}</th>
+                      <th class="text-end" style="width: 100px;">{{ 'PERMISSIONS_PAGE.USE' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -205,10 +205,10 @@
                         <span class="fw-semibold">{{ pageGroup.page }}</span>
                       </td>
                       <td>
-                        <span class="text-muted">{{ pageGroup.actions.length }} actions</span>
+                        <span class="text-muted">{{ pageGroup.actions.length }} {{ 'PERMISSIONS_PAGE.ACTIONS' | translate }}</span>
                       </td>
                       <td class="text-end">
-                        <span class="badge permission-group-badge">Group</span>
+                        <span class="badge permission-group-badge">{{ 'PERMISSIONS_PAGE.GROUP' | translate }}</span>
                       </td>
                     </tr>
                     @if (isAvailableGroupExpanded(pageGroup.page)) {
@@ -246,7 +246,7 @@
                   size="sm">
                 </ngb-pagination>
               </div>
-              <div class="small text-muted mt-2">Click Use to fill Page + Action inputs.</div>
+              <div class="small text-muted mt-2">{{ 'PERMISSIONS_PAGE.CLICK_USE_HINT' | translate }}</div>
             </div>
           </div>
         </div>
@@ -258,7 +258,7 @@
 <ng-template #selectRoleHint>
   <div class="card">
     <div class="card-body text-muted text-center py-5">
-      Select a role to manage permissions.
+      {{ 'PERMISSIONS_PAGE.SELECT_ROLE_HINT' | translate }}
     </div>
   </div>
 </ng-template>

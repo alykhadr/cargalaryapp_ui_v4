@@ -520,7 +520,7 @@
                     <div class="card-body py-2">
                       <div class="row g-2 align-items-center">
                         <div class="col-md-6">
-                          <small class="text-muted d-block">Created By</small>
+                          <small class="text-muted d-block">{{ 'COMMON.CREATED_BY' | translate }}</small>
                           <span class="fw-medium">{{ selectedCar.createdBy || 'System' }}</span>
                         </div>
                         <div class="col-md-6">
@@ -623,9 +623,9 @@
                                 <table class="table table-sm table-hover align-middle mb-0">
                                   <thead class="table-light">
                                     <tr>
-                                      <th>Name (EN)</th>
-                                      <th class="text-center">Name (AR)</th>
-                                      <th class="text-center">Status</th>
+                                      <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+                                      <th class="text-center">{{ 'COMMON.NAME_AR' | translate }}</th>
+                                      <th class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
                                       <th class="text-center text-info">Select for Car</th>
                                     </tr>
                                   </thead>
@@ -695,11 +695,11 @@
 			                        <table class="table table-sm table-hover align-middle mb-0">
 			                          <thead class="table-light">
 			                            <tr>
-				                              <th>Name (EN)</th>
-				                              <th class="text-center">Name (AR)</th>
-				                              <th class="text-center">Status</th>
+				                              <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+				                              <th class="text-center">{{ 'COMMON.NAME_AR' | translate }}</th>
+				                              <th class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
 				                              <th class="text-center text-info">Assigned to Car</th>
-			                              <th class="text-end">Action</th>
+			                              <th class="text-end">{{ 'COMMON.ACTION' | translate }}</th>
 			                            </tr>
 			                          </thead>
 			                          <tbody>
@@ -813,10 +813,10 @@
                         <table class="table table-sm table-hover align-middle mb-0">
                           <thead class="table-light">
                             <tr>
-                              <th>Name (EN)</th>
-                              <th class="text-center">Name (AR)</th>
+                              <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+                              <th class="text-center">{{ 'COMMON.NAME_AR' | translate }}</th>
                               <th class="text-center">Color</th>
-                              <th class="text-center">Status</th>
+                              <th class="text-center">{{ 'COMMON.STATUS' | translate }}</th>
                               <th class="text-center text-info">Select for Car</th>
                             </tr>
                           </thead>
@@ -1120,10 +1120,10 @@
                                   (change)="toggleSelectAllPendingExtraDetails($any($event.target).checked)">
                               </th>
                               <th>Type</th>
-                              <th>Name (EN)</th>
-                              <th class="text-center">Name (AR)</th>
+                              <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+                              <th class="text-center">{{ 'COMMON.NAME_AR' | translate }}</th>
                               <th class="text-center">Available</th>
-                              <th class="text-end">Action</th>
+                              <th class="text-end">{{ 'COMMON.ACTION' | translate }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1346,7 +1346,7 @@
                               <th>File Name</th>
                               <th>Type</th>
                               <th class="text-center">Primary</th>
-                              <th class="text-end">Action</th>
+                              <th class="text-end">{{ 'COMMON.ACTION' | translate }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1539,11 +1539,11 @@
                         <div class="card-body bg-light-subtle rounded">
                           <div class="row g-2">
                             <div class="col-6">
-                              <small class="text-muted d-block">Name (EN)</small>
+                              <small class="text-muted d-block">{{ 'COMMON.NAME_EN' | translate }}</small>
                               <div class="fw-semibold">{{ selectedCar?.nameEn || form['nameEn'].value || '-' }}</div>
                             </div>
                             <div class="col-6">
-                              <small class="text-muted d-block">Name (AR)</small>
+                              <small class="text-muted d-block">{{ 'COMMON.NAME_AR' | translate }}</small>
                               <div class="fw-semibold" dir="rtl">{{ selectedCar?.nameAr || form['nameAr'].value || '-' }}</div>
                             </div>
                             <div class="col-6">
@@ -1658,7 +1658,7 @@
               </div>
             </div>
             <div class="col-md-4">
-              <label class="form-label car-filter-label">Name (EN)</label>
+              <label class="form-label car-filter-label">{{ 'COMMON.NAME_EN' | translate }}</label>
               <div class="input-group input-group-sm">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
                 <input type="text" class="form-control car-filter-input"
@@ -1668,7 +1668,7 @@
               </div>
             </div>
             <div class="col-md-4">
-              <label class="form-label car-filter-label">Name (AR)</label>
+              <label class="form-label car-filter-label">{{ 'COMMON.NAME_AR' | translate }}</label>
               <div class="input-group input-group-sm">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>
                 <input type="text" class="form-control car-filter-input"
@@ -1721,7 +1721,7 @@
         <!-- Loading -->
         <div *ngIf="isLoading" class="text-center py-3">
           <div class="spinner-border spinner-border-sm text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
         </div>
 
@@ -1747,8 +1747,8 @@
                     <i class="ms-1" [ngClass]="carSortDirection === 'asc' ? 'ri-sort-asc' : 'ri-sort-desc'"></i>
                   </button>
                 </th>
-                <th>Status</th>
-                <th class="text-end">Action</th>
+                <th>{{ 'COMMON.STATUS' | translate }}</th>
+                <th class="text-end">{{ 'COMMON.ACTION' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -1889,12 +1889,12 @@
         <h5 class="modal-title">
           {{ previewCar?.nameEn || 'Car' }} - {{ carPreviewTab | titlecase }}
         </h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeCarPreviewModal()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeCarPreviewModal()"></button>
       </div>
       <div class="modal-body">
         <div *ngIf="isCarPreviewLoading" class="text-center py-4">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
         </div>
 
@@ -1906,7 +1906,7 @@
                 <thead class="table-light">
                   <tr>
                     <th>Feature</th>
-                    <th>Status</th>
+                    <th>{{ 'COMMON.STATUS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1952,7 +1952,7 @@
                     <th>Discount</th>
                     <th>Type</th>
                     <th>Total Price</th>
-                    <th>Status</th>
+                    <th>{{ 'COMMON.STATUS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2006,10 +2006,10 @@
               <table class="table table-nowrap table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th>Name (EN)</th>
-                    <th>Name (AR)</th>
+                    <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+                    <th>{{ 'COMMON.NAME_AR' | translate }}</th>
                     <th>Type</th>
-                    <th>Status</th>
+                    <th>{{ 'COMMON.STATUS' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -2075,7 +2075,7 @@
         </ng-container>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeCarPreviewModal()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeCarPreviewModal()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -2087,14 +2087,14 @@
     <div class="modal-content">
       <div class="modal-header bg-light-subtle border-bottom">
         <h5 class="modal-title">Car Info - {{ infoCar?.nameEn || '-' }} / {{ infoCar?.nameAr || '-' }}</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeCarInfoModal()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
       </div>
       <div class="modal-body">
         <div class="row g-3" *ngIf="infoCar as car">
           <div class="col-md-6 col-lg-4">
             <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
               <div class="card-body py-3">
-                <small class="text-muted d-block">Name (EN)</small>
+                <small class="text-muted d-block">{{ 'COMMON.NAME_EN' | translate }}</small>
                 <div class="fw-semibold">{{ car.nameEn || '-' }}</div>
               </div>
             </div>
@@ -2102,7 +2102,7 @@
           <div class="col-md-6 col-lg-4">
             <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
               <div class="card-body py-3">
-                <small class="text-muted d-block">Name (AR)</small>
+                <small class="text-muted d-block">{{ 'COMMON.NAME_AR' | translate }}</small>
                 <div class="fw-semibold" dir="rtl">{{ car.nameAr || '-' }}</div>
               </div>
             </div>
@@ -2110,7 +2110,7 @@
           <div class="col-md-6 col-lg-4">
             <div class="card border-0 bg-light-subtle h-100 mb-0 shadow-sm">
               <div class="card-body py-3">
-                <small class="text-muted d-block">Status</small>
+                <small class="text-muted d-block">{{ 'COMMON.STATUS' | translate }}</small>
                 <span class="badge" [ngClass]="car.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
                   {{ car.isAvailable ? 'Available' : 'Unavailable' }}
                 </span>
@@ -2310,7 +2310,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -2322,7 +2322,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ editingPendingExtraDetailIndex !== null ? 'Edit Car Extra Details' : 'Add Car Extra Details' }}</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeExtraDetailsAddModal()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeExtraDetailsAddModal()"></button>
       </div>
       <div class="modal-body">
         <div class="row g-2">
@@ -2412,7 +2412,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeExtraDetailsAddModal()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeExtraDetailsAddModal()">{{ 'COMMON.CLOSE' | translate }}</button>
         <button type="button" class="btn btn-success" (click)="addExtraDetailToList()">
           <i [class]="editingPendingExtraDetailIndex !== null ? 'ri-save-line me-1' : 'ri-add-line me-1'"></i>
           {{ editingPendingExtraDetailIndex !== null ? 'Save Changes' : 'Add To List' }}
@@ -2428,7 +2428,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Extra Details Statistics</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeExtraDetailsStatsModal()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeExtraDetailsStatsModal()"></button>
       </div>
       <div class="modal-body">
         <div class="row g-2">
@@ -2460,7 +2460,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeExtraDetailsStatsModal()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeExtraDetailsStatsModal()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -2472,7 +2472,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Selected Image Preview</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeSelectedGalleryImagePreview()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeSelectedGalleryImagePreview()"></button>
       </div>
       <div class="modal-body text-center">
         <div class="mb-2 small text-muted" *ngIf="selectedImageFile">{{ selectedImageFile.name }}</div>
@@ -2483,7 +2483,7 @@
           class="img-fluid rounded border">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeSelectedGalleryImagePreview()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeSelectedGalleryImagePreview()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -2495,7 +2495,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Color Image Preview</h5>
-        <button type="button" class="btn-close" aria-label="Close" (click)="closeColorImagePreview()"></button>
+        <button type="button" class="btn-close"  [attr.aria-label]="'COMMON.CLOSE' | translate" (click)="closeColorImagePreview()"></button>
       </div>
       <div class="modal-body text-center">
         <div class="mb-2 small text-muted" *ngIf="colorImagePreviewName">{{ colorImagePreviewName }}</div>
@@ -2506,7 +2506,7 @@
           class="img-fluid rounded border">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeColorImagePreview()">Close</button>
+        <button type="button" class="btn btn-light" (click)="closeColorImagePreview()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>

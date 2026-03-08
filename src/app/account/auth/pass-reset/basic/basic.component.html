@@ -21,7 +21,7 @@
                                 <img src="assets/images/logo-light.png" alt="" height="20">
                             </a>
                         </div>
-                        <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                        <p class="mt-3 fs-15 fw-medium">{{ 'AUTH.LOGIN.TAGLINE' | translate }}</p>
                     </div>
                 </div>
             </div>
@@ -33,18 +33,18 @@
 
                         <div class="card-body p-4">
                             <div class="text-center mt-2">
-                                <h5 class="text-primary">Forgot Password?</h5>
-                                <p class="text-muted">Request a reset token, then set a new password</p>
+                                <h5 class="text-primary">{{ 'AUTH.PASS_RESET.TITLE' | translate }}</h5>
+                                <p class="text-muted">{{ 'AUTH.PASS_RESET.SUBTITLE' | translate }}</p>
                                 <lord-icon src="https://cdn.lordicon.com/rhvddzym.json" trigger="loop" colors="primary:#0ab39c" class="avatar-xl">
                                 </lord-icon>
                             </div>
 
                             <div class="alert border-0 alert-warning text-center mb-2 mx-2" role="alert" *ngIf="!isResetStep">
-                                Enter your email or username to generate a reset token.
+                                {{ 'AUTH.PASS_RESET.ALERT_REQUEST' | translate }}
                             </div>
 
                             <div class="alert border-0 alert-info text-center mb-2 mx-2" role="alert" *ngIf="isResetStep">
-                                Enter the token and your new password.
+                                {{ 'AUTH.PASS_RESET.ALERT_RESET' | translate }}
                             </div>
 
                             <div class="alert border-0 alert-danger mb-3" role="alert" *ngIf="errorMessage">
@@ -58,31 +58,31 @@
                             <div class="p-2">
                                 <form [formGroup]="passresetForm">
                                     <div class="mb-4">
-                                        <label class="form-label">Email or Username</label>
-                                        <input type="text" class="form-control" id="userNameOrEmail" placeholder="Enter Email or Username"
+                                        <label class="form-label">{{ 'AUTH.PASS_RESET.EMAIL_OR_USERNAME' | translate }}</label>
+                                        <input type="text" class="form-control" id="userNameOrEmail" [placeholder]="'AUTH.PASS_RESET.EMAIL_OR_USERNAME_PLACEHOLDER' | translate"
                                             formControlName="userNameOrEmail"
                                             [ngClass]="{ 'is-invalid': (requestSubmitted || resetSubmitted) && f['userNameOrEmail'].errors }">
                                         <div class="invalid-feedback" *ngIf="(requestSubmitted || resetSubmitted) && f['userNameOrEmail'].errors">
-                                            Email or Username is required.
+                                            {{ 'AUTH.PASS_RESET.EMAIL_OR_USERNAME_REQUIRED' | translate }}
                                         </div>
                                     </div>
 
                                     <div *ngIf="isResetStep">
                                         <div class="mb-3">
-                                            <label class="form-label">Reset Token</label>
-                                            <input type="text" class="form-control" id="token" placeholder="Paste reset token"
+                                            <label class="form-label">{{ 'AUTH.PASS_RESET.TOKEN' | translate }}</label>
+                                            <input type="text" class="form-control" id="token" [placeholder]="'AUTH.PASS_RESET.TOKEN_PLACEHOLDER' | translate"
                                                 formControlName="token"
                                                 [ngClass]="{ 'is-invalid': resetSubmitted && f['token'].errors }">
                                             <div class="invalid-feedback" *ngIf="resetSubmitted && f['token'].errors">
-                                                Reset token is required.
+                                                {{ 'AUTH.PASS_RESET.TOKEN_REQUIRED' | translate }}
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">New Password</label>
+                                            <label class="form-label">{{ 'AUTH.PASS_RESET.NEW_PASSWORD' | translate }}</label>
                                             <div class="position-relative auth-pass-inputgroup">
                                                 <input [type]="fieldTextType ? 'text' : 'password'" class="form-control pe-5"
-                                                    placeholder="Enter new password" formControlName="newPassword"
+                                                    [placeholder]="'AUTH.PASS_RESET.NEW_PASSWORD_PLACEHOLDER' | translate" formControlName="newPassword"
                                                     [ngClass]="{ 'is-invalid': resetSubmitted && f['newPassword'].errors }">
                                                 <button
                                                     class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
@@ -92,18 +92,18 @@
                                                 </button>
                                             </div>
                                             <div class="invalid-feedback d-block" *ngIf="resetSubmitted && f['newPassword'].errors?.['required']">
-                                                New password is required.
+                                                {{ 'AUTH.PASS_RESET.NEW_PASSWORD_REQUIRED' | translate }}
                                             </div>
                                             <div class="invalid-feedback d-block" *ngIf="resetSubmitted && f['newPassword'].errors?.['minlength']">
-                                                New password must be at least 6 characters.
+                                                {{ 'AUTH.PASS_RESET.NEW_PASSWORD_MIN' | translate }}
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">Confirm Password</label>
+                                            <label class="form-label">{{ 'AUTH.PASS_RESET.CONFIRM_PASSWORD' | translate }}</label>
                                             <div class="position-relative auth-pass-inputgroup">
                                                 <input [type]="confirmFieldTextType ? 'text' : 'password'" class="form-control pe-5"
-                                                    placeholder="Confirm new password" formControlName="confirmPassword"
+                                                    [placeholder]="'AUTH.PASS_RESET.CONFIRM_PASSWORD_PLACEHOLDER' | translate" formControlName="confirmPassword"
                                                     [ngClass]="{ 'is-invalid': resetSubmitted && f['confirmPassword'].errors }">
                                                 <button
                                                     class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
@@ -113,7 +113,7 @@
                                                 </button>
                                             </div>
                                             <div class="invalid-feedback d-block" *ngIf="resetSubmitted && f['confirmPassword'].errors">
-                                                Confirm password is required.
+                                                {{ 'AUTH.PASS_RESET.CONFIRM_PASSWORD_REQUIRED' | translate }}
                                             </div>
                                         </div>
                                     </div>
@@ -121,11 +121,11 @@
                                     <div class="text-center mt-4" *ngIf="!isResetStep">
                                         <button class="btn btn-success w-100 btn-load" type="button" (click)="onRequestReset()" [disabled]="requestLoading">
                                             <span class="d-flex align-items-center">
-                                                <span *ngIf="requestLoading" class="spinner-border spinner-border-sm flex-shrink-0" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
+                                                    <span *ngIf="requestLoading" class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+                                                    <span class="visually-hidden">{{ 'AUTH.LOGIN.LOADING' | translate }}</span>
                                                 </span>
                                                 <span class="flex-grow-1 ms-2">
-                                                    {{ requestLoading ? 'Sending...' : 'Send Reset Token' }}
+                                                    {{ requestLoading ? ('AUTH.PASS_RESET.SENDING' | translate) : ('AUTH.PASS_RESET.SEND_TOKEN' | translate) }}
                                                 </span>
                                             </span>
                                         </button>
@@ -134,11 +134,11 @@
                                     <div class="text-center mt-4" *ngIf="isResetStep">
                                         <button class="btn btn-primary w-100 btn-load" type="button" (click)="onResetPassword()" [disabled]="resetLoading">
                                             <span class="d-flex align-items-center">
-                                                <span *ngIf="resetLoading" class="spinner-border spinner-border-sm flex-shrink-0" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
+                                                    <span *ngIf="resetLoading" class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+                                                    <span class="visually-hidden">{{ 'AUTH.LOGIN.LOADING' | translate }}</span>
                                                 </span>
                                                 <span class="flex-grow-1 ms-2">
-                                                    {{ resetLoading ? 'Resetting...' : 'Reset Password' }}
+                                                    {{ resetLoading ? ('AUTH.PASS_RESET.RESETTING' | translate) : ('AUTH.PASS_RESET.RESET_PASSWORD' | translate) }}
                                                 </span>
                                             </span>
                                         </button>
@@ -151,7 +151,7 @@
                     <!-- end card -->
 
                     <div class="mt-4 text-center">
-                        <p class="mb-0">Wait, I remember my password... <a routerLink="/auth/login" class="fw-semibold text-primary text-decoration-underline"> Click here </a> </p>
+                        <p class="mb-0">{{ 'AUTH.PASS_RESET.REMEMBER_PROMPT' | translate }} <a routerLink="/auth/login" class="fw-semibold text-primary text-decoration-underline"> {{ 'AUTH.PASS_RESET.CLICK_HERE' | translate }} </a> </p>
                     </div>
 
                 </div>
@@ -168,7 +168,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; <{{year}} Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                        <p class="mb-0 text-muted">&copy; {{year}} Velzon. {{ 'AUTH.LOGIN.FOOTER_TEXT' | translate }} <i class="mdi mdi-heart text-danger"></i> {{ 'AUTH.LOGIN.FOOTER_BY' | translate }} Themesbrand</p>
                     </div>
                 </div>
             </div>

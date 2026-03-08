@@ -2,6 +2,7 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Load Icons
 import { defineElement } from "@lordicon/element";
@@ -22,6 +23,7 @@ import { CoverComponent } from './cover/cover.component';
     NgbCarouselModule,
     ReactiveFormsModule,
     FormsModule,
+    TranslateModule,
     PassResetRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

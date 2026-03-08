@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { patchSwalDeleteI18n } from './core/utils/swal-delete-i18n';
 
 @Component({
     selector: 'app-root',
@@ -8,4 +9,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'velzon';
+
+  constructor() {
+    patchSwalDeleteI18n();
+  }
 }

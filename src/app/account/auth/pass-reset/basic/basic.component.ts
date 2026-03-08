@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { getErrorMessage } from 'src/app/pages/admin/shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
+import Swal from 'sweetalert2';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
     selector: 'app-basic',
@@ -36,10 +39,15 @@ export class BasicComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private myAuthService: MyAuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService,
+    private languageService: LanguageService
   ) { }
 
   ngOnInit(): void {
+     // Use the language selected previously on login page.
+     this.languageService.setLanguage(this.languageService.getCurrentLanguage());
+
      this.passresetForm = this.formBuilder.group({
       userNameOrEmail: ['', [Validators.required]],
       token: ['', [Validators.required]],
@@ -84,11 +92,12 @@ export class BasicComponent implements OnInit {
         next: (response) => {
           this.requestLoading = false;
           this.isResetStep = true;
-          this.successMessage = response?.message || 'If the account exists, a reset link was sent to the email.';
+          this.successMessage = this.translate.instant('AUTH.PASS_RESET.REQUEST_SUCCESS');
         },
         error: (error) => {
           this.requestLoading = false;
-          this.errorMessage = getErrorMessage(error, 'Failed to request password reset.');
+          this.errorMessage = getErrorMessage(error, this.translate.instant('AUTH.PASS_RESET.REQUEST_FAILED'));
+          this.showErrorSwal(this.errorMessage);
         }
       });
   }
@@ -108,7 +117,7 @@ export class BasicComponent implements OnInit {
     }
 
     if (newPassword !== confirmPassword) {
-      this.errorMessage = 'Confirm password must match new password.';
+      this.errorMessage = this.translate.instant('AUTH.PASS_RESET.CONFIRM_MATCH');
       return;
     }
 
@@ -120,14 +129,24 @@ export class BasicComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.resetLoading = false;
-          this.successMessage = response?.message || 'Password reset successfully.';
+          this.successMessage = this.translate.instant('AUTH.PASS_RESET.RESET_SUCCESS');
           this.router.navigate(['/auth/login']);
         },
         error: (error) => {
           this.resetLoading = false;
-          this.errorMessage = getErrorMessage(error, 'Failed to reset password.');
+          this.errorMessage = getErrorMessage(error, this.translate.instant('AUTH.PASS_RESET.RESET_FAILED'));
+          this.showErrorSwal(this.errorMessage);
         }
       });
+  }
+
+  private showErrorSwal(message: string) {
+    Swal.fire({
+      icon: 'error',
+      title: this.translate.instant('AUTH.PASS_RESET.ERROR_TITLE'),
+      text: message || this.translate.instant('AUTH.PASS_RESET.GENERIC_ERROR'),
+      confirmButtonText: this.translate.instant('AUTH.PASS_RESET.OK')
+    });
   }
 
   togglePasswordField() {

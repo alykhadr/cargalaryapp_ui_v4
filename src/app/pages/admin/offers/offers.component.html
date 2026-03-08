@@ -43,7 +43,7 @@
 
     <div *ngIf="isLoading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
       </div>
     </div>
 
@@ -172,7 +172,7 @@
               <label class="form-label">Expiry Date <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-calendar-line"></i></span>
-                <input class="form-control" type="text" formControlName="expiredAt" placeholder="Select date" mwlFlatpickr [altInput]="true" [convertModelValue]="true">
+                <input class="form-control" type="text" formControlName="expiredAt" [placeholder]="'COMMON.SELECT_DATE' | translate" mwlFlatpickr [altInput]="true" [convertModelValue]="true">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['expiredAt'].errors">
                 <span *ngIf="form['expiredAt'].errors['required']">Expiry date is required.</span>
@@ -203,7 +203,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveOffer()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
           {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}

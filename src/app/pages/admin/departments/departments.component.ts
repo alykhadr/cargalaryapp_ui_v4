@@ -11,6 +11,7 @@ import { AdminEmployee } from '../interfaces/employee-admin.interface';
 import { AdminEmployeeService } from '../services/admin-employee.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { LookupService } from '../services/lookup.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-departments',
@@ -47,7 +48,8 @@ export class DepartmentsComponent implements OnInit {
     private departmentService: DepartmentService,
     private adminEmployeeService: AdminEmployeeService,
     private lookupService: LookupService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -155,13 +157,13 @@ export class DepartmentsComponent implements OnInit {
 
   deleteDepartment(department: Department) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete department "${department.nameEn}"?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('DEPARTMENT_PAGE.DELETE_CONFIRM_TEXT', { name: department.nameEn }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {

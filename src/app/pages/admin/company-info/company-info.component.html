@@ -276,7 +276,7 @@
               <button type="button" class="btn btn-success btn-label right ms-auto" *ngIf="currentStep < totalSteps" (click)="nextStep()">
                 <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i> Next Step
               </button>
-              <button type="button" class="btn btn-light" (click)="resetForm()">Cancel</button>
+              <button type="button" class="btn btn-light" (click)="resetForm()">{{ 'COMMON.CANCEL' | translate }}</button>
               <button type="submit" class="btn btn-primary" *ngIf="currentStep === totalSteps">
                 <i class="ri-save-line align-middle me-1"></i> {{ isEditMode ? 'Update' : 'Save' }}
               </button>
@@ -311,7 +311,7 @@
                     <th>Logo</th>
                     <th>Company Name</th>
                     <th>CR Number</th>
-                    <th>Email</th>
+                    <th>{{ 'COMMON.EMAIL' | translate }}</th>
                     <th>Mobile</th>
                     <th>Actions</th>
                   </tr>

@@ -62,7 +62,7 @@
       <div class="card-body">
         <div *ngIf="isLoading" class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
           </div>
         </div>
         <div *ngIf="!isLoading && filteredExtraDetails.length === 0" class="text-center py-5">
@@ -85,9 +85,9 @@
                   <th scope="col">Name (English)</th>
                   <th scope="col">Name (Arabic)</th>
                   <th scope="col">Car ID</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Created By</th>
-                  <th scope="col">Action</th>
+                  <th scope="col">{{ 'COMMON.STATUS' | translate }}</th>
+                  <th scope="col">{{ 'COMMON.CREATED_BY' | translate }}</th>
+                  <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -248,7 +248,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveExtraDetail()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
           {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
