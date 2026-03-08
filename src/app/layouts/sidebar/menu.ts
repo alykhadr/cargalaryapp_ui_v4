@@ -14,23 +14,23 @@ export const MENU: MenuItem[] = [
   },
   {
     id: 1989,
-    label: 'Quotation',
+    label: 'MENUITEMS.QUOTATION.TEXT',
     isTitle: true
   },
   {
     id: 1990,
-    label: 'Quotation',
+    label: 'MENUITEMS.QUOTATION.TEXT',
     icon: 'ri-file-list-3-line',
     isCollapsed: true,
     subItems: [
       {
         id: 1991,
-        label: 'Quotations',
+        label: 'MENUITEMS.QUOTATION.LIST.QUOTATIONS',
         link: '/admin/quotation/list'
       },
       {
         id: 1993,
-        label: 'Track Quotation',
+        label: 'MENUITEMS.QUOTATION.LIST.TRACK',
         link: '/admin/quotation/track'
       }
     ]
@@ -112,7 +112,7 @@ export const MENU: MenuItem[] = [
   },
   {
     id: 1981,
-    label: 'Cars',
+    label: 'MENUITEMS.ADMIN.LIST.CAR',
     link: '/admin/cars/list',
     icon: 'ri-car-line',
     permission: 'cars.view'

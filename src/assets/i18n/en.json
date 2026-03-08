@@ -292,6 +292,13 @@
         }
       }
     },
+    "QUOTATION": {
+      "TEXT": "Quotation",
+      "LIST": {
+        "QUOTATIONS": "Quotations",
+        "TRACK": "Track Quotation"
+      }
+    },
      "ADMIN":{
       "TEXT": "Admin",
       "LIST": {
