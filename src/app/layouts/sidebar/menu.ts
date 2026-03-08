@@ -15,23 +15,27 @@ export const MENU: MenuItem[] = [
   {
     id: 1989,
     label: 'MENUITEMS.QUOTATION.TEXT',
-    isTitle: true
+    isTitle: true,
+    permission: 'quotations.view'
   },
   {
     id: 1990,
     label: 'MENUITEMS.QUOTATION.TEXT',
     icon: 'ri-file-list-3-line',
     isCollapsed: true,
+    permission: 'quotations.view',
     subItems: [
       {
         id: 1991,
         label: 'MENUITEMS.QUOTATION.LIST.QUOTATIONS',
-        link: '/admin/quotation/list'
+        link: '/admin/quotation/list',
+        permission: 'quotations.view'
       },
       {
         id: 1993,
         label: 'MENUITEMS.QUOTATION.LIST.TRACK',
-        link: '/admin/quotation/track'
+        link: '/admin/quotation/track',
+        permission: 'quotations.view'
       }
     ]
   },

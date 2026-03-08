@@ -9,8 +9,8 @@
                 <div class="col-12">
                     <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                         <div class="flex-grow-1">
-                            <h4 class="fs-16 mb-1">Good Morning, Anna!</h4>
-                            <p class="text-muted mb-0">Here's what's happening with your store today.</p>
+                            <h4 class="fs-16 mb-1">{{ 'DASHBOARD_PAGE.GREETING' | translate }} <span *ngIf="dashboardFullName">، {{ dashboardFullName }}</span></h4>
+                            <p class="text-muted mb-0">{{ 'DASHBOARD_PAGE.GREETING_SUBTITLE' | translate }}</p>
                         </div>
                         <div class="mt-3 mt-lg-0">
                             <div class="row g-3 mb-0 align-items-center">
@@ -19,12 +19,6 @@
                                         <input class="form-control flatpickr-input" type="text" mwlFlatpickr [(ngModel)]="currentDate" [altInput]="false" [convertModelValue]="true" [dateFormat]="'d M, Y'" mode="range">
                                         <div class="input-group-text bg-primary border-primary text-white"><i class="ri-calendar-2-line"></i></div>
                                     </div>
-                                </div>
-                                <!--end col-->
-                                <div class="col-auto">
-                                    <a routerLink="/ecommerce/add-product">
-                                        <button type="button" class="btn btn-soft-success"><i class="ri-add-circle-line align-middle me-1"></i> Add
-                                            Product</button></a>
                                 </div>
                                 <!--end col-->
                                 <div class="col-auto">
@@ -52,7 +46,7 @@
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-header border-0 align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.REVENUE' | translate }}</h4>
                             <div class="d-flex gap-1">
                                 <button type="button" class="btn btn-soft-secondary btn-sm" (click)="setrevenuevalue('all')">
                                     ALL
@@ -74,28 +68,28 @@
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0">
                                         <h5 class="mb-1"><span [countUp]="7585" class="counter-value" [options]="option"></span></h5>
-                                        <p class="text-muted mb-0">Orders</p>
+                                        <p class="text-muted mb-0">{{ 'DASHBOARD_PAGE.ORDERS' | translate }}</p>
                                     </div>
                                 </div>
                                 <!--end col-->
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0">
                                         <h5 class="mb-1">$<span [countUp]="22.89" class="counter-value" [options]="option"></span>k</h5>
-                                        <p class="text-muted mb-0">Earnings</p>
+                                        <p class="text-muted mb-0">{{ 'DASHBOARD_PAGE.EARNINGS' | translate }}</p>
                                     </div>
                                 </div>
                                 <!--end col-->
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0">
                                         <h5 class="mb-1"><span [countUp]="367" class="counter-value" [options]="option"></span></h5>
-                                        <p class="text-muted mb-0">Refunds</p>
+                                        <p class="text-muted mb-0">{{ 'DASHBOARD_PAGE.REFUNDS' | translate }}</p>
                                     </div>
                                 </div>
                                 <!--end col-->
                                 <div class="col-6 col-sm-3">
                                     <div class="p-3 border border-dashed border-start-0 border-end-0">
                                         <h5 class="mb-1 text-success"><span [countUp]="18.92" class="counter-value" [options]="option"></span>%</h5>
-                                        <p class="text-muted mb-0">Conversation Ratio</p>
+                                        <p class="text-muted mb-0">{{ 'DASHBOARD_PAGE.CONVERSION_RATIO' | translate }}</p>
                                     </div>
                                 </div>
                                 <!--end col-->
@@ -115,10 +109,10 @@
                     <!-- card -->
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Sales by Locations</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.SALES_BY_LOCATION' | translate }}</h4>
                             <div class="flex-shrink-0">
                                 <button type="button" class="btn btn-soft-primary btn-sm">
-                                    Export Report
+                                    {{ 'DASHBOARD_PAGE.EXPORT_REPORT' | translate }}
                                 </button>
                             </div>
                         </div><!-- end card header -->
@@ -159,19 +153,19 @@
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Best Selling Products</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.BEST_SELLING_PRODUCTS' | translate }}</h4>
                             <div class="flex-shrink-0">
                                 <div class="dropdown card-header-dropdown" ngbDropdown>
                                     <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                                        <span class="fw-semibold text-uppercase fs-12">Sort by: </span><span class="text-muted">Today<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                        <span class="fw-semibold text-uppercase fs-12">{{ 'DASHBOARD_PAGE.SORT_BY' | translate }}: </span><span class="text-muted">{{ 'DASHBOARD_PAGE.TODAY' | translate }}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                                        <a class="dropdown-item" href="javascript: void(0);">Today</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Yesterday</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Last 7 Days</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Last 30 Days</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">This Month</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Last Month</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.TODAY' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.YESTERDAY' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_7_DAYS' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_30_DAYS' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.THIS_MONTH' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_MONTH' | translate }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -184,7 +178,7 @@
 
                             <div class="align-items-center mt-4 pt-2 justify-content-between d-flex">
                                 <div class="col-sm">
-                                    <div class="text-muted">Showing<span class="fw-semibold">4</span> of <span class="fw-semibold">125</span> Results
+                                    <div class="text-muted">{{ 'DASHBOARD_PAGE.SHOWING_RESULTS' | translate:{ shown: 4, total: 125 } }}
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
@@ -215,16 +209,16 @@
                 <div class="col-xl-6">
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Top Sellers</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.TOP_SELLERS' | translate }}</h4>
                             <div class="flex-shrink-0">
                                 <div class="dropdown card-header-dropdown" ngbDropdown>
                                     <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                                        <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                        <span class="text-muted">{{ 'DASHBOARD_PAGE.REPORT' | translate }}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                                        <a class="dropdown-item" href="javascript: void(0);">Download Report</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Export</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Import</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.DOWNLOAD_REPORT' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.EXPORT' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.IMPORT' | translate }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -237,7 +231,7 @@
 
                             <div class="align-items-center mt-4 pt-2 justify-content-between d-flex">
                                 <div class="col-sm">
-                                    <div class="text-muted">Showing<span class="fw-semibold">4</span> of <span class="fw-semibold">125</span> Results
+                                    <div class="text-muted">{{ 'DASHBOARD_PAGE.SHOWING_RESULTS' | translate:{ shown: 4, total: 125 } }}
                                     </div>
                                 </div>
                                 <div class="col-sm-auto">
@@ -270,16 +264,16 @@
                 <div class="col-xl-4">
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Store Visits by Source</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.STORE_VISITS_BY_SOURCE' | translate }}</h4>
                             <div class="flex-shrink-0">
                                 <div class="dropdown card-header-dropdown" ngbDropdown>
                                     <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                                        <span class="text-muted">Report<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                        <span class="text-muted">{{ 'DASHBOARD_PAGE.REPORT' | translate }}<i class="mdi mdi-chevron-down ms-1"></i></span>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                                        <a class="dropdown-item" href="javascript: void(0);">Download Report</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Export</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">Import</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.DOWNLOAD_REPORT' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.EXPORT' | translate }}</a>
+                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.IMPORT' | translate }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -294,10 +288,10 @@
                 <div class="col-xl-8">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Recent Orders</h4>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.RECENT_ORDERS' | translate }}</h4>
                             <div class="flex-shrink-0">
                                 <button type="button" class="btn btn-soft-info btn-sm">
-                                    <i class="ri-file-list-3-line align-middle"></i> Generate Report
+                                    <i class="ri-file-list-3-line align-middle"></i> {{ 'DASHBOARD_PAGE.GENERATE_REPORT' | translate }}
                                 </button>
                             </div>
                         </div><!-- end card header -->
@@ -321,7 +315,7 @@
             <div class="card h-100 rounded-0">
                 <div class="card-body p-0">
                     <div class="p-3">
-                        <h6 class="text-muted mb-0 text-uppercase fw-semibold">Recent Activity</h6>
+                        <h6 class="text-muted mb-0 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.RECENT_ACTIVITY' | translate }}</h6>
                     </div>
                     <ngx-simplebar style="max-height: 410px;" class="p-3 pt-0">
                         <div class="acitivity-timeline acitivity-main">
@@ -445,7 +439,7 @@
                     </ngx-simplebar>
 
                     <div class="p-3 mt-2">
-                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">Top 10 Categories</h6>
+                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.TOP_10_CATEGORIES' | translate }}</h6>
 
                         <ol class="ps-3 text-muted">
                             <li class="py-1">
@@ -480,12 +474,11 @@
                             </li>
                         </ol>
                         <div class="mt-3 text-center">
-                            <a href="javascript:void(0);" class="text-muted text-decoration-underline">View all
-                                Categories</a>
+                            <a href="javascript:void(0);" class="text-muted text-decoration-underline">{{ 'DASHBOARD_PAGE.VIEW_ALL_CATEGORIES' | translate }}</a>
                         </div>
                     </div>
                     <div class="p-3">
-                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">Products Reviews</h6>
+                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.PRODUCT_REVIEWS' | translate }}</h6>
                         <!-- Swiper -->
                         <div class="swiper vertical-swiper rounded" style="height: 280px;" dir="ltr">
                             <ngx-slick-carousel class="carousel" [config]="Vertical" style="height: 280px; width: auth;">
@@ -613,7 +606,7 @@
                     </div>
 
                     <div class="p-3">
-                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">Customer Reviews</h6>
+                        <h6 class="text-muted mb-3 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.CUSTOMER_REVIEWS' | translate }}</h6>
                         <div class="bg-light px-3 py-2 rounded-2 mb-2">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
@@ -626,19 +619,19 @@
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <h6 class="mb-0">4.5 out of 5</h6>
+                                    <h6 class="mb-0">{{ 'DASHBOARD_PAGE.OUT_OF_FIVE' | translate:{ value: 4.5 } }}</h6>
                                 </div>
                             </div>
                         </div>
                         <div class="text-center">
-                            <div class="text-muted">Total <span class="fw-medium">5.50k</span> reviews</div>
+                            <div class="text-muted">{{ 'DASHBOARD_PAGE.TOTAL_REVIEWS' | translate:{ total: '5.50k' } }}</div>
                         </div>
 
                         <div class="mt-3">
                             <div class="row align-items-center g-2">
                                 <div class="col-auto">
                                     <div class="p-1">
-                                        <h6 class="mb-0">5 star</h6>
+                                        <h6 class="mb-0">{{ 'DASHBOARD_PAGE.STAR_LABEL' | translate:{ value: 5 } }}</h6>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -659,7 +652,7 @@
                             <div class="row align-items-center g-2">
                                 <div class="col-auto">
                                     <div class="p-1">
-                                        <h6 class="mb-0">4 star</h6>
+                                        <h6 class="mb-0">{{ 'DASHBOARD_PAGE.STAR_LABEL' | translate:{ value: 4 } }}</h6>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -680,7 +673,7 @@
                             <div class="row align-items-center g-2">
                                 <div class="col-auto">
                                     <div class="p-1">
-                                        <h6 class="mb-0">3 star</h6>
+                                        <h6 class="mb-0">{{ 'DASHBOARD_PAGE.STAR_LABEL' | translate:{ value: 3 } }}</h6>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -701,7 +694,7 @@
                             <div class="row align-items-center g-2">
                                 <div class="col-auto">
                                     <div class="p-1">
-                                        <h6 class="mb-0">2 star</h6>
+                                        <h6 class="mb-0">{{ 'DASHBOARD_PAGE.STAR_LABEL' | translate:{ value: 2 } }}</h6>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -723,7 +716,7 @@
                             <div class="row align-items-center g-2">
                                 <div class="col-auto">
                                     <div class="p-1">
-                                        <h6 class="mb-0">1 star</h6>
+                                        <h6 class="mb-0">{{ 'DASHBOARD_PAGE.STAR_LABEL' | translate:{ value: 1 } }}</h6>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -746,10 +739,9 @@
                         <div class="card-body">
                             <img src="assets/images/giftbox.png" alt="">
                             <div class="mt-4">
-                                <h5>Invite New Seller</h5>
-                                <p class="text-muted lh-base">Refer a new seller to us and earn $100 per refer.</p>
-                                <button type="button" class="btn btn-primary btn-label rounded-pill"><i class="ri-mail-fill label-icon align-middle rounded-pill fs-16 me-2"></i> Invite
-                                    Now</button>
+                                <h5>{{ 'DASHBOARD_PAGE.INVITE_NEW_SELLER' | translate }}</h5>
+                                <p class="text-muted lh-base">{{ 'DASHBOARD_PAGE.INVITE_SELLER_DESC' | translate }}</p>
+                                <button type="button" class="btn btn-primary btn-label rounded-pill"><i class="ri-mail-fill label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'DASHBOARD_PAGE.INVITE_NOW' | translate }}</button>
                             </div>
                         </div>
                     </div>

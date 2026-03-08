@@ -120,7 +120,14 @@
                 </form>
 
                 <div class="d-none d-md-flex align-items-center ms-3 header-welcome-text">
-                    <span class="fw-medium text-body-secondary" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">{{ welcomeUserText }}</span>
+                    <span class="welcome-chip" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">
+                        <i class="ri-user-smile-line"></i>
+                        <span class="welcome-chip-text">{{ welcomeUserText }}</span>
+                    </span>
+                    <span class="date-chip ms-2" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">
+                        <i class="ri-calendar-line"></i>
+                        <span class="date-chip-text">{{ currentDateText }}</span>
+                    </span>
                 </div>
             </div>
 
@@ -265,9 +272,9 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end topbar-user-menu" ngbDropdownMenu>
-                        <a class="dropdown-item" routerLink="/pages/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                        <a class="dropdown-item" routerLink="/pages/faqs"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
-                        <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                        <a class="dropdown-item" routerLink="/pages/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.PROFILE' | translate }}</span></a>
+                        <a class="dropdown-item" routerLink="/pages/faqs"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.HELP' | translate }}</span></a>
+                        <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.LOGOUT' | translate }}</span></a>
                     </div>
                 </div>
             </div>

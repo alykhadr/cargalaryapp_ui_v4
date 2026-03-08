@@ -167,17 +167,20 @@ const routes: Routes = [
   {
     path: "quotation/list",
     component: QuotationListPageComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'quotations.view' }
   },
   {
     path: "quotation/create",
     component: QuotationCreatePageComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'quotations.create' }
   },
   {
     path: "quotation/track",
     component: QuotationTrackPageComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'quotations.view' }
   }
   
 ];

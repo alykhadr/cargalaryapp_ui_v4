@@ -1,6 +1,11 @@
 {
   "HEADER": {
     "WELCOME_USER": "Welcome,",
+    "USER_MENU": {
+      "PROFILE": "Profile",
+      "HELP": "Help",
+      "LOGOUT": "Logout"
+    },
     "MORE": {
       "TEXT": "More"
     }
@@ -516,6 +521,47 @@
         "CLOSE": "Close"
       }
     }
+  },
+  "DASHBOARD_PAGE": {
+    "LOGIN_SUCCESS": "Logged in successfully.",
+    "GREETING": "Good Morning!",
+    "GREETING_SUBTITLE": "Here's what's happening with your store today.",
+    "ADD_PRODUCT": "Add Product",
+    "REVENUE": "Revenue",
+    "ORDERS": "Orders",
+    "EARNINGS": "Earnings",
+    "REFUNDS": "Refunds",
+    "CONVERSION_RATIO": "Conversion Ratio",
+    "SALES_BY_LOCATION": "Sales by Locations",
+    "EXPORT_REPORT": "Export Report",
+    "BEST_SELLING_PRODUCTS": "Best Selling Products",
+    "SORT_BY": "Sort by",
+    "TODAY": "Today",
+    "YESTERDAY": "Yesterday",
+    "LAST_7_DAYS": "Last 7 Days",
+    "LAST_30_DAYS": "Last 30 Days",
+    "THIS_MONTH": "This Month",
+    "LAST_MONTH": "Last Month",
+    "SHOWING_RESULTS": "Showing {{shown}} of {{total}} Results",
+    "TOP_SELLERS": "Top Sellers",
+    "REPORT": "Report",
+    "DOWNLOAD_REPORT": "Download Report",
+    "EXPORT": "Export",
+    "IMPORT": "Import",
+    "STORE_VISITS_BY_SOURCE": "Store Visits by Source",
+    "RECENT_ORDERS": "Recent Orders",
+    "GENERATE_REPORT": "Generate Report",
+    "RECENT_ACTIVITY": "Recent Activity",
+    "TOP_10_CATEGORIES": "Top 10 Categories",
+    "VIEW_ALL_CATEGORIES": "View all Categories",
+    "PRODUCT_REVIEWS": "Products Reviews",
+    "CUSTOMER_REVIEWS": "Customer Reviews",
+    "OUT_OF_FIVE": "{{value}} out of 5",
+    "TOTAL_REVIEWS": "Total {{total}} reviews",
+    "STAR_LABEL": "{{value}} star",
+    "INVITE_NEW_SELLER": "Invite New Seller",
+    "INVITE_SELLER_DESC": "Refer a new seller to us and earn $100 per refer.",
+    "INVITE_NOW": "Invite Now"
   },
   "EMPLOYEE_PAGE": {
     "CREATE_TITLE": "Create Employee",

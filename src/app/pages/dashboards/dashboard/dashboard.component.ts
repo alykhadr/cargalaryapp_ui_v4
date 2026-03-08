@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ToastService } from './toast-service';
 import { TranslateService } from '@ngx-translate/core';
+import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 
 import { circle, latLng, tileLayer } from 'leaflet';
 
@@ -28,12 +29,14 @@ export class DashboardComponent implements OnInit {
   SalesCategoryChart!: ChartType;
   statData!: any;
   currentDate: any;
+  userData: any;
   // Current Date
   // currentDate: Date = new Date();
 
   constructor(
     public toastService: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private tokenStorageService: TokenStorageService
   ) {
     var date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -42,6 +45,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userData = this.tokenStorageService.getUser();
+
     /**
      * BreadCrumb
      */
@@ -51,7 +56,7 @@ export class DashboardComponent implements OnInit {
     ];
 
     if (sessionStorage.getItem('toast')) {
-      this.toastService.show('Logged in Successfull.', { classname: 'bg-success text-center text-white', delay: 5000 });
+      this.toastService.show(this.translate.instant('DASHBOARD_PAGE.LOGIN_SUCCESS'), { classname: 'bg-success text-center text-white', delay: 5000 });
       sessionStorage.removeItem('toast');
     }
 
@@ -63,6 +68,16 @@ export class DashboardComponent implements OnInit {
     // Chart Color Data Get Function
     this._analyticsChart('["--vz-primary", "--vz-success", "--vz-danger"]');
     this._SalesCategoryChart('["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]');
+  }
+
+  get dashboardFullName(): string {
+    const user = this.userData || {};
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+
+    const fullAr = (user.fullNameAr || user.FullNameAr || user.fullnameAr || user.full_name_ar || user.lastName || user.LastName || '').toString().trim();
+    const fullEn = (user.fullNameEn || user.FullNameEn || user.fullnameEn || user.full_name_en || user.firstName || user.FirstName || '').toString().trim();
+
+    return isArabic ? (fullAr || fullEn) : (fullEn || fullAr);
   }
 
 
@@ -103,62 +118,63 @@ export class DashboardComponent implements OnInit {
  * Sales Analytics Chart
  */
   setrevenuevalue(value: any) {
+    const labels = this.getRevenueSeriesLabels();
     if (value == 'all') {
       this.analyticsChart.series = [{
-        name: 'Orders',
+        name: labels.orders,
         type: 'area',
         data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
       }, {
-        name: 'Earnings',
+        name: labels.earnings,
         type: 'bar',
         data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36, 88.51, 36.57]
       }, {
-        name: 'Refunds',
+        name: labels.refunds,
         type: 'line',
         data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
       }]
     }
     if (value == '1M') {
       this.analyticsChart.series = [{
-        name: 'Orders',
+        name: labels.orders,
         type: 'area',
         data: [24, 75, 16, 98, 19, 41, 52, 34, 28, 52, 63, 67]
       }, {
-        name: 'Earnings',
+        name: labels.earnings,
         type: 'bar',
         data: [99.25, 28.58, 98.74, 12.87, 107.54, 94.03, 11.24, 48.57, 22.57, 42.36, 88.51, 36.57]
       }, {
-        name: 'Refunds',
+        name: labels.refunds,
         type: 'line',
         data: [28, 22, 17, 27, 21, 11, 5, 9, 17, 29, 12, 15]
       }]
     }
     if (value == '6M') {
       this.analyticsChart.series = [{
-        name: 'Orders',
+        name: labels.orders,
         type: 'area',
         data: [34, 75, 66, 78, 29, 41, 32, 44, 58, 52, 43, 77]
       }, {
-        name: 'Earnings',
+        name: labels.earnings,
         type: 'bar',
         data: [109.25, 48.58, 38.74, 57.87, 77.54, 84.03, 31.24, 18.57, 92.57, 42.36, 48.51, 56.57]
       }, {
-        name: 'Refunds',
+        name: labels.refunds,
         type: 'line',
         data: [12, 22, 17, 27, 1, 51, 5, 9, 7, 29, 12, 35]
       }]
     }
     if (value == '1Y') {
       this.analyticsChart.series = [{
-        name: 'Orders',
+        name: labels.orders,
         type: 'area',
         data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
       }, {
-        name: 'Earnings',
+        name: labels.earnings,
         type: 'bar',
         data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36, 88.51, 36.57]
       }, {
-        name: 'Refunds',
+        name: labels.refunds,
         type: 'line',
         data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
       }]
@@ -167,6 +183,7 @@ export class DashboardComponent implements OnInit {
 
   private _analyticsChart(colors: any) {
     colors = this.getChartColorsArray(colors);
+    const labels = this.getRevenueSeriesLabels();
     this.analyticsChart = {
       chart: {
         height: 370,
@@ -185,16 +202,16 @@ export class DashboardComponent implements OnInit {
       },
       colors: colors,
       series: [{
-        name: 'Orders',
+        name: labels.orders,
         type: 'area',
         data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
       }, {
-        name: 'Earnings',
+        name: labels.earnings,
         type: 'bar',
         data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36,
           88.51, 36.57]
       }, {
-        name: 'Refunds',
+        name: labels.refunds,
         type: 'line',
         data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
       }],
@@ -271,6 +288,14 @@ export class DashboardComponent implements OnInit {
           barHeight: "70%",
         },
       },
+    };
+  }
+
+  private getRevenueSeriesLabels() {
+    return {
+      orders: this.translate.instant('DASHBOARD_PAGE.ORDERS'),
+      earnings: this.translate.instant('DASHBOARD_PAGE.EARNINGS'),
+      refunds: this.translate.instant('DASHBOARD_PAGE.REFUNDS')
     };
   }
 

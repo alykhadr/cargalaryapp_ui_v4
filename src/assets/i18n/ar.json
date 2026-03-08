@@ -1,6 +1,11 @@
 {
   "HEADER": {
     "WELCOME_USER": "مرحبا ،",
+    "USER_MENU": {
+      "PROFILE": "الملف الشخصي",
+      "HELP": "مساعدة",
+      "LOGOUT": "تسجيل خروج"
+    },
     "MORE": {
       "TEXT": "أكثر"
     }
@@ -516,6 +521,47 @@
         "CLOSE": "إغلاق"
       }
     }
+  },
+  "DASHBOARD_PAGE": {
+    "LOGIN_SUCCESS": "تم تسجيل الدخول بنجاح.",
+    "GREETING": "صباح الخير!",
+    "GREETING_SUBTITLE": "إليك ما يحدث في متجرك اليوم.",
+    "ADD_PRODUCT": "إضافة منتج",
+    "REVENUE": "الإيرادات",
+    "ORDERS": "الطلبات",
+    "EARNINGS": "الأرباح",
+    "REFUNDS": "الاسترجاعات",
+    "CONVERSION_RATIO": "معدل التحويل",
+    "SALES_BY_LOCATION": "المبيعات حسب المواقع",
+    "EXPORT_REPORT": "تصدير التقرير",
+    "BEST_SELLING_PRODUCTS": "أفضل المنتجات مبيعًا",
+    "SORT_BY": "ترتيب حسب",
+    "TODAY": "اليوم",
+    "YESTERDAY": "أمس",
+    "LAST_7_DAYS": "آخر 7 أيام",
+    "LAST_30_DAYS": "آخر 30 يومًا",
+    "THIS_MONTH": "هذا الشهر",
+    "LAST_MONTH": "الشهر الماضي",
+    "SHOWING_RESULTS": "عرض {{shown}} من {{total}} نتيجة",
+    "TOP_SELLERS": "أفضل البائعين",
+    "REPORT": "تقرير",
+    "DOWNLOAD_REPORT": "تنزيل التقرير",
+    "EXPORT": "تصدير",
+    "IMPORT": "استيراد",
+    "STORE_VISITS_BY_SOURCE": "زيارات المتجر حسب المصدر",
+    "RECENT_ORDERS": "أحدث الطلبات",
+    "GENERATE_REPORT": "إنشاء تقرير",
+    "RECENT_ACTIVITY": "النشاط الأخير",
+    "TOP_10_CATEGORIES": "أفضل 10 فئات",
+    "VIEW_ALL_CATEGORIES": "عرض جميع الفئات",
+    "PRODUCT_REVIEWS": "مراجعات المنتجات",
+    "CUSTOMER_REVIEWS": "مراجعات العملاء",
+    "OUT_OF_FIVE": "{{value}} من 5",
+    "TOTAL_REVIEWS": "إجمالي {{total}} مراجعة",
+    "STAR_LABEL": "{{value}} نجمة",
+    "INVITE_NEW_SELLER": "دعوة بائع جديد",
+    "INVITE_SELLER_DESC": "قم بإحالة بائع جديد إلينا واحصل على 100 دولار لكل إحالة.",
+    "INVITE_NOW": "ادعُ الآن"
   },
   "EMPLOYEE_PAGE": {
     "CREATE_TITLE": "إضافة موظف",

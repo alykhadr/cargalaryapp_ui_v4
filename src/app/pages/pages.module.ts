@@ -16,6 +16,7 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 
 import { LightboxModule } from 'ngx-lightbox';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Load Icons
 import { defineElement } from "@lordicon/element";
@@ -54,6 +55,7 @@ import { AdminModule } from './admin/admin.module';
     WidgetModule,
     SlickCarouselModule,
     LightboxModule,
+    TranslateModule,
     DashboardsModule,
     AppsModule,
     EcommerceModule,

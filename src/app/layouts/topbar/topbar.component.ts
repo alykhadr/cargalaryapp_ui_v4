@@ -144,6 +144,16 @@ export class TopbarComponent implements OnInit {
     return name ? `${prefix} ${name}` : prefix;
   }
 
+  get currentDateText(): string {
+    const locale = (this.cookieValue || 'ar').toLowerCase() === 'ar' ? 'ar-SA' : 'en-US';
+    return new Intl.DateTimeFormat(locale, {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    }).format(new Date());
+  }
+
   private getLocalizedUserName(): string {
     const user = this.userData || {};
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';

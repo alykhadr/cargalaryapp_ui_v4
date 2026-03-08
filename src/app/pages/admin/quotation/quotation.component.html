@@ -244,7 +244,7 @@
             </button>
           </div>
           <div class="col-lg-2">
-            <a class="btn btn-primary w-100" routerLink="/admin/quotation/create">
+            <a *appHasPermission="'quotations.create'" class="btn btn-primary w-100" routerLink="/admin/quotation/create">
               <i class="ri-add-circle-line me-1 align-bottom"></i> {{ 'QUOTATION_PAGE.LIST.CREATE_QUOTATION' | translate }}
             </a>
           </div>
