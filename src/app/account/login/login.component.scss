@@ -2,6 +2,10 @@
   margin-inline-end: 0.5rem;
 }
 
+.login-language-switcher {
+  margin-inline-start: auto;
+}
+
 .login-language-switcher .btn-group .btn {
   border-color: var(--vz-border-color);
 }
@@ -10,4 +14,8 @@
   background-color: var(--vz-primary);
   border-color: var(--vz-primary);
   color: #fff;
+}
+
+[dir="rtl"] .login-language-switcher .btn-group {
+  flex-direction: row-reverse;
 }
