@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
 
   // set the current year
   year: number = new Date().getFullYear();
+  selectedLanguage = 'ar';
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService,
@@ -48,8 +49,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Always open login page in Arabic.
-    this.languageService.setLanguage('ar');
+    // Default to Arabic when no previous selection exists.
+    this.selectedLanguage = this.languageService.getCurrentLanguage() || 'ar';
+    this.languageService.setLanguage(this.selectedLanguage);
 
     if (this.tokenStorageService.getUser()) {
       this.router.navigateByUrl(this.returnUrl);
@@ -105,6 +107,11 @@ export class LoginComponent implements OnInit {
 
   private resolveReturnUrl(returnUrl?: string): string {
     return returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
+  }
+
+  onLanguageChange(lang: 'ar' | 'en') {
+    this.selectedLanguage = lang;
+    this.languageService.setLanguage(lang);
   }
 
     /**

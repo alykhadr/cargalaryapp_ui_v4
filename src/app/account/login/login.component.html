@@ -33,6 +33,26 @@
                     <div class="card mt-4">
 
                         <div class="card-body p-4">
+                            <div class="login-language-switcher d-flex justify-content-end mb-3">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Login language switcher">
+                                    <button
+                                        type="button"
+                                        class="btn btn-light d-inline-flex align-items-center gap-1"
+                                        [class.active]="selectedLanguage === 'en'"
+                                        (click)="onLanguageChange('en')">
+                                        <img src="assets/images/flags/us.svg" alt="US" width="16" height="16">
+                                        <span>English</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light d-inline-flex align-items-center gap-1"
+                                        [class.active]="selectedLanguage === 'ar'"
+                                        (click)="onLanguageChange('ar')">
+                                        <img src="assets/images/flags/sa.svg" alt="KSA" width="16" height="16">
+                                        <span>العربية</span>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="text-center mt-2">
                                 <h5 class="text-primary">{{ 'AUTH.LOGIN.WELCOME' | translate }}</h5>
                                 <p class="text-muted">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>

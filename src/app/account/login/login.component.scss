@@ -1,0 +1,13 @@
+.remember-me-check .form-check-input {
+  margin-inline-end: 0.5rem;
+}
+
+.login-language-switcher .btn-group .btn {
+  border-color: var(--vz-border-color);
+}
+
+.login-language-switcher .btn-group .btn.active {
+  background-color: var(--vz-primary);
+  border-color: var(--vz-primary);
+  color: #fff;
+}
