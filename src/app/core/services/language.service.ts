@@ -9,18 +9,11 @@ export class LanguageService {
 
   constructor(public translate: TranslateService, private cookieService: CookieService) {
 
-    let browserLang: any;
     /***
      * cookie Language Get
     */
     this.translate.addLangs(this.languages);
-    if (this.cookieService.check('lang')) {
-      browserLang = this.cookieService.get('lang');
-    }
-    else {
-      browserLang = translate.getBrowserLang();
-    }
-    const initialLang = browserLang.match(/en|ar/) ? browserLang : 'en';
+    const initialLang = this.cookieService.check('lang') ? this.cookieService.get('lang') : 'ar';
     this.applyLanguage(initialLang);
   }
 
@@ -32,12 +25,12 @@ export class LanguageService {
   }
 
   public getCurrentLanguage(): string {
-    return (this.cookieService.get('lang') || this.translate.currentLang || 'en').toLowerCase();
+    return (this.cookieService.get('lang') || this.translate.currentLang || 'ar').toLowerCase();
   }
 
   private applyLanguage(lang: string) {
-    const normalized = (lang || 'en').toLowerCase();
-    const safeLang = normalized.match(/en|ar/) ? normalized : 'en';
+    const normalized = (lang || 'ar').toLowerCase();
+    const safeLang = normalized.match(/en|ar/) ? normalized : 'ar';
     const isArabic = safeLang === 'ar';
 
     this.translate.use(safeLang);
