@@ -153,4 +153,84 @@ File: Main Css File
     padding-left: calc(#{$grid-gutter-width} * 0.5) !important;
     padding-right: $grid-gutter-width !important;
   }
+
+  // Fix extra spacing around collapse arrows in RTL sidebar menus.
+  .navbar-menu .navbar-nav .nav-link[data-bs-toggle="collapse"]::after {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    left: 12px !important;
+    right: auto !important;
+  }
+
+  // Ensure content offset updates correctly in RTL when sidebar size changes.
+  @media (min-width: 768px) {
+    &[data-layout="vertical"] .main-content {
+      margin-right: var(--vz-vertical-menu-width) !important;
+    }
+
+    &[data-layout="vertical"] #page-topbar {
+      right: var(--vz-vertical-menu-width) !important;
+      left: 0 !important;
+    }
+
+    &[data-layout="vertical"] .footer {
+      right: var(--vz-vertical-menu-width) !important;
+      left: 0 !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="sm"] .main-content,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover"] .main-content,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover-active"] .main-content {
+      margin-right: var(--vz-vertical-menu-width-sm) !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="sm"] #page-topbar,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover"] #page-topbar,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover-active"] #page-topbar {
+      right: var(--vz-vertical-menu-width-sm) !important;
+      left: 0 !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="sm"] .footer,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover"] .footer,
+    &[data-layout="vertical"][data-sidebar-size="sm-hover-active"] .footer {
+      right: var(--vz-vertical-menu-width-sm) !important;
+      left: 0 !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="md"] .main-content {
+      margin-right: var(--vz-vertical-menu-width-md) !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="md"] #page-topbar {
+      right: var(--vz-vertical-menu-width-md) !important;
+      left: 0 !important;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="md"] .footer {
+      right: var(--vz-vertical-menu-width-md) !important;
+      left: 0 !important;
+    }
+  }
+
+  // Mirror collapse arrow direction for Arabic menus.
+  .navbar-menu .navbar-nav .nav-link[data-bs-toggle="collapse"]::after {
+    content: "\F0141" !important;
+  }
+
+  .navbar-menu .navbar-nav .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+    transform: rotate(-90deg) !important;
+  }
+
+  // Keep Theme Customizer offcanvas visible in RTL (avoid hidden off-screen state).
+  .offcanvas.theme-customizer-offcanvas.offcanvas-end {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  .offcanvas.theme-customizer-offcanvas.offcanvas-end.show,
+  .offcanvas.theme-customizer-offcanvas.offcanvas-end.showing {
+    transform: none !important;
+    visibility: visible !important;
+  }
 }

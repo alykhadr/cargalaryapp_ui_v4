@@ -160,7 +160,8 @@ $value in $theme-colors {
     position: fixed;
     bottom: 40px;
     right: 20px;
-    z-index: 1000;
+    z-index: 1060;
+    pointer-events: auto;
 }
 
 // 

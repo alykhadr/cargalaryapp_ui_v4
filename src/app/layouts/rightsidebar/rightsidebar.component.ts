@@ -101,7 +101,11 @@ export class RightsidebarComponent implements OnInit {
 
   //  Filter Offcanvas Set
   openEnd(content: TemplateRef<any>) {
-    this.offcanvasService.open(content, { position: 'end' });
+    this.offcanvasService.open(content, {
+      position: 'end',
+      panelClass: 'theme-customizer-offcanvas',
+      backdropClass: 'theme-customizer-backdrop'
+    });
 
     setTimeout(() => {
       this.attribute = document.documentElement.getAttribute('data-layout')
