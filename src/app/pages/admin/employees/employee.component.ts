@@ -91,7 +91,7 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
       { label: this.mode === 'create' ? this.translate.instant('EMPLOYEE_PAGE.CREATE_TITLE') : this.translate.instant('EMPLOYEE_PAGE.LIST_TITLE'), active: true }
     ];
 

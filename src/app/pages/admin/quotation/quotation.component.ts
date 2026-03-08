@@ -13,6 +13,7 @@ import { LookupService } from '../services/lookup.service';
 import { QuotationService } from '../services/quotation.service';
 import { QuotationRealtimeService } from '../services/quotation-realtime.service';
 import { ErrorMessageService } from '../shared/error-message.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-quotation',
@@ -66,12 +67,13 @@ export class QuotationComponent implements OnInit, OnDestroy {
     private carService: CarService,
     private lookupService: LookupService,
     private toastService: ToastService,
-    private errorMessageService: ErrorMessageService
+    private errorMessageService: ErrorMessageService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
       { label: this.mode === 'track' ? 'Track Quotation' : 'Quotation', active: true }
     ];
 

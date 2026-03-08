@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Extra Car Info" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="'MENUITEMS.ADMIN.LIST.CAREXTRADETAILS' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
@@ -7,17 +7,19 @@
         <div class="row g-4 align-items-center">
           <div class="col-sm">
             <div>
-              <h5 class="card-title mb-0">Extra Car Details List</h5>
+              <h5 class="card-title mb-0">{{ 'CAR_EXTRA_DETAILS_PAGE.LIST_TITLE' | translate }}</h5>
             </div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
               <button type="button" class="btn btn-danger"
-                [disabled]="selectedExtraDetailIds.size === 0" (click)="bulkDeleteExtraDetails()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedExtraDetailIds.size }})
+                [disabled]="selectedExtraDetailIds.size === 0" (click)="bulkDeleteExtraDetails()"
+                [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> {{ 'CAR_EXTRA_DETAILS_PAGE.DELETE_SELECTED' | translate }} ({{ selectedExtraDetailIds.size }})
               </button>
-              <button type="button" class="btn btn-success add-btn" (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Extra Detail
+              <button type="button" class="btn btn-success add-btn" (click)="openCreateModal()"
+                [ngbTooltip]="'COMMON.ADD' | translate" placement="top">
+                <i class="ri-add-line align-bottom me-1"></i> {{ 'CAR_EXTRA_DETAILS_PAGE.ADD_BUTTON' | translate }}
               </button>
             </div>
           </div>
@@ -33,7 +35,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Search by English name..."
+                    [placeholder]="'CAR_EXTRA_DETAILS_PAGE.SEARCH_EN' | translate"
                     [(ngModel)]="searchTerm"
                     (ngModelChange)="onSearch()">
                 </div>
@@ -44,7 +46,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="ابحث بالاسم العربي..."
+                    [placeholder]="'CAR_EXTRA_DETAILS_PAGE.SEARCH_AR' | translate"
                     [(ngModel)]="searchTermAr"
                     (ngModelChange)="onSearch()"
                     dir="rtl">
@@ -52,7 +54,7 @@
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-                  <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+                  <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.REMOVE_FILTERS' | translate }}
                 </button>
               </div>
             </div>
@@ -69,8 +71,8 @@
           <div class="mb-3">
             <i class="ri-information-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No extra details found</h5>
-          <p class="text-muted">Click "Add Extra Detail" to create your first extra detail</p>
+          <h5 class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.NO_EXTRA_DETAILS_FOUND' | translate }}</h5>
+          <p class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.NO_EXTRA_DETAILS_HINT' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredExtraDetails.length > 0">
           <div class="table-responsive table-card mb-1">
@@ -82,9 +84,9 @@
                            [checked]="isAllExtraDetailsSelected()"
                            (change)="toggleSelectAllExtraDetails($any($event.target).checked)">
                   </th>
-                  <th scope="col">Name (English)</th>
-                  <th scope="col">Name (Arabic)</th>
-                  <th scope="col">Car ID</th>
+                  <th scope="col">{{ 'CAR_EXTRA_DETAILS_PAGE.NAME_EN' | translate }}</th>
+                  <th scope="col">{{ 'CAR_EXTRA_DETAILS_PAGE.NAME_AR' | translate }}</th>
+                  <th scope="col">{{ 'CAR_EXTRA_DETAILS_PAGE.CAR' | translate }}</th>
                   <th scope="col">{{ 'COMMON.STATUS' | translate }}</th>
                   <th scope="col">{{ 'COMMON.CREATED_BY' | translate }}</th>
                   <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
@@ -105,21 +107,23 @@
                       {{ car.year }} - {{ car.mileage?.toLocaleString() }} km
                     </span>
                     <ng-template #unknownCar>
-                      <span class="text-muted">Unknown Car</span>
+                      <span class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.UNKNOWN_CAR' | translate }}</span>
                     </ng-template>
                   </td>
                   <td>
                     <span class="badge" [ngClass]="extraDetail.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                      {{ extraDetail.isAvailable ? 'Available' : 'Unavailable' }}
+                      {{ extraDetail.isAvailable ? ('CAR_EXTRA_DETAILS_PAGE.AVAILABLE' | translate) : ('CAR_EXTRA_DETAILS_PAGE.UNAVAILABLE' | translate) }}
                     </span>
                   </td>
-                  <td>{{ extraDetail.createdBy || 'N/A' }}</td>
+                  <td>{{ extraDetail.createdBy || ('COMMON.NOT_AVAILABLE' | translate) }}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button class="btn btn-sm btn-soft-primary" (click)="openEditModal(extraDetail)">
+                      <button class="btn btn-sm btn-soft-primary" (click)="openEditModal(extraDetail)"
+                        [ngbTooltip]="'COMMON.EDIT' | translate" placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button class="btn btn-sm btn-soft-danger" (click)="deleteExtraDetail(extraDetail)">
+                      <button class="btn btn-sm btn-soft-danger" (click)="deleteExtraDetail(extraDetail)"
+                        [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -154,57 +158,57 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Extra Detail' : 'Create Extra Detail' }}</h5>
+        <h5 class="modal-title">{{ isEditMode ? ('CAR_EXTRA_DETAILS_PAGE.EDIT_TITLE' | translate) : ('CAR_EXTRA_DETAILS_PAGE.CREATE_TITLE' | translate) }}</h5>
         <button class="btn-close" type="button" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="extraDetailsForm">
           <div class="mb-3">
-            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'CAR_EXTRA_DETAILS_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+              <input class="form-control" type="text" formControlName="nameEn" [placeholder]="'CAR_EXTRA_DETAILS_PAGE.ENTER_EN_NAME' | translate">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
-              English name is required (max 200 characters).
+              {{ 'CAR_EXTRA_DETAILS_PAGE.NAME_EN_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'CAR_EXTRA_DETAILS_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+              <input class="form-control" type="text" formControlName="nameAr" [placeholder]="'CAR_EXTRA_DETAILS_PAGE.ENTER_AR_NAME' | translate" dir="rtl">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
-              Arabic name is required (max 200 characters).
+              {{ 'CAR_EXTRA_DETAILS_PAGE.NAME_AR_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Description (English)</label>
+            <label class="form-label">{{ 'CAR_EXTRA_DETAILS_PAGE.DESCRIPTION_EN' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-              <textarea class="form-control" formControlName="descriptionEn" placeholder="Enter English description" rows="3"></textarea>
+              <textarea class="form-control" formControlName="descriptionEn" [placeholder]="'CAR_EXTRA_DETAILS_PAGE.ENTER_EN_DESCRIPTION' | translate" rows="3"></textarea>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
-              Description must be max 500 characters.
+              {{ 'CAR_EXTRA_DETAILS_PAGE.DESCRIPTION_EN_MAX' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Description (Arabic)</label>
+            <label class="form-label">{{ 'CAR_EXTRA_DETAILS_PAGE.DESCRIPTION_AR' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-              <textarea class="form-control" formControlName="descriptionAr" placeholder="أدخل الوصف بالعربية" dir="rtl" rows="3"></textarea>
+              <textarea class="form-control" formControlName="descriptionAr" [placeholder]="'CAR_EXTRA_DETAILS_PAGE.ENTER_AR_DESCRIPTION' | translate" dir="rtl" rows="3"></textarea>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
-              الوصف يجب أن يكون كحد أقصى 500 حرف.
+              {{ 'CAR_EXTRA_DETAILS_PAGE.DESCRIPTION_AR_MAX' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Car <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'CAR_EXTRA_DETAILS_PAGE.CAR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-car-line"></i></span>
               <div class="flex-grow-1">
@@ -213,7 +217,7 @@
                   bindLabel="nameEn"
                   bindValue="id"
                   formControlName="carId"
-                  placeholder="Select a car"
+                  [placeholder]="'CAR_EXTRA_DETAILS_PAGE.SELECT_CAR' | translate"
                   [searchable]="true"
                   [clearable]="true"
                   [loading]="cars.length === 0">
@@ -223,17 +227,17 @@
                   <ng-template ng-option-tmp let-item="item" let-index="index">
                     <div class="d-flex flex-column">
                       <span class="fw-semibold">{{ item.nameAr || '-' }} - {{ item.nameEn || '-' }}</span>
-                      <small class="text-muted">Branch: {{ getBranchName(item.branchId) }}</small>
-                      <small class="text-muted">Brand: {{ getBrandNameByModelId(item.modelId) }}</small>
-                      <small class="text-muted">Model: {{ getModelName(item.modelId) }}</small>
-                      <small class="text-muted">Year: {{ item.year }}</small>
+                      <small class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.BRANCH_LABEL' | translate }} {{ getBranchName(item.branchId) }}</small>
+                      <small class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.BRAND_LABEL' | translate }} {{ getBrandNameByModelId(item.modelId) }}</small>
+                      <small class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.MODEL_LABEL' | translate }} {{ getModelName(item.modelId) }}</small>
+                      <small class="text-muted">{{ 'CAR_EXTRA_DETAILS_PAGE.YEAR_LABEL' | translate }} {{ item.year }}</small>
                     </div>
                   </ng-template>
                 </ng-select>
               </div>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">
-              Car is required.
+              {{ 'CAR_EXTRA_DETAILS_PAGE.CAR_REQUIRED' | translate }}
             </div>
           </div>
 
@@ -241,7 +245,7 @@
             <div class="form-check">
               <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
               <label class="form-check-label" for="isAvailable">
-                Available
+                {{ 'CAR_EXTRA_DETAILS_PAGE.AVAILABLE' | translate }}
               </label>
             </div>
           </div>
@@ -251,7 +255,7 @@
         <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveExtraDetail()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('CAR_EXTRA_DETAILS_PAGE.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>

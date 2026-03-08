@@ -138,6 +138,44 @@ export class TopbarComponent implements OnInit {
     this.languageService.setLanguage(lang);
   }
 
+  get welcomeUserText(): string {
+    const prefix = this.translate.instant('HEADER.WELCOME_USER');
+    const name = this.getLocalizedUserName();
+    return name ? `${prefix} ${name}` : prefix;
+  }
+
+  private getLocalizedUserName(): string {
+    const user = this.userData || {};
+    const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
+
+    const read = (...keys: string[]): string => {
+      for (const key of keys) {
+        const value = user?.[key];
+        if (typeof value === 'string' && value.trim()) {
+          return value.trim();
+        }
+      }
+      return '';
+    };
+
+    const fullAr = read('fullNameAr', 'nameAr', 'full_name_ar');
+    const fullEn = read('fullNameEn', 'nameEn', 'full_name_en');
+
+    const firstAr = read('firstNameAr', 'first_name_ar');
+    const lastAr = read('lastNameAr', 'last_name_ar');
+    const firstEn = read('firstName', 'first_name');
+    const lastEn = read('lastName', 'last_name');
+
+    const composedAr = `${firstAr} ${lastAr}`.trim();
+    const composedEn = `${firstEn} ${lastEn}`.trim();
+
+    if (isArabic) {
+      return fullAr || composedAr || fullEn || composedEn || read('username', 'userName', 'email');
+    }
+
+    return fullEn || composedEn || fullAr || composedAr || read('username', 'userName', 'email');
+  }
+
   /**
    * Logout the user
    */

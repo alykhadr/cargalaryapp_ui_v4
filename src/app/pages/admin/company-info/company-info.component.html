@@ -2,11 +2,11 @@
   <div class="row">
     <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 class="mb-sm-0">{{ 'COMPANYINFO' | translate }}</h4>
+        <h4 class="mb-sm-0">{{ 'COMPANY_INFO_PAGE.TITLE' | translate }}</h4>
         <div class="page-title-right">
           <ol class="breadcrumb m-0">
-            <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
-            <li class="breadcrumb-item active">{{ 'COMPANYINFO' | translate }}</li>
+            <li class="breadcrumb-item"><a href="javascript: void(0);">{{ 'MENUITEMS.ADMIN.TEXT' | translate }}</a></li>
+            <li class="breadcrumb-item active">{{ 'COMPANY_INFO_PAGE.TITLE' | translate }}</li>
           </ol>
         </div>
       </div>
@@ -17,7 +17,7 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header border-bottom-dashed">
-          <h5 class="card-title mb-0">{{ isEditMode ? 'Edit' : 'Add' }} Company Information</h5>
+          <h5 class="card-title mb-0">{{ isEditMode ? ('COMPANY_INFO_PAGE.EDIT_TITLE' | translate) : ('COMPANY_INFO_PAGE.CREATE_TITLE' | translate) }}</h5>
         </div>
 
         <div class="card-body form-steps">
@@ -51,115 +51,115 @@
             </div>
 
             <div class="d-flex justify-content-end mb-3">
-              <button type="button" class="btn btn-soft-info btn-sm" (click)="fillTestDataForCurrentStep()">
-                <i class="ri-file-copy-line align-middle me-1"></i> Fill Test Data (Step {{ currentStep }})
+              <button type="button" class="btn btn-soft-info btn-sm" (click)="fillTestDataForCurrentStep()" [title]="'COMPANY_INFO_PAGE.FILL_TEST_DATA' | translate">
+                <i class="ri-file-copy-line align-middle me-1"></i> {{ 'COMPANY_INFO_PAGE.FILL_TEST_DATA' | translate }} ({{ 'COMMON.PAGE' | translate }} {{ currentStep }})
               </button>
             </div>
 
             <!-- Step 1: Basic Info -->
             <div *ngIf="currentStep === 1">
               <div class="mb-4">
-                <h5 class="mb-1">Basic Information</h5>
-                <p class="text-muted">Fill all information below</p>
+                <h5 class="mb-1">{{ 'COMPANY_INFO_PAGE.STEP1_TITLE' | translate }}</h5>
+                <p class="text-muted">{{ 'COMPANY_INFO_PAGE.STEP1_SUBTITLE' | translate }}</p>
               </div>
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">Company Name (English) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.COMPANY_NAME_EN' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-building-line"></i></span>
                       <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameEn" name="companyNameEn" maxlength="200" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.companyNameEn">
-                      Company name in English is required
+                      {{ 'COMPANY_INFO_PAGE.COMPANY_NAME_EN_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">Company Name (Arabic) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.COMPANY_NAME_AR' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-building-line"></i></span>
                       <input type="text" class="form-control" [(ngModel)]="companyInfoForm.companyNameAr" name="companyNameAr" maxlength="200" dir="rtl" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.companyNameAr">
-                      Company name in Arabic is required
+                      {{ 'COMPANY_INFO_PAGE.COMPANY_NAME_AR_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">CR Number <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.CR_NUMBER' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-file-list-3-line"></i></span>
                       <input type="text" class="form-control" [(ngModel)]="companyInfoForm.crNumber" name="crNumber" maxlength="50" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.crNumber">
-                      CR Number is required
+                      {{ 'COMPANY_INFO_PAGE.CR_NUMBER_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMMON.EMAIL' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-mail-line"></i></span>
                       <input type="email" class="form-control" [(ngModel)]="companyInfoForm.email" name="email" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.email">
-                      Email is required
+                      {{ 'COMPANY_INFO_PAGE.EMAIL_REQUIRED' | translate }}
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && companyInfoForm.email && !isValidEmail(companyInfoForm.email)">
-                      Email is not valid
+                      {{ 'COMPANY_INFO_PAGE.EMAIL_INVALID' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.MOBILE_NUMBER' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-phone-line"></i></span>
                       <input type="text" class="form-control" [(ngModel)]="companyInfoForm.mobileNo" name="mobileNo" maxlength="10" placeholder="05XXXXXXXX" pattern="[0-9]*" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.mobileNo">
-                      Mobile number is required
+                      {{ 'COMPANY_INFO_PAGE.MOBILE_REQUIRED' | translate }}
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && companyInfoForm.mobileNo && !isNumeric(companyInfoForm.mobileNo)">
-                      Mobile number must contain only numbers
+                      {{ 'COMPANY_INFO_PAGE.NUMBERS_ONLY' | translate }}
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && companyInfoForm.mobileNo && isNumeric(companyInfoForm.mobileNo) && !isValidMobile(companyInfoForm.mobileNo)">
-                      Mobile number must start with 05 and be 10 digits
+                      {{ 'COMPANY_INFO_PAGE.MOBILE_FORMAT' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label class="form-label">Telephone Number <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.TEL_NUMBER' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-phone-line"></i></span>
                       <input type="text" class="form-control" [(ngModel)]="companyInfoForm.telNo" name="telNo" maxlength="30" pattern="[0-9]*" required>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.telNo">
-                      Telephone number is required
+                      {{ 'COMPANY_INFO_PAGE.TEL_REQUIRED' | translate }}
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && companyInfoForm.telNo && !isNumeric(companyInfoForm.telNo)">
-                      Telephone number must contain only numbers
+                      {{ 'COMPANY_INFO_PAGE.NUMBERS_ONLY' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="mb-3">
-                    <label class="form-label">Logo <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.LOGO' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-image-2-line"></i></span>
                       <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*">
                     </div>
-                    <small class="text-muted">Maximum file size: 5 MB</small>
+                    <small class="text-muted">{{ 'COMPANY_INFO_PAGE.LOGO_MAX_SIZE' | translate }}</small>
                     <div *ngIf="logoPreview" class="mt-2">
                       <img [src]="logoPreview" alt="Logo Preview" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !logoPreview && !selectedFile">
-                      Logo is required
+                      {{ 'COMPANY_INFO_PAGE.LOGO_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
@@ -169,31 +169,31 @@
             <!-- Step 2: About Us -->
             <div *ngIf="currentStep === 2">
               <div class="mb-4">
-                <h5 class="mb-1">About Us</h5>
-                <p class="text-muted">Describe your company</p>
+                <h5 class="mb-1">{{ 'COMPANY_INFO_PAGE.STEP2_TITLE' | translate }}</h5>
+                <p class="text-muted">{{ 'COMPANY_INFO_PAGE.STEP2_SUBTITLE' | translate }}</p>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">About Us (English) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.ABOUT_EN' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-file-text-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsEn" name="aboutUsEn" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.aboutUsEn">
-                      About Us in English is required
+                      {{ 'COMPANY_INFO_PAGE.ABOUT_EN_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">About Us (Arabic) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.ABOUT_AR' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-file-text-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.aboutUsAr" name="aboutUsAr" dir="rtl" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.aboutUsAr">
-                      About Us in Arabic is required
+                      {{ 'COMPANY_INFO_PAGE.ABOUT_AR_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
@@ -203,31 +203,31 @@
             <!-- Step 3: Our Mission -->
             <div *ngIf="currentStep === 3">
               <div class="mb-4">
-                <h5 class="mb-1">Our Mission</h5>
-                <p class="text-muted">What is your company's mission?</p>
+                <h5 class="mb-1">{{ 'COMPANY_INFO_PAGE.STEP3_TITLE' | translate }}</h5>
+                <p class="text-muted">{{ 'COMPANY_INFO_PAGE.STEP3_SUBTITLE' | translate }}</p>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Our Mission (English) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.MISSION_EN' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-focus-2-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionEn" name="ourMissionEn" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourMissionEn">
-                      Our Mission in English is required
+                      {{ 'COMPANY_INFO_PAGE.MISSION_EN_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Our Mission (Arabic) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.MISSION_AR' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-focus-2-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourMissionAr" name="ourMissionAr" dir="rtl" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourMissionAr">
-                      Our Mission in Arabic is required
+                      {{ 'COMPANY_INFO_PAGE.MISSION_AR_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
@@ -237,31 +237,31 @@
             <!-- Step 4: Our Goals -->
             <div *ngIf="currentStep === 4">
               <div class="mb-4">
-                <h5 class="mb-1">Our Goals</h5>
-                <p class="text-muted">What are your company's goals?</p>
+                <h5 class="mb-1">{{ 'COMPANY_INFO_PAGE.STEP4_TITLE' | translate }}</h5>
+                <p class="text-muted">{{ 'COMPANY_INFO_PAGE.STEP4_SUBTITLE' | translate }}</p>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Our Goals (English) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.GOALS_EN' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-flag-2-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsEn" name="ourGoalsEn" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourGoalsEn">
-                      Our Goals in English is required
+                      {{ 'COMPANY_INFO_PAGE.GOALS_EN_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Our Goals (Arabic) <span class="text-danger">*</span></label>
+                    <label class="form-label">{{ 'COMPANY_INFO_PAGE.GOALS_AR' | translate }} <span class="text-danger">*</span></label>
                     <div class="input-group">
                       <span class="input-group-text"><i class="ri-flag-2-line"></i></span>
                       <textarea class="form-control" rows="8" [(ngModel)]="companyInfoForm.ourGoalsAr" name="ourGoalsAr" dir="rtl" required></textarea>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="submitted && !companyInfoForm.ourGoalsAr">
-                      Our Goals in Arabic is required
+                      {{ 'COMPANY_INFO_PAGE.GOALS_AR_REQUIRED' | translate }}
                     </div>
                   </div>
                 </div>
@@ -270,15 +270,15 @@
 
             <!-- Navigation Buttons -->
             <div class="d-flex align-items-start gap-3 mt-4">
-              <button type="button" class="btn btn-light btn-label" *ngIf="currentStep > 1" (click)="previousStep()">
-                <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Previous
+              <button type="button" class="btn btn-light btn-label" *ngIf="currentStep > 1" (click)="previousStep()" [title]="'COMMON.PREVIOUS' | translate">
+                <i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> {{ 'COMMON.PREVIOUS' | translate }}
               </button>
-              <button type="button" class="btn btn-success btn-label right ms-auto" *ngIf="currentStep < totalSteps" (click)="nextStep()">
-                <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i> Next Step
+              <button type="button" class="btn btn-success btn-label right ms-auto" *ngIf="currentStep < totalSteps" (click)="nextStep()" [title]="'COMMON.NEXT' | translate">
+                <i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i> {{ 'COMMON.NEXT' | translate }}
               </button>
-              <button type="button" class="btn btn-light" (click)="resetForm()">{{ 'COMMON.CANCEL' | translate }}</button>
-              <button type="submit" class="btn btn-primary" *ngIf="currentStep === totalSteps">
-                <i class="ri-save-line align-middle me-1"></i> {{ isEditMode ? 'Update' : 'Save' }}
+              <button type="button" class="btn btn-light" (click)="resetForm()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+              <button type="submit" class="btn btn-primary" *ngIf="currentStep === totalSteps" [title]="isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.SAVE' | translate)">
+                <i class="ri-save-line align-middle me-1"></i> {{ isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.SAVE' | translate) }}
               </button>
             </div>
           </form>
@@ -291,7 +291,7 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header border-bottom-dashed">
-          <h5 class="card-title mb-0">Company Information List</h5>
+          <h5 class="card-title mb-0">{{ 'COMPANY_INFO_PAGE.LIST_TITLE' | translate }}</h5>
         </div>
 
         <div class="card-body">
@@ -299,8 +299,8 @@
             <div class="mb-3">
               <i class="ri-building-line" style="font-size: 48px; color: #ccc;"></i>
             </div>
-            <h5 class="text-muted">No company information found</h5>
-            <p class="text-muted">Click "Create" above to add company information</p>
+            <h5 class="text-muted">{{ 'COMPANY_INFO_PAGE.NO_DATA' | translate }}</h5>
+            <p class="text-muted">{{ 'COMPANY_INFO_PAGE.NO_DATA_HINT' | translate }}</p>
           </div>
 
           <div *ngIf="filteredCompanyInfos.length > 0">
@@ -308,18 +308,18 @@
               <table class="table align-middle table-nowrap">
                 <thead class="table-light text-muted">
                   <tr>
-                    <th>Logo</th>
-                    <th>Company Name</th>
-                    <th>CR Number</th>
+                    <th>{{ 'COMPANY_INFO_PAGE.LOGO' | translate }}</th>
+                    <th>{{ 'COMPANY_INFO_PAGE.COMPANY_NAME' | translate }}</th>
+                    <th>{{ 'COMPANY_INFO_PAGE.CR_NUMBER' | translate }}</th>
                     <th>{{ 'COMMON.EMAIL' | translate }}</th>
-                    <th>Mobile</th>
-                    <th>Actions</th>
+                    <th>{{ 'COMMON.MOBILE' | translate }}</th>
+                    <th>{{ 'COMMON.ACTION' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let info of paginatedCompanyInfos">
                     <td>
-                      <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(info.logoUrl || 'assets/images/companies/img-1.png')">
+                      <div class="avatar-sm position-relative" style="cursor: pointer;" (click)="previewImage(info.logoUrl || 'assets/images/companies/img-1.png')" [title]="'COMPANY_INFO_PAGE.PREVIEW_LOGO' | translate">
                         <img [src]="info.logoUrl || 'assets/images/companies/img-1.png'" alt="Logo" class="rounded img-fluid">
                         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 rounded opacity-0 hover-overlay">
                           <i class="ri-eye-line text-white fs-4"></i>
@@ -332,11 +332,11 @@
                     <td>{{ info.mobileNo || '-' }}</td>
                     <td>
                       <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-soft-primary" (click)="editCompanyInfo(info)">
-                          <i class="ri-pencil-fill align-bottom"></i> Edit
+                        <button class="btn btn-sm btn-soft-primary" (click)="editCompanyInfo(info)" [title]="'COMMON.EDIT' | translate">
+                          <i class="ri-pencil-fill align-bottom"></i> {{ 'COMMON.EDIT' | translate }}
                         </button>
-                        <button class="btn btn-sm btn-soft-danger" (click)="deleteCompanyInfo(info.id)">
-                          <i class="ri-delete-bin-fill align-bottom"></i> Delete
+                        <button class="btn btn-sm btn-soft-danger" (click)="deleteCompanyInfo(info.id)" [title]="'COMMON.DELETE' | translate">
+                          <i class="ri-delete-bin-fill align-bottom"></i> {{ 'COMMON.DELETE' | translate }}
                         </button>
                       </div>
                     </td>
@@ -355,13 +355,13 @@
                 <div class="dataTables_paginate paging_simple_numbers float-end">
                   <ul class="pagination pagination-separated pagination-sm mb-0">
                     <li class="page-item" [class.disabled]="currentPage === 1">
-                      <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+                      <a class="page-link" (click)="changePage(currentPage - 1)">{{ 'COMMON.PREVIOUS' | translate }}</a>
                     </li>
                     <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" [class.active]="currentPage === i + 1">
                       <a class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</a>
                     </li>
                     <li class="page-item" [class.disabled]="currentPage === totalPages">
-                      <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+                      <a class="page-link" (click)="changePage(currentPage + 1)">{{ 'COMMON.NEXT' | translate }}</a>
                     </li>
                   </ul>
                 </div>
@@ -379,8 +379,8 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Logo Preview</h5>
-        <button type="button" class="btn-close" (click)="closePreview()"></button>
+        <h5 class="modal-title">{{ 'COMPANY_INFO_PAGE.PREVIEW_LOGO' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="closePreview()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body text-center">
         <img [src]="previewImageUrl" alt="Logo Preview" class="img-fluid" style="max-height: 500px;">

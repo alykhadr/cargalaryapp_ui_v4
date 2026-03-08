@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Services" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="'SERVICES_PAGE.TITLE' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
@@ -7,14 +7,14 @@
         <div class="row">
           <div class="col-xxl-9 align-self-center">
             <div class="py-4">
-              <h4 class="display-6">Services Management</h4>
-              <p class="text-success fs-15 mt-3">Manage your services with descriptions, discounts, and images.</p>
+              <h4 class="display-6">{{ 'SERVICES_PAGE.MANAGEMENT_TITLE' | translate }}</h4>
+              <p class="text-success fs-15 mt-3">{{ 'SERVICES_PAGE.MANAGEMENT_SUBTITLE' | translate }}</p>
               <div class="hstack flex-wrap gap-2">
-                <button *appHasPermission="'services.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()">
-                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> Add Service
+                <button *appHasPermission="'services.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()" [title]="'SERVICES_PAGE.ADD_BUTTON' | translate">
+                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'SERVICES_PAGE.ADD_BUTTON' | translate }}
                 </button>
-                <button *appHasPermission="'services.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedServiceIds.size === 0" (click)="bulkDeleteServices()">
-                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> Delete Selected ({{ selectedServiceIds.size }})
+                <button *appHasPermission="'services.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedServiceIds.size === 0" (click)="bulkDeleteServices()" [title]="'SERVICES_PAGE.DELETE_SELECTED' | translate">
+                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'SERVICES_PAGE.DELETE_SELECTED' | translate }} ({{ selectedServiceIds.size }})
                 </button>
               </div>
             </div>
@@ -29,12 +29,12 @@
           <div class="col-sm-10">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'SERVICES_PAGE.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-sm-2">
-            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i>Clear
+            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()" [title]="'COMMON.CLEAR' | translate">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.CLEAR' | translate }}
             </button>
           </div>
         </div>
@@ -51,8 +51,8 @@
       <div class="mb-3">
         <i class="ri-service-line" style="font-size: 64px; color: #ccc;"></i>
       </div>
-      <h5 class="text-muted">No services found</h5>
-      <p class="text-muted">Click "Add Service" to create your first service</p>
+      <h5 class="text-muted">{{ 'SERVICES_PAGE.NO_DATA' | translate }}</h5>
+      <p class="text-muted">{{ 'SERVICES_PAGE.NO_DATA_HINT' | translate }}</p>
     </div>
 
     <div *ngIf="!isLoading && filteredServices.length > 0" class="row">
@@ -61,7 +61,7 @@
         <div class="card">
           <div class="card-body">
             <div class="position-relative">
-              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedServiceIds.has(service.id)" (change)="toggleServiceSelection(service.id, $any($event.target).checked)">
+              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedServiceIds.has(service.id)" (change)="toggleServiceSelection(service.id, $any($event.target).checked)" [title]="'SERVICES_PAGE.SELECT_SERVICE' | translate">
               <div class="position-relative">
                 <img [src]="service.serviceImageUrl ? apiUrl + service.serviceImageUrl : 'assets/images/small/img-2.jpg'" alt="" class="card-img-top" style="height: 200px; object-fit: cover;">
                 <span class="badge bg-info position-absolute top-0 start-0 m-2">
@@ -73,18 +73,18 @@
               <h5 class="mb-2">{{ service.nameEn }}</h5>
               <div class="text-muted mb-2" style="height: 60px; overflow: hidden;" [innerHTML]="service.descriptionEn"></div>
               <div class="text-center mb-2">
-                <span class="badge" [ngClass]="service.isAvailable ? 'bg-success' : 'bg-danger'">
-                  {{ service.isAvailable ? 'Available' : 'Unavailable' }}
+                  <span class="badge" [ngClass]="service.isAvailable ? 'bg-success' : 'bg-danger'">
+                  {{ service.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
                 </span>
               </div>
               <div class="d-flex gap-2 justify-content-center">
-                <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(service)" title="Preview Image">
+                <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(service)" [title]="'SERVICES_PAGE.PREVIEW_IMAGE' | translate">
                   <i class="ri-eye-line"></i>
                 </button>
-                <button *appHasPermission="'services.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(service)">
+                <button *appHasPermission="'services.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(service)" [title]="'COMMON.EDIT' | translate">
                   <i class="ri-edit-line"></i>
                 </button>
-                <button *appHasPermission="'services.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteService(service)">
+                <button *appHasPermission="'services.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteService(service)" [title]="'COMMON.DELETE' | translate">
                   <i class="ri-delete-bin-line"></i>
                 </button>
               </div>
@@ -123,97 +123,97 @@
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Service' : 'Create Service' }}</h5>
-        <button class="btn-close" type="button" (click)="closeModal()"></button>
+        <h5 class="modal-title">{{ isEditMode ? ('SERVICES_PAGE.EDIT_TITLE' | translate) : ('SERVICES_PAGE.CREATE_TITLE' | translate) }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="serviceForm">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Service Name (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-service-line"></i></span>
-                <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter service name in English" maxlength="200">
+                <input class="form-control" type="text" formControlName="nameEn" [placeholder]="'SERVICES_PAGE.NAME_EN_PLACEHOLDER' | translate" maxlength="200">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
-                <span *ngIf="form['nameEn'].errors['required']">Service name in English is required.</span>
+                <span *ngIf="form['nameEn'].errors['required']">{{ 'SERVICES_PAGE.NAME_EN_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Service Name (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-service-line"></i></span>
-                <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل اسم الخدمة بالعربية" maxlength="200" dir="rtl">
+                <input class="form-control" type="text" formControlName="nameAr" [placeholder]="'SERVICES_PAGE.NAME_AR_PLACEHOLDER' | translate" maxlength="200" dir="rtl">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
-                <span *ngIf="form['nameAr'].errors['required']">Service name in Arabic is required.</span>
+                <span *ngIf="form['nameAr'].errors['required']">{{ 'SERVICES_PAGE.NAME_AR_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.DESC_EN' | translate }} <span class="text-danger">*</span></label>
               <ckeditor [editor]="Editor" formControlName="descriptionEn"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
-                <span *ngIf="form['descriptionEn'].errors['required']">Description in English is required.</span>
+                <span *ngIf="form['descriptionEn'].errors['required']">{{ 'SERVICES_PAGE.DESC_EN_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.DESC_AR' | translate }} <span class="text-danger">*</span></label>
               <ckeditor [editor]="Editor" formControlName="descriptionAr"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
-                <span *ngIf="form['descriptionAr'].errors['required']">Description in Arabic is required.</span>
+                <span *ngIf="form['descriptionAr'].errors['required']">{{ 'SERVICES_PAGE.DESC_AR_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Discount <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.DISCOUNT' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-percent-line"></i></span>
-                <input class="form-control" type="number" formControlName="discount" placeholder="Enter discount value" min="0">
+                <input class="form-control" type="number" formControlName="discount" [placeholder]="'SERVICES_PAGE.DISCOUNT_PLACEHOLDER' | translate" min="0">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['discount'].errors">
-                <span *ngIf="form['discount'].errors['required']">Discount is required.</span>
-                <span *ngIf="form['discount'].errors['min']">Discount must be 0 or greater.</span>
+                <span *ngIf="form['discount'].errors['required']">{{ 'SERVICES_PAGE.DISCOUNT_REQUIRED' | translate }}</span>
+                <span *ngIf="form['discount'].errors['min']">{{ 'SERVICES_PAGE.DISCOUNT_MIN' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Image <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'SERVICES_PAGE.IMAGE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-image-2-line"></i></span>
                 <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
               </div>
               <div *ngIf="imagePreview" class="mt-2">
-                <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
+                <img [src]="imagePreview" [alt]="'SERVICES_PAGE.PREVIEW_IMAGE' | translate" class="img-thumbnail" style="max-height: 150px;">
               </div>
               <div class="text-danger mt-1" *ngIf="submitted && !isEditMode && !selectedFile">
-                Image is required
+                {{ 'SERVICES_PAGE.IMAGE_REQUIRED' | translate }}
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" formControlName="isPercentage" id="isPercentageSwitch">
-                <label class="form-check-label" for="isPercentageSwitch">Is Percentage Discount</label>
+                <label class="form-check-label" for="isPercentageSwitch">{{ 'SERVICES_PAGE.IS_PERCENTAGE' | translate }}</label>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailableSwitch">
-                <label class="form-check-label" for="isAvailableSwitch">Is Available</label>
+                <label class="form-check-label" for="isAvailableSwitch">{{ 'COMMON.IS_AVAILABLE' | translate }}</label>
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveService()">
+        <button class="btn btn-light" type="button" (click)="closeModal()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveService()" [title]="(isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate))">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COMMON.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>
@@ -225,8 +225,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Image Preview</h5>
-        <button class="btn-close" type="button" (click)="closeImagePreview()"></button>
+        <h5 class="modal-title">{{ 'SERVICES_PAGE.PREVIEW_IMAGE' | translate }}</h5>
+        <button class="btn-close" type="button" (click)="closeImagePreview()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body text-center">
         <img [src]="previewImageUrl" alt="Service Image" class="img-fluid">

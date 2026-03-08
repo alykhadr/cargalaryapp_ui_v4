@@ -13,6 +13,7 @@ import { first } from 'rxjs/operators';
 import { CreateRoleRequest, Role, RoleUser, UpdateRoleRequest } from '../interfaces/role.interface';
 import { ToastService } from '../../icons/toast-service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-roles',
@@ -54,7 +55,8 @@ export class RolesComponent {
     private formBuilder: UntypedFormBuilder,
     private roleService: RoleService,
     private toastService: ToastService,
-    private store: Store<{ data: RootReducerState }>) {
+    private store: Store<{ data: RootReducerState }>,
+    private translate: TranslateService) {
   }
 
   ngOnInit(): void {
@@ -62,8 +64,8 @@ export class RolesComponent {
     * BreadCrumb
     */
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Roles', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.ROLE'), active: true }
     ];
 
     /**

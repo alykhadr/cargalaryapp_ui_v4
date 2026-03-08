@@ -8,6 +8,7 @@ import { Offer } from '../interfaces/offer.interface';
 import { OfferService } from '../services/offer.service';
 import { getErrorMessage } from '../shared/error-message.util';
 import { GlobalComponent } from 'src/app/global-component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offers',
@@ -40,13 +41,14 @@ export class OffersComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private offerService: OfferService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Offers', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.OFFER'), active: true }
     ];
 
     this.offerForm = this.formBuilder.group({
@@ -165,7 +167,7 @@ export class OffersComponent implements OnInit {
     this.submitted = true;
     if (this.offerForm.invalid) return;
     if (!this.isEditMode && !this.selectedFile) {
-      this.showError({ message: 'Image is required' });
+      this.showError(this.translate.instant('OFFERS_PAGE.IMAGE_REQUIRED'));
       return;
     }
 
@@ -185,7 +187,7 @@ export class OffersComponent implements OnInit {
       this.offerService.update(this.selectedOffer.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Offer updated successfully');
+          this.showSuccess(this.translate.instant('OFFERS_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadOffers();
         },
@@ -198,7 +200,7 @@ export class OffersComponent implements OnInit {
       this.offerService.create(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Offer created successfully');
+          this.showSuccess(this.translate.instant('OFFERS_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadOffers();
         },
@@ -212,20 +214,20 @@ export class OffersComponent implements OnInit {
 
   deleteOffer(offer: Offer) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.offerService.delete(offer.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Offer deleted successfully');
+            this.showSuccess(this.translate.instant('OFFERS_PAGE.DELETE_SUCCESS'));
             this.loadOffers();
           },
           error: (error) => this.showError(error)
@@ -273,13 +275,13 @@ export class OffersComponent implements OnInit {
     if (this.selectedOfferIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedOfferIds.size} selected offer(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('OFFERS_PAGE.BULK_DELETE_TEXT', { count: this.selectedOfferIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -289,9 +291,14 @@ export class OffersComponent implements OnInit {
           next: (response) => {
             this.selectedOfferIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} offers. Failed to delete ${response.failedIds.length} offers.` });
+              this.showError(this.translate.instant('OFFERS_PAGE.BULK_DELETE_PARTIAL', {
+                deleted: response.deletedCount,
+                failed: response.failedIds.length
+              }));
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} offer(s)`);
+              this.showSuccess(this.translate.instant('OFFERS_PAGE.BULK_DELETE_SUCCESS', {
+                count: response.deletedCount
+              }));
             }
             this.loadOffers();
           },

@@ -8,6 +8,7 @@ import { ToastService } from '../../icons/toast-service';
 import { FAQ } from '../interfaces/faq.interface';
 import { FAQService } from '../services/faq.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-faq',
@@ -36,13 +37,14 @@ export class FaqComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private faqService: FAQService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'FAQ', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.FAQ'), active: true }
     ];
 
     this.faqForm = this.formBuilder.group({
@@ -159,7 +161,7 @@ export class FaqComponent implements OnInit {
       this.faqService.update(this.selectedFaq.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('FAQ updated successfully');
+          this.showSuccess(this.translate.instant('FAQ_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadFaqs();
         },
@@ -172,7 +174,7 @@ export class FaqComponent implements OnInit {
       this.faqService.create(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('FAQ created successfully');
+          this.showSuccess(this.translate.instant('FAQ_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadFaqs();
         },
@@ -186,20 +188,20 @@ export class FaqComponent implements OnInit {
 
   deleteFaq(faq: FAQ) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.faqService.delete(faq.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('FAQ deleted successfully');
+            this.showSuccess(this.translate.instant('FAQ_PAGE.DELETE_SUCCESS'));
             this.loadFaqs();
           },
           error: (error) => this.showError(error)
@@ -247,13 +249,13 @@ export class FaqComponent implements OnInit {
     if (this.selectedFaqIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedFaqIds.size} selected FAQ(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('FAQ_PAGE.BULK_DELETE_TEXT', { count: this.selectedFaqIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -263,9 +265,14 @@ export class FaqComponent implements OnInit {
           next: (response) => {
             this.selectedFaqIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} FAQs. Failed to delete ${response.failedIds.length} FAQs.` });
+              this.showError(this.translate.instant('FAQ_PAGE.BULK_DELETE_PARTIAL', {
+                deleted: response.deletedCount,
+                failed: response.failedIds.length
+              }));
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} FAQ(s)`);
+              this.showSuccess(this.translate.instant('FAQ_PAGE.BULK_DELETE_SUCCESS', {
+                count: response.deletedCount
+              }));
             }
             this.loadFaqs();
           },

@@ -50,8 +50,8 @@ export class PermissionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Permissions', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.PERMISSION'), active: true }
     ];
     this.assignedPager.pageSize = 10;
     this.availablePager.pageSize = 10;

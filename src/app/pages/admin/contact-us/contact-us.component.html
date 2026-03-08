@@ -6,17 +6,19 @@
       <div class="card-header border-bottom-dashed">
         <div class="row g-4 align-items-center">
           <div class="col-sm">
-            <h5 class="card-title mb-0">Contact Us List</h5>
+            <h5 class="card-title mb-0">{{ 'CONTACT_US_PAGE.LIST_TITLE' | translate }}</h5>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
               <button *appHasPermission="'contactus.delete'" type="button" class="btn btn-danger"
-                [disabled]="selectedContactIds.size === 0" (click)="bulkDeleteContacts()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedContactIds.size }})
+                [disabled]="selectedContactIds.size === 0" (click)="bulkDeleteContacts()" [title]="'CONTACT_US_PAGE.DELETE_SELECTED' | translate"
+                data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> {{ 'CONTACT_US_PAGE.DELETE_SELECTED' | translate }} ({{ selectedContactIds.size }})
               </button>
               <button *appHasPermission="'contactus.create'" type="button" class="btn btn-success add-btn"
-                (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Contact
+                (click)="openCreateModal()" [title]="'CONTACT_US_PAGE.ADD_BUTTON' | translate"
+                data-bs-toggle="tooltip" data-bs-placement="top">
+                <i class="ri-add-line align-bottom me-1"></i> {{ 'CONTACT_US_PAGE.ADD_BUTTON' | translate }}
               </button>
             </div>
           </div>
@@ -30,7 +32,7 @@
               <input
                 type="text"
                 class="form-control"
-                placeholder="Search by contact value..."
+                [placeholder]="'CONTACT_US_PAGE.SEARCH_PLACEHOLDER' | translate"
                 [(ngModel)]="searchTerm"
                 (ngModelChange)="onSearch()">
             </div>
@@ -39,14 +41,15 @@
             <div class="input-group">
               <span class="input-group-text"><i class="ri-list-check-2"></i></span>
               <select class="form-select" [(ngModel)]="selectedTypeFilter" (ngModelChange)="onSearch()">
-                <option [value]="null">All Types</option>
+                <option [value]="null">{{ 'CONTACT_US_PAGE.ALL_TYPES' | translate }}</option>
                 <option *ngFor="let type of contactTypes" [value]="type.value">{{ type.label }}</option>
               </select>
             </div>
           </div>
           <div class="col-sm-4">
-            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()" [title]="'COMMON.REMOVE_FILTERS' | translate"
+                    data-bs-toggle="tooltip" data-bs-placement="top">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.REMOVE_FILTERS' | translate }}
             </button>
           </div>
         </div>
@@ -61,8 +64,8 @@
           <div class="mb-3">
             <i class="ri-folder-open-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No contacts found</h5>
-          <p class="text-muted">Click "Add Contact" to create your first contact</p>
+          <h5 class="text-muted">{{ 'CONTACT_US_PAGE.NO_DATA' | translate }}</h5>
+          <p class="text-muted">{{ 'CONTACT_US_PAGE.NO_DATA_HINT' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredContacts.length > 0">
           <div class="table-responsive table-card mb-1">
@@ -74,11 +77,11 @@
                            [checked]="isAllContactsSelected()"
                            (change)="toggleSelectAllContacts($any($event.target).checked)">
                   </th>
-                  <th scope="col">Icon</th>
-                  <th scope="col">Contact Value</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Message (AR)</th>
-                  <th scope="col">Message (EN)</th>
+                  <th scope="col">{{ 'CONTACT_US_PAGE.ICON' | translate }}</th>
+                  <th scope="col">{{ 'CONTACT_US_PAGE.CONTACT_VALUE' | translate }}</th>
+                  <th scope="col">{{ 'CONTACT_US_PAGE.CONTACT_TYPE' | translate }}</th>
+                  <th scope="col">{{ 'CONTACT_US_PAGE.MESSAGE_AR' | translate }}</th>
+                  <th scope="col">{{ 'CONTACT_US_PAGE.MESSAGE_EN' | translate }}</th>
                   <th scope="col">{{ 'COMMON.STATUS' | translate }}</th>
                   <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
                 </tr>
@@ -94,7 +97,8 @@
                   <td>
                     <div *ngIf="contact.contactIconUrl" class="position-relative d-inline-block">
                       <img [src]="contact.contactIconUrl" alt="Icon" class="avatar-xs rounded" />
-                      <div class="hover-overlay" (click)="previewImage(contact.contactIconUrl)">
+                      <div class="hover-overlay" (click)="previewImage(contact.contactIconUrl)" [title]="'CONTACT_US_PAGE.PREVIEW_IMAGE' | translate"
+                           data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="ri-eye-line text-white" style="font-size: 16px;"></i>
                       </div>
                     </div>
@@ -108,15 +112,17 @@
                   <td>{{ contact.messageEn }}</td>
                   <td>
                     <span class="badge" [ngClass]="contact.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                      {{ contact.isAvailable ? 'Active' : 'Inactive' }}
+                      {{ contact.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
                     </span>
                   </td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button *appHasPermission="'contactus.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(contact)">
+                      <button *appHasPermission="'contactus.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(contact)" [title]="'COMMON.EDIT' | translate"
+                              data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button *appHasPermission="'contactus.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteContact(contact)">
+                      <button *appHasPermission="'contactus.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteContact(contact)" [title]="'COMMON.DELETE' | translate"
+                              data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -150,26 +156,26 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Contact' : 'Create Contact' }}</h5>
-        <button class="btn-close" type="button" (click)="closeModal()"></button>
+        <h5 class="modal-title">{{ isEditMode ? ('CONTACT_US_PAGE.EDIT_TITLE' | translate) : ('CONTACT_US_PAGE.CREATE_TITLE' | translate) }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="contactForm">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Contact Value <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'CONTACT_US_PAGE.CONTACT_VALUE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-contacts-book-2-line"></i></span>
-                <input class="form-control" type="text" formControlName="contactValue" placeholder="Enter contact value" maxlength="100">
+                <input class="form-control" type="text" formControlName="contactValue" [placeholder]="'CONTACT_US_PAGE.CONTACT_VALUE_PLACEHOLDER' | translate" maxlength="100">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['contactValue'].errors">
-                <span *ngIf="form['contactValue'].errors['required']">Contact value is required.</span>
-                <span *ngIf="form['contactValue'].errors['maxlength']">Max length is 100 characters.</span>
+                <span *ngIf="form['contactValue'].errors['required']">{{ 'CONTACT_US_PAGE.CONTACT_VALUE_REQUIRED' | translate }}</span>
+                <span *ngIf="form['contactValue'].errors['maxlength']">{{ 'CONTACT_US_PAGE.CONTACT_VALUE_MAX' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Contact Type <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'CONTACT_US_PAGE.CONTACT_TYPE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-list-check-2"></i></span>
                 <select class="form-select" formControlName="contactType">
@@ -177,36 +183,36 @@
                 </select>
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['contactType'].errors">
-                Contact type is required.
+                {{ 'CONTACT_US_PAGE.CONTACT_TYPE_REQUIRED' | translate }}
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Message (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'CONTACT_US_PAGE.MESSAGE_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-message-2-line"></i></span>
-                <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" placeholder="أدخل الرسالة بالعربية" dir="rtl"></textarea>
+                <textarea class="form-control" formControlName="messageAr" rows="3" maxlength="500" [placeholder]="'CONTACT_US_PAGE.MESSAGE_AR_PLACEHOLDER' | translate" dir="rtl"></textarea>
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['messageAr'].errors">
-                <span *ngIf="form['messageAr'].errors['required']">Message in Arabic is required.</span>
-                <span *ngIf="form['messageAr'].errors['maxlength']">Max length is 500 characters.</span>
+                <span *ngIf="form['messageAr'].errors['required']">{{ 'CONTACT_US_PAGE.MESSAGE_AR_REQUIRED' | translate }}</span>
+                <span *ngIf="form['messageAr'].errors['maxlength']">{{ 'CONTACT_US_PAGE.MESSAGE_MAX' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Message (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'CONTACT_US_PAGE.MESSAGE_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-message-2-line"></i></span>
-                <textarea class="form-control" formControlName="messageEn" rows="3" maxlength="500" placeholder="Enter message in English"></textarea>
+                <textarea class="form-control" formControlName="messageEn" rows="3" maxlength="500" [placeholder]="'CONTACT_US_PAGE.MESSAGE_EN_PLACEHOLDER' | translate"></textarea>
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['messageEn'].errors">
-                <span *ngIf="form['messageEn'].errors['required']">Message in English is required.</span>
-                <span *ngIf="form['messageEn'].errors['maxlength']">Max length is 500 characters.</span>
+                <span *ngIf="form['messageEn'].errors['required']">{{ 'CONTACT_US_PAGE.MESSAGE_EN_REQUIRED' | translate }}</span>
+                <span *ngIf="form['messageEn'].errors['maxlength']">{{ 'CONTACT_US_PAGE.MESSAGE_MAX' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Icon Image <span class="text-danger" *ngIf="!isEditMode">*</span></label>
+              <label class="form-label">{{ 'CONTACT_US_PAGE.ICON_IMAGE' | translate }} <span class="text-danger" *ngIf="!isEditMode">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-image-2-line"></i></span>
                 <input class="form-control" type="file" accept="image/*" (change)="onIconFileSelected($event)">
@@ -215,24 +221,24 @@
                 <img [src]="iconPreviewUrl" alt="Icon Preview" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && !isEditMode && !selectedIconFile">
-                Icon image is required.
+                {{ 'CONTACT_US_PAGE.ICON_REQUIRED' | translate }}
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailableSwitch">
-                <label class="form-check-label" for="isAvailableSwitch">Is Available</label>
+                <label class="form-check-label" for="isAvailableSwitch">{{ 'COMMON.IS_AVAILABLE' | translate }}</label>
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveContact()">
+        <button class="btn btn-light" type="button" (click)="closeModal()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveContact()" [title]="(isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate))">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COMMON.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>
@@ -244,8 +250,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Image Preview</h5>
-        <button class="btn-close" type="button" (click)="closePreview()"></button>
+        <h5 class="modal-title">{{ 'CONTACT_US_PAGE.PREVIEW_IMAGE' | translate }}</h5>
+        <button class="btn-close" type="button" (click)="closePreview()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body text-center">
         <img [src]="previewImageUrl" alt="Preview" class="img-fluid" />

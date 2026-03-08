@@ -15,6 +15,7 @@ import { CarExtraDetailsService } from '../services/car-extra-details.service';
 import { CarModelService } from '../services/car-model.service';
 import { CarService } from '../services/car.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-car-extra-details',
@@ -52,13 +53,14 @@ export class CarExtraDetailsComponent implements OnInit {
     private branchService: BranchService,
     private brandService: BrandService,
     private carModelService: CarModelService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Extra Car Info', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.CAREXTRADETAILS'), active: true }
     ];
 
     this.extraDetailsForm = this.formBuilder.group({
@@ -253,7 +255,7 @@ export class CarExtraDetailsComponent implements OnInit {
       this.extraDetailsService.updateExtraDetail(this.selectedExtraDetail.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Extra detail updated successfully');
+          this.showSuccess(this.translate.instant('CAR_EXTRA_DETAILS_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadExtraDetails();
         },
@@ -266,7 +268,7 @@ export class CarExtraDetailsComponent implements OnInit {
       this.extraDetailsService.createExtraDetail(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Extra detail created successfully');
+          this.showSuccess(this.translate.instant('CAR_EXTRA_DETAILS_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadExtraDetails();
         },
@@ -280,20 +282,20 @@ export class CarExtraDetailsComponent implements OnInit {
 
   deleteExtraDetail(extraDetail: CarExtraDetails) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.extraDetailsService.deleteExtraDetail(extraDetail.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Extra detail deleted successfully');
+            this.showSuccess(this.translate.instant('CAR_EXTRA_DETAILS_PAGE.DELETE_SUCCESS'));
             this.loadExtraDetails();
           },
           error: (error) => this.showError(error)
@@ -341,13 +343,13 @@ export class CarExtraDetailsComponent implements OnInit {
     if (this.selectedExtraDetailIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedExtraDetailIds.size} selected extra detail(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('CAR_EXTRA_DETAILS_PAGE.BULK_DELETE_TEXT', { count: this.selectedExtraDetailIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -356,7 +358,7 @@ export class CarExtraDetailsComponent implements OnInit {
         this.extraDetailsService.bulkDeleteExtraDetails(ids).pipe(first()).subscribe({
           next: () => {
             this.selectedExtraDetailIds.clear();
-            this.showSuccess(`Successfully deleted extra detail(s)`);
+            this.showSuccess(this.translate.instant('CAR_EXTRA_DETAILS_PAGE.BULK_DELETE_SUCCESS'));
             this.loadExtraDetails();
           },
           error: (error) => this.showError(error)

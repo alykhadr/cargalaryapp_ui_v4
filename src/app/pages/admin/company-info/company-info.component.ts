@@ -3,6 +3,7 @@ import { CompanyInfoService } from '../services/company-info.service';
 import { CompanyInfo, CreateCompanyInfoRequest, UpdateCompanyInfoRequest } from '../interfaces/company-info.interface';
 import Swal from 'sweetalert2';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-company-info',
@@ -42,7 +43,10 @@ export class CompanyInfoComponent implements OnInit {
   itemsPerPage: number = 10;
   private readonly testLogoSvg: string = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#405189"/><stop offset="100%" stop-color="#0ab39c"/></linearGradient></defs><rect width="240" height="240" rx="24" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-size="64" fill="white">CG</text></svg>`;
 
-  constructor(private companyInfoService: CompanyInfoService) {}
+  constructor(
+    private companyInfoService: CompanyInfoService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.loadCompanyInfos();
@@ -63,7 +67,11 @@ export class CompanyInfoComponent implements OnInit {
     if (file) {
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        Swal.fire('Error', 'Logo image size must be less than or equal to 5 MB', 'error');
+        Swal.fire(
+          this.translate.instant('COMMON.ERROR'),
+          this.translate.instant('COMPANY_INFO_PAGE.LOGO_MAX_SIZE'),
+          'error'
+        );
         event.target.value = '';
         return;
       }
@@ -194,13 +202,17 @@ export class CompanyInfoComponent implements OnInit {
 
     this.companyInfoService.createCompanyInfo(request).subscribe({
       next: () => {
-        Swal.fire('Success', 'Company info created successfully', 'success');
+        Swal.fire(
+          this.translate.instant('COMMON.SUCCESS'),
+          this.translate.instant('COMPANY_INFO_PAGE.CREATE_SUCCESS'),
+          'success'
+        );
         this.resetForm();
         this.loadCompanyInfos();
       },
       error: (error) => {
-        const errorMsg = getErrorMessage(error, 'Error creating company info');
-        Swal.fire('Error', errorMsg, 'error');
+        const errorMsg = getErrorMessage(error, this.translate.instant('COMPANY_INFO_PAGE.ERROR_CREATE'));
+        Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
       }
     });
   }
@@ -215,13 +227,17 @@ export class CompanyInfoComponent implements OnInit {
 
     this.companyInfoService.updateCompanyInfo(this.selectedCompanyInfoId, request).subscribe({
       next: () => {
-        Swal.fire('Success', 'Company info updated successfully', 'success');
+        Swal.fire(
+          this.translate.instant('COMMON.SUCCESS'),
+          this.translate.instant('COMPANY_INFO_PAGE.UPDATE_SUCCESS'),
+          'success'
+        );
         this.resetForm();
         this.loadCompanyInfos();
       },
       error: (error) => {
-        const errorMsg = getErrorMessage(error, 'Error updating company info');
-        Swal.fire('Error', errorMsg, 'error');
+        const errorMsg = getErrorMessage(error, this.translate.instant('COMPANY_INFO_PAGE.ERROR_UPDATE'));
+        Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
       }
     });
   }
@@ -251,22 +267,30 @@ export class CompanyInfoComponent implements OnInit {
 
   deleteCompanyInfo(id: number): void {
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMPANY_INFO_PAGE.DELETE_WARNING'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE')
     }).then((result) => {
       if (result.isConfirmed) {
         this.companyInfoService.deleteCompanyInfo(id).subscribe({
           next: () => {
-            Swal.fire('Deleted!', 'Company info has been deleted.', 'success');
+            Swal.fire(
+              this.translate.instant('COMMON.DELETED'),
+              this.translate.instant('COMPANY_INFO_PAGE.DELETE_SUCCESS'),
+              'success'
+            );
             this.loadCompanyInfos();
           },
-          error: (error) => console.error('Error deleting company info:', error)
+          error: (error) => {
+            const errorMsg = getErrorMessage(error, this.translate.instant('COMPANY_INFO_PAGE.ERROR_DELETE'));
+            Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
+          }
         });
       }
     });

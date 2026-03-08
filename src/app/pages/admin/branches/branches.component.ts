@@ -11,6 +11,7 @@ import { BranchService } from '../services/branch.service';
 import { ContactSalesService } from '../services/contact-sales.service';
 import { AdminEmployeeService } from '../services/admin-employee.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-branches',
@@ -77,13 +78,14 @@ export class BranchesComponent {
     private branchService: BranchService,
     private toastService: ToastService,
     private contactSalesService: ContactSalesService,
-    private adminEmployeeService: AdminEmployeeService
+    private adminEmployeeService: AdminEmployeeService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Branches', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.BRANCH'), active: true }
     ];
 
     this.initForm();

@@ -10,6 +10,7 @@ import { BranchService } from '../services/branch.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { LookupService } from '../services/lookup.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contact-sales',
@@ -51,13 +52,20 @@ export class ContactSalesComponent implements OnInit {
     private contactSalesService: ContactSalesService,
     private toastService: ToastService,
     private branchService: BranchService,
-    private lookupService: LookupService
+    private lookupService: LookupService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Contact Sales', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.CONTACTSALES'), active: true }
+    ];
+
+    this.contactTypes = [
+      { value: 1, label: this.translate.instant('CONTACT_SALES_PAGE.TYPE_MOBILE') },
+      { value: 2, label: this.translate.instant('CONTACT_SALES_PAGE.TYPE_WHATSAPP') },
+      { value: 3, label: this.translate.instant('CONTACT_SALES_PAGE.TYPE_EMAIL') }
     ];
 
     this.contactForm = this.formBuilder.group({
@@ -215,7 +223,7 @@ export class ContactSalesComponent implements OnInit {
     this.submitted = true;
     if (this.contactForm.invalid) return;
     if (!this.isEditMode && !this.selectedIconFile) {
-      this.showError({ message: 'Icon image is required' });
+      this.showError(this.translate.instant('CONTACT_SALES_PAGE.ICON_REQUIRED'));
       return;
     }
 
@@ -233,7 +241,7 @@ export class ContactSalesComponent implements OnInit {
       this.contactSalesService.update(this.selectedContact.id, formData).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Contact updated successfully');
+          this.showSuccess(this.translate.instant('CONTACT_SALES_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadContacts();
         },
@@ -246,7 +254,7 @@ export class ContactSalesComponent implements OnInit {
       this.contactSalesService.create(formData).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Contact created successfully');
+          this.showSuccess(this.translate.instant('CONTACT_SALES_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadContacts();
         },
@@ -260,20 +268,20 @@ export class ContactSalesComponent implements OnInit {
 
   deleteContact(contact: ContactSales) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.contactSalesService.delete(contact.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Contact deleted successfully');
+            this.showSuccess(this.translate.instant('CONTACT_SALES_PAGE.DELETE_SUCCESS'));
             this.loadContacts();
           },
           error: (error) => this.showError(error)
@@ -284,7 +292,7 @@ export class ContactSalesComponent implements OnInit {
 
   getContactTypeLabel(type: number): string {
     const contactType = this.contactTypes.find(t => t.value === type);
-    return contactType ? contactType.label : 'Unknown';
+    return contactType ? contactType.label : this.translate.instant('COMMON.NOT_AVAILABLE');
   }
 
   private showSuccess(message: string) {
@@ -326,13 +334,13 @@ export class ContactSalesComponent implements OnInit {
     if (this.selectedContactIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedContactIds.size} selected contact(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('CONTACT_SALES_PAGE.BULK_DELETE_TEXT', { count: this.selectedContactIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -342,9 +350,14 @@ export class ContactSalesComponent implements OnInit {
           next: (response) => {
             this.selectedContactIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} contacts. Failed to delete ${response.failedIds.length} contacts.` });
+              this.showError(this.translate.instant('CONTACT_SALES_PAGE.BULK_DELETE_PARTIAL', {
+                deleted: response.deletedCount,
+                failed: response.failedIds.length
+              }));
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} contact(s)`);
+              this.showSuccess(this.translate.instant('CONTACT_SALES_PAGE.BULK_DELETE_SUCCESS', {
+                count: response.deletedCount
+              }));
             }
             this.loadContacts();
           },

@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ToastService } from './toast-service';
+import { TranslateService } from '@ngx-translate/core';
 
 import { circle, latLng, tileLayer } from 'leaflet';
 
@@ -30,7 +31,10 @@ export class DashboardComponent implements OnInit {
   // Current Date
   // currentDate: Date = new Date();
 
-  constructor(public toastService: ToastService) {
+  constructor(
+    public toastService: ToastService,
+    private translate: TranslateService
+  ) {
     var date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -42,8 +46,8 @@ export class DashboardComponent implements OnInit {
      * BreadCrumb
      */
     this.breadCrumbItems = [
-      { label: 'Dashboards' },
-      { label: 'Dashboard', active: true }
+      { label: this.translate.instant('MENUITEMS.DASHBOARD.TEXT') },
+      { label: this.translate.instant('MENUITEMS.DASHBOARD.LIST.ECOMMERCE'), active: true }
     ];
 
     if (sessionStorage.getItem('toast')) {

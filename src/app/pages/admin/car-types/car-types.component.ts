@@ -7,6 +7,7 @@ import { ToastService } from '../../icons/toast-service';
 import { CarType } from '../interfaces/car-type.interface';
 import { CarTypeService } from '../services/car-type.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-car-types',
@@ -35,13 +36,14 @@ export class CarTypesComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private carTypeService: CarTypeService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Car Types', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.CARTYPE'), active: true }
     ];
 
     this.carTypeForm = this.formBuilder.group({
@@ -149,7 +151,7 @@ export class CarTypesComponent implements OnInit {
       this.carTypeService.updateCarType(this.selectedCarType.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Car type updated successfully');
+          this.showSuccess(this.translate.instant('CAR_TYPE_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadCarTypes();
         },
@@ -162,7 +164,7 @@ export class CarTypesComponent implements OnInit {
       this.carTypeService.createCarType(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Car type created successfully');
+          this.showSuccess(this.translate.instant('CAR_TYPE_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadCarTypes();
         },
@@ -176,20 +178,20 @@ export class CarTypesComponent implements OnInit {
 
   deleteCarType(carType: CarType) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.carTypeService.deleteCarType(carType.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Car type deleted successfully');
+            this.showSuccess(this.translate.instant('CAR_TYPE_PAGE.DELETE_SUCCESS'));
             this.loadCarTypes();
           },
           error: (error) => this.showError(error)
@@ -237,13 +239,13 @@ export class CarTypesComponent implements OnInit {
     if (this.selectedCarTypeIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedCarTypeIds.size} selected car type(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('CAR_TYPE_PAGE.BULK_DELETE_TEXT', { count: this.selectedCarTypeIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -258,7 +260,7 @@ export class CarTypesComponent implements OnInit {
               completed++;
               if (completed === ids.length) {
                 this.selectedCarTypeIds.clear();
-                this.showSuccess(`Successfully deleted ${completed} car type(s)`);
+                this.showSuccess(this.translate.instant('CAR_TYPE_PAGE.BULK_DELETE_SUCCESS', { count: completed }));
                 this.loadCarTypes();
               }
             },

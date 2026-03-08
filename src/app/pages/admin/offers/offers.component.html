@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Offers" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="'OFFERS_PAGE.TITLE' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
@@ -7,14 +7,14 @@
         <div class="row">
           <div class="col-xxl-9 align-self-center">
             <div class="py-4">
-              <h4 class="display-6">Special Offers</h4>
-              <p class="text-warning fs-15 mt-3">Manage promotional offers with expiry dates and images.</p>
+              <h4 class="display-6">{{ 'OFFERS_PAGE.MANAGEMENT_TITLE' | translate }}</h4>
+              <p class="text-warning fs-15 mt-3">{{ 'OFFERS_PAGE.MANAGEMENT_SUBTITLE' | translate }}</p>
               <div class="hstack flex-wrap gap-2">
-                <button *appHasPermission="'offers.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()">
-                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> Add Offer
+                <button *appHasPermission="'offers.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()" [title]="'OFFERS_PAGE.ADD_BUTTON' | translate">
+                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'OFFERS_PAGE.ADD_BUTTON' | translate }}
                 </button>
-                <button *appHasPermission="'offers.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedOfferIds.size === 0" (click)="bulkDeleteOffers()">
-                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> Delete Selected ({{ selectedOfferIds.size }})
+                <button *appHasPermission="'offers.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedOfferIds.size === 0" (click)="bulkDeleteOffers()" [title]="'OFFERS_PAGE.DELETE_SELECTED' | translate">
+                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'OFFERS_PAGE.DELETE_SELECTED' | translate }} ({{ selectedOfferIds.size }})
                 </button>
               </div>
             </div>
@@ -29,12 +29,12 @@
           <div class="col-sm-10">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" placeholder="Search offers..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'OFFERS_PAGE.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-sm-2">
-            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i>Clear
+            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()" [title]="'COMMON.CLEAR' | translate">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.CLEAR' | translate }}
             </button>
           </div>
         </div>
@@ -51,8 +51,8 @@
       <div class="mb-3">
         <i class="ri-price-tag-3-line" style="font-size: 64px; color: #ccc;"></i>
       </div>
-      <h5 class="text-muted">No offers found</h5>
-      <p class="text-muted">Click "Add Offer" to create your first offer</p>
+      <h5 class="text-muted">{{ 'OFFERS_PAGE.NO_DATA' | translate }}</h5>
+      <p class="text-muted">{{ 'OFFERS_PAGE.NO_DATA_HINT' | translate }}</p>
     </div>
 
     <div *ngIf="!isLoading && filteredOffers.length > 0" class="row">
@@ -61,31 +61,31 @@
         <div class="card">
           <div class="card-body">
             <div class="position-relative">
-              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedOfferIds.has(offer.id)" (change)="toggleOfferSelection(offer.id, $any($event.target).checked)">
+              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedOfferIds.has(offer.id)" (change)="toggleOfferSelection(offer.id, $any($event.target).checked)" [title]="'OFFERS_PAGE.SELECT_OFFER' | translate">
               <div class="position-relative">
                 <img [src]="offer.offerImageUrl ? apiUrl + offer.offerImageUrl : 'assets/images/small/img-2.jpg'" alt="" class="card-img-top" style="height: 200px; object-fit: cover;">
                 <span class="badge position-absolute top-0 start-0 m-2" [ngClass]="isExpired(offer.expiredAt) ? 'bg-danger' : 'bg-success'">
-                  {{ isExpired(offer.expiredAt) ? 'Expired' : 'Active' }}
+                  {{ isExpired(offer.expiredAt) ? ('OFFERS_PAGE.EXPIRED' | translate) : ('COMMON.ACTIVE' | translate) }}
                 </span>
               </div>
             </div>
             <div class="mt-3">
               <h5 class="mb-2">{{ offer.offerNameEn }}</h5>
               <p class="text-muted mb-2" style="height: 40px; overflow: hidden;">{{ offer.descriptionEn }}</p>
-              <p class="text-muted mb-3"><i class="ri-calendar-line me-1"></i>Expires: {{ offer.expiredAt | date:'short' }}</p>
+              <p class="text-muted mb-3"><i class="ri-calendar-line me-1"></i>{{ 'OFFERS_PAGE.EXPIRES' | translate }}: {{ offer.expiredAt | date:'short' }}</p>
               <div class="text-center mb-2">
                 <span class="badge" [ngClass]="offer.isAvailable ? 'bg-success' : 'bg-danger'">
-                  {{ offer.isAvailable ? 'Available' : 'Unavailable' }}
+                  {{ offer.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
                 </span>
               </div>
               <div class="d-flex gap-2 justify-content-center">
-                <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(offer)" title="Preview Image">
+                <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(offer)" [title]="'OFFERS_PAGE.PREVIEW_IMAGE' | translate">
                   <i class="ri-eye-line"></i>
                 </button>
-                <button *appHasPermission="'offers.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(offer)">
+                <button *appHasPermission="'offers.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(offer)" [title]="'COMMON.EDIT' | translate">
                   <i class="ri-edit-line"></i>
                 </button>
-                <button *appHasPermission="'offers.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteOffer(offer)">
+                <button *appHasPermission="'offers.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteOffer(offer)" [title]="'COMMON.DELETE' | translate">
                   <i class="ri-delete-bin-line"></i>
                 </button>
               </div>
@@ -124,89 +124,89 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Offer' : 'Create Offer' }}</h5>
-        <button class="btn-close" type="button" (click)="closeModal()"></button>
+        <h5 class="modal-title">{{ isEditMode ? ('OFFERS_PAGE.EDIT_TITLE' | translate) : ('OFFERS_PAGE.CREATE_TITLE' | translate) }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="offerForm">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Offer Name (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'OFFERS_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
-                <input class="form-control" type="text" formControlName="offerNameEn" placeholder="Enter offer name in English" maxlength="200">
+                <input class="form-control" type="text" formControlName="offerNameEn" [placeholder]="'OFFERS_PAGE.NAME_EN_PLACEHOLDER' | translate" maxlength="200">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['offerNameEn'].errors">
-                <span *ngIf="form['offerNameEn'].errors['required']">Offer name in English is required.</span>
+                <span *ngIf="form['offerNameEn'].errors['required']">{{ 'OFFERS_PAGE.NAME_EN_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Offer Name (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'OFFERS_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-price-tag-3-line"></i></span>
-                <input class="form-control" type="text" formControlName="offerNameAr" placeholder="أدخل اسم العرض بالعربية" maxlength="200" dir="rtl">
+                <input class="form-control" type="text" formControlName="offerNameAr" [placeholder]="'OFFERS_PAGE.NAME_AR_PLACEHOLDER' | translate" maxlength="200" dir="rtl">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['offerNameAr'].errors">
-                <span *ngIf="form['offerNameAr'].errors['required']">Offer name in Arabic is required.</span>
+                <span *ngIf="form['offerNameAr'].errors['required']">{{ 'OFFERS_PAGE.NAME_AR_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (English)</label>
+              <label class="form-label">{{ 'OFFERS_PAGE.DESC_EN' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-                <textarea class="form-control" formControlName="descriptionEn" rows="3" maxlength="500" placeholder="Enter description in English"></textarea>
+                <textarea class="form-control" formControlName="descriptionEn" rows="3" maxlength="500" [placeholder]="'OFFERS_PAGE.DESC_EN_PLACEHOLDER' | translate"></textarea>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (Arabic)</label>
+              <label class="form-label">{{ 'OFFERS_PAGE.DESC_AR' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-                <textarea class="form-control" formControlName="descriptionAr" rows="3" maxlength="500" placeholder="أدخل الوصف بالعربية" dir="rtl"></textarea>
+                <textarea class="form-control" formControlName="descriptionAr" rows="3" maxlength="500" [placeholder]="'OFFERS_PAGE.DESC_AR_PLACEHOLDER' | translate" dir="rtl"></textarea>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Expiry Date <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'OFFERS_PAGE.EXPIRY_DATE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-calendar-line"></i></span>
                 <input class="form-control" type="text" formControlName="expiredAt" [placeholder]="'COMMON.SELECT_DATE' | translate" mwlFlatpickr [altInput]="true" [convertModelValue]="true">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['expiredAt'].errors">
-                <span *ngIf="form['expiredAt'].errors['required']">Expiry date is required.</span>
+                <span *ngIf="form['expiredAt'].errors['required']">{{ 'OFFERS_PAGE.EXPIRY_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Image <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'OFFERS_PAGE.IMAGE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-image-2-line"></i></span>
                 <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
               </div>
               <div *ngIf="imagePreview" class="mt-2">
-                <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
+                <img [src]="imagePreview" [alt]="'OFFERS_PAGE.PREVIEW_IMAGE' | translate" class="img-thumbnail" style="max-height: 150px;">
               </div>
               <div class="text-danger mt-1" *ngIf="submitted && !isEditMode && !selectedFile">
-                Image is required
+                {{ 'OFFERS_PAGE.IMAGE_REQUIRED' | translate }}
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailableSwitch">
-                <label class="form-check-label" for="isAvailableSwitch">Is Available</label>
+                <label class="form-check-label" for="isAvailableSwitch">{{ 'COMMON.IS_AVAILABLE' | translate }}</label>
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveOffer()">
+        <button class="btn btn-light" type="button" (click)="closeModal()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveOffer()" [title]="(isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate))">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COMMON.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>
@@ -218,8 +218,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Image Preview</h5>
-        <button class="btn-close" type="button" (click)="closeImagePreview()"></button>
+        <h5 class="modal-title">{{ 'OFFERS_PAGE.PREVIEW_IMAGE' | translate }}</h5>
+        <button class="btn-close" type="button" (click)="closeImagePreview()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body text-center">
         <img [src]="previewImageUrl" alt="Offer Image" class="img-fluid">

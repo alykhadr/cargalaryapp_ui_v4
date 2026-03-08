@@ -7,6 +7,7 @@ import { ToastService } from '../../icons/toast-service';
 import { Color } from '../interfaces/color.interface';
 import { ColorService } from '../services/color.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-colors',
@@ -35,13 +36,14 @@ export class ColorsComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private colorService: ColorService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Colors', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.COLOR'), active: true }
     ];
 
     this.colorForm = this.formBuilder.group({
@@ -149,7 +151,7 @@ export class ColorsComponent implements OnInit {
       this.colorService.updateColor(this.selectedColor.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Color updated successfully');
+          this.showSuccess(this.translate.instant('COLOR_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadColors();
         },
@@ -162,7 +164,7 @@ export class ColorsComponent implements OnInit {
       this.colorService.createColor(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Color created successfully');
+          this.showSuccess(this.translate.instant('COLOR_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadColors();
         },
@@ -176,20 +178,20 @@ export class ColorsComponent implements OnInit {
 
   deleteColor(color: Color) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.colorService.deleteColor(color.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Color deleted successfully');
+            this.showSuccess(this.translate.instant('COLOR_PAGE.DELETE_SUCCESS'));
             this.loadColors();
           },
           error: (error) => this.showError(error)
@@ -237,13 +239,13 @@ export class ColorsComponent implements OnInit {
     if (this.selectedColorIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedColorIds.size} selected color(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COLOR_PAGE.BULK_DELETE_TEXT', { count: this.selectedColorIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -253,9 +255,9 @@ export class ColorsComponent implements OnInit {
           next: (response) => {
             this.selectedColorIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} colors. Failed to delete ${response.failedIds.length} colors.` });
+              this.showError({ message: this.translate.instant('COLOR_PAGE.BULK_DELETE_PARTIAL', { deleted: response.deletedCount, failed: response.failedIds.length }) });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} color(s)`);
+              this.showSuccess(this.translate.instant('COLOR_PAGE.BULK_DELETE_SUCCESS', { count: response.deletedCount }));
             }
             this.loadColors();
           },

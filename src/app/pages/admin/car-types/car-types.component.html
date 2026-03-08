@@ -7,17 +7,19 @@
         <div class="row g-4 align-items-center">
           <div class="col-sm">
             <div>
-              <h5 class="card-title mb-0">Car Types List</h5>
+              <h5 class="card-title mb-0">{{ 'CAR_TYPE_PAGE.LIST_TITLE' | translate }}</h5>
             </div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
               <button type="button" class="btn btn-danger"
-                [disabled]="selectedCarTypeIds.size === 0" (click)="bulkDeleteCarTypes()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedCarTypeIds.size }})
+                [disabled]="selectedCarTypeIds.size === 0" (click)="bulkDeleteCarTypes()"
+                [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> {{ 'CAR_TYPE_PAGE.DELETE_SELECTED' | translate }} ({{ selectedCarTypeIds.size }})
               </button>
-              <button type="button" class="btn btn-success add-btn" (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Car Type
+              <button type="button" class="btn btn-success add-btn" (click)="openCreateModal()"
+                [ngbTooltip]="'COMMON.ADD' | translate" placement="top">
+                <i class="ri-add-line align-bottom me-1"></i> {{ 'CAR_TYPE_PAGE.ADD_BUTTON' | translate }}
               </button>
             </div>
           </div>
@@ -33,7 +35,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Search by English name..."
+                    [placeholder]="'CAR_TYPE_PAGE.SEARCH_EN' | translate"
                     [(ngModel)]="searchTerm"
                     (ngModelChange)="onSearch()">
                 </div>
@@ -44,7 +46,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="ابحث بالاسم العربي..."
+                    [placeholder]="'CAR_TYPE_PAGE.SEARCH_AR' | translate"
                     [(ngModel)]="searchTermAr"
                     (ngModelChange)="onSearch()"
                     dir="rtl">
@@ -52,7 +54,7 @@
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-                  <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+                  <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.REMOVE_FILTERS' | translate }}
                 </button>
               </div>
             </div>
@@ -69,8 +71,8 @@
           <div class="mb-3">
             <i class="ri-car-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No car types found</h5>
-          <p class="text-muted">Click "Add Car Type" to create your first car type</p>
+          <h5 class="text-muted">{{ 'CAR_TYPE_PAGE.NO_TYPES_FOUND' | translate }}</h5>
+          <p class="text-muted">{{ 'CAR_TYPE_PAGE.NO_TYPES_HINT' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredCarTypes.length > 0">
           <div class="table-responsive table-card mb-1">
@@ -82,8 +84,8 @@
                            [checked]="isAllCarTypesSelected()"
                            (change)="toggleSelectAllCarTypes($any($event.target).checked)">
                   </th>
-                  <th scope="col">Name (English)</th>
-                  <th scope="col">Name (Arabic)</th>
+                  <th scope="col">{{ 'CAR_TYPE_PAGE.NAME_EN' | translate }}</th>
+                  <th scope="col">{{ 'CAR_TYPE_PAGE.NAME_AR' | translate }}</th>
                   <th scope="col">{{ 'COMMON.STATUS' | translate }}</th>
                   <th scope="col">{{ 'COMMON.CREATED_BY' | translate }}</th>
                   <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
@@ -101,16 +103,18 @@
                   <td>{{ carType.nameAr }}</td>
                   <td>
                     <span class="badge" [ngClass]="carType.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                      {{ carType.isAvailable ? 'Available' : 'Unavailable' }}
+                      {{ carType.isAvailable ? ('CAR_TYPE_PAGE.AVAILABLE' | translate) : ('CAR_TYPE_PAGE.UNAVAILABLE' | translate) }}
                     </span>
                   </td>
-                  <td>{{ carType.createdBy || 'N/A' }}</td>
+                  <td>{{ carType.createdBy || ('COMMON.NOT_AVAILABLE' | translate) }}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button class="btn btn-sm btn-soft-primary" (click)="openEditModal(carType)">
+                      <button class="btn btn-sm btn-soft-primary" (click)="openEditModal(carType)"
+                        [ngbTooltip]="'COMMON.EDIT' | translate" placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button class="btn btn-sm btn-soft-danger" (click)="deleteCarType(carType)">
+                      <button class="btn btn-sm btn-soft-danger" (click)="deleteCarType(carType)"
+                        [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -145,30 +149,30 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Car Type' : 'Create Car Type' }}</h5>
+        <h5 class="modal-title">{{ isEditMode ? ('CAR_TYPE_PAGE.EDIT_TITLE' | translate) : ('CAR_TYPE_PAGE.CREATE_TITLE' | translate) }}</h5>
         <button class="btn-close" type="button" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="carTypeForm">
           <div class="mb-3">
-            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'CAR_TYPE_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter English name">
+              <input class="form-control" type="text" formControlName="nameEn" [placeholder]="'CAR_TYPE_PAGE.ENTER_EN_NAME' | translate">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
-              English name is required (max 100 characters).
+              {{ 'CAR_TYPE_PAGE.NAME_EN_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'CAR_TYPE_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+              <input class="form-control" type="text" formControlName="nameAr" [placeholder]="'CAR_TYPE_PAGE.ENTER_AR_NAME' | translate" dir="rtl">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
-              Arabic name is required (max 100 characters).
+              {{ 'CAR_TYPE_PAGE.NAME_AR_REQUIRED' | translate }}
             </div>
           </div>
 
@@ -176,7 +180,7 @@
             <div class="form-check">
               <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailable">
               <label class="form-check-label" for="isAvailable">
-                Available
+                {{ 'CAR_TYPE_PAGE.AVAILABLE' | translate }}
               </label>
             </div>
           </div>
@@ -186,7 +190,7 @@
         <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveCarType()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('CAR_TYPE_PAGE.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>

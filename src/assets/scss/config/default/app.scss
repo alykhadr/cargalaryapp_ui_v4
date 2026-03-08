@@ -139,6 +139,18 @@ File: Main Css File
   .card-title, .table, .btn, .breadcrumb {
     font-family: "Poppins", "Segoe UI", Tahoma, Arial, sans-serif !important;
   }
+
+  // Keep placeholders visually aligned with LTR layout.
+  input::placeholder,
+  textarea::placeholder {
+    direction: ltr;
+    text-align: left;
+  }
+
+  .ng-select .ng-placeholder {
+    direction: ltr;
+    text-align: left;
+  }
 }
 
 [dir="rtl"] {
@@ -157,6 +169,18 @@ File: Main Css File
   .form-control, .form-select, .dropdown-item, .nav-link,
   .card-title, .table, .btn, .breadcrumb {
     font-family: "Cairo", "Segoe UI", Tahoma, Arial, sans-serif !important;
+  }
+
+  // Keep placeholders visually aligned with RTL layout.
+  input::placeholder,
+  textarea::placeholder {
+    direction: rtl;
+    text-align: right;
+  }
+
+  .ng-select .ng-placeholder {
+    direction: rtl;
+    text-align: right;
   }
 
   // Prevent leftover LTR spacing on Arabic layout content area.
@@ -289,4 +313,17 @@ File: Main Css File
     margin-left: 0.35rem !important;
     margin-right: 0 !important;
   }
+}
+
+// Respect explicit field direction even if page direction is different.
+input[dir="ltr"]::placeholder,
+textarea[dir="ltr"]::placeholder {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+input[dir="rtl"]::placeholder,
+textarea[dir="rtl"]::placeholder {
+  direction: rtl !important;
+  text-align: right !important;
 }

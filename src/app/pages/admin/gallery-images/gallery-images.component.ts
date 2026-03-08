@@ -10,6 +10,7 @@ import { CarModel } from '../interfaces/car-model.interface';
 import { BrandService } from '../services/brand.service';
 import { Brand } from '../interfaces/brand.interface';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-gallery-images',
@@ -49,7 +50,8 @@ export class GalleryImagesComponent implements OnInit {
     private carService: CarService,
     private lookupService: LookupService,
     private carModelService: CarModelService,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +113,7 @@ export class GalleryImagesComponent implements OnInit {
         this.galleryImages = data;
         this.applyFilters();
       },
-      error: (error) => console.error('Error loading gallery images:', error)
+      error: (error) => console.error(this.translate.instant('GALLERY_IMAGES_PAGE.ERROR_LOAD'), error)
     });
   }
 
@@ -152,7 +154,7 @@ export class GalleryImagesComponent implements OnInit {
 
   createGalleryImage(): void {
     if (!this.galleryImageForm.carId || !this.selectedFile || !this.galleryImageForm.imageType) {
-      Swal.fire('Error', 'Please fill all required fields', 'error');
+      Swal.fire(this.translate.instant('COMMON.ERROR'), this.translate.instant('GALLERY_IMAGES_PAGE.REQUIRED_FIELDS'), 'error');
       return;
     }
 
@@ -165,20 +167,20 @@ export class GalleryImagesComponent implements OnInit {
 
     this.galleryImageService.createGalleryImage(request).subscribe({
       next: () => {
-        Swal.fire('Success', 'Gallery image created successfully', 'success');
+        Swal.fire(this.translate.instant('COMMON.SUCCESS'), this.translate.instant('GALLERY_IMAGES_PAGE.CREATE_SUCCESS'), 'success');
         this.resetForm();
         this.loadGalleryImages();
       },
       error: (error) => {
-        const errorMsg = getErrorMessage(error, 'Error creating gallery image');
-        Swal.fire('Error', errorMsg, 'error');
+        const errorMsg = getErrorMessage(error, this.translate.instant('GALLERY_IMAGES_PAGE.ERROR_CREATE'));
+        Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
       }
     });
   }
 
   updateGalleryImage(): void {
     if (!this.selectedGalleryImageId || !this.galleryImageForm.carId || !this.galleryImageForm.imageType) {
-      Swal.fire('Error', 'Please fill all required fields', 'error');
+      Swal.fire(this.translate.instant('COMMON.ERROR'), this.translate.instant('GALLERY_IMAGES_PAGE.REQUIRED_FIELDS'), 'error');
       return;
     }
 
@@ -191,13 +193,13 @@ export class GalleryImagesComponent implements OnInit {
 
     this.galleryImageService.updateGalleryImage(this.selectedGalleryImageId, request).subscribe({
       next: () => {
-        Swal.fire('Success', 'Gallery image updated successfully', 'success');
+        Swal.fire(this.translate.instant('COMMON.SUCCESS'), this.translate.instant('GALLERY_IMAGES_PAGE.UPDATE_SUCCESS'), 'success');
         this.resetForm();
         this.loadGalleryImages();
       },
       error: (error) => {
-        const errorMsg = getErrorMessage(error, 'Error updating gallery image');
-        Swal.fire('Error', errorMsg, 'error');
+        const errorMsg = getErrorMessage(error, this.translate.instant('GALLERY_IMAGES_PAGE.ERROR_UPDATE'));
+        Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
       }
     });
   }
@@ -216,22 +218,26 @@ export class GalleryImagesComponent implements OnInit {
 
   deleteGalleryImage(id: number): void {
     Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('GALLERY_IMAGES_PAGE.DELETE_WARNING'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE')
     }).then((result) => {
       if (result.isConfirmed) {
         this.galleryImageService.deleteGalleryImage(id).subscribe({
           next: () => {
-            Swal.fire('Deleted!', 'Gallery image has been deleted.', 'success');
+            Swal.fire(this.translate.instant('COMMON.DELETED'), this.translate.instant('GALLERY_IMAGES_PAGE.DELETE_SUCCESS'), 'success');
             this.loadGalleryImages();
           },
-          error: (error) => console.error('Error deleting gallery image:', error)
+          error: (error) => {
+            const errorMsg = getErrorMessage(error, this.translate.instant('GALLERY_IMAGES_PAGE.ERROR_DELETE'));
+            Swal.fire(this.translate.instant('COMMON.ERROR'), errorMsg, 'error');
+          }
         });
       }
     });

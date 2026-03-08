@@ -8,6 +8,7 @@ import { MemberService } from '../interfaces/member-service.interface';
 import { MemberServiceService } from '../services/member-service.service';
 import { getErrorMessage } from '../shared/error-message.util';
 import { GlobalComponent } from 'src/app/global-component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-member-services',
@@ -40,13 +41,14 @@ export class MemberServicesComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
     private memberServiceService: MemberServiceService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Member Services', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.MEMBERSERVICE'), active: true }
     ];
 
     this.serviceForm = this.formBuilder.group({
@@ -163,7 +165,7 @@ export class MemberServicesComponent implements OnInit {
     this.submitted = true;
     if (this.serviceForm.invalid) return;
     if (!this.isEditMode && !this.selectedFile) {
-      this.showError({ message: 'Image is required' });
+      this.showError(this.translate.instant('MEMBER_SERVICES_PAGE.IMAGE_REQUIRED'));
       return;
     }
 
@@ -181,7 +183,7 @@ export class MemberServicesComponent implements OnInit {
       this.memberServiceService.update(this.selectedService.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Member Service updated successfully');
+          this.showSuccess(this.translate.instant('MEMBER_SERVICES_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadServices();
         },
@@ -194,7 +196,7 @@ export class MemberServicesComponent implements OnInit {
       this.memberServiceService.create(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Member Service created successfully');
+          this.showSuccess(this.translate.instant('MEMBER_SERVICES_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadServices();
         },
@@ -208,20 +210,20 @@ export class MemberServicesComponent implements OnInit {
 
   deleteService(memberService: MemberService) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.memberServiceService.delete(memberService.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Member Service deleted successfully');
+            this.showSuccess(this.translate.instant('MEMBER_SERVICES_PAGE.DELETE_SUCCESS'));
             this.loadServices();
           },
           error: (error) => this.showError(error)
@@ -269,13 +271,13 @@ export class MemberServicesComponent implements OnInit {
     if (this.selectedServiceIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedServiceIds.size} selected service(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('MEMBER_SERVICES_PAGE.BULK_DELETE_TEXT', { count: this.selectedServiceIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -285,9 +287,14 @@ export class MemberServicesComponent implements OnInit {
           next: (response) => {
             this.selectedServiceIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} services. Failed to delete ${response.failedIds.length} services.` });
+              this.showError(this.translate.instant('MEMBER_SERVICES_PAGE.BULK_DELETE_PARTIAL', {
+                deleted: response.deletedCount,
+                failed: response.failedIds.length
+              }));
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} service(s)`);
+              this.showSuccess(this.translate.instant('MEMBER_SERVICES_PAGE.BULK_DELETE_SUCCESS', {
+                count: response.deletedCount
+              }));
             }
             this.loadServices();
           },

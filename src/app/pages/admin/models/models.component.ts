@@ -7,10 +7,13 @@ import { ToastService } from '../../icons/toast-service';
 import { CarModel } from '../interfaces/car-model.interface';
 import { Brand } from '../interfaces/brand.interface';
 import { Car } from '../interfaces/car.interface';
+import { CarType } from '../interfaces/car-type.interface';
 import { CarModelService } from '../services/car-model.service';
 import { BrandService } from '../services/brand.service';
 import { CarService } from '../services/car.service';
+import { CarTypeService } from '../services/car-type.service';
 import { getErrorMessage } from '../shared/error-message.util';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-models',
@@ -34,6 +37,7 @@ export class ModelsComponent implements OnInit {
   filteredModels: CarModel[] = [];
   pagedModels: CarModel[] = [];
   brands: Brand[] = [];
+  carTypes: CarType[] = [];
   searchTerm = '';
   searchTermAr = '';
   previewImageUrl: string | null = null;
@@ -53,13 +57,15 @@ export class ModelsComponent implements OnInit {
     private modelService: CarModelService,
     private brandService: BrandService,
     private carService: CarService,
-    private toastService: ToastService
+    private carTypeService: CarTypeService,
+    private toastService: ToastService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: 'Admin' },
-      { label: 'Car Models', active: true }
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.ADMIN.LIST.MODEL'), active: true }
     ];
 
     this.modelForm = this.formBuilder.group({
@@ -70,6 +76,7 @@ export class ModelsComponent implements OnInit {
 
     this.loadModels();
     this.loadBrands();
+    this.loadCarTypes();
   }
 
   get form() {
@@ -95,6 +102,15 @@ export class ModelsComponent implements OnInit {
     this.brandService.getBrands().pipe(first()).subscribe({
       next: (brands) => {
         this.brands = brands;
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  loadCarTypes() {
+    this.carTypeService.getCarTypes().pipe(first()).subscribe({
+      next: (types) => {
+        this.carTypes = types;
       },
       error: (error) => this.showError(error)
     });
@@ -173,7 +189,7 @@ export class ModelsComponent implements OnInit {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      this.showError({ message: 'Please select only image files' });
+      this.showError({ message: this.translate.instant('MODEL_PAGE.IMAGE_ONLY_ERROR') });
       event.target.value = '';
       this.selectedImage = null;
       this.imagePreview = null;
@@ -186,7 +202,7 @@ export class ModelsComponent implements OnInit {
       this.imagePreview = e.target.result as string;
     };
     reader.onerror = () => {
-      this.showError({ message: 'Failed to read image file' });
+      this.showError({ message: this.translate.instant('MODEL_PAGE.IMAGE_READ_ERROR') });
       this.selectedImage = null;
       this.imagePreview = null;
     };
@@ -210,7 +226,7 @@ export class ModelsComponent implements OnInit {
       this.modelService.updateModel(this.selectedModel.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Model updated successfully');
+          this.showSuccess(this.translate.instant('MODEL_PAGE.UPDATE_SUCCESS'));
           this.closeModal();
           this.loadModels();
         },
@@ -223,7 +239,7 @@ export class ModelsComponent implements OnInit {
       this.modelService.createModel(payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Model created successfully');
+          this.showSuccess(this.translate.instant('MODEL_PAGE.CREATE_SUCCESS'));
           this.closeModal();
           this.loadModels();
         },
@@ -237,20 +253,20 @@ export class ModelsComponent implements OnInit {
 
   deleteModel(model: CarModel) {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
       if (result.isConfirmed) {
         this.modelService.deleteModel(model.id).pipe(first()).subscribe({
           next: () => {
-            this.showSuccess('Model deleted successfully');
+            this.showSuccess(this.translate.instant('MODEL_PAGE.DELETE_SUCCESS'));
             this.loadModels();
           },
           error: (error) => this.showError(error)
@@ -275,7 +291,27 @@ export class ModelsComponent implements OnInit {
 
   getBrandName(brandId: number): string {
     const brand = this.brands.find(b => b.id === brandId);
-    return brand ? brand.nameEn : 'N/A';
+    return brand ? brand.nameEn : this.translate.instant('COMMON.NOT_AVAILABLE');
+  }
+
+  getBrandNameEn(brandId: number): string {
+    const brand = this.brands.find(b => b.id === brandId);
+    return brand?.nameEn?.trim() || this.translate.instant('COMMON.NOT_AVAILABLE');
+  }
+
+  getBrandNameAr(brandId: number): string {
+    const brand = this.brands.find(b => b.id === brandId);
+    return brand?.nameAr?.trim() || this.translate.instant('COMMON.NOT_AVAILABLE');
+  }
+
+  getCarTypeName(typeId: number): string {
+    const type = this.carTypes.find(t => t.id === typeId);
+    if (!type) {
+      return this.translate.instant('COMMON.NOT_AVAILABLE');
+    }
+
+    const isArabic = this.translate.currentLang?.toLowerCase().startsWith('ar');
+    return isArabic ? type.nameAr : type.nameEn;
   }
 
   private showSuccess(message: string) {
@@ -325,13 +361,13 @@ export class ModelsComponent implements OnInit {
     if (this.selectedModelIds.size === 0) return;
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Delete ${this.selectedModelIds.size} selected model(s)?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('MODEL_PAGE.BULK_DELETE_TEXT', { count: this.selectedModelIds.size }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -341,9 +377,9 @@ export class ModelsComponent implements OnInit {
           next: (response) => {
             this.selectedModelIds.clear();
             if (response.failedIds.length > 0) {
-              this.showError({ message: `Deleted ${response.deletedCount} models. Failed to delete ${response.failedIds.length} models.` });
+              this.showError({ message: this.translate.instant('MODEL_PAGE.BULK_DELETE_PARTIAL', { deleted: response.deletedCount, failed: response.failedIds.length }) });
             } else {
-              this.showSuccess(`Successfully deleted ${response.deletedCount} model(s)`);
+              this.showSuccess(this.translate.instant('MODEL_PAGE.BULK_DELETE_SUCCESS', { count: response.deletedCount }));
             }
             this.loadModels();
           },

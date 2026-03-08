@@ -1,4 +1,4 @@
-export function getErrorMessage(error: any, fallback = 'Something went wrong'): string {
+export function getErrorMessage(error: any, fallback?: string): string {
   if (typeof error === 'string') {
     return error;
   }
@@ -19,7 +19,10 @@ export function getErrorMessage(error: any, fallback = 'Something went wrong'): 
     return withCode(apiErrors.join(', '), errorCode);
   }
 
-  return withCode(response?.message || response?.error || error?.message || fallback, errorCode);
+  return withCode(
+    response?.message || response?.error || error?.message || fallback || getDefaultFallbackMessage(),
+    errorCode
+  );
 }
 
 function getCurrentLanguage(): string {
@@ -41,4 +44,8 @@ function extractErrorCode(response: any): string | null {
 function withCode(message: string, code: string | null): string {
   if (!code) return message;
   return `${code} - ${message}`;
+}
+
+function getDefaultFallbackMessage(): string {
+  return getCurrentLanguage().startsWith('ar') ? 'حدث خطأ ما' : 'Something went wrong';
 }

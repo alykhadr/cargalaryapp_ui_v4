@@ -7,14 +7,16 @@
         <div class="row">
           <div class="col-xxl-9 align-self-center">
             <div class="py-4">
-              <h4 class="display-6">Frequently Asked Questions</h4>
-              <p class="text-success fs-15 mt-3">Manage your FAQ content to help users find answers quickly and efficiently.</p>
+              <h4 class="display-6">{{ 'FAQ_PAGE.TITLE' | translate }}</h4>
+              <p class="text-success fs-15 mt-3">{{ 'FAQ_PAGE.SUBTITLE' | translate }}</p>
               <div class="hstack flex-wrap gap-2">
-                <button *appHasPermission="'faq.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()">
-                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> Add FAQ
+                <button *appHasPermission="'faq.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()"
+                        [title]="'FAQ_PAGE.ADD_BUTTON' | translate" data-bs-toggle="tooltip" data-bs-placement="top">
+                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'FAQ_PAGE.ADD_BUTTON' | translate }}
                 </button>
-                <button *appHasPermission="'faq.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedFaqIds.size === 0" (click)="bulkDeleteFaqs()">
-                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> Delete Selected ({{ selectedFaqIds.size }})
+                <button *appHasPermission="'faq.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedFaqIds.size === 0" (click)="bulkDeleteFaqs()"
+                        [title]="'FAQ_PAGE.DELETE_SELECTED' | translate" data-bs-toggle="tooltip" data-bs-placement="top">
+                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'FAQ_PAGE.DELETE_SELECTED' | translate }} ({{ selectedFaqIds.size }})
                 </button>
               </div>
             </div>
@@ -34,12 +36,13 @@
           <div class="col-sm-10">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" placeholder="Search FAQs..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'FAQ_PAGE.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-sm-2">
-            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i>Clear
+            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()"
+                    [title]="'COMMON.CLEAR' | translate" data-bs-toggle="tooltip" data-bs-placement="top">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.CLEAR' | translate }}
             </button>
           </div>
         </div>
@@ -56,8 +59,8 @@
       <div class="mb-3">
         <i class="ri-question-line" style="font-size: 64px; color: #ccc;"></i>
       </div>
-      <h5 class="text-muted">No FAQs found</h5>
-      <p class="text-muted">Click "Add FAQ" to create your first FAQ</p>
+      <h5 class="text-muted">{{ 'FAQ_PAGE.NO_DATA' | translate }}</h5>
+      <p class="text-muted">{{ 'FAQ_PAGE.NO_DATA_HINT' | translate }}</p>
     </div>
 
     <div *ngIf="!isLoading && filteredFaqs.length > 0" class="row justify-content-center mb-4">
@@ -69,7 +72,7 @@
                 <i class="ri-question-line fs-24 align-middle text-success"></i>
               </div>
               <div class="flex-grow-1">
-                <h5 class="fs-16 mb-0 fw-semibold text-success">All FAQs ({{ filteredFaqs.length }})</h5>
+                <h5 class="fs-16 mb-0 fw-semibold text-success">{{ 'FAQ_PAGE.ALL_FAQS' | translate }} ({{ filteredFaqs.length }})</h5>
               </div>
             </div>
           </div>
@@ -86,13 +89,15 @@
                       <i class="ri-question-fill text-success me-2"></i>{{ faq.titleEn }}
                     </button>
                     <span class="badge" [ngClass]="faq.isAvailable ? 'bg-success' : 'bg-danger'">
-                      {{ faq.isAvailable ? 'Active' : 'Inactive' }}
+                      {{ faq.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
                     </span>
                     <div class="d-flex gap-1">
-                      <button *appHasPermission="'faq.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(faq); $event.stopPropagation()" title="Edit">
+                      <button *appHasPermission="'faq.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(faq); $event.stopPropagation()"
+                              [title]="'COMMON.EDIT' | translate" data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button *appHasPermission="'faq.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteFaq(faq); $event.stopPropagation()" title="Delete">
+                      <button *appHasPermission="'faq.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteFaq(faq); $event.stopPropagation()"
+                              [title]="'COMMON.DELETE' | translate" data-bs-toggle="tooltip" data-bs-placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -103,13 +108,13 @@
                     <div class="row g-3">
                       <div class="col-md-6">
                         <div class="border-start border-3 border-primary ps-3">
-                          <h6 class="text-primary mb-2"><i class="ri-english-input me-1"></i>English</h6>
+                          <h6 class="text-primary mb-2"><i class="ri-english-input me-1"></i>{{ 'FAQ_PAGE.ENGLISH' | translate }}</h6>
                           <div class="text-muted" [innerHTML]="faq.descriptionEn"></div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="border-start border-3 border-success ps-3">
-                          <h6 class="text-success mb-2"><i class="ri-translate me-1"></i>العربية</h6>
+                          <h6 class="text-success mb-2"><i class="ri-translate me-1"></i>{{ 'FAQ_PAGE.ARABIC' | translate }}</h6>
                           <div class="text-muted" dir="rtl" [innerHTML]="faq.descriptionAr"></div>
                         </div>
                       </div>
@@ -145,78 +150,78 @@
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit FAQ' : 'Create FAQ' }}</h5>
-        <button class="btn-close" type="button" (click)="closeModal()"></button>
+        <h5 class="modal-title">{{ isEditMode ? ('FAQ_PAGE.EDIT_TITLE' | translate) : ('FAQ_PAGE.CREATE_TITLE' | translate) }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="faqForm">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Title (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'FAQ_PAGE.TITLE_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-question-line"></i></span>
-                <input class="form-control" type="text" formControlName="titleEn" placeholder="Enter title in English" maxlength="200">
+                <input class="form-control" type="text" formControlName="titleEn" [placeholder]="'FAQ_PAGE.TITLE_EN_PLACEHOLDER' | translate" maxlength="200">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['titleEn'].errors">
-                <span *ngIf="form['titleEn'].errors['required']">Title in English is required.</span>
-                <span *ngIf="form['titleEn'].errors['maxlength']">Max length is 200 characters.</span>
+                <span *ngIf="form['titleEn'].errors['required']">{{ 'FAQ_PAGE.TITLE_EN_REQUIRED' | translate }}</span>
+                <span *ngIf="form['titleEn'].errors['maxlength']">{{ 'FAQ_PAGE.MAX_200' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Title (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'FAQ_PAGE.TITLE_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-question-line"></i></span>
-                <input class="form-control" type="text" formControlName="titleAr" placeholder="أدخل العنوان بالعربية" maxlength="200" dir="rtl">
+                <input class="form-control" type="text" formControlName="titleAr" [placeholder]="'FAQ_PAGE.TITLE_AR_PLACEHOLDER' | translate" maxlength="200" dir="rtl">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['titleAr'].errors">
-                <span *ngIf="form['titleAr'].errors['required']">Title in Arabic is required.</span>
-                <span *ngIf="form['titleAr'].errors['maxlength']">Max length is 200 characters.</span>
+                <span *ngIf="form['titleAr'].errors['required']">{{ 'FAQ_PAGE.TITLE_AR_REQUIRED' | translate }}</span>
+                <span *ngIf="form['titleAr'].errors['maxlength']">{{ 'FAQ_PAGE.MAX_200' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (English) <span class="text-danger">*</span></label>
-              <ckeditor [editor]="Editor" formControlName="descriptionEn" data="<p>Enter description in English</p>"></ckeditor>
+              <label class="form-label">{{ 'FAQ_PAGE.DESC_EN' | translate }} <span class="text-danger">*</span></label>
+              <ckeditor [editor]="Editor" formControlName="descriptionEn"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
-                <span *ngIf="form['descriptionEn'].errors['required']">Description in English is required.</span>
+                <span *ngIf="form['descriptionEn'].errors['required']">{{ 'FAQ_PAGE.DESC_EN_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (Arabic) <span class="text-danger">*</span></label>
-              <ckeditor [editor]="Editor" formControlName="descriptionAr" data="<p dir='rtl'>أدخل الوصف بالعربية</p>"></ckeditor>
+              <label class="form-label">{{ 'FAQ_PAGE.DESC_AR' | translate }} <span class="text-danger">*</span></label>
+              <ckeditor [editor]="Editor" formControlName="descriptionAr"></ckeditor>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
-                <span *ngIf="form['descriptionAr'].errors['required']">Description in Arabic is required.</span>
+                <span *ngIf="form['descriptionAr'].errors['required']">{{ 'FAQ_PAGE.DESC_AR_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Order <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'FAQ_PAGE.ORDER' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-sort-asc"></i></span>
-                <input class="form-control" type="number" formControlName="order" placeholder="Enter order" min="0">
+                <input class="form-control" type="number" formControlName="order" [placeholder]="'FAQ_PAGE.ORDER_PLACEHOLDER' | translate" min="0">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['order'].errors">
-                <span *ngIf="form['order'].errors['required']">Order is required.</span>
-                <span *ngIf="form['order'].errors['min']">Order must be 0 or greater.</span>
+                <span *ngIf="form['order'].errors['required']">{{ 'FAQ_PAGE.ORDER_REQUIRED' | translate }}</span>
+                <span *ngIf="form['order'].errors['min']">{{ 'FAQ_PAGE.ORDER_MIN' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
               <div class="form-check form-switch mt-4">
                 <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailableSwitch">
-                <label class="form-check-label" for="isAvailableSwitch">Is Available</label>
+                <label class="form-check-label" for="isAvailableSwitch">{{ 'COMMON.IS_AVAILABLE' | translate }}</label>
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveFaq()">
+        <button class="btn btn-light" type="button" (click)="closeModal()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveFaq()" [title]="(isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate))">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COMMON.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>

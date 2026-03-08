@@ -32,6 +32,7 @@ import { CarCarColorService } from '../services/car-car-color.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { LookupService } from '../services/lookup.service';
 import { CarRealtimeService } from '../services/car-realtime.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface CarListActionCounts {
   features: number;
@@ -300,20 +301,23 @@ export class CarsComponent implements OnInit, OnDestroy {
     private router: Router,
     private accessControlService: AccessControlService,
     private lookupService: LookupService,
-    private carRealtimeService: CarRealtimeService
+    private carRealtimeService: CarRealtimeService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     const mode = this.mode ?? this.route.snapshot.data['mode'];
     this.pageMode = mode === 'list' ? 'list' : 'create';
-    this.pageTitle = this.pageMode === 'list' ? 'Car List' : 'Create Car';
+    this.pageTitle = this.pageMode === 'list'
+      ? this.translate.instant('CARS_PAGE.CAR_LIST')
+      : this.translate.instant('CARS_PAGE.CREATE_CAR');
     this.canViewCar = this.accessControlService.hasPermission('cars.view');
     this.canCreateCar = this.accessControlService.hasPermission('cars.create');
     this.canEditCar = this.accessControlService.hasPermission('cars.edit');
     this.canDeleteCar = this.accessControlService.hasPermission('cars.delete');
 
     this.breadCrumbItems = [
-      { label: 'Admin' },
+      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
       { label: this.pageTitle, active: true }
     ];
 
@@ -2722,12 +2726,12 @@ export class CarsComponent implements OnInit, OnDestroy {
     }
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Create a copy of this car with all related details?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('CARS_PAGE.COPY_CONFIRM_TEXT'),
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Copy!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('CARS_PAGE.COPY_CONFIRM_BUTTON'),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#0ab39c',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -2735,7 +2739,7 @@ export class CarsComponent implements OnInit, OnDestroy {
 
       this.carService.copyCar(car.id).pipe(first()).subscribe({
         next: () => {
-          this.showSuccess('Car copied successfully.');
+          this.showSuccess(this.translate.instant('CARS_PAGE.COPY_SUCCESS'));
           this.loadCars();
         },
         error: (error) => this.showError(error)
@@ -2750,20 +2754,25 @@ export class CarsComponent implements OnInit, OnDestroy {
     }
 
     if (car.isAvailable === isAvailable) {
-      this.showError(`Car is already ${isAvailable ? 'available' : 'unavailable'}.`);
+      this.showError(
+        this.translate.instant(
+          isAvailable ? 'CARS_PAGE.ALREADY_ACTIVE_ERROR' : 'CARS_PAGE.ALREADY_INACTIVE_ERROR'
+        )
+      );
       return;
     }
 
-    const actionLabel = isAvailable ? 'available' : 'unavailable';
+    const statusLabel = this.translate.instant(isAvailable ? 'COMMON.ACTIVE' : 'COMMON.INACTIVE');
+    const confirmLabel = this.translate.instant(isAvailable ? 'CARS_PAGE.MARK_ACTIVE' : 'CARS_PAGE.MARK_INACTIVE');
 
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Mark this car as ${actionLabel}?`,
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('CARS_PAGE.MARK_STATUS_CONFIRM_TEXT', { status: statusLabel }),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: `Yes, Mark ${isAvailable ? 'Available' : 'Unavailable'}!`,
-      cancelButtonText: 'Cancel',
+      confirmButtonText: this.translate.instant('CARS_PAGE.MARK_STATUS_CONFIRM_BUTTON', { action: confirmLabel }),
+      cancelButtonText: this.translate.instant('COMMON.CANCEL'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     }).then((result) => {
@@ -2771,7 +2780,7 @@ export class CarsComponent implements OnInit, OnDestroy {
 
       this.carService.updateAvailability(car.id, isAvailable).pipe(first()).subscribe({
         next: () => {
-          this.showSuccess(`Car marked as ${actionLabel}.`);
+          this.showSuccess(this.translate.instant('CARS_PAGE.MARK_STATUS_SUCCESS', { status: statusLabel }));
           this.loadCars();
         },
         error: (error) => this.showError(error)
@@ -3597,21 +3606,21 @@ export class CarsComponent implements OnInit, OnDestroy {
 
   private getTabValidationErrorMessage(tabId: number): string {
     if (tabId === 2) {
-      return 'Please select at least one feature before proceeding to the next tab.';
+      return this.translate.instant('CARS_PAGE.FEATURE_TAB_REQUIRED');
     }
     if (tabId === 3) {
       if (this.pendingCarColors.length === 0) {
-        return 'Please select at least one color before proceeding to the next tab.';
+        return this.translate.instant('CARS_PAGE.COLOR_TAB_REQUIRED');
       }
-      return 'Please complete all required fields in car color details.';
+      return this.translate.instant('CARS_PAGE.COLOR_TAB_FIELDS_REQUIRED');
     }
     if (tabId === 4) {
-      return 'Please add at least one extra detail before proceeding to the next tab.';
+      return this.translate.instant('CARS_PAGE.DETAILS_TAB_REQUIRED');
     }
     if (tabId === 5) {
-      return 'Please add at least one gallery image before saving.';
+      return this.translate.instant('CARS_PAGE.IMAGES_TAB_REQUIRED');
     }
-    return 'Please fill all required fields before proceeding';
+    return this.translate.instant('CARS_PAGE.FILL_REQUIRED_BEFORE_PROCEED');
   }
 
   isControlInvalid(controlName: string): boolean {
@@ -3628,107 +3637,107 @@ export class CarsComponent implements OnInit, OnDestroy {
     if (control.errors['required']) {
       switch (controlName) {
         case 'modelId':
-          return 'Model is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_MODEL_REQUIRED');
         case 'nameEn':
-          return 'Name (English) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_NAME_EN_REQUIRED');
         case 'nameAr':
-          return 'Name (Arabic) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_NAME_AR_REQUIRED');
         case 'brandFilterId':
-          return 'Brand is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_BRAND_REQUIRED');
         case 'typeId':
-          return 'Type is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_TYPE_REQUIRED');
         case 'year':
-          return 'Year is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_YEAR_REQUIRED');
         case 'branchId':
-          return 'Branch is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_BRANCH_REQUIRED');
         case 'mileage':
-          return 'Mileage is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_MILEAGE_REQUIRED');
         case 'vat':
-          return 'VAT is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_VAT_REQUIRED');
         case 'descriptionEn':
-          return 'Description (English) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_DESCRIPTION_EN_REQUIRED');
         case 'descriptionAr':
-          return 'Description (Arabic) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_DESCRIPTION_AR_REQUIRED');
         case 'conditionId':
-          return 'Condition is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_CONDITION_REQUIRED');
         case 'seatingCapacity':
-          return 'Seating capacity is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_SEATING_CAPACITY_REQUIRED');
         case 'weelSizeInch':
-          return 'Wheel size is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_WHEEL_SIZE_REQUIRED');
         case 'fuelTankCapacityLiter':
-          return 'Fuel tank capacity is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_FUEL_TANK_CAPACITY_REQUIRED');
         case 'trimLevel':
-          return 'Trim level is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_TRIM_LEVEL_REQUIRED');
         case 'vehicleClass':
-          return 'Vehicle class is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_VEHICLE_CLASS_REQUIRED');
         case 'manufactureCountryId':
-          return 'Manufacture country is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_MANUFACTURE_COUNTRY_REQUIRED');
         case 'plateNumberAr':
-          return 'Plate number (AR) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_PLATE_AR_REQUIRED');
         case 'plateNumberEn':
-          return 'Plate number (EN) is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_PLATE_EN_REQUIRED');
         case 'transmisionType':
-          return 'Transmission type is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_TRANSMISSION_TYPE_REQUIRED');
         case 'drivetrain':
-          return 'Drivetrain is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_DRIVETRAIN_REQUIRED');
         case 'cylenders':
-          return 'Cylenders is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_CYLENDERS_REQUIRED');
         case 'fuelType':
-          return 'Fuel type is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_FUEL_TYPE_REQUIRED');
         case 'enginNumber':
-          return 'Engine number is required.';
+          return this.translate.instant('CARS_PAGE.ERROR_ENGINE_NUMBER_REQUIRED');
       }
     }
 
     if (controlName === 'year') {
-      if (control.errors['min']) return 'Year must be 1900 or later.';
-      if (control.errors['max']) return 'Year must be 2100 or earlier.';
+      if (control.errors['min']) return this.translate.instant('CARS_PAGE.ERROR_YEAR_MIN');
+      if (control.errors['max']) return this.translate.instant('CARS_PAGE.ERROR_YEAR_MAX');
     }
 
     if (controlName === 'mileage' && control.errors['min']) {
-      return 'Mileage must be 0 or greater.';
+      return this.translate.instant('CARS_PAGE.ERROR_MILEAGE_MIN');
     }
     if (controlName === 'vat' && control.errors['min']) {
-      return 'VAT must be 0 or greater.';
+      return this.translate.instant('CARS_PAGE.ERROR_VAT_MIN');
     }
     if (controlName === 'conditionId' && control.errors['min']) {
-      return 'Condition must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_CONDITION_MIN');
     }
     if (controlName === 'seatingCapacity' && control.errors['min']) {
-      return 'Seating capacity must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_SEATING_CAPACITY_MIN');
     }
     if (controlName === 'fuelTankCapacityLiter' && control.errors['min']) {
-      return 'Fuel tank capacity must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_FUEL_TANK_CAPACITY_MIN');
     }
     if (controlName === 'trimLevel' && control.errors['min']) {
-      return 'Trim level must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_TRIM_LEVEL_MIN');
     }
     if (controlName === 'vehicleClass' && control.errors['min']) {
-      return 'Vehicle class must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_VEHICLE_CLASS_MIN');
     }
     if (controlName === 'manufactureCountryId' && control.errors['min']) {
-      return 'Manufacture country must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_MANUFACTURE_COUNTRY_MIN');
     }
     if (controlName === 'transmisionType' && control.errors['min']) {
-      return 'Transmission type must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_TRANSMISSION_TYPE_MIN');
     }
     if (controlName === 'drivetrain' && control.errors['min']) {
-      return 'Drivetrain must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_DRIVETRAIN_MIN');
     }
     if (controlName === 'cylenders' && control.errors['min']) {
-      return 'Cylenders must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_CYLENDERS_MIN');
     }
     if (controlName === 'fuelType' && control.errors['min']) {
-      return 'Fuel type must be greater than 0.';
+      return this.translate.instant('CARS_PAGE.ERROR_FUEL_TYPE_MIN');
     }
     if (controlName === 'plateNumberAr' && control.errors['pattern']) {
-      return 'Plate number (AR) must be like ABC-1234.';
+      return this.translate.instant('CARS_PAGE.ERROR_PLATE_AR_PATTERN');
     }
     if (controlName === 'plateNumberEn' && control.errors['pattern']) {
-      return 'Plate number (EN) must be like ABC-1234.';
+      return this.translate.instant('CARS_PAGE.ERROR_PLATE_EN_PATTERN');
     }
 
-    return 'Invalid value.';
+    return this.translate.instant('CARS_PAGE.ERROR_INVALID_VALUE');
   }
 
   private markMainInfoControlsTouched() {

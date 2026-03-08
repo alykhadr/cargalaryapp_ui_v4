@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Colors" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="'MENUITEMS.ADMIN.LIST.COLOR' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
@@ -7,18 +7,20 @@
         <div class="row g-4 align-items-center">
           <div class="col-sm">
             <div>
-              <h5 class="card-title mb-0">Color List</h5>
+              <h5 class="card-title mb-0">{{ 'COLOR_PAGE.LIST_TITLE' | translate }}</h5>
             </div>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-start gap-2">
               <button *appHasPermission="'colors.delete'" type="button" class="btn btn-danger"
-                [disabled]="selectedColorIds.size === 0" (click)="bulkDeleteColors()">
-                <i class="ri-delete-bin-line align-bottom me-1"></i> Delete Selected ({{ selectedColorIds.size }})
+                [disabled]="selectedColorIds.size === 0" (click)="bulkDeleteColors()"
+                [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
+                <i class="ri-delete-bin-line align-bottom me-1"></i> {{ 'COLOR_PAGE.DELETE_SELECTED' | translate }} ({{ selectedColorIds.size }})
               </button>
               <button *appHasPermission="'colors.create'" type="button" class="btn btn-success add-btn"
-                (click)="openCreateModal()">
-                <i class="ri-add-line align-bottom me-1"></i> Add Color
+                (click)="openCreateModal()"
+                [ngbTooltip]="'COMMON.ADD' | translate" placement="top">
+                <i class="ri-add-line align-bottom me-1"></i> {{ 'COLOR_PAGE.ADD_BUTTON' | translate }}
               </button>
             </div>
           </div>
@@ -34,7 +36,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Search by English name..."
+                    [placeholder]="'COLOR_PAGE.SEARCH_EN' | translate"
                     [(ngModel)]="searchTerm"
                     (ngModelChange)="onSearch()">
                 </div>
@@ -45,7 +47,7 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="ابحث بالاسم العربي..."
+                    [placeholder]="'COLOR_PAGE.SEARCH_AR' | translate"
                     [(ngModel)]="searchTermAr"
                     (ngModelChange)="onSearch()"
                     dir="rtl">
@@ -53,7 +55,7 @@
               </div>
               <div class="col-sm-2">
                 <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-                  <i class="ri-filter-off-line mx-2 align-bottom"></i>Remove Filters
+                  <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.REMOVE_FILTERS' | translate }}
                 </button>
               </div>
             </div>
@@ -70,8 +72,8 @@
           <div class="mb-3">
             <i class="ri-folder-open-line" style="font-size: 48px; color: #ccc;"></i>
           </div>
-          <h5 class="text-muted">No colors found</h5>
-          <p class="text-muted">Click "Add Color" to create your first color</p>
+          <h5 class="text-muted">{{ 'COLOR_PAGE.NO_COLORS_FOUND' | translate }}</h5>
+          <p class="text-muted">{{ 'COLOR_PAGE.NO_COLORS_HINT' | translate }}</p>
         </div>
         <div *ngIf="!isLoading && filteredColors.length > 0">
           <div class="table-responsive table-card mb-1">
@@ -83,10 +85,10 @@
                            [checked]="isAllColorsSelected()"
                            (change)="toggleSelectAllColors($any($event.target).checked)">
                   </th>
-                  <th scope="col" style="width: 60px;">Color</th>
-                  <th scope="col">Name (English)</th>
-                  <th scope="col">Name (Arabic)</th>
-                  <th scope="col">Color Code</th>
+                  <th scope="col" style="width: 60px;">{{ 'COLOR_PAGE.COLOR' | translate }}</th>
+                  <th scope="col">{{ 'COLOR_PAGE.NAME_EN' | translate }}</th>
+                  <th scope="col">{{ 'COLOR_PAGE.NAME_AR' | translate }}</th>
+                  <th scope="col">{{ 'COLOR_PAGE.COLOR_CODE' | translate }}</th>
                   <th scope="col">{{ 'COMMON.CREATED_BY' | translate }}</th>
                   <th scope="col">{{ 'COMMON.ACTION' | translate }}</th>
                 </tr>
@@ -106,13 +108,15 @@
                   <td>{{ color.colorNameEn }}</td>
                   <td>{{ color.colorNameAr }}</td>
                   <td>{{ color.colorCode }}</td>
-                  <td>{{ color.createdBy || 'N/A' }}</td>
+                  <td>{{ color.createdBy || ('COMMON.NOT_AVAILABLE' | translate) }}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <button *appHasPermission="'colors.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(color)">
+                      <button *appHasPermission="'colors.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(color)"
+                        [ngbTooltip]="'COMMON.EDIT' | translate" placement="top">
                         <i class="ri-edit-line"></i>
                       </button>
-                      <button *appHasPermission="'colors.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteColor(color)">
+                      <button *appHasPermission="'colors.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteColor(color)"
+                        [ngbTooltip]="'COMMON.DELETE' | translate" placement="top">
                         <i class="ri-delete-bin-line"></i>
                       </button>
                     </div>
@@ -146,38 +150,38 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Color' : 'Create Color' }}</h5>
+        <h5 class="modal-title">{{ isEditMode ? ('COLOR_PAGE.EDIT_TITLE' | translate) : ('COLOR_PAGE.CREATE_TITLE' | translate) }}</h5>
         <button class="btn-close" type="button" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="colorForm">
           <div class="mb-3">
-            <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'COLOR_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="colorNameEn" placeholder="Enter English name">
+              <input class="form-control" type="text" formControlName="colorNameEn" [placeholder]="'COLOR_PAGE.ENTER_EN_NAME' | translate">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['colorNameEn'].errors">
-              English name is required (max 100 characters).
+              {{ 'COLOR_PAGE.NAME_EN_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'COLOR_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-text"></i></span>
-              <input class="form-control" type="text" formControlName="colorNameAr" placeholder="أدخل الاسم بالعربية" dir="rtl">
+              <input class="form-control" type="text" formControlName="colorNameAr" [placeholder]="'COLOR_PAGE.ENTER_AR_NAME' | translate" dir="rtl">
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['colorNameAr'].errors">
-              Arabic name is required (max 100 characters).
+              {{ 'COLOR_PAGE.NAME_AR_REQUIRED' | translate }}
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Color Code <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'COLOR_PAGE.COLOR_CODE' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-palette-line"></i></span>
-              <input class="form-control" type="text" formControlName="colorCode" placeholder="#000000">
+              <input class="form-control" type="text" formControlName="colorCode" [placeholder]="'COLOR_PAGE.COLOR_CODE_PLACEHOLDER' | translate">
               <span class="input-group-text p-0" style="width: 50px;">
                 <input type="color" class="form-control form-control-color border-0 h-100 w-100" 
                        [value]="form['colorCode'].value || '#000000'"
@@ -185,8 +189,8 @@
               </span>
             </div>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['colorCode'].errors">
-              <span *ngIf="form['colorCode'].errors['required']">Color code is required.</span>
-              <span *ngIf="form['colorCode'].errors['pattern']">Color code must be in format #RRGGBB.</span>
+              <span *ngIf="form['colorCode'].errors['required']">{{ 'COLOR_PAGE.COLOR_CODE_REQUIRED' | translate }}</span>
+              <span *ngIf="form['colorCode'].errors['pattern']">{{ 'COLOR_PAGE.COLOR_CODE_PATTERN' | translate }}</span>
             </div>
           </div>
         </form>
@@ -195,7 +199,7 @@
         <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveColor()">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COLOR_PAGE.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>

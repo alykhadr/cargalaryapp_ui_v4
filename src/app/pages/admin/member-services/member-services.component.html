@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Member Services" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="'MEMBER_SERVICES_PAGE.TITLE' | translate" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-lg-12">
@@ -7,14 +7,14 @@
         <div class="row">
           <div class="col-xxl-9 align-self-center">
             <div class="py-4">
-              <h4 class="display-6">Member Services</h4>
-              <p class="text-info fs-15 mt-3">Manage services offered to members with descriptions and images.</p>
+              <h4 class="display-6">{{ 'MEMBER_SERVICES_PAGE.MANAGEMENT_TITLE' | translate }}</h4>
+              <p class="text-info fs-15 mt-3">{{ 'MEMBER_SERVICES_PAGE.MANAGEMENT_SUBTITLE' | translate }}</p>
               <div class="hstack flex-wrap gap-2">
-                <button *appHasPermission="'memberservices.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()">
-                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> Add Service
+                <button *appHasPermission="'memberservices.create'" type="button" class="btn btn-primary btn-label rounded-pill" (click)="openCreateModal()" [title]="'MEMBER_SERVICES_PAGE.ADD_BUTTON' | translate">
+                  <i class="ri-add-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'MEMBER_SERVICES_PAGE.ADD_BUTTON' | translate }}
                 </button>
-                <button *appHasPermission="'memberservices.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedServiceIds.size === 0" (click)="bulkDeleteServices()">
-                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> Delete Selected ({{ selectedServiceIds.size }})
+                <button *appHasPermission="'memberservices.delete'" type="button" class="btn btn-danger btn-label rounded-pill" [disabled]="selectedServiceIds.size === 0" (click)="bulkDeleteServices()" [title]="'MEMBER_SERVICES_PAGE.DELETE_SELECTED' | translate">
+                  <i class="ri-delete-bin-line label-icon align-middle rounded-pill fs-16 me-2"></i> {{ 'MEMBER_SERVICES_PAGE.DELETE_SELECTED' | translate }} ({{ selectedServiceIds.size }})
                 </button>
               </div>
             </div>
@@ -29,12 +29,12 @@
           <div class="col-sm-10">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" placeholder="Search services..." [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'MEMBER_SERVICES_PAGE.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-sm-2">
-            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i>Clear
+            <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()" [title]="'COMMON.CLEAR' | translate">
+              <i class="ri-filter-off-line mx-2 align-bottom"></i>{{ 'COMMON.CLEAR' | translate }}
             </button>
           </div>
         </div>
@@ -51,8 +51,8 @@
       <div class="mb-3">
         <i class="ri-service-line" style="font-size: 64px; color: #ccc;"></i>
       </div>
-      <h5 class="text-muted">No services found</h5>
-      <p class="text-muted">Click "Add Service" to create your first service</p>
+      <h5 class="text-muted">{{ 'MEMBER_SERVICES_PAGE.NO_DATA' | translate }}</h5>
+      <p class="text-muted">{{ 'MEMBER_SERVICES_PAGE.NO_DATA_HINT' | translate }}</p>
     </div>
 
     <div *ngIf="!isLoading && filteredServices.length > 0" class="row">
@@ -61,7 +61,7 @@
         <div class="card">
           <div class="card-body">
             <div class="position-relative">
-              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedServiceIds.has(memberService.id)" (change)="toggleServiceSelection(memberService.id, $any($event.target).checked)">
+              <input class="form-check-input position-absolute top-0 end-0 m-2" type="checkbox" [checked]="selectedServiceIds.has(memberService.id)" (change)="toggleServiceSelection(memberService.id, $any($event.target).checked)" [title]="'MEMBER_SERVICES_PAGE.SELECT_SERVICE' | translate">
               <div class="avatar-lg mx-auto mb-3">
                 <div class="avatar-title bg-light rounded">
                   <img [src]="memberService.imageUrl ? apiUrl + memberService.imageUrl : 'assets/images/small/img-2.jpg'" alt="" class="avatar-md">
@@ -72,17 +72,17 @@
             <p class="text-muted text-center mb-3" style="height: 60px; overflow: hidden;">{{ memberService.descriptionEn }}</p>
             <div class="text-center mb-2">
               <span class="badge" [ngClass]="memberService.isAvailable ? 'bg-success' : 'bg-danger'">
-                {{ memberService.isAvailable ? 'Active' : 'Inactive' }}
+                {{ memberService.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
               </span>
             </div>
             <div class="d-flex gap-2 justify-content-center">
-              <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(memberService)" title="Preview Image">
+              <button class="btn btn-sm btn-soft-info" (click)="openImagePreview(memberService)" [title]="'MEMBER_SERVICES_PAGE.PREVIEW_IMAGE' | translate">
                 <i class="ri-eye-line"></i>
               </button>
-              <button *appHasPermission="'memberservices.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(memberService)">
+              <button *appHasPermission="'memberservices.edit'" class="btn btn-sm btn-soft-primary" (click)="openEditModal(memberService)" [title]="'COMMON.EDIT' | translate">
                 <i class="ri-edit-line"></i>
               </button>
-              <button *appHasPermission="'memberservices.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteService(memberService)">
+              <button *appHasPermission="'memberservices.delete'" class="btn btn-sm btn-soft-danger" (click)="deleteService(memberService)" [title]="'COMMON.DELETE' | translate">
                 <i class="ri-delete-bin-line"></i>
               </button>
             </div>
@@ -120,84 +120,84 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">{{ isEditMode ? 'Edit Service' : 'Create Service' }}</h5>
-        <button class="btn-close" type="button" (click)="closeModal()"></button>
+        <h5 class="modal-title">{{ isEditMode ? ('MEMBER_SERVICES_PAGE.EDIT_TITLE' | translate) : ('MEMBER_SERVICES_PAGE.CREATE_TITLE' | translate) }}</h5>
+        <button class="btn-close" type="button" (click)="closeModal()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body">
         <form [formGroup]="serviceForm">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label class="form-label">Name (English) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'MEMBER_SERVICES_PAGE.NAME_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-text"></i></span>
-                <input class="form-control" type="text" formControlName="nameEn" placeholder="Enter name in English" maxlength="200">
+                <input class="form-control" type="text" formControlName="nameEn" [placeholder]="'MEMBER_SERVICES_PAGE.NAME_EN_PLACEHOLDER' | translate" maxlength="200">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">
-                <span *ngIf="form['nameEn'].errors['required']">Name in English is required.</span>
+                <span *ngIf="form['nameEn'].errors['required']">{{ 'MEMBER_SERVICES_PAGE.NAME_EN_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Name (Arabic) <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'MEMBER_SERVICES_PAGE.NAME_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-text"></i></span>
-                <input class="form-control" type="text" formControlName="nameAr" placeholder="أدخل الاسم بالعربية" maxlength="200" dir="rtl">
+                <input class="form-control" type="text" formControlName="nameAr" [placeholder]="'MEMBER_SERVICES_PAGE.NAME_AR_PLACEHOLDER' | translate" maxlength="200" dir="rtl">
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">
-                <span *ngIf="form['nameAr'].errors['required']">Name in Arabic is required.</span>
+                <span *ngIf="form['nameAr'].errors['required']">{{ 'MEMBER_SERVICES_PAGE.NAME_AR_REQUIRED' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (English)</label>
+              <label class="form-label">{{ 'MEMBER_SERVICES_PAGE.DESC_EN' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-                <textarea class="form-control" formControlName="descriptionEn" rows="4" maxlength="500" placeholder="Enter description in English"></textarea>
+                <textarea class="form-control" formControlName="descriptionEn" rows="4" maxlength="500" [placeholder]="'MEMBER_SERVICES_PAGE.DESC_EN_PLACEHOLDER' | translate"></textarea>
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionEn'].errors">
-                <span *ngIf="form['descriptionEn'].errors['maxlength']">Max length is 500 characters.</span>
+                <span *ngIf="form['descriptionEn'].errors['maxlength']">{{ 'MEMBER_SERVICES_PAGE.MAX_500' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-12 mb-3">
-              <label class="form-label">Description (Arabic)</label>
+              <label class="form-label">{{ 'MEMBER_SERVICES_PAGE.DESC_AR' | translate }}</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-file-text-line"></i></span>
-                <textarea class="form-control" formControlName="descriptionAr" rows="4" maxlength="500" placeholder="أدخل الوصف بالعربية" dir="rtl"></textarea>
+                <textarea class="form-control" formControlName="descriptionAr" rows="4" maxlength="500" [placeholder]="'MEMBER_SERVICES_PAGE.DESC_AR_PLACEHOLDER' | translate" dir="rtl"></textarea>
               </div>
               <div class="invalid-feedback d-block" *ngIf="submitted && form['descriptionAr'].errors">
-                <span *ngIf="form['descriptionAr'].errors['maxlength']">Max length is 500 characters.</span>
+                <span *ngIf="form['descriptionAr'].errors['maxlength']">{{ 'MEMBER_SERVICES_PAGE.MAX_500' | translate }}</span>
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
-              <label class="form-label">Image <span class="text-danger">*</span></label>
+              <label class="form-label">{{ 'MEMBER_SERVICES_PAGE.IMAGE' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-image-2-line"></i></span>
                 <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)">
               </div>
               <div *ngIf="imagePreview" class="mt-2">
-                <img [src]="imagePreview" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
+                <img [src]="imagePreview" [alt]="'MEMBER_SERVICES_PAGE.PREVIEW_IMAGE' | translate" class="img-thumbnail" style="max-height: 150px;">
               </div>
               <div class="text-danger mt-1" *ngIf="submitted && !isEditMode && !selectedFile">
-                Image is required
+                {{ 'MEMBER_SERVICES_PAGE.IMAGE_REQUIRED' | translate }}
               </div>
             </div>
 
             <div class="col-md-6 mb-3">
               <div class="form-check form-switch mt-4">
                 <input class="form-check-input" type="checkbox" formControlName="isAvailable" id="isAvailableSwitch">
-                <label class="form-check-label" for="isAvailableSwitch">Is Available</label>
+                <label class="form-check-label" for="isAvailableSwitch">{{ 'COMMON.IS_AVAILABLE' | translate }}</label>
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-light" type="button" (click)="closeModal()">{{ 'COMMON.CANCEL' | translate }}</button>
-        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveService()">
+        <button class="btn btn-light" type="button" (click)="closeModal()" [title]="'COMMON.CANCEL' | translate">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="saveService()" [title]="(isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate))">
           <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
-          {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+          {{ isSubmitting ? ('COMMON.SAVING' | translate) : (isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)) }}
         </button>
       </div>
     </div>
@@ -209,8 +209,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Image Preview</h5>
-        <button class="btn-close" type="button" (click)="closeImagePreview()"></button>
+        <h5 class="modal-title">{{ 'MEMBER_SERVICES_PAGE.PREVIEW_IMAGE' | translate }}</h5>
+        <button class="btn-close" type="button" (click)="closeImagePreview()" [title]="'COMMON.CLOSE' | translate"></button>
       </div>
       <div class="modal-body text-center">
         <img [src]="previewImageUrl" alt="Service Image" class="img-fluid">

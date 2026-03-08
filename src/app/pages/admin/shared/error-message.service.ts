@@ -5,7 +5,7 @@ import { getErrorMessage } from './error-message.util';
 export class ErrorMessageService {
   constructor() {}
 
-  getMessage(error: any, fallback = 'Something went wrong'): string {
+  getMessage(error: any, fallback?: string): string {
     return getErrorMessage(error, fallback);
   }
 }
