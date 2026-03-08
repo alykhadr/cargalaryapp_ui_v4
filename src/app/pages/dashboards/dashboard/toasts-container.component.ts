@@ -1,6 +1,7 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, TemplateRef, HostBinding } from '@angular/core';
 
 import { ToastService } from './toast-service';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 
 @Component({
@@ -8,6 +9,7 @@ import { ToastService } from './toast-service';
     template: `
    @for(toast of toastService.toasts;track $index){
      <ngb-toast
+       [attr.dir]="isRtl ? 'rtl' : 'ltr'"
        [class]="toast.classname"
        [autohide]="true"
        [delay]="toast.delay || 5000"
@@ -22,11 +24,25 @@ import { ToastService } from './toast-service';
      </ngb-toast>
    }
    `,
-    host: { 'class': 'toast-container position-fixed top-0 end-0 p-3', 'style': 'z-index: 1200' },
+    host: { 'style': 'z-index: 1200' },
     standalone: false
 })
 export class ToastsContainer {
-  constructor(public toastService: ToastService) { }
+  constructor(
+    public toastService: ToastService,
+    private languageService: LanguageService
+  ) { }
+
+  @HostBinding('class')
+  get hostClass(): string {
+    return this.isRtl
+      ? 'toast-container position-fixed top-0 start-0 p-3'
+      : 'toast-container position-fixed top-0 end-0 p-3';
+  }
+
+  get isRtl(): boolean {
+    return this.languageService.getCurrentLanguage() === 'ar';
+  }
 
   isTemplate(toast: { textOrTpl: any; }) { return toast.textOrTpl instanceof TemplateRef; }
 }

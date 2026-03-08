@@ -272,4 +272,21 @@ File: Main Css File
     margin-left: 1rem !important;
     margin-right: 0 !important;
   }
+
+  // Fix user section dropdown/header alignment in Arabic.
+  #page-header-user-dropdown .topbar-user-meta {
+    text-align: right !important;
+  }
+
+  .dropdown-menu.topbar-user-menu {
+    left: 0 !important;
+    right: auto !important;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .dropdown-menu.topbar-user-menu .dropdown-item i {
+    margin-left: 0.35rem !important;
+    margin-right: 0 !important;
+  }
 }
