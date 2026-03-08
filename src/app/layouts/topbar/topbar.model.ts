@@ -9,6 +9,7 @@ export interface CartModel {
 export interface QuotationNotificationItem {
   id: number;
   carName: string;
+  carImageUrl?: string | null;
   createdDate: string;
 }
 

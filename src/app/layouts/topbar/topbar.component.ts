@@ -239,4 +239,13 @@ export class TopbarComponent implements OnInit {
         }
       });
   }
+
+  getNotificationCarImageUrl(item: QuotationNotificationItem): string | null {
+    const raw = item?.carImageUrl?.trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw) || raw.startsWith('data:')) return raw;
+    const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
+    const normalized = raw.replace(/^\/+/, '');
+    return base ? `${base}/${normalized}` : raw;
+  }
 }
