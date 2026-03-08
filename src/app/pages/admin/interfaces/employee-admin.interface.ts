@@ -2,6 +2,8 @@ export interface AdminEmployee {
   id: string;
   employeeId: number;
   userName: string;
+  fullNameEn?: string;
+  fullNameAr?: string;
   email: string;
   mobileNo?: string;
   branchName?: string;

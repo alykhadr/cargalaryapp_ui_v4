@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UntypedFormBuilder } from '@angular/forms';
 
 import { TokenStorageService } from '../../../../core/services/token-storage.service';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 
 import { projectListModel, documentModel } from './profile.model';
@@ -27,7 +28,13 @@ export class ProfileComponent {
   allprojectList: any;
 
 
-  constructor(private formBuilder: UntypedFormBuilder, private modalService: NgbModal, private TokenStorageService: TokenStorageService, public service: PaginationService) {
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private modalService: NgbModal,
+    private TokenStorageService: TokenStorageService,
+    public service: PaginationService,
+    private languageService: LanguageService
+  ) {
 
   }
 
@@ -83,6 +90,14 @@ export class ProfileComponent {
   deleteData(id: any) {
     this.document.slice(id, 1)
     this.modalService.dismissAll()
+  }
+
+  get displayFullName(): string {
+    const user = this.userData || {};
+    const isArabic = this.languageService.getCurrentLanguage() === 'ar';
+    const fullAr = (user.fullNameAr || user.fullnameAr || user.full_name_ar || user.nameAr || '').toString().trim();
+    const fullEn = (user.fullNameEn || user.fullnameEn || user.full_name_en || user.nameEn || '').toString().trim();
+    return isArabic ? (fullAr || fullEn || user.username || user.userName || '') : (fullEn || fullAr || user.username || user.userName || '');
   }
 
 }

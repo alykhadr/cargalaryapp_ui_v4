@@ -30,8 +30,7 @@
                             </label>
                         </div>
                     </div>
-                    <h5 class="fs-16 mb-1">{{userData.first_name}}
-                        {{userData.last_name}}</h5>
+                    <h5 class="fs-16 mb-1">{{ displayFullName }}</h5>
                     <p class="text-muted mb-0">{{userData.designation}}</p>
                 </div>
             </div>
@@ -90,14 +89,24 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="firstnameInput" class="form-label">First Name</label>
-                                            <input type="text" class="form-control" id="firstnameInput" placeholder="Enter your firstname" value="{{userData.first_name}}">
+                                            <label for="fullNameEnInput" class="form-label">Full Name (English)</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="fullNameEnInput"
+                                                placeholder="Enter full name in English"
+                                                value="{{userData.fullNameEn || userData.fullnameEn || userData.full_name_en || userData.nameEn}}">
                                         </div>
                                     </div><!--end col-->
                                     <div class="col-lg-6">
                                         <div class="mb-3">
-                                            <label for="lastnameInput" class="form-label">Last Name</label>
-                                            <input type="text" class="form-control" id="lastnameInput" placeholder="Enter your lastname" value="{{userData.last_name}}">
+                                            <label for="fullNameArInput" class="form-label">Full Name (Arabic)</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                id="fullNameArInput"
+                                                placeholder="Enter full name in Arabic"
+                                                value="{{userData.fullNameAr || userData.fullnameAr || userData.full_name_ar || userData.nameAr}}">
                                         </div>
                                     </div><!--end col-->
                                     <div class="col-lg-6">

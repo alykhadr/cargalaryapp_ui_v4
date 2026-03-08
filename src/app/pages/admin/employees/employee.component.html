@@ -336,6 +336,7 @@
                          (change)="toggleSelectAll($any($event.target).checked)">
                 </th>
                 <th>{{ 'COMMON.USERNAME' | translate }}</th>
+                <th>{{ 'COMMON.NAME' | translate }}</th>
                 <th>{{ 'COMMON.EMAIL' | translate }}</th>
                 <th>{{ 'EMPLOYEE_PAGE.MOBILE_NO' | translate }}</th>
                 <th>{{ 'EMPLOYEE_PAGE.BRANCH_NAME' | translate }}</th>
@@ -363,6 +364,7 @@
                     <span>{{ user.userName }}</span>
                   </div>
                 </td>
+                <td>{{ getEmployeeDisplayName(user) }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.mobileNo || '-' }}</td>
                 <td>{{ user.branchName || getBranchName(user.branchId) }}</td>

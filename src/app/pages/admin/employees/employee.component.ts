@@ -981,4 +981,16 @@ export class EmployeeComponent implements OnInit {
     if (!status) return statusCode;
     return status.nameAr && status.nameEn ? `${status.nameAr} - ${status.nameEn}` : (status.nameEn || status.nameAr || statusCode);
   }
+
+  getEmployeeDisplayName(user: AdminEmployee): string {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    const fullNameAr = (user.fullNameAr || '').trim();
+    const fullNameEn = (user.fullNameEn || '').trim();
+
+    if (isArabic) {
+      return fullNameAr || fullNameEn || (user.lastName || '').trim() || (user.firstName || '').trim() || user.userName;
+    }
+
+    return fullNameEn || fullNameAr || (user.firstName || '').trim() || (user.lastName || '').trim() || user.userName;
+  }
 }

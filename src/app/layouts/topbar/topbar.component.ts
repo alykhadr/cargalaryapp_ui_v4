@@ -158,22 +158,27 @@ export class TopbarComponent implements OnInit {
       return '';
     };
 
-    const fullAr = read('fullNameAr', 'nameAr', 'full_name_ar');
-    const fullEn = read('fullNameEn', 'nameEn', 'full_name_en');
-
-    const firstAr = read('firstNameAr', 'first_name_ar');
-    const lastAr = read('lastNameAr', 'last_name_ar');
-    const firstEn = read('firstName', 'first_name');
-    const lastEn = read('lastName', 'last_name');
-
-    const composedAr = `${firstAr} ${lastAr}`.trim();
-    const composedEn = `${firstEn} ${lastEn}`.trim();
+    // Use DB full-name fields only (AR/EN), not first/last names.
+    const fullAr = read(
+      'fullNameAr', 'FullNameAr',
+      'fullnameAr', 'full_name_ar',
+      'nameAr',
+      // login payload fallback (currently used by backend UserDto)
+      'lastName', 'LastName'
+    );
+    const fullEn = read(
+      'fullNameEn', 'FullNameEn',
+      'fullnameEn', 'full_name_en',
+      'nameEn',
+      // login payload fallback (currently used by backend UserDto)
+      'firstName', 'FirstName'
+    );
 
     if (isArabic) {
-      return fullAr || composedAr || fullEn || composedEn || read('username', 'userName', 'email');
+      return fullAr || fullEn;
     }
 
-    return fullEn || composedEn || fullAr || composedAr || read('username', 'userName', 'email');
+    return fullEn || fullAr;
   }
 
   /**

@@ -12,7 +12,7 @@
         </div><!--end col-->
         <div class="col">
             <div class="p-2">
-                <h3 class="text-white mb-1">{{userData.first_name}} {{userData.last_name}}</h3>
+                <h3 class="text-white mb-1">{{ displayFullName }}</h3>
                 <p class="text-white text-opacity-75">{{userData.role
                     == 0 ? 'Admin':'User'}}</p>
                 <div class="hstack text-white-50 gap-1">
@@ -75,8 +75,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <th class="ps-0" scope="row">Full Name :</th>
-                                                            <td class="text-muted">{{userData.first_name}}
-                                                                {{userData.last_name}}</td>
+                                                            <td class="text-muted">{{ displayFullName }}</td>
                                                         </tr>
                                                         <tr>
                                                             <th class="ps-0" scope="row">Mobile :</th>
