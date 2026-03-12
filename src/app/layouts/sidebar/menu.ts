@@ -36,6 +36,12 @@ export const MENU: MenuItem[] = [
         label: 'MENUITEMS.QUOTATION.LIST.TRACK',
         link: '/admin/quotation/track',
         permission: 'quotations.view'
+      },
+      {
+        id: 1994,
+        label: 'MENUITEMS.QUOTATION.LIST.USERS',
+        link: '/admin/quotation/users',
+        permission: 'quotations.view'
       }
     ]
   },

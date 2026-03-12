@@ -427,7 +427,8 @@
       "TEXT": "عروض الأسعار",
       "LIST": {
         "QUOTATIONS": "عروض الأسعار",
-        "TRACK": "تتبع عرض السعر"
+        "TRACK": "تتبع عرض السعر",
+        "USERS": "المستخدمون"
       }
     },
     "ADMIN": {
@@ -563,6 +564,21 @@
     "INVITE_NEW_SELLER": "دعوة بائع جديد",
     "INVITE_SELLER_DESC": "قم بإحالة بائع جديد إلينا واحصل على 100 دولار لكل إحالة.",
     "INVITE_NOW": "ادعُ الآن"
+  },
+  "USERS_PAGE": {
+    "SEARCH_PLACEHOLDER": "ابحث باسم المستخدم أو الاسم أو البريد الإلكتروني...",
+    "DETAILS_TITLE": "تفاصيل المستخدم",
+    "EDIT_TITLE": "تعديل المستخدم",
+    "FILL_REQUIRED": "اسم المستخدم والبريد الإلكتروني والاسم العربي والاسم الإنجليزي والفرع مطلوبة.",
+    "UPDATE_SUCCESS": "تم تحديث المستخدم بنجاح",
+    "ACTIVATE": "تفعيل",
+    "DEACTIVATE": "تعطيل",
+    "ACTIVATE_TITLE": "تفعيل المستخدم؟",
+    "DEACTIVATE_TITLE": "تعطيل المستخدم؟",
+    "ACTIVATE_CONFIRM": "هل تريد تفعيل {{userName}}؟",
+    "DEACTIVATE_CONFIRM": "هل تريد تعطيل {{userName}}؟",
+    "ACTIVATE_SUCCESS": "تم تفعيل المستخدم بنجاح",
+    "DEACTIVATE_SUCCESS": "تم تعطيل المستخدم بنجاح"
   },
   "EMPLOYEE_PAGE": {
     "CREATE_TITLE": "إضافة موظف",

@@ -22,6 +22,7 @@ import { EmployeeListPageComponent } from './employee-list-page/employee-list-pa
 import { QuotationListPageComponent } from './quotation-list-page/quotation-list-page.component';
 import { QuotationCreatePageComponent } from './quotation-create-page/quotation-create-page.component';
 import { QuotationTrackPageComponent } from './quotation-track-page/quotation-track-page.component';
+import { UsersComponent } from './users/users.component';
 import { DepartmentsComponent } from './departments/departments.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
@@ -179,6 +180,12 @@ const routes: Routes = [
   {
     path: "quotation/track",
     component: QuotationTrackPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'quotations.view' }
+  },
+  {
+    path: "quotation/users",
+    component: UsersComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'quotations.view' }
   }

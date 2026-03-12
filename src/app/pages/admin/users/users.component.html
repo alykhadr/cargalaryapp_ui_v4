@@ -1,0 +1,168 @@
+<app-breadcrumbs title="{{ 'MENUITEMS.QUOTATION.LIST.USERS' | translate }}" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<div class="card">
+  <div class="card-body">
+    <div class="row g-2 align-items-center mb-3">
+      <div class="col-md-6">
+        <input
+          type="text"
+          class="form-control"
+          [placeholder]="'USERS_PAGE.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchTerm"
+          (keyup)="onSearch()"
+        />
+      </div>
+      <div class="col-md-6 text-md-end">
+        <button type="button" class="btn btn-light" (click)="clearSearch()">
+          {{ 'COMMON.CLEAR' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>{{ 'COMMON.USERNAME' | translate }}</th>
+            <th>{{ 'COMMON.NAME_AR' | translate }}</th>
+            <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+            <th>{{ 'COMMON.EMAIL' | translate }}</th>
+            <th>{{ 'COMMON.BRANCH' | translate }}</th>
+            <th>{{ 'COMMON.CREATED_AT' | translate }}</th>
+            <th>{{ 'COMMON.STATUS' | translate }}</th>
+            <th class="text-center">{{ 'COMMON.ACTION' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading) {
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">{{ 'COMMON.LOADING' | translate }}</td>
+            </tr>
+          } @else if (pagedUsers.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">{{ 'COMMON.NO_DATA_FOUND' | translate }}</td>
+            </tr>
+          } @else {
+            @for (user of pagedUsers; track user.id) {
+              <tr>
+                <td>{{ user.userName || '-' }}</td>
+                <td>{{ user.nameAr || user.fullNameAr || '-' }}</td>
+                <td>{{ user.nameEn || user.fullNameEn || '-' }}</td>
+                <td>{{ user.email || '-' }}</td>
+                <td>{{ getBranchName(user.branchId) }}</td>
+                <td>{{ user.createdAt | date: 'medium' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="user.isLocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'">
+                    {{ user.isLocked ? ('COMMON.BLOCKED' | translate) : ('COMMON.ACTIVE' | translate) }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-info me-1" (click)="openDetails(user)">
+                    {{ 'COMMON.VIEW' | translate }}
+                  </button>
+                  <button *appHasPermission="'employees.edit'" type="button" class="btn btn-sm btn-soft-secondary" (click)="openEdit(user)">
+                    {{ 'COMMON.EDIT' | translate }}
+                  </button>
+                  <button
+                    *appHasPermission="'employees.lock'"
+                    type="button"
+                    class="btn btn-sm ms-1"
+                    [ngClass]="user.isLocked ? 'btn-soft-success' : 'btn-soft-danger'"
+                    [disabled]="togglingUserId === user.id"
+                    (click)="toggleUserStatus(user)">
+                    {{ (user.isLocked ? 'USERS_PAGE.ACTIVATE' : 'USERS_PAGE.DEACTIVATE') | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+      <ngb-pagination
+        [collectionSize]="filteredUsers.length"
+        [page]="service.page"
+        [pageSize]="service.pageSize"
+        [maxSize]="5"
+        [ellipses]="false"
+        [boundaryLinks]="true"
+        (pageChange)="onPageChange($event)">
+      </ngb-pagination>
+    </div>
+  </div>
+</div>
+
+@if (isDetailsModalOpen && selectedUser) {
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ (isEditMode ? 'USERS_PAGE.EDIT_TITLE' : 'USERS_PAGE.DETAILS_TITLE') | translate }}
+          </h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+        <div class="modal-body">
+          @if (isEditMode && editableUser) {
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">{{ 'COMMON.USERNAME' | translate }}</label>
+                <input class="form-control" [(ngModel)]="editableUser.userName" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ 'COMMON.EMAIL' | translate }}</label>
+                <input class="form-control" [(ngModel)]="editableUser.email" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ 'COMMON.NAME_AR' | translate }}</label>
+                <input class="form-control" [(ngModel)]="editableUser.nameAr" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ 'COMMON.NAME_EN' | translate }}</label>
+                <input class="form-control" [(ngModel)]="editableUser.nameEn" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">{{ 'COMMON.BRANCH' | translate }}</label>
+                <select class="form-select" [(ngModel)]="editableUser.branchId">
+                  <option [ngValue]="0">--</option>
+                  @for (branch of branches; track branch.id) {
+                    <option [ngValue]="branch.id">{{ branch.branchNameAr }} / {{ branch.branchNameEn }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          } @else {
+            <div class="row g-3">
+              <div class="col-md-6"><strong>{{ 'COMMON.USERNAME' | translate }}:</strong> {{ selectedUser.userName || '-' }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.EMAIL' | translate }}:</strong> {{ selectedUser.email || '-' }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.NAME_AR' | translate }}:</strong> {{ selectedUser.nameAr || selectedUser.fullNameAr || '-' }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.NAME_EN' | translate }}:</strong> {{ selectedUser.nameEn || selectedUser.fullNameEn || '-' }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.BRANCH' | translate }}:</strong> {{ getBranchName(selectedUser.branchId) }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.MOBILE' | translate }}:</strong> {{ selectedUser.mobileNo || '-' }}</div>
+              <div class="col-md-6"><strong>{{ 'COMMON.CREATED_AT' | translate }}:</strong> {{ selectedUser.createdAt | date: 'medium' }}</div>
+              <div class="col-md-6">
+                <strong>{{ 'COMMON.STATUS' | translate }}:</strong>
+                <span class="badge ms-1" [ngClass]="selectedUser.isLocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'">
+                  {{ selectedUser.isLocked ? ('COMMON.BLOCKED' | translate) : ('COMMON.ACTIVE' | translate) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" (click)="closeDetails()">{{ (isEditMode ? 'COMMON.CANCEL' : 'COMMON.CLOSE') | translate }}</button>
+          @if (isEditMode) {
+            <button type="button" class="btn btn-success" [disabled]="isSaving" (click)="saveUser()">
+              {{ (isSaving ? 'COMMON.SAVING' : 'COMMON.SAVE') | translate }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show"></div>
+}
+
+<app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

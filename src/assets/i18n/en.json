@@ -427,7 +427,8 @@
       "TEXT": "Quotation",
       "LIST": {
         "QUOTATIONS": "Quotations",
-        "TRACK": "Track Quotation"
+        "TRACK": "Track Quotation",
+        "USERS": "Users"
       }
     },
     "ADMIN": {
@@ -563,6 +564,21 @@
     "INVITE_NEW_SELLER": "Invite New Seller",
     "INVITE_SELLER_DESC": "Refer a new seller to us and earn $100 per refer.",
     "INVITE_NOW": "Invite Now"
+  },
+  "USERS_PAGE": {
+    "SEARCH_PLACEHOLDER": "Search by username, name or email...",
+    "DETAILS_TITLE": "User Details",
+    "EDIT_TITLE": "Edit User",
+    "FILL_REQUIRED": "Username, email, Arabic name, English name and branch are required.",
+    "UPDATE_SUCCESS": "User updated successfully",
+    "ACTIVATE": "Activate",
+    "DEACTIVATE": "Deactivate",
+    "ACTIVATE_TITLE": "Activate User?",
+    "DEACTIVATE_TITLE": "Deactivate User?",
+    "ACTIVATE_CONFIRM": "Do you want to activate {{userName}}?",
+    "DEACTIVATE_CONFIRM": "Do you want to deactivate {{userName}}?",
+    "ACTIVATE_SUCCESS": "User activated successfully",
+    "DEACTIVATE_SUCCESS": "User deactivated successfully"
   },
   "EMPLOYEE_PAGE": {
     "CREATE_TITLE": "Create Employee",

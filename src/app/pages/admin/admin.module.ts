@@ -36,6 +36,7 @@ import { QuotationComponent } from './quotation/quotation.component';
 import { QuotationListPageComponent } from './quotation-list-page/quotation-list-page.component';
 import { QuotationCreatePageComponent } from './quotation-create-page/quotation-create-page.component';
 import { QuotationTrackPageComponent } from './quotation-track-page/quotation-track-page.component';
+import { UsersComponent } from './users/users.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -88,6 +89,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     QuotationListPageComponent,
     QuotationCreatePageComponent,
     QuotationTrackPageComponent,
+    UsersComponent,
     CarByIdPipe
   ],
   imports: [
