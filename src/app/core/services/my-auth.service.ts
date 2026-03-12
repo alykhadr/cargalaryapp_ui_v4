@@ -5,10 +5,31 @@ import { catchError, map } from 'rxjs/operators';
 import { User } from 'src/app/store/Authentication/auth.models';
 import { GlobalComponent } from 'src/app/global-component';
 import { TokenStorageService } from './token-storage.service';
-import { TranslateService } from '@ngx-translate/core';
 
 
 const AUTH_API = GlobalComponent.AUTH_API;
+const INVALID_CREDENTIALS_MESSAGES = {
+    en: 'Invalid user name or password',
+    ar: 'اسم المستخدم أو كلمة المرور غير صحيحة'
+} as const;
+
+function getCurrentLanguage(): 'ar' | 'en' {
+    const browserLang = (typeof navigator !== 'undefined' ? navigator.language : '').toLowerCase();
+    const htmlLang = (typeof document !== 'undefined' ? document.documentElement.lang : '').toLowerCase();
+    const savedLang = (
+        window.localStorage.getItem('lang')
+        || window.sessionStorage.getItem('lang')
+        || htmlLang
+        || browserLang
+        || 'en'
+    ).toLowerCase();
+
+    return savedLang.startsWith('ar') ? 'ar' : 'en';
+}
+
+function getInvalidCredentialsMessage(): string {
+    return INVALID_CREDENTIALS_MESSAGES[getCurrentLanguage()];
+}
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,8 +42,7 @@ export class MyAuthService {
 
     constructor(
         private http: HttpClient,
-        private tokenStorageService: TokenStorageService,
-        private translate: TranslateService
+        private tokenStorageService: TokenStorageService
     ) {
         this.currentUserSubject = new BehaviorSubject<User>(tokenStorageService.getUser()!);
         this.currentUser = this.currentUserSubject.asObservable();
@@ -64,7 +84,7 @@ export class MyAuthService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
+                const errorMessage = getInvalidCredentialsMessage();
                 return throwError(() => errorMessage);
             })
         );

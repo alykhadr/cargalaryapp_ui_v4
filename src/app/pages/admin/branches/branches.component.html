@@ -337,9 +337,9 @@
                   <input type="checkbox" class="form-check-input" id="branchActiveSwitch"
                     [checked]="branchForm.get('isAvailable')?.value"
                     (change)="toggleBranchAvailability($event.target.checked)">
-                  <label class="form-check-label" for="branchActiveSwitch" style="margin-inline-start: 0.5rem;">{{ 'BRANCH_PAGE.BRANCH_ACTIVE' | translate }}</label>
+                  <label class="form-check-label branch-active-switch-label" for="branchActiveSwitch">{{ 'BRANCH_PAGE.BRANCH_ACTIVE' | translate }}</label>
                 </div>
-                <small class="text-muted">{{ 'BRANCH_PAGE.BRANCH_ACTIVE_HINT' | translate }}</small>
+                <small class="text-muted d-block branch-active-switch-hint">{{ 'BRANCH_PAGE.BRANCH_ACTIVE_HINT' | translate }}</small>
               </div>
               <div class="col-12">
                 <hr class="my-3">

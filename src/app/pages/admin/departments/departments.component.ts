@@ -129,7 +129,7 @@ export class DepartmentsComponent implements OnInit {
       this.departmentService.updateDepartment(this.selectedDepartment.id, payload).pipe(first()).subscribe({
         next: () => {
           this.isSubmitting = false;
-          this.showSuccess('Department updated successfully');
+          this.showSuccess('DEPARTMENT_PAGE.UPDATE_SUCCESS');
           this.closeModal();
           this.loadDepartments();
         },
@@ -144,7 +144,7 @@ export class DepartmentsComponent implements OnInit {
     this.departmentService.createDepartment(payload).pipe(first()).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.showSuccess('Department created successfully');
+        this.showSuccess('DEPARTMENT_PAGE.CREATE_SUCCESS');
         this.closeModal();
         this.loadDepartments();
       },
@@ -171,7 +171,7 @@ export class DepartmentsComponent implements OnInit {
 
       this.departmentService.deleteDepartment(department.id).pipe(first()).subscribe({
         next: () => {
-          this.showSuccess('Department deleted successfully');
+          this.showSuccess('DEPARTMENT_PAGE.DELETE_SUCCESS');
           this.loadDepartments();
         },
         error: (error) => this.showError(error)
@@ -272,10 +272,12 @@ export class DepartmentsComponent implements OnInit {
     });
   }
 
-  private showSuccess(message: string) {
-    this.toastService.show(message, {
-      classname: 'bg-success text-white',
-      delay: 3000
+  private showSuccess(messageKey: string) {
+    void Swal.fire({
+      title: this.translate.instant(messageKey),
+      icon: 'success',
+      confirmButtonText: this.translate.instant('COMMON.OK'),
+      confirmButtonColor: '#299cdb'
     });
   }
 

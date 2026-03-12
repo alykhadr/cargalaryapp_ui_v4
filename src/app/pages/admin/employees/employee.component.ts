@@ -399,7 +399,7 @@ export class EmployeeComponent implements OnInit {
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: this.translate.instant('COMMON.DELETE'),
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
       cancelButtonText: this.translate.instant('COMMON.CANCEL')
     });
 
@@ -591,7 +591,7 @@ export class EmployeeComponent implements OnInit {
                 title: this.translate.instant('COMMON.UPDATE'),
                 text: this.translate.instant('EMPLOYEE_PAGE.UPDATE_SUCCESS'),
                 icon: 'success',
-                confirmButtonText: this.translate.instant('AUTH.PASS_RESET.OK')
+                confirmButtonText: this.translate.instant('COMMON.OK')
               });
               this.closeEditModal();
               this.loadListPageData();

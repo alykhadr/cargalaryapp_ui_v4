@@ -167,7 +167,13 @@ export class GalleryImagesComponent implements OnInit {
 
     this.galleryImageService.createGalleryImage(request).subscribe({
       next: () => {
-        Swal.fire(this.translate.instant('COMMON.SUCCESS'), this.translate.instant('GALLERY_IMAGES_PAGE.CREATE_SUCCESS'), 'success');
+        void Swal.fire({
+          title: this.translate.instant('COMMON.SUCCESS'),
+          text: this.translate.instant('GALLERY_IMAGES_PAGE.CREATE_SUCCESS'),
+          icon: 'success',
+          confirmButtonText: this.translate.instant('COMMON.OK'),
+          confirmButtonColor: '#299cdb'
+        });
         this.resetForm();
         this.loadGalleryImages();
       },
@@ -193,7 +199,13 @@ export class GalleryImagesComponent implements OnInit {
 
     this.galleryImageService.updateGalleryImage(this.selectedGalleryImageId, request).subscribe({
       next: () => {
-        Swal.fire(this.translate.instant('COMMON.SUCCESS'), this.translate.instant('GALLERY_IMAGES_PAGE.UPDATE_SUCCESS'), 'success');
+        void Swal.fire({
+          title: this.translate.instant('COMMON.SUCCESS'),
+          text: this.translate.instant('GALLERY_IMAGES_PAGE.UPDATE_SUCCESS'),
+          icon: 'success',
+          confirmButtonText: this.translate.instant('COMMON.OK'),
+          confirmButtonColor: '#299cdb'
+        });
         this.resetForm();
         this.loadGalleryImages();
       },
@@ -231,7 +243,13 @@ export class GalleryImagesComponent implements OnInit {
       if (result.isConfirmed) {
         this.galleryImageService.deleteGalleryImage(id).subscribe({
           next: () => {
-            Swal.fire(this.translate.instant('COMMON.DELETED'), this.translate.instant('GALLERY_IMAGES_PAGE.DELETE_SUCCESS'), 'success');
+            void Swal.fire({
+              title: this.translate.instant('COMMON.DELETED'),
+              text: this.translate.instant('GALLERY_IMAGES_PAGE.DELETE_SUCCESS'),
+              icon: 'success',
+              confirmButtonText: this.translate.instant('COMMON.OK'),
+              confirmButtonColor: '#299cdb'
+            });
             this.loadGalleryImages();
           },
           error: (error) => {

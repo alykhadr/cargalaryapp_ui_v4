@@ -202,11 +202,13 @@ export class CompanyInfoComponent implements OnInit {
 
     this.companyInfoService.createCompanyInfo(request).subscribe({
       next: () => {
-        Swal.fire(
-          this.translate.instant('COMMON.SUCCESS'),
-          this.translate.instant('COMPANY_INFO_PAGE.CREATE_SUCCESS'),
-          'success'
-        );
+        void Swal.fire({
+          title: this.translate.instant('COMMON.SUCCESS'),
+          text: this.translate.instant('COMPANY_INFO_PAGE.CREATE_SUCCESS'),
+          icon: 'success',
+          confirmButtonText: this.translate.instant('COMMON.OK'),
+          confirmButtonColor: '#299cdb'
+        });
         this.resetForm();
         this.loadCompanyInfos();
       },
@@ -227,11 +229,13 @@ export class CompanyInfoComponent implements OnInit {
 
     this.companyInfoService.updateCompanyInfo(this.selectedCompanyInfoId, request).subscribe({
       next: () => {
-        Swal.fire(
-          this.translate.instant('COMMON.SUCCESS'),
-          this.translate.instant('COMPANY_INFO_PAGE.UPDATE_SUCCESS'),
-          'success'
-        );
+        void Swal.fire({
+          title: this.translate.instant('COMMON.SUCCESS'),
+          text: this.translate.instant('COMPANY_INFO_PAGE.UPDATE_SUCCESS'),
+          icon: 'success',
+          confirmButtonText: this.translate.instant('COMMON.OK'),
+          confirmButtonColor: '#299cdb'
+        });
         this.resetForm();
         this.loadCompanyInfos();
       },
@@ -280,11 +284,13 @@ export class CompanyInfoComponent implements OnInit {
       if (result.isConfirmed) {
         this.companyInfoService.deleteCompanyInfo(id).subscribe({
           next: () => {
-            Swal.fire(
-              this.translate.instant('COMMON.DELETED'),
-              this.translate.instant('COMPANY_INFO_PAGE.DELETE_SUCCESS'),
-              'success'
-            );
+            void Swal.fire({
+              title: this.translate.instant('COMMON.DELETED'),
+              text: this.translate.instant('COMPANY_INFO_PAGE.DELETE_SUCCESS'),
+              icon: 'success',
+              confirmButtonText: this.translate.instant('COMMON.OK'),
+              confirmButtonColor: '#299cdb'
+            });
             this.loadCompanyInfos();
           },
           error: (error) => {

@@ -237,9 +237,11 @@ export class OffersComponent implements OnInit {
   }
 
   private showSuccess(message: string) {
-    this.toastService.show(message, {
-      classname: 'bg-success text-white',
-      delay: 3000
+    void Swal.fire({
+      title: message,
+      icon: 'success',
+      confirmButtonText: this.translate.instant('COMMON.OK'),
+      confirmButtonColor: '#299cdb'
     });
   }
 

@@ -81,7 +81,8 @@
     "SAVING": "جارٍ الحفظ...",
     "SUCCESS": "نجاح",
     "ERROR": "خطأ",
-    "DELETED": "تم الحذف!"
+    "DELETED": "تم الحذف!",
+    "OK": "حسناً"
   },
   "AUTH": {
     "LOGIN": {
@@ -657,7 +658,10 @@
     "NAME_AR": "الاسم (عربي)",
     "NO_EMPLOYEES": "لا يوجد موظفون في هذا القسم",
     "SELECT_DEPARTMENT": "اختر القسم",
-    "DELETE_CONFIRM_TEXT": "حذف القسم \"{{name}}\"؟"
+    "DELETE_CONFIRM_TEXT": "حذف القسم \"{{name}}\"؟",
+    "CREATE_SUCCESS": "تم إنشاء القسم بنجاح",
+    "UPDATE_SUCCESS": "تم تحديث القسم بنجاح",
+    "DELETE_SUCCESS": "تم حذف القسم بنجاح"
   },
   "BRANCH_PAGE": {
     "LIST_TITLE": "قائمة الفروع",
@@ -703,7 +707,10 @@
     "CREATE_BUTTON": "إنشاء فرع",
     "UPDATE_BUTTON": "تحديث الفرع",
     "CREATING_BUTTON": "جارٍ إنشاء الفرع...",
-    "UPDATING_BUTTON": "جارٍ تحديث الفرع..."
+    "UPDATING_BUTTON": "جارٍ تحديث الفرع...",
+    "CREATE_SUCCESS": "تم إنشاء الفرع بنجاح",
+    "UPDATE_SUCCESS": "تم تحديث الفرع بنجاح",
+    "DELETE_SUCCESS": "تم حذف الفرع بنجاح"
   },
   "ROLE_PAGE": {
     "LIST_TITLE": "قائمة الأدوار",
@@ -714,7 +721,11 @@
     "EDIT_TITLE": "تعديل دور",
     "ADD_TITLE": "إضافة دور",
     "ENTER_NAME": "أدخل الاسم",
-    "USERS": "المستخدمون"
+    "USERS": "المستخدمون",
+    "SELECT_AT_LEAST_ONE": "يرجى تحديد خانة اختيار واحدة على الأقل",
+    "CREATE_SUCCESS": "تم إنشاء الدور بنجاح",
+    "UPDATE_SUCCESS": "تم تحديث الدور بنجاح",
+    "DELETE_SUCCESS": "تم حذف الدور بنجاح"
   },
   "COMPANYINFO": "معلومات الشركة",
   "GALLERYIMAGE": "صور المعرض",
@@ -1239,6 +1250,9 @@
     "NO_IMAGES_ADDED": "لم يتم إضافة صور بعد",
     "CAR_UPDATED_SUCCESS": "تم تحديث السيارة بنجاح",
     "CAR_CREATED_SUCCESS": "تم إنشاء السيارة بنجاح",
+    "CREATE_SUCCESS": "تم إنشاء السيارة بنجاح",
+    "UPDATE_SUCCESS": "تم تحديث السيارة بنجاح",
+    "DELETE_SUCCESS": "تم حذف السيارة بنجاح",
     "CAR_UPDATED_DESC": "تم تحديث السيارة وحفظها بأحدث التفاصيل.",
     "CAR_CREATED_DESC": "تم إنشاء السيارة وحفظها بالتفاصيل المحددة.",
     "CONTINUE_EDITING": "متابعة التعديل",

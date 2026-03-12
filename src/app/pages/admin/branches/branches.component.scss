@@ -1,1 +1,12 @@
+.branch-active-switch-label {
+  margin-inline-start: 0.5rem;
+}
 
+.branch-active-switch-hint {
+  margin-top: 0.35rem;
+}
+
+:host-context([dir='rtl']) .branch-active-switch-label {
+  margin-inline-start: 0;
+  margin-inline-end: 0.5rem;
+}

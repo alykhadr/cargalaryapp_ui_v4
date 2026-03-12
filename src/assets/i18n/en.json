@@ -81,7 +81,8 @@
     "SAVING": "Saving...",
     "SUCCESS": "Success",
     "ERROR": "Error",
-    "DELETED": "Deleted!"
+    "DELETED": "Deleted!",
+    "OK": "OK"
   },
   "AUTH": {
     "LOGIN": {
@@ -657,7 +658,10 @@
     "NAME_AR": "Name (Arabic)",
     "NO_EMPLOYEES": "No employees found in this department",
     "SELECT_DEPARTMENT": "Select department",
-    "DELETE_CONFIRM_TEXT": "Delete department \"{{name}}\"?"
+    "DELETE_CONFIRM_TEXT": "Delete department \"{{name}}\"?",
+    "CREATE_SUCCESS": "Department created successfully",
+    "UPDATE_SUCCESS": "Department updated successfully",
+    "DELETE_SUCCESS": "Department deleted successfully"
   },
   "BRANCH_PAGE": {
     "LIST_TITLE": "Branch List",
@@ -703,7 +707,10 @@
     "CREATE_BUTTON": "Create Branch",
     "UPDATE_BUTTON": "Update Branch",
     "CREATING_BUTTON": "Creating...",
-    "UPDATING_BUTTON": "Updating..."
+    "UPDATING_BUTTON": "Updating...",
+    "CREATE_SUCCESS": "Branch created successfully",
+    "UPDATE_SUCCESS": "Branch updated successfully",
+    "DELETE_SUCCESS": "Branch deleted successfully"
   },
   "ROLE_PAGE": {
     "LIST_TITLE": "Role List",
@@ -714,7 +721,11 @@
     "EDIT_TITLE": "Edit Role",
     "ADD_TITLE": "Add Role",
     "ENTER_NAME": "Enter Name",
-    "USERS": "Users"
+    "USERS": "Users",
+    "SELECT_AT_LEAST_ONE": "Please select at least one checkbox",
+    "CREATE_SUCCESS": "Role created successfully",
+    "UPDATE_SUCCESS": "Role updated successfully",
+    "DELETE_SUCCESS": "Role deleted successfully"
   },
   "COMPANYINFO": "Company Info",
   "GALLERYIMAGE": "Gallery Images",
@@ -1239,6 +1250,9 @@
     "NO_IMAGES_ADDED": "No images added yet",
     "CAR_UPDATED_SUCCESS": "Car Updated Successfully",
     "CAR_CREATED_SUCCESS": "Car Created Successfully",
+    "CREATE_SUCCESS": "Car created successfully",
+    "UPDATE_SUCCESS": "Car updated successfully",
+    "DELETE_SUCCESS": "Car deleted successfully",
     "CAR_UPDATED_DESC": "The car has been updated and saved with the latest details.",
     "CAR_CREATED_DESC": "The car has been created and saved with its selected details.",
     "CONTINUE_EDITING": "Continue Editing",

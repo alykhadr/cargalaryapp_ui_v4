@@ -277,13 +277,13 @@ export class RolesComponent {
 
   async confirm(id: string) {
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     });
@@ -327,23 +327,28 @@ export class RolesComponent {
     this.masterSelected = false
   }
 
-  async openSuccessModal(action: string) {
-
-    let timerInterval: any;
-    Swal.fire({
-      title: `Role ${action} successfully!`,
+  async openSuccessModal(action: 'created' | 'updated' | 'deleted') {
+    await Swal.fire({
+      title: this.translate.instant(this.getSuccessMessageKey(action)),
       icon: 'success',
-      timer: 2000,
-      timerProgressBar: true,
-      willClose: () => {
-        clearInterval(timerInterval);
-      },
-    }).then((result) => {
-      this.getRoles();
-      /* Read more about handling dismissals below */
-      if (result.dismiss === Swal.DismissReason.timer) {
-      }
+      confirmButtonText: this.translate.instant('COMMON.OK'),
+      confirmButtonColor: '#299cdb'
     });
+
+    this.getRoles();
+  }
+
+  private getSuccessMessageKey(action: 'created' | 'updated' | 'deleted'): string {
+    switch (action) {
+      case 'created':
+        return 'ROLE_PAGE.CREATE_SUCCESS';
+      case 'updated':
+        return 'ROLE_PAGE.UPDATE_SUCCESS';
+      case 'deleted':
+        return 'ROLE_PAGE.DELETE_SUCCESS';
+      default:
+        return 'COMMON.SUCCESS';
+    }
   }
   /**
   * Multiple Delete
@@ -352,19 +357,23 @@ export class RolesComponent {
   async deleteMultiple() {
     const checkedVal = this.roles.filter(r => r.state).map(r => r.id);
     if (checkedVal.length === 0) {
-      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+      Swal.fire({
+        text: this.translate.instant('ROLE_PAGE.SELECT_AT_LEAST_ONE'),
+        confirmButtonText: this.translate.instant('COMMON.OK'),
+        confirmButtonColor: '#299cdb',
+      });
       return;
     }
 
     this.checkedValGet = checkedVal;
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Are you sure you want to remove this record?',
+      title: this.translate.instant('COMMON.ARE_YOU_SURE'),
+      text: this.translate.instant('COMMON.DELETE_CONFIRM_RECORD'),
       icon: 'warning',
       iconHtml: '<lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete It!',
-      cancelButtonText: 'Close',
+      confirmButtonText: this.translate.instant('COMMON.YES_DELETE'),
+      cancelButtonText: this.translate.instant('COMMON.CLOSE'),
       confirmButtonColor: '#f06548',
       cancelButtonColor: '#74788d'
     });

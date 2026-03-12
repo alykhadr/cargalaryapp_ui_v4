@@ -7,9 +7,30 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { GlobalComponent } from "../../global-component";
 import { Store } from '@ngrx/store';
 import { RegisterSuccess, loginFailure, loginSuccess, logout, logoutSuccess } from 'src/app/store/Authentication/authentication.actions';
-import { TranslateService } from '@ngx-translate/core';
 
 const AUTH_API = GlobalComponent.AUTH_API;
+const INVALID_CREDENTIALS_MESSAGES = {
+    en: 'Invalid user name or password',
+    ar: 'اسم المستخدم أو كلمة المرور غير صحيحة'
+} as const;
+
+function getCurrentLanguage(): 'ar' | 'en' {
+    const browserLang = (typeof navigator !== 'undefined' ? navigator.language : '').toLowerCase();
+    const htmlLang = (typeof document !== 'undefined' ? document.documentElement.lang : '').toLowerCase();
+    const savedLang = (
+        window.localStorage.getItem('lang')
+        || window.sessionStorage.getItem('lang')
+        || htmlLang
+        || browserLang
+        || 'en'
+    ).toLowerCase();
+
+    return savedLang.startsWith('ar') ? 'ar' : 'en';
+}
+
+function getInvalidCredentialsMessage(): string {
+    return INVALID_CREDENTIALS_MESSAGES[getCurrentLanguage()];
+}
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -29,7 +50,7 @@ export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     // public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient, private store: Store, private translate: TranslateService) {
+    constructor(private http: HttpClient, private store: Store) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')!));
         // this.currentUser = this.currentUserSubject.asObservable();
      }
@@ -56,7 +77,7 @@ export class AuthenticationService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
+                const errorMessage = getInvalidCredentialsMessage();
                 this.store.dispatch(loginFailure({ error: errorMessage }));
                 return throwError(() => errorMessage);
             })
@@ -83,7 +104,7 @@ export class AuthenticationService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
+                const errorMessage = getInvalidCredentialsMessage();
                 return throwError(() => errorMessage);
             })
         );

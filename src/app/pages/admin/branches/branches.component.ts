@@ -471,19 +471,30 @@ export class BranchesComponent {
     return this.filteredBranches.filter(b => !b.isAvailable).length;
   }
 
-  async openSuccessModal(action: string) {
-    let timerInterval: any;
-    Swal.fire({
-      title: `Branch ${action} successfully!`,
+  async openSuccessModal(action: 'created' | 'updated' | 'deleted') {
+    const title = this.translate.instant(this.getSuccessMessageKey(action));
+
+    await Swal.fire({
+      title,
       icon: 'success',
-      timer: 2000,
-      timerProgressBar: true,
-      willClose: () => {
-        clearInterval(timerInterval);
-      }
-    }).then(() => {
-      this.getBranches();
+      confirmButtonText: this.translate.instant('COMMON.OK'),
+      confirmButtonColor: '#299cdb'
     });
+
+    this.getBranches();
+  }
+
+  private getSuccessMessageKey(action: 'created' | 'updated' | 'deleted'): string {
+    switch (action) {
+      case 'created':
+        return 'BRANCH_PAGE.CREATE_SUCCESS';
+      case 'updated':
+        return 'BRANCH_PAGE.UPDATE_SUCCESS';
+      case 'deleted':
+        return 'BRANCH_PAGE.DELETE_SUCCESS';
+      default:
+        return 'COMMON.SUCCESS';
+    }
   }
 
   private showError(error: any) {
