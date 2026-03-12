@@ -27,6 +27,7 @@ import { CarExtraDetailsService } from '../services/car-extra-details.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { CarCarColor } from '../interfaces/car-car-color.interface';
 import { CarCarColorService } from '../services/car-car-color.service';
 import { LookupDetail } from '../interfaces/lookup.interface';
@@ -68,6 +69,8 @@ export class CarsComponent implements OnInit, OnDestroy {
   canCreateCar = false;
   canEditCar = false;
   canDeleteCar = false;
+  canSelectBranch = false;
+  currentUserBranchId: number | null = null;
   private requestedCarIdToOpen: number | null = null;
   private requestedTabToOpen: number = 1;
   private readonly mainInfoFields = ['nameEn', 'nameAr', 'brandFilterId', 'modelId', 'typeId', 'branchId', 'year', 'mileage', 'vat', 'conditionId', 'seatingCapacity', 'weelSizeInch', 'fuelTankCapacityLiter', 'trimLevel', 'vehicleClass', 'manufactureCountryId', 'plateNumberAr', 'plateNumberEn', 'transmisionType', 'drivetrain', 'cylenders', 'fuelType', 'enginNumber', 'descriptionEn', 'descriptionAr'];
@@ -300,6 +303,7 @@ export class CarsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private accessControlService: AccessControlService,
+    private myAuthService: MyAuthService,
     private lookupService: LookupService,
     private carRealtimeService: CarRealtimeService,
     private translate: TranslateService
@@ -315,6 +319,8 @@ export class CarsComponent implements OnInit, OnDestroy {
     this.canCreateCar = this.accessControlService.hasPermission('cars.create');
     this.canEditCar = this.accessControlService.hasPermission('cars.edit');
     this.canDeleteCar = this.accessControlService.hasPermission('cars.delete');
+    this.canSelectBranch = this.accessControlService.hasRole(['Manager', 'Admin']);
+    this.currentUserBranchId = Number(this.myAuthService.currentUserValue?.branchId) || null;
 
     this.breadCrumbItems = [
       { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
@@ -336,7 +342,7 @@ export class CarsComponent implements OnInit, OnDestroy {
       brandFilterId: [null, [Validators.required]],
       modelId: [null, [Validators.required]],
       typeId: [null, [Validators.required]],
-      branchId: [null, [Validators.required]],
+      branchId: [this.currentUserBranchId, this.canSelectBranch ? [Validators.required] : []],
       year: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
       mileage: [0, [Validators.required, Validators.min(0)]],
       vat: [15, [Validators.required, Validators.min(0)]],
@@ -2030,7 +2036,7 @@ export class CarsComponent implements OnInit, OnDestroy {
       nameEn: '',
       nameAr: '',
       brandFilterId: null,
-      branchId: null,
+      branchId: this.getResolvedBranchId(),
       year: new Date().getFullYear(),
       mileage: 0,
       vat: 15,
@@ -2581,7 +2587,7 @@ export class CarsComponent implements OnInit, OnDestroy {
       nameAr: this.form['nameAr'].value,
       modelId: this.form['modelId'].value,
       typeId: this.form['typeId'].value,
-      branchId: this.form['branchId'].value,
+      branchId: this.getResolvedBranchId(),
       year: this.form['year'].value,
       mileage: this.form['mileage'].value,
       vat: this.form['vat'].value,
@@ -3135,6 +3141,27 @@ export class CarsComponent implements OnInit, OnDestroy {
     return branch ? `${branch.branchNameEn} (${branch.branchNameAr})` : 'Unknown';
   }
 
+  getCurrentUserBranchDisplayName(): string {
+    const branchId = this.currentUserBranchId;
+    if (!branchId) {
+      return '-';
+    }
+
+    const current = this.branches.find(b => b.id === branchId);
+    if (current) {
+      return `${current.branchNameEn} (${current.branchNameAr})`;
+    }
+
+    const user = this.myAuthService.currentUserValue;
+    const branchNameEn = user?.branchNameEn || '';
+    const branchNameAr = user?.branchNameAr || '';
+    if (branchNameEn || branchNameAr) {
+      return `${branchNameEn} (${branchNameAr})`;
+    }
+
+    return `#${branchId}`;
+  }
+
   getCarModelName(modelId: number): string {
     const model = this.carModels.find(m => m.id === modelId);
     return model ? `${model.nameEn} (${model.nameAr})` : 'Unknown';
@@ -3202,6 +3229,15 @@ export class CarsComponent implements OnInit, OnDestroy {
       return `${GlobalComponent.API_URL}${imageUrl}`;
     }
     return `${GlobalComponent.API_URL}/${imageUrl}`;
+  }
+
+  private getResolvedBranchId(): number {
+    if (this.canSelectBranch) {
+      const selected = Number(this.form['branchId'].value);
+      return Number.isFinite(selected) && selected > 0 ? selected : 0;
+    }
+
+    return this.currentUserBranchId || 0;
   }
 
   // Selection handling

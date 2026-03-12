@@ -59,10 +59,13 @@
                     </div>
 
                     <div class="col-lg-6 mb-3">
-                      <label class="form-label">{{ 'CARS_PAGE.BRANCH' | translate }} <span class="text-danger">*</span></label>
+                      <label class="form-label">
+                        {{ 'CARS_PAGE.BRANCH' | translate }}
+                        <span class="text-danger" *ngIf="canSelectBranch">*</span>
+                      </label>
                       <div class="input-group">
                         <span class="input-group-text"><i class="ri-git-branch-line"></i></span>
-                        <div class="flex-grow-1">
+                        <div class="flex-grow-1" *ngIf="canSelectBranch; else autoBranchTpl">
                           <ng-select
                             [items]="branches"
                             bindLabel="branchNameEn"
@@ -82,7 +85,14 @@
                           </ng-select>
                         </div>
                       </div>
-                      <div class="invalid-feedback d-block" *ngIf="isControlInvalid('branchId')">
+                      <ng-template #autoBranchTpl>
+                        <input
+                          type="text"
+                          class="form-control"
+                          [value]="getCurrentUserBranchDisplayName()"
+                          readonly>
+                      </ng-template>
+                      <div class="invalid-feedback d-block" *ngIf="canSelectBranch && isControlInvalid('branchId')">
                         {{ getControlError('branchId') }}
                       </div>
                     </div>
