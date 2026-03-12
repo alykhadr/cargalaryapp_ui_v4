@@ -31,8 +31,8 @@ export class AdminEmployeeService {
     formData.append('email', payload.email);
     formData.append('userName', payload.userName);
     formData.append('password', payload.password);
-    formData.append('firstName', payload.firstName || '');
-    formData.append('lastName', payload.lastName || '');
+    formData.append('nameEn', payload.nameEn || '');
+    formData.append('nameAr', payload.nameAr || '');
     formData.append('branchId', payload.branchId.toString());
     if (payload.employeeNo?.trim()) formData.append('employeeNo', payload.employeeNo.trim());
     if (payload.nationalId?.trim()) formData.append('nationalId', payload.nationalId.trim());
@@ -70,8 +70,8 @@ export class AdminEmployeeService {
   updateEmployee(userId: string, payload: {
     userName: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    nameEn: string;
+    nameAr: string;
     branchId: number;
     profileImage?: File;
     employeeNo?: string;
@@ -96,8 +96,8 @@ export class AdminEmployeeService {
     const formData = new FormData();
     formData.append('userName', payload.userName);
     formData.append('email', payload.email);
-    formData.append('firstName', payload.firstName || '');
-    formData.append('lastName', payload.lastName || '');
+    formData.append('nameEn', payload.nameEn || '');
+    formData.append('nameAr', payload.nameAr || '');
     formData.append('branchId', payload.branchId.toString());
     if (payload.employeeNo) formData.append('employeeNo', payload.employeeNo);
     if (payload.nationalId) formData.append('nationalId', payload.nationalId);

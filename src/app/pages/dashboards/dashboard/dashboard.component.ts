@@ -74,8 +74,8 @@ export class DashboardComponent implements OnInit {
     const user = this.userData || {};
     const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
 
-    const fullAr = (user.fullNameAr || user.FullNameAr || user.fullnameAr || user.full_name_ar || user.lastName || user.LastName || '').toString().trim();
-    const fullEn = (user.fullNameEn || user.FullNameEn || user.fullnameEn || user.full_name_en || user.firstName || user.FirstName || '').toString().trim();
+    const fullAr = (user.fullNameAr || user.FullNameAr || user.fullnameAr || user.full_name_ar || user.nameAr || user.NameAr || '').toString().trim();
+    const fullEn = (user.fullNameEn || user.FullNameEn || user.fullnameEn || user.full_name_en || user.nameEn || user.NameEn || '').toString().trim();
 
     return isArabic ? (fullAr || fullEn) : (fullEn || fullAr);
   }

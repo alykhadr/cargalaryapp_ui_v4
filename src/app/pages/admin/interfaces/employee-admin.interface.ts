@@ -7,8 +7,8 @@ export interface AdminEmployee {
   email: string;
   mobileNo?: string;
   branchName?: string;
-  firstName: string;
-  lastName: string;
+  nameEn: string;
+  nameAr: string;
   isLocked: boolean;
   createdAt: string;
   branchId: number;
@@ -38,8 +38,8 @@ export interface CreateAdminEmployeeRequest {
   email: string;
   userName: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  nameEn: string;
+  nameAr: string;
   roles: string[];
   branchId: number;
   profileImage?: File;

@@ -10,8 +10,8 @@ export interface RoleUser {
   id: string;
   username: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  nameEn: string;
+  nameAr: string;
 }
 
 export interface CreateRoleRequest {

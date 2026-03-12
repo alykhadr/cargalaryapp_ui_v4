@@ -536,7 +536,7 @@
           <tr *ngFor="let user of pagedBranchUsers">
             <td>{{ user.userName }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.nameEn }} {{ user.nameAr }}</td>
             <td>
               <span class="badge" [ngClass]="!user.lockoutEnd ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
                 {{ !user.lockoutEnd ? ('COMMON.ACTIVE' | translate) : ('COMMON.LOCKED' | translate) }}

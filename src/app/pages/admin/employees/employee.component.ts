@@ -99,8 +99,8 @@ export class EmployeeComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      firstName: [''],
-      lastName: [''],
+      nameEn: ['', Validators.required],
+      nameAr: ['', Validators.required],
       branchId: [null, Validators.required],
       employeeNo: [''],
       nationalId: ['', Validators.required],
@@ -125,8 +125,8 @@ export class EmployeeComponent implements OnInit {
     this.editUserForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       userName: ['', [Validators.required, Validators.minLength(3)]],
-      firstName: [''],
-      lastName: [''],
+      nameEn: ['', Validators.required],
+      nameAr: ['', Validators.required],
       branchId: [null, Validators.required],
       employeeNo: [''],
       nationalId: [''],
@@ -337,8 +337,8 @@ export class EmployeeComponent implements OnInit {
       email: this.form['email'].value,
       userName: this.form['userName'].value,
       password: this.form['password'].value,
-      firstName: this.form['firstName'].value,
-      lastName: this.form['lastName'].value,
+      nameEn: this.form['nameEn'].value,
+      nameAr: this.form['nameAr'].value,
       roles: this.selectedRoles,
       branchId: this.form['branchId'].value,
       profileImage: this.selectedProfileImage || undefined,
@@ -495,8 +495,8 @@ export class EmployeeComponent implements OnInit {
     this.editUserForm.patchValue({
       email: user.email,
       userName: user.userName,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      nameEn: user.nameEn,
+      nameAr: user.nameAr,
       branchId: user.branchId,
       employeeNo: user.employeeNo,
       nationalId: user.nationalId,
@@ -557,8 +557,8 @@ export class EmployeeComponent implements OnInit {
     this.adminEmployeeService.updateEmployee(this.selectedUser.id, {
       email: this.editForm['email'].value,
       userName: this.editForm['userName'].value,
-      firstName: this.editForm['firstName'].value,
-      lastName: this.editForm['lastName'].value,
+      nameEn: this.editForm['nameEn'].value,
+      nameAr: this.editForm['nameAr'].value,
       branchId: this.editForm['branchId'].value,
       profileImage: this.selectedEditProfileImage || undefined,
       employeeNo: this.editForm['employeeNo'].value || undefined,
@@ -946,8 +946,8 @@ export class EmployeeComponent implements OnInit {
       email: '',
       userName: '',
       password: '',
-      firstName: '',
-      lastName: '',
+      nameEn: '',
+      nameAr: '',
       branchId: null,
       employeeNo: '',
       nationalId: '',
@@ -988,9 +988,9 @@ export class EmployeeComponent implements OnInit {
     const fullNameEn = (user.fullNameEn || '').trim();
 
     if (isArabic) {
-      return fullNameAr || fullNameEn || (user.lastName || '').trim() || (user.firstName || '').trim() || user.userName;
+      return fullNameAr || fullNameEn || (user.nameAr || '').trim() || (user.nameEn || '').trim() || user.userName;
     }
 
-    return fullNameEn || fullNameAr || (user.firstName || '').trim() || (user.lastName || '').trim() || user.userName;
+    return fullNameEn || fullNameAr || (user.nameEn || '').trim() || (user.nameAr || '').trim() || user.userName;
   }
 }

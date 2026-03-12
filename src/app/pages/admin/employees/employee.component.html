@@ -59,19 +59,23 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">{{ 'COMMON.NAME_EN' | translate }}</label>
+            <label class="form-label">{{ 'COMMON.NAME_EN' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-              <input class="form-control" type="text" formControlName="firstName" />
+              <input class="form-control" type="text" formControlName="nameEn"
+                [ngClass]="{ 'is-invalid': submitted && form['nameEn'].errors }" />
             </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">{{ 'COMMON.NAME_EN' | translate }} is required</div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">{{ 'COMMON.NAME_AR' | translate }}</label>
+            <label class="form-label">{{ 'COMMON.NAME_AR' | translate }} <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-              <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+              <input class="form-control" type="text" formControlName="nameAr" dir="rtl"
+                [ngClass]="{ 'is-invalid': submitted && form['nameAr'].errors }" />
             </div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">{{ 'COMMON.NAME_AR' | translate }} is required</div>
           </div>
 
           <div class="mb-3">
@@ -508,19 +512,23 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">{{ 'COMMON.NAME_EN' | translate }}</label>
+              <label class="form-label">{{ 'COMMON.NAME_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-                <input class="form-control" type="text" formControlName="firstName" />
+                <input class="form-control" type="text" formControlName="nameEn"
+                  [ngClass]="{ 'is-invalid': submitted && form['nameEn'].errors }" />
               </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['nameEn'].errors">{{ 'COMMON.NAME_EN' | translate }} is required</div>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">{{ 'COMMON.NAME_AR' | translate }}</label>
+              <label class="form-label">{{ 'COMMON.NAME_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-                <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+                <input class="form-control" type="text" formControlName="nameAr" dir="rtl"
+                  [ngClass]="{ 'is-invalid': submitted && form['nameAr'].errors }" />
               </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && form['nameAr'].errors">{{ 'COMMON.NAME_AR' | translate }} is required</div>
             </div>
 
             <div class="col-12">
@@ -784,19 +792,23 @@
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">{{ 'COMMON.NAME_EN' | translate }}</label>
+              <label class="form-label">{{ 'COMMON.NAME_EN' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-                <input class="form-control" type="text" formControlName="firstName" />
+                <input class="form-control" type="text" formControlName="nameEn"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['nameEn'].errors }" />
               </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['nameEn'].errors">{{ 'COMMON.NAME_EN' | translate }} is required</div>
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">{{ 'COMMON.NAME_AR' | translate }}</label>
+              <label class="form-label">{{ 'COMMON.NAME_AR' | translate }} <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text"><i class="ri-user-smile-line"></i></span>
-                <input class="form-control" type="text" formControlName="lastName" dir="rtl" />
+                <input class="form-control" type="text" formControlName="nameAr" dir="rtl"
+                  [ngClass]="{ 'is-invalid': editSubmitted && editForm['nameAr'].errors }" />
               </div>
+              <div class="invalid-feedback d-block" *ngIf="editSubmitted && editForm['nameAr'].errors">{{ 'COMMON.NAME_AR' | translate }} is required</div>
             </div>
 
             <div class="col-12">

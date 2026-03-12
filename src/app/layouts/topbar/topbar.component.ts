@@ -168,20 +168,16 @@ export class TopbarComponent implements OnInit {
       return '';
     };
 
-    // Use DB full-name fields only (AR/EN), not first/last names.
+    // Use localized full-name variants and API login aliases.
     const fullAr = read(
       'fullNameAr', 'FullNameAr',
       'fullnameAr', 'full_name_ar',
-      'nameAr',
-      // login payload fallback (currently used by backend UserDto)
-      'lastName', 'LastName'
+      'nameAr', 'NameAr'
     );
     const fullEn = read(
       'fullNameEn', 'FullNameEn',
       'fullnameEn', 'full_name_en',
-      'nameEn',
-      // login payload fallback (currently used by backend UserDto)
-      'firstName', 'FirstName'
+      'nameEn', 'NameEn'
     );
 
     if (isArabic) {
