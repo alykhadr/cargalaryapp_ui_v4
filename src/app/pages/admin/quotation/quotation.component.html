@@ -13,7 +13,7 @@
             <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.VEHICLE_OWNER_TYPE' | translate }} <span class="text-danger">*</span></label>
             <select class="form-select" formControlName="vehicleOwnerType">
               <option [ngValue]="null">{{ 'QUOTATION_PAGE.CREATE.SELECT_TYPE' | translate }}</option>
-              <option *ngFor="let item of vehicleOwnerTypeLookups" [ngValue]="item.id">{{ item.nameAr }} - {{ item.nameEn }}</option>
+              <option *ngFor="let item of vehicleOwnerTypeLookups" [ngValue]="item.id">{{ getLookupDisplayName(item) }}</option>
             </select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['vehicleOwnerType'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
@@ -60,7 +60,7 @@
             <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.PAYMENT_METHOD' | translate }} <span class="text-danger">*</span></label>
             <select class="form-select" formControlName="paymentMethod">
               <option [ngValue]="null">{{ 'QUOTATION_PAGE.CREATE.SELECT_PAYMENT_METHOD' | translate }}</option>
-              <option *ngFor="let item of paymentMethodLookups" [ngValue]="item.id">{{ item.nameAr }} - {{ item.nameEn }}</option>
+              <option *ngFor="let item of paymentMethodLookups" [ngValue]="item.id">{{ getLookupDisplayName(item) }}</option>
             </select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['paymentMethod'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
@@ -75,6 +75,12 @@
               [clearable]="true"
               [placeholder]="'QUOTATION_PAGE.CREATE.SEARCH_REGION' | translate"
               formControlName="regionId">
+              <ng-template ng-option-tmp let-item="item">
+                {{ getLookupDisplayName(item) }}
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{ getLookupDisplayName(item) }}
+              </ng-template>
             </ng-select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['regionId'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
@@ -89,6 +95,12 @@
               [clearable]="true"
               [placeholder]="'QUOTATION_PAGE.CREATE.SEARCH_CITY' | translate"
               formControlName="cityId">
+              <ng-template ng-option-tmp let-item="item">
+                {{ getLookupDisplayName(item) }}
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{ getLookupDisplayName(item) }}
+              </ng-template>
             </ng-select>
             <div class="invalid-feedback d-block" *ngIf="submitted && form['cityId'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
@@ -211,7 +223,7 @@
               <select class="form-select" [ngModel]="selectedStatusFilter" (ngModelChange)="onStatusFilterChange($event)">
                 <option [ngValue]="null">{{ 'QUOTATION_PAGE.LIST.ALL_STATUS' | translate }}</option>
                 <option *ngFor="let status of quotationStatusLookups" [ngValue]="status.id">
-                  {{ status.nameAr }} - {{ status.nameEn }}
+                  {{ getLookupDisplayName(status) }}
                 </option>
               </select>
             </div>
@@ -324,7 +336,7 @@
                         (click)="updateQuotationStatus(item, status.id)">
                         <span [class]="getQuotationStatusBadgeClass(status.id)">
                           <i [class]="getQuotationStatusIcon(status.id) + ' align-bottom me-1'"></i>
-                          {{ status.nameAr }} - {{ status.nameEn }}
+                          {{ getLookupDisplayName(status) }}
                         </span>
                       </button>
                     </div>
@@ -415,7 +427,7 @@
         </h5>
         <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate" (click)="closeMoreInfoModal()"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body quotation-car-info-body">
         <div class="vstack gap-3">
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
@@ -450,42 +462,291 @@
 </div>
 <div *ngIf="showMoreInfoModal" class="modal-backdrop fade show" (click)="closeMoreInfoModal()"></div>
 
-<div *ngIf="showCarInfoModal && selectedCarForInfo" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div *ngIf="showCarInfoModal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-primary-subtle border-bottom">
         <h5 class="modal-title mb-0">
           <i class="ri-car-line me-1 text-primary"></i>
-          {{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.TITLE' | translate:{ id: selectedCarForInfo.id } }}
+          {{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.TITLE' | translate:{ id: (selectedCarForInfo?.id || 0) } }}
         </h5>
         <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
       </div>
       <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CAR' | translate }}:</strong> {{ selectedCarForInfo.nameEn || selectedCarForInfo.nameAr || ('#' + selectedCarForInfo.id) }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MODEL' | translate }}:</strong> {{ selectedCarForInfo.modelId }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TYPE' | translate }}:</strong> {{ selectedCarForInfo.typeId }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.BRANCH' | translate }}:</strong> {{ selectedCarForInfo.branchId }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.YEAR' | translate }}:</strong> {{ selectedCarForInfo.year }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MILEAGE' | translate }}:</strong> {{ selectedCarForInfo.mileage }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.VAT' | translate }}:</strong> {{ selectedCarForInfo.vat }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CONDITION' | translate }}:</strong> {{ selectedCarForInfo.conditionId }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.SEATING_CAPACITY' | translate }}:</strong> {{ selectedCarForInfo.seatingCapacity }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.WHEEL_SIZE' | translate }}:</strong> {{ selectedCarForInfo.weelSizeInch }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.FUEL_TANK_CAPACITY' | translate }}:</strong> {{ selectedCarForInfo.fuelTankCapacityLiter }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TRIM_LEVEL' | translate }}:</strong> {{ selectedCarForInfo.trimLevel }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.VEHICLE_CLASS' | translate }}:</strong> {{ selectedCarForInfo.vehicleClass }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}:</strong> {{ selectedCarForInfo.transmisionType }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.DRIVETRAIN' | translate }}:</strong> {{ selectedCarForInfo.drivetrain }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CYLENDERS' | translate }}:</strong> {{ selectedCarForInfo.cylenders }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.FUEL_TYPE' | translate }}:</strong> {{ selectedCarForInfo.fuelType }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MANUFACTURE_COUNTRY' | translate }}:</strong> {{ selectedCarForInfo.manufactureCountryId }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.ENGINE_NUMBER' | translate }}:</strong> {{ selectedCarForInfo.enginNumber || '-' }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.PLATE_NUMBER_AR' | translate }}:</strong> {{ selectedCarForInfo.plateNumberAr || '-' }}</div>
-          <div class="col-md-6"><strong>{{ 'CARS_PAGE.PLATE_NUMBER_EN' | translate }}:</strong> {{ selectedCarForInfo.plateNumberEn || '-' }}</div>
-          <div class="col-md-12"><strong>{{ 'CARS_PAGE.DESCRIPTION_AR' | translate }}:</strong> {{ selectedCarForInfo.descriptionAr || '-' }}</div>
-          <div class="col-md-12"><strong>{{ 'CARS_PAGE.DESCRIPTION_EN' | translate }}:</strong> {{ selectedCarForInfo.descriptionEn || '-' }}</div>
+        <div *ngIf="isCarInfoLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
+          </div>
         </div>
+
+        <ng-container *ngIf="!isCarInfoLoading && selectedCarForInfo">
+          <ul class="nav nav-pills nav-custom-outline nav-primary mb-3">
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="carInfoTab === 'overview'" type="button" (click)="carInfoTab = 'overview'">
+                <i class="ri-information-line me-1"></i>{{ 'CARS_PAGE.INFO' | translate }}
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="carInfoTab === 'colors'" type="button" (click)="carInfoTab = 'colors'">
+                <i class="ri-palette-line me-1"></i>{{ 'CARS_PAGE.COLOR' | translate }}
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="carInfoTab === 'features'" type="button" (click)="carInfoTab = 'features'">
+                <i class="ri-star-line me-1"></i>{{ 'CARS_PAGE.FEATURES' | translate }}
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="carInfoTab === 'details'" type="button" (click)="carInfoTab = 'details'">
+                <i class="ri-file-list-3-line me-1"></i>{{ 'CARS_PAGE.DETAILS' | translate }}
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" [class.active]="carInfoTab === 'gallery'" type="button" (click)="carInfoTab = 'gallery'">
+                <i class="ri-image-2-line me-1"></i>{{ 'CARS_PAGE.IMAGES' | translate }}
+              </button>
+            </li>
+          </ul>
+
+          <div *ngIf="carInfoTab === 'overview'" class="row g-3">
+            <div class="col-12">
+              <div class="p-3 border rounded-3 bg-light-subtle">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                  <div>
+                    <h6 class="mb-1">{{ selectedCarForInfo.nameAr || '-' }} / {{ selectedCarForInfo.nameEn || '-' }}</h6>
+                    <small class="text-muted">#{{ selectedCarForInfo.id }}</small>
+                  </div>
+                  <span class="badge" [ngClass]="selectedCarForInfo.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                    {{ selectedCarForInfo.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 h-100">
+                <h6 class="mb-3 text-primary">{{ 'CARS_PAGE.INFO' | translate }}</h6>
+                <div class="vstack gap-2 car-info-grid">
+                  <div><span class="text-muted">{{ 'CARS_PAGE.BRAND' | translate }}:</span> <strong>{{ getBrandLabelByModel(selectedCarForInfo.modelId) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.MODEL' | translate }}:</span> <strong>{{ getModelLabel(selectedCarForInfo.modelId) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.TYPE' | translate }}:</span> <strong>{{ getTypeLabel(selectedCarForInfo.typeId) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.BRANCH' | translate }}:</span> <strong>{{ getBranchLabel(selectedCarForInfo.branchId) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.YEAR' | translate }}:</span> <strong>{{ selectedCarForInfo.year }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.MILEAGE' | translate }}:</span> <strong>{{ selectedCarForInfo.mileage }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.CONDITION' | translate }}:</span> <strong>{{ selectedCarForInfo.conditionId }}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 h-100">
+                <h6 class="mb-3 text-primary">{{ 'CARS_PAGE.CAR_INFO' | translate }}</h6>
+                <div class="vstack gap-2 car-info-grid">
+                  <div><span class="text-muted">{{ 'CARS_PAGE.VAT' | translate }}:</span> <strong>{{ selectedCarForInfo.vat }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.SEATING_CAPACITY' | translate }}:</span> <strong>{{ selectedCarForInfo.seatingCapacity }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.WHEEL_SIZE' | translate }}:</span> <strong>{{ selectedCarForInfo.weelSizeInch }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.FUEL_TANK_CAPACITY' | translate }}:</span> <strong>{{ selectedCarForInfo.fuelTankCapacityLiter }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.TRIM_LEVEL' | translate }}:</span> <strong>{{ selectedCarForInfo.trimLevel }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.VEHICLE_CLASS' | translate }}:</span> <strong>{{ selectedCarForInfo.vehicleClass }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.MANUFACTURE_COUNTRY' | translate }}:</span> <strong>{{ selectedCarForInfo.manufactureCountryId }}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 h-100">
+                <h6 class="mb-3 text-primary">{{ 'CARS_PAGE.PLATE_NUMBER' | translate }}</h6>
+                <div class="vstack gap-2 car-info-grid">
+                  <div><span class="text-muted">{{ 'CARS_PAGE.PLATE_NUMBER_AR' | translate }}:</span> <strong>{{ selectedCarForInfo.plateNumberAr || '-' }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.PLATE_NUMBER_EN' | translate }}:</span> <strong>{{ selectedCarForInfo.plateNumberEn || '-' }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.ENGINE_NUMBER' | translate }}:</span> <strong>{{ selectedCarForInfo.enginNumber || '-' }}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="p-3 border rounded-3 h-100">
+                <h6 class="mb-3 text-primary">{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}</h6>
+                <div class="vstack gap-2 car-info-grid">
+                  <div><span class="text-muted">{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}:</span> <strong>{{ selectedCarForInfo.transmisionType }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.DRIVETRAIN' | translate }}:</span> <strong>{{ selectedCarForInfo.drivetrain }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.CYLENDERS' | translate }}:</span> <strong>{{ selectedCarForInfo.cylenders }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.FUEL_TYPE' | translate }}:</span> <strong>{{ selectedCarForInfo.fuelType }}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="p-3 border rounded-3">
+                <div class="mb-2"><span class="text-muted">{{ 'CARS_PAGE.DESCRIPTION_AR' | translate }}:</span> {{ selectedCarForInfo.descriptionAr || '-' }}</div>
+                <div><span class="text-muted">{{ 'CARS_PAGE.DESCRIPTION_EN' | translate }}:</span> {{ selectedCarForInfo.descriptionEn || '-' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="carInfoTab === 'colors'" class="table-responsive table-card">
+            <table class="table table-nowrap table-hover align-middle mb-0" *ngIf="carInfoColors.length > 0; else noCarColorsTpl">
+              <thead class="table-light">
+                <tr>
+                  <th>{{ 'CARS_PAGE.COLOR_NAME' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.STOCK' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.PRICE' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.PRICE_BEFORE' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.VAT_AMOUNT' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.DISCOUNT' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.TOTAL_PRICE' | translate }}</th>
+                  <th>{{ 'COMMON.STATUS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of pagedCarInfoColors">
+                  <td>
+                    <span class="d-inline-flex align-items-center gap-2">
+                      <span class="rounded-circle border" [style.background]="getColorCode(item.colorId)" style="width:14px;height:14px;display:inline-block;"></span>
+                      <span>{{ getColorLabel(item.colorId) }}</span>
+                    </span>
+                  </td>
+                  <td>{{ item.stockQuantity ?? '-' }}</td>
+                  <td>{{ item.pricingPerColor ?? '-' }}</td>
+                  <td>{{ item.pricePefore ?? '-' }}</td>
+                  <td>{{ item.vatAmount ?? '-' }}</td>
+                  <td>{{ item.discount ?? '-' }}</td>
+                  <td>{{ item.totalPrice ?? '-' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ item.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mt-3" *ngIf="carInfoColors.length > carInfoColorPagination.pageSize">
+              <ngb-pagination
+                [collectionSize]="carInfoColors.length"
+                [(page)]="carInfoColorPagination.page"
+                [pageSize]="carInfoColorPagination.pageSize"
+                [maxSize]="5"
+                [ellipses]="false"
+                [boundaryLinks]="true"
+                (pageChange)="onCarInfoColorPageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+
+          <div *ngIf="carInfoTab === 'features'" class="table-responsive table-card">
+            <table class="table table-nowrap table-hover align-middle mb-0" *ngIf="carInfoFeatures.length > 0; else noCarFeaturesTpl">
+              <thead class="table-light">
+                <tr>
+                  <th>{{ 'CARS_PAGE.FEATURE' | translate }}</th>
+                  <th>{{ 'COMMON.STATUS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of pagedCarInfoFeatures">
+                  <td>{{ getFeatureName(item.featureId) }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ item.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mt-3" *ngIf="carInfoFeatures.length > carInfoFeaturePagination.pageSize">
+              <ngb-pagination
+                [collectionSize]="carInfoFeatures.length"
+                [(page)]="carInfoFeaturePagination.page"
+                [pageSize]="carInfoFeaturePagination.pageSize"
+                [maxSize]="5"
+                [ellipses]="false"
+                [boundaryLinks]="true"
+                (pageChange)="onCarInfoFeaturePageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+
+          <div *ngIf="carInfoTab === 'details'" class="table-responsive table-card">
+            <table class="table table-nowrap table-hover align-middle mb-0" *ngIf="carInfoExtraDetails.length > 0; else noCarDetailsTpl">
+              <thead class="table-light">
+                <tr>
+                  <th>{{ 'COMMON.NAME_AR' | translate }}</th>
+                  <th>{{ 'COMMON.NAME_EN' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.TYPE' | translate }}</th>
+                  <th>{{ 'COMMON.STATUS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of pagedCarInfoExtraDetails">
+                  <td>{{ item.nameAr || '-' }}</td>
+                  <td>{{ item.nameEn || '-' }}</td>
+                  <td>{{ item.carExtraDetailsType || '-' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                      {{ item.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mt-3" *ngIf="carInfoExtraDetails.length > carInfoDetailsPagination.pageSize">
+              <ngb-pagination
+                [collectionSize]="carInfoExtraDetails.length"
+                [(page)]="carInfoDetailsPagination.page"
+                [pageSize]="carInfoDetailsPagination.pageSize"
+                [maxSize]="5"
+                [ellipses]="false"
+                [boundaryLinks]="true"
+                (pageChange)="onCarInfoDetailsPageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+
+          <div *ngIf="carInfoTab === 'gallery'">
+            <div class="row g-3" *ngIf="carInfoImages.length > 0; else noCarImagesTpl">
+              <div class="col-md-3 col-sm-6" *ngFor="let item of pagedCarInfoImages">
+                <div class="card mb-0 h-100 border">
+                  <img class="card-img-top" [src]="item.imageUrl || ''" alt="car image" style="height: 150px; object-fit: cover;">
+                  <div class="card-body p-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <small class="text-muted">#{{ item.id }}</small>
+                      <span class="badge" [ngClass]="item.isPrimary ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                        {{ item.isPrimary ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                      </span>
+                    </div>
+                    <div class="mt-2">
+                      <small class="text-muted d-block">{{ 'CARS_PAGE.IMAGE_TYPE' | translate }}</small>
+                      <small class="fw-semibold">{{ getImageTypeLabel(item.imageType) }}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3" *ngIf="carInfoImages.length > carInfoImagesPagination.pageSize">
+              <ngb-pagination
+                [collectionSize]="carInfoImages.length"
+                [(page)]="carInfoImagesPagination.page"
+                [pageSize]="carInfoImagesPagination.pageSize"
+                [maxSize]="5"
+                [ellipses]="false"
+                [boundaryLinks]="true"
+                (pageChange)="onCarInfoImagesPageChange($event)">
+              </ngb-pagination>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #noCarColorsTpl>
+          <div class="text-center text-muted py-4">{{ 'CARS_PAGE.NO_COLORS_FOUND' | translate }}</div>
+        </ng-template>
+        <ng-template #noCarFeaturesTpl>
+          <div class="text-center text-muted py-4">{{ 'CARS_PAGE.NO_FEATURES_FOUND' | translate }}</div>
+        </ng-template>
+        <ng-template #noCarDetailsTpl>
+          <div class="text-center text-muted py-4">{{ 'CARS_PAGE.NO_DETAILS_FOUND' | translate }}</div>
+        </ng-template>
+        <ng-template #noCarImagesTpl>
+          <div class="text-center text-muted py-4">{{ 'CARS_PAGE.NO_IMAGES_FOUND' | translate }}</div>
+        </ng-template>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">{{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate }}</button>

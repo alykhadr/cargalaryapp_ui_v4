@@ -1,14 +1,30 @@
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
-import { Car } from '../interfaces/car.interface';
+import { Car, CarImage } from '../interfaces/car.interface';
+import { CarCarColor } from '../interfaces/car-car-color.interface';
+import { CarCarFeature, CarFeature } from '../interfaces/car-feature.interface';
+import { CarExtraDetails } from '../interfaces/car-extra-details.interface';
+import { Color } from '../interfaces/color.interface';
 import { LookupDetail } from '../interfaces/lookup.interface';
 import { Quotation, QuotationHistory } from '../interfaces/quotation.interface';
+import { Branch } from '../interfaces/branch.interface';
+import { Brand } from '../interfaces/brand.interface';
+import { CarModel } from '../interfaces/car-model.interface';
+import { CarType } from '../interfaces/car-type.interface';
+import { BranchService } from '../services/branch.service';
+import { BrandService } from '../services/brand.service';
+import { CarCarColorService } from '../services/car-car-color.service';
+import { CarExtraDetailsService } from '../services/car-extra-details.service';
+import { CarFeatureService } from '../services/car-feature.service';
+import { CarModelService } from '../services/car-model.service';
 import { CarService } from '../services/car.service';
+import { CarTypeService } from '../services/car-type.service';
+import { ColorService } from '../services/color.service';
 import { LookupService } from '../services/lookup.service';
 import { QuotationService } from '../services/quotation.service';
 import { QuotationRealtimeService } from '../services/quotation-realtime.service';
@@ -56,6 +72,27 @@ export class QuotationComponent implements OnInit, OnDestroy {
   selectedQuotationForMore: Quotation | null = null;
   showCarInfoModal = false;
   selectedCarForInfo: Car | null = null;
+  isCarInfoLoading = false;
+  carInfoTab: 'overview' | 'colors' | 'features' | 'details' | 'gallery' = 'overview';
+  carInfoColors: CarCarColor[] = [];
+  pagedCarInfoColors: CarCarColor[] = [];
+  carInfoFeatures: CarCarFeature[] = [];
+  pagedCarInfoFeatures: CarCarFeature[] = [];
+  carInfoExtraDetails: CarExtraDetails[] = [];
+  pagedCarInfoExtraDetails: CarExtraDetails[] = [];
+  carInfoImages: CarImage[] = [];
+  pagedCarInfoImages: CarImage[] = [];
+  carFeaturesCatalog: CarFeature[] = [];
+  colorsCatalog: Color[] = [];
+  branchesCatalog: Branch[] = [];
+  modelsCatalog: CarModel[] = [];
+  typesCatalog: CarType[] = [];
+  brandsCatalog: Brand[] = [];
+  imageTypeLookups: LookupDetail[] = [];
+  carInfoColorPagination = new PaginationService();
+  carInfoFeaturePagination = new PaginationService();
+  carInfoDetailsPagination = new PaginationService();
+  carInfoImagesPagination = new PaginationService();
   private readonly notificationSoundUrl = 'assets/sounds/quotation-notification.mp3';
   private isSoundUnlocked = false;
   private soundHintShown = false;
@@ -67,6 +104,14 @@ export class QuotationComponent implements OnInit, OnDestroy {
     private quotationService: QuotationService,
     private quotationRealtimeService: QuotationRealtimeService,
     private carService: CarService,
+    private branchService: BranchService,
+    private carModelService: CarModelService,
+    private carTypeService: CarTypeService,
+    private brandService: BrandService,
+    private carCarColorService: CarCarColorService,
+    private carFeatureService: CarFeatureService,
+    private carExtraDetailsService: CarExtraDetailsService,
+    private colorService: ColorService,
     private lookupService: LookupService,
     private toastService: ToastService,
     private errorMessageService: ErrorMessageService,
@@ -119,17 +164,22 @@ export class QuotationComponent implements OnInit, OnDestroy {
       ownerTypes: this.lookupService.getByMasterCode('VEHICLE_OWNER_TYPE').pipe(first()),
       regions: this.lookupService.getByMasterCode('REGION').pipe(first()),
       cities: this.lookupService.getByMasterCode('CITY').pipe(first()),
-      statuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(first())
+      statuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(first()),
+      imageTypes: this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first())
     }).subscribe({
-      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses }) => {
+      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, imageTypes }) => {
         this.cars = cars.filter(c => c.isAvailable);
         this.paymentMethodLookups = paymentMethods;
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
         this.cityLookups = cities;
         this.quotationStatusLookups = statuses;
+        this.imageTypeLookups = imageTypes || [];
       },
-      error: (error) => this.showError(error)
+      error: (error) => {
+        this.isCarInfoLoading = false;
+        this.showError(error);
+      }
     });
   }
 
@@ -219,7 +269,19 @@ export class QuotationComponent implements OnInit, OnDestroy {
   getLookupLabel(items: LookupDetail[], id: number): string {
     const found = items.find(x => x.id === id || x.detailCode === String(id));
     if (!found) return String(id);
-    return found.nameAr && found.nameEn ? `${found.nameAr} - ${found.nameEn}` : (found.displayName || found.nameEn || found.nameAr || String(id));
+    return this.getLookupDisplayName(found, String(id));
+  }
+
+  getLookupDisplayName(item?: LookupDetail | null, fallback = '-'): string {
+    if (!item) {
+      return fallback;
+    }
+
+    const preferArabic = this.isArabicLanguage();
+    const preferredName = preferArabic ? item.nameAr : item.nameEn;
+    const alternateName = preferArabic ? item.nameEn : item.nameAr;
+
+    return preferredName || alternateName || item.displayName || fallback;
   }
 
   getQuotationStatusLabel(statusId?: number): string {
@@ -332,25 +394,145 @@ export class QuotationComponent implements OnInit, OnDestroy {
   }
 
   openCarInfoModal(item: Quotation) {
-    const cachedCar = this.cars.find(c => c.id === item.carId);
-    if (cachedCar) {
-      this.selectedCarForInfo = cachedCar;
-      this.showCarInfoModal = true;
-      return;
-    }
+    this.showCarInfoModal = true;
+    this.isCarInfoLoading = true;
+    this.carInfoTab = 'overview';
 
-    this.carService.getCarById(item.carId).pipe(first()).subscribe({
-      next: (car) => {
+    const cachedCar = this.cars.find(c => c.id === item.carId);
+
+    forkJoin({
+      car: cachedCar ? of(cachedCar) : this.carService.getCarById(item.carId),
+      colors: this.carCarColorService.getByCarId(item.carId),
+      features: this.carFeatureService.getCarFeaturesByCarId(item.carId),
+      extraDetails: this.carExtraDetailsService.getExtraDetailsByCarId(item.carId),
+      images: this.carService.getCarImages(item.carId),
+      featureCatalog: this.carFeaturesCatalog.length > 0 ? of(this.carFeaturesCatalog) : this.carFeatureService.getCarFeatures(),
+      colorCatalog: this.colorsCatalog.length > 0 ? of(this.colorsCatalog) : this.colorService.getColors(),
+      branchCatalog: this.branchesCatalog.length > 0 ? of(this.branchesCatalog) : this.branchService.getBranches(),
+      modelCatalog: this.modelsCatalog.length > 0 ? of(this.modelsCatalog) : this.carModelService.getModels(),
+      typeCatalog: this.typesCatalog.length > 0 ? of(this.typesCatalog) : this.carTypeService.getCarTypes(),
+      brandCatalog: this.brandsCatalog.length > 0 ? of(this.brandsCatalog) : this.brandService.getBrands()
+    }).pipe(first()).subscribe({
+      next: ({ car, colors, features, extraDetails, images, featureCatalog, colorCatalog, branchCatalog, modelCatalog, typeCatalog, brandCatalog }) => {
         this.selectedCarForInfo = car;
-        this.showCarInfoModal = true;
+        this.carInfoColors = colors || [];
+        this.carInfoFeatures = features || [];
+        this.carInfoExtraDetails = extraDetails || [];
+        this.carInfoImages = images || [];
+        this.carFeaturesCatalog = featureCatalog || [];
+        this.colorsCatalog = colorCatalog || [];
+        this.branchesCatalog = branchCatalog || [];
+        this.modelsCatalog = modelCatalog || [];
+        this.typesCatalog = typeCatalog || [];
+        this.brandsCatalog = brandCatalog || [];
+        this.carInfoColorPagination.page = 1;
+        this.carInfoFeaturePagination.page = 1;
+        this.carInfoDetailsPagination.page = 1;
+        this.carInfoImagesPagination.page = 1;
+        this.pagedCarInfoColors = this.carInfoColorPagination.changePage(this.carInfoColors);
+        this.pagedCarInfoFeatures = this.carInfoFeaturePagination.changePage(this.carInfoFeatures);
+        this.pagedCarInfoExtraDetails = this.carInfoDetailsPagination.changePage(this.carInfoExtraDetails);
+        this.pagedCarInfoImages = this.carInfoImagesPagination.changePage(this.carInfoImages);
+        this.isCarInfoLoading = false;
       },
-      error: (error) => this.showError(error)
+      error: (error) => {
+        this.isCarInfoLoading = false;
+        this.showError(error);
+      }
     });
   }
 
   closeCarInfoModal() {
     this.showCarInfoModal = false;
     this.selectedCarForInfo = null;
+    this.isCarInfoLoading = false;
+    this.carInfoColors = [];
+    this.pagedCarInfoColors = [];
+    this.carInfoFeatures = [];
+    this.pagedCarInfoFeatures = [];
+    this.carInfoExtraDetails = [];
+    this.pagedCarInfoExtraDetails = [];
+    this.carInfoImages = [];
+    this.pagedCarInfoImages = [];
+  }
+
+  getBranchLabel(branchId: number): string {
+    const branch = this.branchesCatalog.find(x => x.id === branchId);
+    return branch ? `${branch.branchNameAr || '-'} / ${branch.branchNameEn || '-'}` : `#${branchId}`;
+  }
+
+  getTypeLabel(typeId: number): string {
+    const type = this.typesCatalog.find(x => x.id === typeId);
+    return type ? `${type.nameAr || '-'} / ${type.nameEn || '-'}` : `#${typeId}`;
+  }
+
+  getModelLabel(modelId: number): string {
+    const model = this.modelsCatalog.find(x => x.id === modelId);
+    return model ? `${model.nameAr || '-'} / ${model.nameEn || '-'}` : `#${modelId}`;
+  }
+
+  getBrandLabelByModel(modelId: number): string {
+    const model = this.modelsCatalog.find(x => x.id === modelId);
+    if (!model) {
+      return '-';
+    }
+
+    const brand = this.brandsCatalog.find(x => x.id === model.brandId);
+    return brand ? `${brand.nameAr || '-'} / ${brand.nameEn || '-'}` : `#${model.brandId}`;
+  }
+
+  getFeatureName(featureId: number): string {
+    const feature = this.carFeaturesCatalog.find(x => x.id === featureId);
+    if (!feature) {
+      return `#${featureId}`;
+    }
+    return `${feature.nameAr || '-'} / ${feature.nameEn || '-'}`;
+  }
+
+  getColorLabel(colorId: number): string {
+    const color = this.colorsCatalog.find(x => x.id === colorId);
+    if (!color) {
+      return `#${colorId}`;
+    }
+    return `${color.colorNameAr || '-'} / ${color.colorNameEn || '-'}`;
+  }
+
+  getColorCode(colorId: number): string {
+    const color = this.colorsCatalog.find(x => x.id === colorId);
+    return color?.colorCode || '#d4d4d4';
+  }
+
+  getImageTypeLabel(imageType?: number): string {
+    if (!imageType) {
+      return '-';
+    }
+
+    const lookup = this.imageTypeLookups.find(x => x.id === imageType || x.detailCode === String(imageType));
+    if (!lookup) {
+      return String(imageType);
+    }
+
+    return this.getLookupDisplayName(lookup, String(imageType));
+  }
+
+  onCarInfoColorPageChange(page: number) {
+    this.carInfoColorPagination.page = Math.max(1, Number(page) || 1);
+    this.pagedCarInfoColors = this.carInfoColorPagination.changePage(this.carInfoColors);
+  }
+
+  onCarInfoFeaturePageChange(page: number) {
+    this.carInfoFeaturePagination.page = Math.max(1, Number(page) || 1);
+    this.pagedCarInfoFeatures = this.carInfoFeaturePagination.changePage(this.carInfoFeatures);
+  }
+
+  onCarInfoDetailsPageChange(page: number) {
+    this.carInfoDetailsPagination.page = Math.max(1, Number(page) || 1);
+    this.pagedCarInfoExtraDetails = this.carInfoDetailsPagination.changePage(this.carInfoExtraDetails);
+  }
+
+  onCarInfoImagesPageChange(page: number) {
+    this.carInfoImagesPagination.page = Math.max(1, Number(page) || 1);
+    this.pagedCarInfoImages = this.carInfoImagesPagination.changePage(this.carInfoImages);
   }
 
   private getQuotationStatusCode(statusId?: number): string {
@@ -358,6 +540,11 @@ export class QuotationComponent implements OnInit, OnDestroy {
     const statusLookup = this.quotationStatusLookups.find(x => x.id === statusId || x.detailCode === String(statusId));
     if (!statusLookup) return String(statusId);
     return statusLookup.detailCode || String(statusLookup.id);
+  }
+
+  private isArabicLanguage(): boolean {
+    const lang = (this.translate.currentLang || this.translate.getDefaultLang() || '').toLowerCase();
+    return lang.startsWith('ar');
   }
 
   private applyFilters(resetPage = false) {

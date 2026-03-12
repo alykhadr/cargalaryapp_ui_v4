@@ -52,6 +52,16 @@
   margin-inline-start: 1rem;
 }
 
+.quotation-car-info-body {
+  height: 70vh;
+  min-height: 70vh;
+  overflow-y: auto;
+}
+
+.car-info-grid {
+  font-size: 0.92rem;
+}
+
 .quotation-empty-animation {
   max-width: 360px;
   margin: 0 auto;
