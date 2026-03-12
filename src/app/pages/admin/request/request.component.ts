@@ -130,6 +130,8 @@ export class RequestComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.carInfoColorPagination.pageSize = 5;
+
     this.breadCrumbItems = [
       { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
       { label: this.mode === 'track' ? 'Track Request' : 'Request', active: true }
@@ -470,7 +472,7 @@ export class RequestComponent implements OnInit, OnDestroy {
     this.showCarInfoModal = true;
     this.selectedRequestForCarInfo = item;
     this.isCarInfoLoading = true;
-    this.carInfoTab = 'overview';
+    this.onCarInfoTabChange('overview');
 
     const cachedCar = this.cars.find(c => c.id === item.carId);
 
@@ -529,6 +531,20 @@ export class RequestComponent implements OnInit, OnDestroy {
     this.pagedCarInfoExtraDetails = [];
     this.carInfoImages = [];
     this.pagedCarInfoImages = [];
+  }
+
+  onCarInfoTabChange(tab: 'overview' | 'colors' | 'features' | 'details' | 'gallery') {
+    this.carInfoTab = tab;
+
+    if (tab === 'colors') {
+      this.pagedCarInfoColors = this.carInfoColorPagination.changePage(this.carInfoColors);
+    } else if (tab === 'features') {
+      this.pagedCarInfoFeatures = this.carInfoFeaturePagination.changePage(this.carInfoFeatures);
+    } else if (tab === 'details') {
+      this.pagedCarInfoExtraDetails = this.carInfoDetailsPagination.changePage(this.carInfoExtraDetails);
+    } else if (tab === 'gallery') {
+      this.pagedCarInfoImages = this.carInfoImagesPagination.changePage(this.carInfoImages);
+    }
   }
 
   getBranchLabel(branchId: number): string {

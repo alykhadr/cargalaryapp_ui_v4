@@ -487,27 +487,27 @@
         <ng-container *ngIf="!isCarInfoLoading && selectedCarForInfo">
           <ul class="nav nav-pills nav-custom-outline nav-primary mb-3">
             <li class="nav-item">
-              <button class="nav-link" [class.active]="carInfoTab === 'overview'" type="button" (click)="carInfoTab = 'overview'">
+              <button class="nav-link" [class.active]="carInfoTab === 'overview'" type="button" (click)="onCarInfoTabChange('overview')">
                 <i class="ri-information-line me-1"></i>{{ 'CARS_PAGE.INFO' | translate }}
               </button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" [class.active]="carInfoTab === 'colors'" type="button" (click)="carInfoTab = 'colors'">
+              <button class="nav-link" [class.active]="carInfoTab === 'colors'" type="button" (click)="onCarInfoTabChange('colors')">
                 <i class="ri-palette-line me-1"></i>{{ 'CARS_PAGE.COLOR' | translate }}
               </button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" [class.active]="carInfoTab === 'features'" type="button" (click)="carInfoTab = 'features'">
+              <button class="nav-link" [class.active]="carInfoTab === 'features'" type="button" (click)="onCarInfoTabChange('features')">
                 <i class="ri-star-line me-1"></i>{{ 'CARS_PAGE.FEATURES' | translate }}
               </button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" [class.active]="carInfoTab === 'details'" type="button" (click)="carInfoTab = 'details'">
+              <button class="nav-link" [class.active]="carInfoTab === 'details'" type="button" (click)="onCarInfoTabChange('details')">
                 <i class="ri-file-list-3-line me-1"></i>{{ 'CARS_PAGE.DETAILS' | translate }}
               </button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" [class.active]="carInfoTab === 'gallery'" type="button" (click)="carInfoTab = 'gallery'">
+              <button class="nav-link" [class.active]="carInfoTab === 'gallery'" type="button" (click)="onCarInfoTabChange('gallery')">
                 <i class="ri-image-2-line me-1"></i>{{ 'CARS_PAGE.IMAGES' | translate }}
               </button>
             </li>
