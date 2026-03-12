@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 const TOKEN_KEY = 'token';
 const USER_KEY = 'currentUser';
 const REMEMBER_ME_KEY = 'rememberMe';
+const SELECTED_BRANCH_KEY = 'selectedBranchId';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class TokenStorageService {
 
   signOut(): void {
     this.clearAuthStorage();
+    this.clearSelectedBranchId();
     window.localStorage.removeItem(REMEMBER_ME_KEY);
   }
 
@@ -40,6 +42,25 @@ export class TokenStorageService {
   public saveAuth(user: any, token: string, rememberMe = false): void {
     this.saveUser(user, rememberMe);
     this.saveToken(token, rememberMe);
+  }
+
+  public setSelectedBranchId(branchId: number | null): void {
+    if (branchId && Number.isFinite(branchId) && branchId > 0) {
+      window.localStorage.setItem(SELECTED_BRANCH_KEY, String(branchId));
+      return;
+    }
+
+    this.clearSelectedBranchId();
+  }
+
+  public getSelectedBranchId(): number | null {
+    const raw = window.localStorage.getItem(SELECTED_BRANCH_KEY);
+    const parsed = raw ? Number(raw) : NaN;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
+
+  public clearSelectedBranchId(): void {
+    window.localStorage.removeItem(SELECTED_BRANCH_KEY);
   }
 
   public getUser(): any {

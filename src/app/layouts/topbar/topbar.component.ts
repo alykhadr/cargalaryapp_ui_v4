@@ -14,8 +14,10 @@ import { CookieService } from 'ngx-cookie-service';
 import { LanguageService } from '../../core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
+import { AccessControlService } from 'src/app/core/services/access-control.service';
 import { GlobalComponent } from 'src/app/global-component';
 import { RequestNotificationItem, RequestNotificationsResponse } from './topbar.model';
+import { Branch } from 'src/app/pages/admin/interfaces/branch.interface';
 
 @Component({
     selector: 'app-topbar',
@@ -35,23 +37,43 @@ export class TopbarComponent implements OnInit {
   countryName = 'العربية';
   cookieValue = 'ar';
   userData: any;
+  branches: Branch[] = [];
+  canSwitchBranch = false;
+  selectedBranchId: number | null = null;
+  branchSearchTerm = '';
   isDropdownOpen = false;
 
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService,
     public _cookiesService: CookieService, public translate: TranslateService,
      private authService: MyAuthService,
-    private router: Router, private TokenStorageService: TokenStorageService,
+    private tokenStorageService: TokenStorageService,
+    private accessControlService: AccessControlService,
+    private router: Router,
     private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.userData = this.TokenStorageService.getUser();
+    this.userData = this.tokenStorageService.getUser();
     this.element = document.documentElement;
+    this.canSwitchBranch = this.accessControlService.hasRole(['Admin', 'Manager']);
 
     // Cookies wise Language set
     this.cookieValue = (this._cookiesService.get('lang') || 'ar').toLowerCase();
     const selected = this.listLang.find(x => x.lang === this.cookieValue) || this.listLang.find(x => x.lang === 'ar');
     this.countryName = selected?.text || 'العربية';
     this.flagvalue = selected?.flag || 'assets/images/flags/sa.svg';
+
+    if (this.canSwitchBranch) {
+      const userBranchId = Number(this.userData?.branchId) || null;
+      this.selectedBranchId = this.tokenStorageService.getSelectedBranchId() ?? userBranchId;
+      if (this.selectedBranchId) {
+        this.tokenStorageService.setSelectedBranchId(this.selectedBranchId);
+      }
+      this.loadBranches();
+    } else {
+      // Prevent stale branch override from another session/user.
+      this.selectedBranchId = null;
+      this.tokenStorageService.clearSelectedBranchId();
+    }
 
     this.loadRequestNotifications();
   }
@@ -162,6 +184,52 @@ export class TopbarComponent implements OnInit {
     return `${this.translate.instant('COMMON.BRANCH')}: ${branchName}`;
   }
 
+  onBranchChanged(value: string): void {
+    const branchId = Number(value);
+    const normalized = Number.isFinite(branchId) && branchId > 0 ? branchId : null;
+    this.selectedBranchId = normalized;
+    this.tokenStorageService.setSelectedBranchId(normalized);
+    window.location.reload();
+  }
+
+  onSelectBranch(branchId: number): void {
+    this.branchSearchTerm = '';
+    this.onBranchChanged(String(branchId));
+  }
+
+  get filteredBranches(): Branch[] {
+    const term = (this.branchSearchTerm || '').trim().toLowerCase();
+    if (!term) {
+      return this.branches;
+    }
+
+    return this.branches.filter(branch => {
+      const ar = (branch.branchNameAr || '').toLowerCase();
+      const en = (branch.branchNameEn || '').toLowerCase();
+      return ar.includes(term) || en.includes(term);
+    });
+  }
+
+  get selectedBranchDisplayName(): string {
+    if (!this.selectedBranchId) {
+      return this.translate.instant('COMMON.BRANCH');
+    }
+
+    const selected = this.branches.find(x => x.id === this.selectedBranchId);
+    if (selected) {
+      return this.getBranchDisplayName(selected);
+    }
+
+    return this.translate.instant('COMMON.BRANCH');
+  }
+
+  getBranchDisplayName(branch: Branch): string {
+    const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
+    return isArabic
+      ? (branch.branchNameAr || branch.branchNameEn || `#${branch.id}`)
+      : (branch.branchNameEn || branch.branchNameAr || `#${branch.id}`);
+  }
+
   private getLocalizedUserName(): string {
     const user = this.userData || {};
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
@@ -196,6 +264,13 @@ export class TopbarComponent implements OnInit {
   }
 
   private getLocalizedBranchName(): string {
+    if (this.canSwitchBranch && this.selectedBranchId) {
+      const selectedBranch = this.branches.find(x => x.id === this.selectedBranchId);
+      if (selectedBranch) {
+        return this.getBranchDisplayName(selectedBranch);
+      }
+    }
+
     const user = this.userData || {};
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
 
@@ -220,6 +295,18 @@ export class TopbarComponent implements OnInit {
     );
 
     return isArabic ? (branchAr || branchEn) : (branchEn || branchAr);
+  }
+
+  private loadBranches(): void {
+    const url = `${GlobalComponent.API_URL}/api/branches`;
+    this.http.get<Branch[]>(url).pipe(first()).subscribe({
+      next: (items) => {
+        this.branches = items || [];
+      },
+      error: () => {
+        this.branches = [];
+      }
+    });
   }
 
   /**

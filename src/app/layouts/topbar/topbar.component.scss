@@ -83,6 +83,46 @@
   .date-chip-text {
     white-space: nowrap;
   }
+
+  .branch-switch-chip {
+    .branch-switch-btn {
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background-color: rgba(var(--vz-primary-rgb), 0.08);
+      border: 1px solid rgba(var(--vz-primary-rgb), 0.28);
+      color: var(--vz-body-color);
+      max-width: 260px;
+    }
+
+    .branch-switch-btn-text {
+      max-width: 170px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .branch-switch-menu {
+      width: 280px;
+      border-radius: 0.75rem;
+    }
+
+    .branch-switch-options {
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .branch-switch-option {
+      border-radius: 0.5rem;
+      margin-bottom: 0.2rem;
+
+      &.active {
+        background: rgba(var(--vz-primary-rgb), 0.12);
+        color: rgb(var(--vz-primary-rgb));
+        font-weight: 600;
+      }
+    }
+  }
 }
 
 :host-context([data-bs-theme='dark']) .header-welcome-text .welcome-chip {
@@ -104,5 +144,11 @@
 :host-context([data-bs-theme='dark']) .header-welcome-text .branch-chip {
   background: rgba(var(--vz-success-rgb), 0.2);
   border-color: rgba(var(--vz-success-rgb), 0.45);
+  color: #e6edf3;
+}
+
+:host-context([data-bs-theme='dark']) .header-welcome-text .branch-switch-chip .branch-switch-btn {
+  background-color: rgba(var(--vz-primary-rgb), 0.2);
+  border-color: rgba(var(--vz-primary-rgb), 0.45);
   color: #e6edf3;
 }
