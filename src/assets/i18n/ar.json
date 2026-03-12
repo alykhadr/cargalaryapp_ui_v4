@@ -423,11 +423,11 @@
         }
       }
     },
-    "QUOTATION": {
-      "TEXT": "عروض الأسعار",
+    "REQUEST": {
+      "TEXT": "الطلبات",
       "LIST": {
-        "QUOTATIONS": "عروض الأسعار",
-        "TRACK": "تتبع عرض السعر",
+        "REQUESTS": "الطلبات",
+        "TRACK": "تتبع الطلب",
         "USERS": "المستخدمون"
       }
     },
@@ -469,9 +469,9 @@
       }
     }
   },
-  "QUOTATION_PAGE": {
+  "REQUEST_PAGE": {
     "CREATE": {
-      "PAGE_TITLE": "إنشاء عرض سعر",
+      "PAGE_TITLE": "إنشاء طلب",
       "BACK_TO_LIST": "العودة إلى القائمة",
       "VEHICLE_OWNER_TYPE": "نوع مالك المركبة",
       "SELECT_TYPE": "اختر النوع",
@@ -492,29 +492,29 @@
       "REQUIRED": "مطلوب",
       "VALID_EMAIL": "يرجى إدخال بريد إلكتروني صحيح",
       "SAVING": "جارٍ الحفظ...",
-      "SUBMIT": "إنشاء عرض سعر"
+      "SUBMIT": "إنشاء طلب"
     },
     "TRACK": {
-      "TIMELINE_TITLE": "تتبع تسلسل عرض السعر",
-      "QUOTATION_ID": "رقم عرض السعر",
-      "ENTER_ID": "أدخل رقم عرض السعر",
+      "TIMELINE_TITLE": "تتبع تسلسل الطلب",
+      "REQUEST_ID": "رقم الطلب",
+      "ENTER_ID": "أدخل رقم الطلب",
       "TRACK_BTN": "تتبع",
       "TIMELINE": "التسلسل الزمني",
       "STATUS_UPDATED": "تم تحديث الحالة",
-      "NO_TIMELINE": "لا توجد سجلات تسلسل زمني لعرض السعر هذا.",
+      "NO_TIMELINE": "لا توجد سجلات تسلسل زمني لهذا الطلب.",
       "EMPTY_TITLE": "لا يوجد تتبع حتى الآن",
-      "EMPTY_DESC": "أدخل رقم عرض السعر ثم اضغط تتبع لعرض التفاصيل."
+      "EMPTY_DESC": "أدخل رقم الطلب ثم اضغط تتبع لعرض التفاصيل."
     },
     "LIST": {
-      "PAGE_TITLE": "عروض الأسعار",
+      "PAGE_TITLE": "الطلبات",
       "SEARCH_PLACEHOLDER": "ابحث بالاسم أو البريد أو الجوال أو الرقم...",
       "ALL_STATUS": "كل الحالات",
       "FROM": "من",
       "TO": "إلى",
       "CLEAR_FILTER": "مسح الفلتر",
-      "CREATE_QUOTATION": "إنشاء عرض سعر",
+      "CREATE_REQUEST": "إنشاء طلب",
       "ID": "الرقم",
-      "QUOTATION_NO": "رقم الطلب",
+      "REQUEST_NO": "رقم الطلب",
       "NAME": "الاسم",
       "EMAIL": "البريد الإلكتروني",
       "MOBILE": "الجوال",
@@ -530,7 +530,7 @@
       "CAR_INFO_BTN": "معلومات السيارة",
       "MORE_BTN": "المزيد..",
       "INFO_MODAL": {
-        "TITLE": "تفاصيل عرض السعر رقم {{id}}",
+        "TITLE": "تفاصيل الطلب رقم {{id}}",
         "PAYMENT": "الدفع",
         "REGION": "المنطقة",
         "CITY": "المدينة",

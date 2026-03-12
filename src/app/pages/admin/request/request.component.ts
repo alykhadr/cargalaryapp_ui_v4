@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@an
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
@@ -11,7 +12,7 @@ import { CarCarFeature, CarFeature } from '../interfaces/car-feature.interface';
 import { CarExtraDetails } from '../interfaces/car-extra-details.interface';
 import { Color } from '../interfaces/color.interface';
 import { LookupDetail } from '../interfaces/lookup.interface';
-import { Quotation, QuotationHistory } from '../interfaces/quotation.interface';
+import { Request, RequestHistory } from '../interfaces/request.interface';
 import { Branch } from '../interfaces/branch.interface';
 import { Brand } from '../interfaces/brand.interface';
 import { CarModel } from '../interfaces/car-model.interface';
@@ -26,24 +27,24 @@ import { CarService } from '../services/car.service';
 import { CarTypeService } from '../services/car-type.service';
 import { ColorService } from '../services/color.service';
 import { LookupService } from '../services/lookup.service';
-import { QuotationService } from '../services/quotation.service';
-import { QuotationRealtimeService } from '../services/quotation-realtime.service';
+import { RequestService } from '../services/request.service';
+import { RequestRealtimeService } from '../services/request-realtime.service';
 import { ErrorMessageService } from '../shared/error-message.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-quotation',
-  templateUrl: './quotation.component.html',
-  styleUrl: './quotation.component.scss',
+  selector: 'app-request',
+  templateUrl: './request.component.html',
+  styleUrl: './request.component.scss',
   standalone: false
 })
-export class QuotationComponent implements OnInit, OnDestroy {
+export class RequestComponent implements OnInit, OnDestroy {
   @Input() mode: 'create' | 'list' | 'track' = 'list';
   @ViewChild('realtimeToastTpl') realtimeToastTpl!: TemplateRef<any>;
   @ViewChild('statusRealtimeToastTpl') statusRealtimeToastTpl!: TemplateRef<any>;
 
   breadCrumbItems!: Array<{}>;
-  quotationForm!: UntypedFormGroup;
+  requestForm!: UntypedFormGroup;
   submitted = false;
   isLoading = false;
   isSubmitting = false;
@@ -52,27 +53,28 @@ export class QuotationComponent implements OnInit, OnDestroy {
   createdFromDate = '';
   createdToDate = '';
   idSortDirection: 'asc' | 'desc' = 'desc';
-  trackQuotationId: number | null = null;
+  trackRequestId: number | null = null;
   isTracking = false;
-  trackedQuotation: Quotation | null = null;
-  trackedTimeline: QuotationHistory[] = [];
-  filteredQuotations: Quotation[] = [];
-  quotations: Quotation[] = [];
-  pagedQuotations: Quotation[] = [];
+  trackedRequest: Request | null = null;
+  trackedTimeline: RequestHistory[] = [];
+  filteredRequests: Request[] = [];
+  requests: Request[] = [];
+  pagedRequests: Request[] = [];
   cars: Car[] = [];
   paymentMethodLookups: LookupDetail[] = [];
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
   cityLookups: LookupDetail[] = [];
-  quotationStatusLookups: LookupDetail[] = [];
-  latestRealtimeQuotation: Quotation | null = null;
-  latestRealtimeStatusQuotation: Quotation | null = null;
-  statusUpdatingByQuotationId = new Set<number>();
+  requestStatusLookups: LookupDetail[] = [];
+  allRequestStatusLookups: LookupDetail[] = [];
+  latestRealtimeRequest: Request | null = null;
+  latestRealtimeStatusRequest: Request | null = null;
+  statusUpdatingByRequestId = new Set<number>();
   showMoreInfoModal = false;
-  selectedQuotationForMore: Quotation | null = null;
+  selectedRequestForMore: Request | null = null;
   showCarInfoModal = false;
   selectedCarForInfo: Car | null = null;
-  selectedQuotationForCarInfo: Quotation | null = null;
+  selectedRequestForCarInfo: Request | null = null;
   isCarInfoLoading = false;
   carInfoTab: 'overview' | 'colors' | 'features' | 'details' | 'gallery' = 'overview';
   carInfoColors: CarCarColor[] = [];
@@ -102,7 +104,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   carInfoFeaturePagination = new PaginationService();
   carInfoDetailsPagination = new PaginationService();
   carInfoImagesPagination = new PaginationService();
-  private readonly notificationSoundUrl = 'assets/sounds/quotation-notification.mp3';
+  private readonly notificationSoundUrl = 'assets/sounds/request-notification.mp3';
   private isSoundUnlocked = false;
   private soundHintShown = false;
   private readonly unlockSoundHandler = () => this.unlockSound();
@@ -110,8 +112,8 @@ export class QuotationComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
-    private quotationService: QuotationService,
-    private quotationRealtimeService: QuotationRealtimeService,
+    private requestService: RequestService,
+    private requestRealtimeService: RequestRealtimeService,
     private carService: CarService,
     private branchService: BranchService,
     private carModelService: CarModelService,
@@ -130,10 +132,10 @@ export class QuotationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.breadCrumbItems = [
       { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
-      { label: this.mode === 'track' ? 'Track Quotation' : 'Quotation', active: true }
+      { label: this.mode === 'track' ? 'Track Request' : 'Request', active: true }
     ];
 
-    this.quotationForm = this.formBuilder.group({
+    this.requestForm = this.formBuilder.group({
       userId: [''],
       vehicleOwnerType: [null, Validators.required],
       name: ['', [Validators.required, Validators.maxLength(200)]],
@@ -150,7 +152,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
     if (this.mode === 'list') {
       this.setupSoundUnlock();
-      this.loadQuotations();
+      this.loadRequests();
       this.connectRealtime();
     }
   }
@@ -158,12 +160,12 @@ export class QuotationComponent implements OnInit, OnDestroy {
   async ngOnDestroy(): Promise<void> {
     if (this.mode === 'list') {
       this.removeSoundUnlockListeners();
-      await this.quotationRealtimeService.stop();
+      await this.requestRealtimeService.stop();
     }
   }
 
   get form() {
-    return this.quotationForm.controls;
+    return this.requestForm.controls;
   }
 
   loadFormDependencies() {
@@ -173,7 +175,11 @@ export class QuotationComponent implements OnInit, OnDestroy {
       ownerTypes: this.lookupService.getByMasterCode('VEHICLE_OWNER_TYPE').pipe(first()),
       regions: this.lookupService.getByMasterCode('REGION').pipe(first()),
       cities: this.lookupService.getByMasterCode('CITY').pipe(first()),
-      statuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(first()),
+      statuses: this.lookupService.getByMasterCode('REQUEST_STATUS').pipe(first()),
+      legacyStatuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(
+        first(),
+        catchError(() => of([]))
+      ),
       imageTypes: this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first()),
       conditions: this.lookupService.getByMasterCode('CAR_CONDITION').pipe(first()),
       trimLevels: this.lookupService.getByMasterCode('CAR_TRIM_LEVEL').pipe(first()),
@@ -184,13 +190,26 @@ export class QuotationComponent implements OnInit, OnDestroy {
       countries: this.lookupService.getByMasterCode('COUNTRY').pipe(first()),
       extraDetailTypes: this.lookupService.getByMasterCode('EXTRA_TYPE').pipe(first())
     }).subscribe({
-      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, imageTypes, conditions, trimLevels, vehicleClasses, transmisionTypes, drivetrains, fuelTypes, countries, extraDetailTypes }) => {
+      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, legacyStatuses, imageTypes, conditions, trimLevels, vehicleClasses, transmisionTypes, drivetrains, fuelTypes, countries, extraDetailTypes }) => {
         this.cars = cars.filter(c => c.isAvailable);
         this.paymentMethodLookups = paymentMethods;
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
         this.cityLookups = cities;
-        this.quotationStatusLookups = statuses;
+        const preferredStatuses = statuses || [];
+        const fallbackStatuses = legacyStatuses || [];
+        this.allRequestStatusLookups = [...preferredStatuses, ...fallbackStatuses]
+          .filter(item => item?.id)
+          .filter((item, index, array) => array.findIndex(x => x.id === item.id) === index);
+        const seenStatusKeys = new Set<string>();
+        this.requestStatusLookups = [...preferredStatuses, ...fallbackStatuses].filter(item => {
+          const key = (item.detailCode || String(item.id || '')).trim();
+          if (!key || seenStatusKeys.has(key)) {
+            return false;
+          }
+          seenStatusKeys.add(key);
+          return true;
+        });
         this.imageTypeLookups = imageTypes || [];
         this.conditionLookups = conditions || [];
         this.trimLevelLookups = trimLevels || [];
@@ -208,11 +227,11 @@ export class QuotationComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadQuotations() {
+  loadRequests() {
     this.isLoading = true;
-    this.quotationService.getAll().pipe(first()).subscribe({
-      next: (quotations) => {
-        this.quotations = quotations;
+    this.requestService.getAll().pipe(first()).subscribe({
+      next: (requests) => {
+        this.requests = requests;
         this.applyFilters(true);
         this.isLoading = false;
       },
@@ -246,7 +265,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   onPageChange(page: number) {
     this.service.page = page;
-    this.pagedQuotations = this.service.changePage(this.filteredQuotations);
+    this.pagedRequests = this.service.changePage(this.filteredRequests);
   }
 
   toggleIdSort() {
@@ -254,9 +273,9 @@ export class QuotationComponent implements OnInit, OnDestroy {
     this.applyFilters(true);
   }
 
-  createQuotation() {
+  createRequest() {
     this.submitted = true;
-    if (this.quotationForm.invalid) return;
+    if (this.requestForm.invalid) return;
 
     this.isSubmitting = true;
     const payload = {
@@ -272,11 +291,11 @@ export class QuotationComponent implements OnInit, OnDestroy {
       notes: this.form['notes'].value || undefined
     };
 
-    this.quotationService.create(payload).pipe(first()).subscribe({
+    this.requestService.create(payload).pipe(first()).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.showSuccess('Quotation created successfully');
-        this.quotationForm.reset();
+        this.showSuccess('Request created successfully');
+        this.requestForm.reset();
         this.submitted = false;
       },
       error: (error) => {
@@ -316,31 +335,53 @@ export class QuotationComponent implements OnInit, OnDestroy {
     return preferred || alternate || fallback;
   }
 
-  getQuotationStatusLabel(statusId?: number): string {
+  getRequestStatusLabel(statusId?: number): string {
     if (!statusId) return '-';
-    return this.getLookupLabel(this.quotationStatusLookups, statusId);
+    const status = this.findRequestStatusLookup(statusId);
+    return status ? this.getLookupDisplayName(status, String(statusId)) : String(statusId);
   }
 
-  getQuotationStatusBadgeClass(statusId?: number): string {
-    const statusCode = this.getQuotationStatusCode(statusId);
+  getRequestStatusValueWithNames(statusId?: number, statusNameAr?: string | null, statusNameEn?: string | null): string {
+    if (!statusId) return '-';
+
+    if (statusNameAr || statusNameEn) {
+      const namesFromResponse = this.getLocalizedText(statusNameAr, statusNameEn, '-');
+      return `${statusId} - ${namesFromResponse}`;
+    }
+
+    const status = this.findRequestStatusLookup(statusId);
+    if (!status) return String(statusId);
+
+    const ar = status.nameAr || '-';
+    const en = status.nameEn || '-';
+    const names = this.isArabicLanguage() ? `${ar} / ${en}` : `${en} / ${ar}`;
+    return `${statusId} - ${names}`;
+  }
+
+  getRequestStatusBadgeClass(statusId?: number): string {
+    return `badge ${this.getRequestStatusToneClass(statusId)}`;
+  }
+
+  getRequestStatusToneClass(statusId?: number): string {
+    const statusCode = this.getRequestStatusCode(statusId);
     switch (statusCode) {
       case '1':
-        return 'badge bg-primary-subtle text-primary';
+        return 'bg-primary-subtle text-primary';
       case '2':
-        return 'badge bg-warning-subtle text-warning';
+        return 'bg-warning-subtle text-warning';
       case '3':
-        return 'badge bg-info-subtle text-info';
+        return 'bg-info-subtle text-info';
       case '4':
-        return 'badge bg-success-subtle text-success';
+        return 'bg-success-subtle text-success';
       case '5':
-        return 'badge bg-danger-subtle text-danger';
+        return 'bg-danger-subtle text-danger';
       default:
-        return 'badge bg-secondary-subtle text-secondary';
+        return 'bg-secondary-subtle text-secondary';
     }
   }
 
-  getQuotationStatusIcon(statusId?: number): string {
-    const statusCode = this.getQuotationStatusCode(statusId);
+  getRequestStatusIcon(statusId?: number): string {
+    const statusCode = this.getRequestStatusCode(statusId);
     switch (statusCode) {
       case '1':
         return 'ri-add-circle-line';
@@ -364,47 +405,47 @@ export class QuotationComponent implements OnInit, OnDestroy {
     return parsed.toLocaleString();
   }
 
-  isStatusUpdating(quotationId: number): boolean {
-    return this.statusUpdatingByQuotationId.has(quotationId);
+  isStatusUpdating(requestId: number): boolean {
+    return this.statusUpdatingByRequestId.has(requestId);
   }
 
-  updateQuotationStatus(item: Quotation, statusId: number) {
+  updateRequestStatus(item: Request, statusId: number) {
     if (!statusId || this.isStatusUpdating(item.id)) return;
 
-    this.statusUpdatingByQuotationId.add(item.id);
-    this.quotationService.updateStatus(item.id, { currentStatus: statusId }).pipe(first()).subscribe({
+    this.statusUpdatingByRequestId.add(item.id);
+    this.requestService.updateStatus(item.id, { currentStatus: statusId }).pipe(first()).subscribe({
       next: (updated) => {
-        const idx = this.quotations.findIndex(q => q.id === item.id);
+        const idx = this.requests.findIndex(q => q.id === item.id);
         if (idx >= 0) {
-          this.quotations[idx] = { ...this.quotations[idx], ...updated };
+          this.requests[idx] = { ...this.requests[idx], ...updated };
         }
         this.applyFilters(false);
         this.showStatusUpdateSuccess();
-        this.statusUpdatingByQuotationId.delete(item.id);
+        this.statusUpdatingByRequestId.delete(item.id);
       },
       error: (error) => {
-        this.statusUpdatingByQuotationId.delete(item.id);
+        this.statusUpdatingByRequestId.delete(item.id);
         this.showStatusUpdateError(error);
       }
     });
   }
 
-  trackByQuotationId() {
-    if (!this.trackQuotationId || this.trackQuotationId <= 0) {
-      this.showError('Please enter a valid quotation id');
+  trackByRequestId() {
+    if (!this.trackRequestId || this.trackRequestId <= 0) {
+      this.showError('Please enter a valid request id');
       return;
     }
 
     this.isTracking = true;
-    this.trackedQuotation = null;
+    this.trackedRequest = null;
     this.trackedTimeline = [];
 
     forkJoin({
-      quotation: this.quotationService.getById(this.trackQuotationId).pipe(first()),
-      timeline: this.quotationService.getHistory(this.trackQuotationId).pipe(first())
+      request: this.requestService.getById(this.trackRequestId).pipe(first()),
+      timeline: this.requestService.getHistory(this.trackRequestId).pipe(first())
     }).subscribe({
-      next: ({ quotation, timeline }) => {
-        this.trackedQuotation = quotation;
+      next: ({ request, timeline }) => {
+        this.trackedRequest = request;
         this.trackedTimeline = timeline || [];
         this.isTracking = false;
       },
@@ -415,19 +456,19 @@ export class QuotationComponent implements OnInit, OnDestroy {
     });
   }
 
-  openMoreInfoModal(item: Quotation) {
-    this.selectedQuotationForMore = item;
+  openMoreInfoModal(item: Request) {
+    this.selectedRequestForMore = item;
     this.showMoreInfoModal = true;
   }
 
   closeMoreInfoModal() {
     this.showMoreInfoModal = false;
-    this.selectedQuotationForMore = null;
+    this.selectedRequestForMore = null;
   }
 
-  openCarInfoModal(item: Quotation) {
+  openCarInfoModal(item: Request) {
     this.showCarInfoModal = true;
-    this.selectedQuotationForCarInfo = item;
+    this.selectedRequestForCarInfo = item;
     this.isCarInfoLoading = true;
     this.carInfoTab = 'overview';
 
@@ -478,7 +519,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   closeCarInfoModal() {
     this.showCarInfoModal = false;
     this.selectedCarForInfo = null;
-    this.selectedQuotationForCarInfo = null;
+    this.selectedRequestForCarInfo = null;
     this.isCarInfoLoading = false;
     this.carInfoColors = [];
     this.pagedCarInfoColors = [];
@@ -633,11 +674,19 @@ export class QuotationComponent implements OnInit, OnDestroy {
     this.pagedCarInfoImages = this.carInfoImagesPagination.changePage(this.carInfoImages);
   }
 
-  private getQuotationStatusCode(statusId?: number): string {
+  private getRequestStatusCode(statusId?: number): string {
     if (!statusId) return '';
-    const statusLookup = this.quotationStatusLookups.find(x => x.id === statusId || x.detailCode === String(statusId));
+    const statusLookup = this.findRequestStatusLookup(statusId);
     if (!statusLookup) return String(statusId);
     return statusLookup.detailCode || String(statusLookup.id);
+  }
+
+  private findRequestStatusLookup(statusId?: number): LookupDetail | undefined {
+    if (!statusId) {
+      return undefined;
+    }
+
+    return this.allRequestStatusLookups.find(x => x.id === statusId || x.detailCode === String(statusId));
   }
 
   private isArabicLanguage(): boolean {
@@ -646,7 +695,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   }
 
   private applyFilters(resetPage = false) {
-    let data = [...this.quotations];
+    let data = [...this.requests];
     const term = this.searchTerm.trim().toLowerCase();
 
     if (term) {
@@ -682,9 +731,9 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
     data.sort((a, b) => this.idSortDirection === 'asc' ? a.id - b.id : b.id - a.id);
 
-    this.filteredQuotations = data;
+    this.filteredRequests = data;
     if (resetPage) this.service.page = 1;
-    this.pagedQuotations = this.service.changePage(this.filteredQuotations);
+    this.pagedRequests = this.service.changePage(this.filteredRequests);
   }
 
   private showSuccess(message: string) {
@@ -706,7 +755,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
     void Swal.fire({
       icon: 'success',
       title: 'Status Updated',
-      text: 'Quotation status updated successfully',
+      text: 'Request status updated successfully',
       confirmButtonText: 'OK'
     });
   }
@@ -726,33 +775,33 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   private async connectRealtime() {
     try {
-      await this.quotationRealtimeService.start(
+      await this.requestRealtimeService.start(
         (payload) => {
-          const quotation = payload as Quotation;
-          if (!quotation?.id) return;
-          if (this.quotations.some(q => q.id === quotation.id)) return;
+          const request = payload as Request;
+          if (!request?.id) return;
+          if (this.requests.some(q => q.id === request.id)) return;
 
-          this.quotations = [quotation, ...this.quotations];
+          this.requests = [request, ...this.requests];
           this.applyFilters(true);
-          this.latestRealtimeQuotation = quotation;
+          this.latestRealtimeRequest = request;
           this.toastService.show(this.realtimeToastTpl, {
-            classname: 'border-0 shadow-sm quotation-realtime-toast',
+            classname: 'border-0 shadow-sm request-realtime-toast',
             delay: 4000
           });
           this.playNotificationSound();
         },
         (payload) => {
-          const updated = payload as Quotation;
+          const updated = payload as Request;
           if (!updated?.id) return;
 
-          const idx = this.quotations.findIndex(x => x.id === updated.id);
+          const idx = this.requests.findIndex(x => x.id === updated.id);
           if (idx < 0) return;
 
-          this.quotations[idx] = { ...this.quotations[idx], ...updated };
+          this.requests[idx] = { ...this.requests[idx], ...updated };
           this.applyFilters(false);
-          this.latestRealtimeStatusQuotation = updated;
+          this.latestRealtimeStatusRequest = updated;
           this.toastService.show(this.statusRealtimeToastTpl, {
-            classname: 'border-0 shadow-sm quotation-realtime-toast',
+            classname: 'border-0 shadow-sm request-realtime-toast',
             delay: 4000
           });
           this.playNotificationSound();

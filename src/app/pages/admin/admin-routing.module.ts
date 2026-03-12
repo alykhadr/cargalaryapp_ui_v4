@@ -19,9 +19,9 @@ import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
-import { QuotationListPageComponent } from './quotation-list-page/quotation-list-page.component';
-import { QuotationCreatePageComponent } from './quotation-create-page/quotation-create-page.component';
-import { QuotationTrackPageComponent } from './quotation-track-page/quotation-track-page.component';
+import { RequestListPageComponent } from './request-list-page/request-list-page.component';
+import { RequestCreatePageComponent } from './request-create-page/request-create-page.component';
+import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
 import { UsersComponent } from './users/users.component';
 import { DepartmentsComponent } from './departments/departments.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
@@ -161,33 +161,58 @@ const routes: Routes = [
     data: { permission: 'cars.create' }
   },
   {
+    path: "request",
+    redirectTo: "request/list",
+    pathMatch: "full"
+  },
+  {
     path: "quotation",
-    redirectTo: "quotation/list",
+    redirectTo: "request/list",
     pathMatch: "full"
   },
   {
     path: "quotation/list",
-    component: QuotationListPageComponent,
-    canActivate: [AuthGuard, PermissionGuard],
-    data: { permission: 'quotations.view' }
+    redirectTo: "request/list",
+    pathMatch: "full"
   },
   {
     path: "quotation/create",
-    component: QuotationCreatePageComponent,
-    canActivate: [AuthGuard, PermissionGuard],
-    data: { permission: 'quotations.create' }
+    redirectTo: "request/create",
+    pathMatch: "full"
   },
   {
     path: "quotation/track",
-    component: QuotationTrackPageComponent,
-    canActivate: [AuthGuard, PermissionGuard],
-    data: { permission: 'quotations.view' }
+    redirectTo: "request/track",
+    pathMatch: "full"
   },
   {
     path: "quotation/users",
+    redirectTo: "request/users",
+    pathMatch: "full"
+  },
+  {
+    path: "request/list",
+    component: RequestListPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'requests.view' }
+  },
+  {
+    path: "request/create",
+    component: RequestCreatePageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'requests.create' }
+  },
+  {
+    path: "request/track",
+    component: RequestTrackPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'requests.view' }
+  },
+  {
+    path: "request/users",
     component: UsersComponent,
     canActivate: [AuthGuard, PermissionGuard],
-    data: { permission: 'quotations.view' }
+    data: { permission: 'requests.view' }
   }
   
 ];

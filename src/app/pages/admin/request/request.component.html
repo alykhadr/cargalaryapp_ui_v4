@@ -1,79 +1,79 @@
-<app-breadcrumbs [title]="mode === 'create' ? ('QUOTATION_PAGE.CREATE.PAGE_TITLE' | translate) : (mode === 'track' ? ('QUOTATION_PAGE.TRACK.TIMELINE_TITLE' | translate) : ('QUOTATION_PAGE.LIST.PAGE_TITLE' | translate))" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs [title]="mode === 'create' ? ('REQUEST_PAGE.CREATE.PAGE_TITLE' | translate) : (mode === 'track' ? ('REQUEST_PAGE.TRACK.TIMELINE_TITLE' | translate) : ('REQUEST_PAGE.LIST.PAGE_TITLE' | translate))" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div *ngIf="mode === 'create'" class="row">
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="card-title mb-0">{{ 'QUOTATION_PAGE.CREATE.PAGE_TITLE' | translate }}</h5>
-        <a class="btn btn-soft-primary btn-sm" routerLink="/admin/quotation/list">{{ 'QUOTATION_PAGE.CREATE.BACK_TO_LIST' | translate }}</a>
+        <h5 class="card-title mb-0">{{ 'REQUEST_PAGE.CREATE.PAGE_TITLE' | translate }}</h5>
+        <a class="btn btn-soft-primary btn-sm" routerLink="/admin/request/list">{{ 'REQUEST_PAGE.CREATE.BACK_TO_LIST' | translate }}</a>
       </div>
       <div class="card-body">
-        <form [formGroup]="quotationForm" class="row g-3">
+        <form [formGroup]="requestForm" class="row g-3">
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.VEHICLE_OWNER_TYPE' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.VEHICLE_OWNER_TYPE' | translate }} <span class="text-danger">*</span></label>
             <select class="form-select" formControlName="vehicleOwnerType">
-              <option [ngValue]="null">{{ 'QUOTATION_PAGE.CREATE.SELECT_TYPE' | translate }}</option>
+              <option [ngValue]="null">{{ 'REQUEST_PAGE.CREATE.SELECT_TYPE' | translate }}</option>
               <option *ngFor="let item of vehicleOwnerTypeLookups" [ngValue]="item.id">{{ getLookupDisplayName(item) }}</option>
             </select>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['vehicleOwnerType'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['vehicleOwnerType'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.NAME' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.NAME' | translate }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" formControlName="name">
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['name'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.EMAIL' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.EMAIL' | translate }} <span class="text-danger">*</span></label>
             <input class="form-control" type="email" formControlName="email">
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">{{ 'QUOTATION_PAGE.CREATE.VALID_EMAIL' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['email'].errors">{{ 'REQUEST_PAGE.CREATE.VALID_EMAIL' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.MOBILE_NO' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.MOBILE_NO' | translate }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" formControlName="mobileNo">
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['mobileNo'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['mobileNo'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.CAR' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.CAR' | translate }} <span class="text-danger">*</span></label>
             <ng-select
               [items]="cars"
               bindLabel="nameEn"
               bindValue="id"
               [searchable]="true"
               [clearable]="true"
-              [placeholder]="'QUOTATION_PAGE.CREATE.SEARCH_CAR' | translate"
+              [placeholder]="'REQUEST_PAGE.CREATE.SEARCH_CAR' | translate"
               formControlName="carId">
               <ng-template ng-option-tmp let-item="item">
-                {{ item.nameEn || item.nameAr || (('QUOTATION_PAGE.CREATE.CAR' | translate) + ' #' + item.id) }}
+                {{ item.nameEn || item.nameAr || (('REQUEST_PAGE.CREATE.CAR' | translate) + ' #' + item.id) }}
               </ng-template>
               <ng-template ng-label-tmp let-item="item">
-                {{ item.nameEn || item.nameAr || (('QUOTATION_PAGE.CREATE.CAR' | translate) + ' #' + item.id) }}
+                {{ item.nameEn || item.nameAr || (('REQUEST_PAGE.CREATE.CAR' | translate) + ' #' + item.id) }}
               </ng-template>
             </ng-select>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['carId'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.PAYMENT_METHOD' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.PAYMENT_METHOD' | translate }} <span class="text-danger">*</span></label>
             <select class="form-select" formControlName="paymentMethod">
-              <option [ngValue]="null">{{ 'QUOTATION_PAGE.CREATE.SELECT_PAYMENT_METHOD' | translate }}</option>
+              <option [ngValue]="null">{{ 'REQUEST_PAGE.CREATE.SELECT_PAYMENT_METHOD' | translate }}</option>
               <option *ngFor="let item of paymentMethodLookups" [ngValue]="item.id">{{ getLookupDisplayName(item) }}</option>
             </select>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['paymentMethod'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['paymentMethod'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.REGION' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.REGION' | translate }} <span class="text-danger">*</span></label>
             <ng-select
               [items]="regionLookups"
               bindLabel="displayName"
               bindValue="id"
               [searchable]="true"
               [clearable]="true"
-              [placeholder]="'QUOTATION_PAGE.CREATE.SEARCH_REGION' | translate"
+              [placeholder]="'REQUEST_PAGE.CREATE.SEARCH_REGION' | translate"
               formControlName="regionId">
               <ng-template ng-option-tmp let-item="item">
                 {{ getLookupDisplayName(item) }}
@@ -82,18 +82,18 @@
                 {{ getLookupDisplayName(item) }}
               </ng-template>
             </ng-select>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['regionId'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['regionId'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.CITY' | translate }} <span class="text-danger">*</span></label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.CITY' | translate }} <span class="text-danger">*</span></label>
             <ng-select
               [items]="cityLookups"
               bindLabel="displayName"
               bindValue="id"
               [searchable]="true"
               [clearable]="true"
-              [placeholder]="'QUOTATION_PAGE.CREATE.SEARCH_CITY' | translate"
+              [placeholder]="'REQUEST_PAGE.CREATE.SEARCH_CITY' | translate"
               formControlName="cityId">
               <ng-template ng-option-tmp let-item="item">
                 {{ getLookupDisplayName(item) }}
@@ -102,22 +102,22 @@
                 {{ getLookupDisplayName(item) }}
               </ng-template>
             </ng-select>
-            <div class="invalid-feedback d-block" *ngIf="submitted && form['cityId'].errors">{{ 'QUOTATION_PAGE.CREATE.REQUIRED' | translate }}</div>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['cityId'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.USER_ID_OPTIONAL' | translate }}</label>
-            <input class="form-control" type="text" formControlName="userId" [placeholder]="'QUOTATION_PAGE.CREATE.USER_ID_PLACEHOLDER' | translate">
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.USER_ID_OPTIONAL' | translate }}</label>
+            <input class="form-control" type="text" formControlName="userId" [placeholder]="'REQUEST_PAGE.CREATE.USER_ID_PLACEHOLDER' | translate">
           </div>
 
           <div class="col-12">
-            <label class="form-label">{{ 'QUOTATION_PAGE.CREATE.NOTES' | translate }}</label>
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.NOTES' | translate }}</label>
             <textarea rows="3" class="form-control" formControlName="notes"></textarea>
           </div>
 
           <div class="col-12">
-            <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="createQuotation()">
-              {{ isSubmitting ? ('QUOTATION_PAGE.CREATE.SAVING' | translate) : ('QUOTATION_PAGE.CREATE.SUBMIT' | translate) }}
+            <button class="btn btn-success" type="button" [disabled]="isSubmitting" (click)="createRequest()">
+              {{ isSubmitting ? ('REQUEST_PAGE.CREATE.SAVING' | translate) : ('REQUEST_PAGE.CREATE.SUBMIT' | translate) }}
             </button>
           </div>
         </form>
@@ -130,24 +130,24 @@
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header border-bottom-dashed">
-        <h5 class="card-title mb-0">{{ 'QUOTATION_PAGE.TRACK.TIMELINE_TITLE' | translate }}</h5>
+        <h5 class="card-title mb-0">{{ 'REQUEST_PAGE.TRACK.TIMELINE_TITLE' | translate }}</h5>
       </div>
       <div class="card-body border-bottom-dashed border-bottom">
         <div class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label class="form-label">{{ 'QUOTATION_PAGE.TRACK.QUOTATION_ID' | translate }}</label>
+            <label class="form-label">{{ 'REQUEST_PAGE.TRACK.REQUEST_ID' | translate }}</label>
             <div class="input-group">
               <span class="input-group-text"><i class="ri-hashtag"></i></span>
               <input
                 type="number"
                 class="form-control"
-                [placeholder]="'QUOTATION_PAGE.TRACK.ENTER_ID' | translate"
-                [(ngModel)]="trackQuotationId">
+                [placeholder]="'REQUEST_PAGE.TRACK.ENTER_ID' | translate"
+                [(ngModel)]="trackRequestId">
             </div>
           </div>
           <div class="col-md-3">
-            <button type="button" class="btn btn-primary w-100" [disabled]="isTracking" (click)="trackByQuotationId()">
-              <span *ngIf="!isTracking"><i class="ri-search-line me-1"></i> {{ 'QUOTATION_PAGE.TRACK.TRACK_BTN' | translate }}</span>
+            <button type="button" class="btn btn-primary w-100" [disabled]="isTracking" (click)="trackByRequestId()">
+              <span *ngIf="!isTracking"><i class="ri-search-line me-1"></i> {{ 'REQUEST_PAGE.TRACK.TRACK_BTN' | translate }}</span>
               <span *ngIf="isTracking" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             </button>
           </div>
@@ -155,52 +155,57 @@
       </div>
     </div>
 
-    <div *ngIf="trackedQuotation" class="card">
+    <div *ngIf="trackedRequest" class="card">
       <div class="card-header border-bottom-dashed d-flex justify-content-between align-items-center">
         <div>
-          <h5 class="card-title mb-0">Quotation #{{ trackedQuotation.id }}</h5>
-          <small class="text-muted">{{ trackedQuotation.email }}</small>
+          <h5 class="card-title mb-0">Request #{{ trackedRequest.id }}</h5>
+          <small class="text-muted">{{ trackedRequest.email }}</small>
         </div>
-        <span [class]="getQuotationStatusBadgeClass(trackedQuotation.currentStatus)" class="track-current-status-badge">
-          <i [class]="getQuotationStatusIcon(trackedQuotation.currentStatus) + ' align-bottom me-1'"></i>
-          {{ getQuotationStatusLabel(trackedQuotation.currentStatus) }}
+        <span [class]="getRequestStatusBadgeClass(trackedRequest.currentStatus)" class="track-current-status-badge">
+          <i [class]="getRequestStatusIcon(trackedRequest.currentStatus) + ' align-bottom me-1'"></i>
+          {{ getRequestStatusValueWithNames(trackedRequest.currentStatus, trackedRequest.currentStatusNameAr, trackedRequest.currentStatusNameEn) }}
         </span>
       </div>
       <div class="card-body">
       </div>
     </div>
 
-    <div *ngIf="trackedQuotation" class="card">
+    <div *ngIf="trackedRequest" class="card">
       <div class="card-header border-bottom-dashed">
-        <h5 class="card-title mb-0">{{ 'QUOTATION_PAGE.TRACK.TIMELINE' | translate }}</h5>
+        <h5 class="card-title mb-0">{{ 'REQUEST_PAGE.TRACK.TIMELINE' | translate }}</h5>
       </div>
       <div class="card-body">
         <div class="acitivity-timeline acitivity-main">
           <div class="acitivity-item d-flex" *ngFor="let item of trackedTimeline">
             <div class="flex-shrink-0 avatar-xs acitivity-avatar">
-              <div class="avatar-title rounded-circle" [ngClass]="getQuotationStatusBadgeClass(item.status).replace('badge ', '')">
-                <i [class]="getQuotationStatusIcon(item.status)"></i>
+              <div class="avatar-title rounded-circle" [ngClass]="getRequestStatusToneClass(item.status)">
+                <i [class]="getRequestStatusIcon(item.status)"></i>
               </div>
             </div>
-            <div class="flex-grow-1 quotation-track-timeline-content">
-              <h6 class="mb-1 lh-base">{{ getQuotationStatusLabel(item.status) }}</h6>
-              <p class="text-muted mb-1">{{ item.notes || ('QUOTATION_PAGE.TRACK.STATUS_UPDATED' | translate) }}</p>
+            <div class="flex-grow-1 request-track-timeline-content">
+              <div class="mb-2">
+                <span [class]="getRequestStatusBadgeClass(item.status)">
+                  <i [class]="getRequestStatusIcon(item.status) + ' align-bottom me-1'"></i>
+                  {{ getRequestStatusValueWithNames(item.status) }}
+                </span>
+              </div>
+              <p class="text-muted mb-1">{{ item.notes || ('REQUEST_PAGE.TRACK.STATUS_UPDATED' | translate) }}</p>
               <small class="mb-0 text-muted">{{ getTimelineStatusTime(item.statusDate) }}</small>
             </div>
           </div>
         </div>
 
         <div *ngIf="trackedTimeline.length === 0" class="text-center text-muted py-3">
-          {{ 'QUOTATION_PAGE.TRACK.NO_TIMELINE' | translate }}
+          {{ 'REQUEST_PAGE.TRACK.NO_TIMELINE' | translate }}
         </div>
       </div>
     </div>
 
-    <div *ngIf="!isTracking && !trackedQuotation" class="card">
+    <div *ngIf="!isTracking && !trackedRequest" class="card">
       <div class="card-body text-center py-5">
         <i class="ri-search-eye-line display-5 text-muted mb-3 d-inline-block"></i>
-        <h6 class="mb-1">{{ 'QUOTATION_PAGE.TRACK.EMPTY_TITLE' | translate }}</h6>
-        <p class="text-muted mb-0">{{ 'QUOTATION_PAGE.TRACK.EMPTY_DESC' | translate }}</p>
+        <h6 class="mb-1">{{ 'REQUEST_PAGE.TRACK.EMPTY_TITLE' | translate }}</h6>
+        <p class="text-muted mb-0">{{ 'REQUEST_PAGE.TRACK.EMPTY_DESC' | translate }}</p>
       </div>
     </div>
   </div>
@@ -214,15 +219,15 @@
           <div class="col-lg-4">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-search-line"></i></span>
-              <input type="text" class="form-control" [placeholder]="'QUOTATION_PAGE.LIST.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
+              <input type="text" class="form-control" [placeholder]="'REQUEST_PAGE.LIST.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()">
             </div>
           </div>
           <div class="col-lg-2">
             <div class="input-group">
               <span class="input-group-text"><i class="ri-toggle-line"></i></span>
               <select class="form-select" [ngModel]="selectedStatusFilter" (ngModelChange)="onStatusFilterChange($event)">
-                <option [ngValue]="null">{{ 'QUOTATION_PAGE.LIST.ALL_STATUS' | translate }}</option>
-                <option *ngFor="let status of quotationStatusLookups" [ngValue]="status.id">
+                <option [ngValue]="null">{{ 'REQUEST_PAGE.LIST.ALL_STATUS' | translate }}</option>
+                <option *ngFor="let status of requestStatusLookups" [ngValue]="status.id">
                   {{ getLookupDisplayName(status) }}
                 </option>
               </select>
@@ -236,7 +241,7 @@
                 class="form-control"
                 [(ngModel)]="createdFromDate"
                 (ngModelChange)="onDateFilterChange()"
-                [placeholder]="'QUOTATION_PAGE.LIST.FROM' | translate">
+                [placeholder]="'REQUEST_PAGE.LIST.FROM' | translate">
             </div>
           </div>
           <div class="col-lg-2">
@@ -247,17 +252,17 @@
                 class="form-control"
                 [(ngModel)]="createdToDate"
                 (ngModelChange)="onDateFilterChange()"
-                [placeholder]="'QUOTATION_PAGE.LIST.TO' | translate">
+                [placeholder]="'REQUEST_PAGE.LIST.TO' | translate">
             </div>
           </div>
           <div class="col-lg-2">
             <button type="button" class="btn btn-soft-secondary w-100" (click)="clearSearch()">
-              <i class="ri-filter-off-line mx-2 align-bottom"></i> {{ 'QUOTATION_PAGE.LIST.CLEAR_FILTER' | translate }}
+              <i class="ri-filter-off-line mx-2 align-bottom"></i> {{ 'REQUEST_PAGE.LIST.CLEAR_FILTER' | translate }}
             </button>
           </div>
           <div class="col-lg-2">
-            <a *appHasPermission="'quotations.create'" class="btn btn-primary w-100" routerLink="/admin/quotation/create">
-              <i class="ri-add-circle-line me-1 align-bottom"></i> {{ 'QUOTATION_PAGE.LIST.CREATE_QUOTATION' | translate }}
+            <a *appHasPermission="'requests.create'" class="btn btn-primary w-100" routerLink="/admin/request/create">
+              <i class="ri-add-circle-line me-1 align-bottom"></i> {{ 'REQUEST_PAGE.LIST.CREATE_REQUEST' | translate }}
             </a>
           </div>
         </div>
@@ -270,8 +275,8 @@
       </div>
     </div>
 
-    <div *ngIf="!isLoading && filteredQuotations.length === 0" class="text-center py-5">
-      <div class="quotation-empty-animation">
+    <div *ngIf="!isLoading && filteredRequests.length === 0" class="text-center py-5">
+      <div class="request-empty-animation">
         <div class="street">
           <div class="lane-markings"></div>
           <div class="car-track">
@@ -281,7 +286,7 @@
       </div>
     </div>
 
-    <div *ngIf="!isLoading && filteredQuotations.length > 0" class="card">
+    <div *ngIf="!isLoading && filteredRequests.length > 0" class="card">
       <div class="card-body">
         <div class="table-responsive">
           <table class="table align-middle table-nowrap table-hover mb-0">
@@ -289,23 +294,23 @@
               <tr>
                 <th>
                   <button type="button" class="btn btn-sm btn-ghost-dark p-0" (click)="toggleIdSort()">
-                    {{ 'QUOTATION_PAGE.LIST.ID' | translate }} <i [class]="idSortDirection === 'asc' ? 'ri-sort-asc align-bottom' : 'ri-sort-desc align-bottom'"></i>
+                    {{ 'REQUEST_PAGE.LIST.ID' | translate }} <i [class]="idSortDirection === 'asc' ? 'ri-sort-asc align-bottom' : 'ri-sort-desc align-bottom'"></i>
                   </button>
                 </th>
-                <th>{{ 'QUOTATION_PAGE.LIST.NAME' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.EMAIL' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.MOBILE' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.CAR' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.OWNER_TYPE' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.CURRENT_STATUS' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.STATUS_DATE' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.STATUS' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.MORE' | translate }}</th>
-                <th>{{ 'QUOTATION_PAGE.LIST.CREATED' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.NAME' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.EMAIL' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.MOBILE' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.CAR' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.OWNER_TYPE' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.CURRENT_STATUS' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.STATUS_DATE' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.STATUS' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.MORE' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.CREATED' | translate }}</th>
               </tr>
             </thead>
             <tbody>
-              @for (item of pagedQuotations; track item.id) {
+              @for (item of pagedRequests; track item.id) {
               <tr>
                 <td>{{ item.id }}</td>
                 <td>{{ item.name }}</td>
@@ -314,28 +319,28 @@
                 <td>{{ getCarName(item.carId) }}</td>
                 <td>{{ getLookupLabel(vehicleOwnerTypeLookups, item.vehicleOwnerType) }}</td>
                 <td>
-                  <span [class]="getQuotationStatusBadgeClass(item.currentStatus)">
-                    <i [class]="getQuotationStatusIcon(item.currentStatus) + ' align-bottom me-1'"></i>
-                    {{ getQuotationStatusLabel(item.currentStatus) }}
+                  <span [class]="getRequestStatusBadgeClass(item.currentStatus)">
+                    <i [class]="getRequestStatusIcon(item.currentStatus) + ' align-bottom me-1'"></i>
+                    {{ getRequestStatusValueWithNames(item.currentStatus, item.currentStatusNameAr, item.currentStatusNameEn) }}
                   </span>
                 </td>
                 <td>{{ item.currentStatusDate ? (item.currentStatusDate | date: 'yyyy-MM-dd HH:mm') : '-' }}</td>
                 <td>
                   <div ngbDropdown container="body" class="d-inline-block">
                     <button class="btn btn-sm btn-soft-primary" ngbDropdownToggle>
-                      <span *ngIf="!isStatusUpdating(item.id)">{{ 'QUOTATION_PAGE.LIST.CHANGE_STATUS' | translate }}</span>
+                      <span *ngIf="!isStatusUpdating(item.id)">{{ 'REQUEST_PAGE.LIST.CHANGE_STATUS' | translate }}</span>
                       <span *ngIf="isStatusUpdating(item.id)" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
                     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
-                      <h6 class="dropdown-header">{{ 'QUOTATION_PAGE.LIST.CURRENT' | translate }}: {{ getQuotationStatusLabel(item.currentStatus) }}</h6>
+                      <h6 class="dropdown-header">{{ 'REQUEST_PAGE.LIST.CURRENT' | translate }}: {{ getRequestStatusValueWithNames(item.currentStatus, item.currentStatusNameAr, item.currentStatusNameEn) }}</h6>
                       <button
                         ngbDropdownItem
                         type="button"
-                        *ngFor="let status of quotationStatusLookups"
+                        *ngFor="let status of requestStatusLookups"
                         [disabled]="status.id === item.currentStatus || isStatusUpdating(item.id)"
-                        (click)="updateQuotationStatus(item, status.id)">
-                        <span [class]="getQuotationStatusBadgeClass(status.id)">
-                          <i [class]="getQuotationStatusIcon(status.id) + ' align-bottom me-1'"></i>
+                        (click)="updateRequestStatus(item, status.id)">
+                        <span [class]="getRequestStatusBadgeClass(status.id)">
+                          <i [class]="getRequestStatusIcon(status.id) + ' align-bottom me-1'"></i>
                           {{ getLookupDisplayName(status) }}
                         </span>
                       </button>
@@ -344,10 +349,10 @@
                 </td>
                 <td>
                   <button type="button" class="btn btn-sm btn-soft-primary me-1" (click)="openCarInfoModal(item)">
-                    <i class="ri-car-line align-bottom me-1"></i> {{ 'QUOTATION_PAGE.LIST.CAR_INFO_BTN' | translate }}
+                    <i class="ri-car-line align-bottom me-1"></i> {{ 'REQUEST_PAGE.LIST.CAR_INFO_BTN' | translate }}
                   </button>
                   <button type="button" class="btn btn-sm btn-soft-info" (click)="openMoreInfoModal(item)">
-                    <i class="ri-more-2-fill align-bottom me-1"></i> {{ 'QUOTATION_PAGE.LIST.MORE_BTN' | translate }}
+                    <i class="ri-more-2-fill align-bottom me-1"></i> {{ 'REQUEST_PAGE.LIST.MORE_BTN' | translate }}
                   </button>
                 </td>
                 <td>{{ item.createdAt | date: 'short' }}</td>
@@ -360,13 +365,13 @@
         <div class="row justify-content-md-between align-items-md-center mt-3">
           <div class="col col-sm-6">
             <div class="dataTables_info mb-2">
-              {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredQuotations.length) } }}
+              {{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: (service.startIndex), end: (service.endIndex), total: (filteredRequests.length) } }}
             </div>
           </div>
           <div class="col col-sm-6">
             <div class="text-sm-right float-sm-end listjs-pagination">
               <ngb-pagination
-                [collectionSize]="filteredQuotations.length"
+                [collectionSize]="filteredRequests.length"
                 [(page)]="service.page"
                 [pageSize]="service.pageSize"
                 (pageChange)="onPageChange($event)">
@@ -387,9 +392,9 @@
       </span>
     </div>
     <div>
-      <div class="fw-semibold mb-1">New quotation received</div>
+      <div class="fw-semibold mb-1">New request received</div>
       <div class="text-muted small">
-        #{{ latestRealtimeQuotation?.id }} - {{ latestRealtimeQuotation?.name || 'Unknown Customer' }}
+        #{{ latestRealtimeRequest?.id }} - {{ latestRealtimeRequest?.name || 'Unknown Customer' }}
       </div>
     </div>
   </div>
@@ -403,59 +408,59 @@
       </span>
     </div>
     <div>
-      <div class="fw-semibold mb-1">Quotation status updated</div>
+      <div class="fw-semibold mb-1">Request status updated</div>
       <div class="text-muted small">
-        #{{ latestRealtimeStatusQuotation?.id }} | {{ latestRealtimeStatusQuotation?.email || '-' }}
+        #{{ latestRealtimeStatusRequest?.id }} | {{ latestRealtimeStatusRequest?.email || '-' }}
       </div>
       <div class="text-muted small">
-        <span [class]="getQuotationStatusBadgeClass(latestRealtimeStatusQuotation?.currentStatus)">
-          <i [class]="getQuotationStatusIcon(latestRealtimeStatusQuotation?.currentStatus) + ' align-bottom me-1'"></i>
-          {{ getQuotationStatusLabel(latestRealtimeStatusQuotation?.currentStatus) }}
+        <span [class]="getRequestStatusBadgeClass(latestRealtimeStatusRequest?.currentStatus)">
+          <i [class]="getRequestStatusIcon(latestRealtimeStatusRequest?.currentStatus) + ' align-bottom me-1'"></i>
+          {{ getRequestStatusLabel(latestRealtimeStatusRequest?.currentStatus) }}
         </span>
       </div>
     </div>
   </div>
 </ng-template>
 
-<div *ngIf="showMoreInfoModal && selectedQuotationForMore" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+<div *ngIf="showMoreInfoModal && selectedRequestForMore" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-info-subtle border-bottom">
         <h5 class="modal-title mb-0">
           <i class="ri-file-list-3-line me-1 text-info"></i>
-          {{ 'QUOTATION_PAGE.LIST.INFO_MODAL.TITLE' | translate:{ id: selectedQuotationForMore.id } }}
+          {{ 'REQUEST_PAGE.LIST.INFO_MODAL.TITLE' | translate:{ id: selectedRequestForMore.id } }}
         </h5>
-        <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate" (click)="closeMoreInfoModal()"></button>
+        <button type="button" class="btn-close" [attr.aria-label]="'REQUEST_PAGE.LIST.INFO_MODAL.CLOSE' | translate" (click)="closeMoreInfoModal()"></button>
       </div>
-      <div class="modal-body quotation-more-info-body">
+      <div class="modal-body request-more-info-body">
         <div class="vstack gap-3">
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-bank-card-line text-primary"></i>
-              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.PAYMENT' | translate }}</span>
+              <span class="fw-semibold">{{ 'REQUEST_PAGE.LIST.INFO_MODAL.PAYMENT' | translate }}</span>
             </div>
-            <div class="text-muted">{{ getLookupLabel(paymentMethodLookups, selectedQuotationForMore.paymentMethod) }}</div>
+            <div class="text-muted">{{ getLookupLabel(paymentMethodLookups, selectedRequestForMore.paymentMethod) }}</div>
           </div>
 
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-map-pin-2-line text-warning"></i>
-              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.REGION' | translate }}</span>
+              <span class="fw-semibold">{{ 'REQUEST_PAGE.LIST.INFO_MODAL.REGION' | translate }}</span>
             </div>
-            <div class="text-muted">{{ getLookupLabel(regionLookups, selectedQuotationForMore.regionId) }}</div>
+            <div class="text-muted">{{ getLookupLabel(regionLookups, selectedRequestForMore.regionId) }}</div>
           </div>
 
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="ri-community-line text-success"></i>
-              <span class="fw-semibold">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.CITY' | translate }}</span>
+              <span class="fw-semibold">{{ 'REQUEST_PAGE.LIST.INFO_MODAL.CITY' | translate }}</span>
             </div>
-            <div class="text-muted">{{ getLookupLabel(cityLookups, selectedQuotationForMore.cityId) }}</div>
+            <div class="text-muted">{{ getLookupLabel(cityLookups, selectedRequestForMore.cityId) }}</div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeMoreInfoModal()">{{ 'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate }}</button>
+        <button type="button" class="btn btn-light" (click)="closeMoreInfoModal()">{{ 'REQUEST_PAGE.LIST.INFO_MODAL.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>
@@ -468,11 +473,11 @@
       <div class="modal-header bg-primary-subtle border-bottom">
         <h5 class="modal-title mb-0">
           <i class="ri-car-line me-1 text-primary"></i>
-          {{ getLocalizedText(selectedCarForInfo?.nameAr, selectedCarForInfo?.nameEn) }} - {{ 'QUOTATION_PAGE.LIST.QUOTATION_NO' | translate }} #{{ selectedQuotationForCarInfo?.id || 0 }}
+          {{ getLocalizedText(selectedCarForInfo?.nameAr, selectedCarForInfo?.nameEn) }} - {{ 'REQUEST_PAGE.LIST.REQUEST_NO' | translate }} #{{ selectedRequestForCarInfo?.id || 0 }}
         </h5>
-        <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
+        <button type="button" class="btn-close" [attr.aria-label]="'REQUEST_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
       </div>
-      <div class="modal-body quotation-car-info-body">
+      <div class="modal-body request-car-info-body">
         <div *ngIf="isCarInfoLoading" class="text-center py-5">
           <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">{{ 'COMMON.LOADING' | translate }}</span>
@@ -749,7 +754,7 @@
         </ng-template>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">{{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate }}</button>
+        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">{{ 'REQUEST_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate }}</button>
       </div>
     </div>
   </div>

@@ -7,9 +7,9 @@ import { TokenStorageService } from 'src/app/core/services/token-storage.service
 @Injectable({
   providedIn: 'root'
 })
-export class QuotationRealtimeService {
+export class RequestRealtimeService {
   private connection: HubConnection | null = null;
-  private readonly hubUrl = `${GlobalComponent.API_URL}/hubs/quotations`;
+  private readonly hubUrl = `${GlobalComponent.API_URL}/hubs/requests`;
 
   constructor(
     private authService: MyAuthService,
@@ -17,19 +17,19 @@ export class QuotationRealtimeService {
   ) {}
 
   async start(
-    onQuotationCreated: (payload: any) => void,
-    onQuotationStatusUpdated?: (payload: any) => void
+    onRequestCreated: (payload: any) => void,
+    onRequestStatusUpdated?: (payload: any) => void
   ): Promise<void> {
     if (this.connection && this.connection.state !== HubConnectionState.Disconnected) {
       return;
     }
 
     this.connection = this.buildConnection(true);
-    this.connection.off('quotationCreated');
-    this.connection.off('quotationStatusUpdated');
-    this.connection.on('quotationCreated', onQuotationCreated);
-    if (onQuotationStatusUpdated) {
-      this.connection.on('quotationStatusUpdated', onQuotationStatusUpdated);
+    this.connection.off('requestCreated');
+    this.connection.off('requestStatusUpdated');
+    this.connection.on('requestCreated', onRequestCreated);
+    if (onRequestStatusUpdated) {
+      this.connection.on('requestStatusUpdated', onRequestStatusUpdated);
     }
 
     try {
@@ -37,11 +37,11 @@ export class QuotationRealtimeService {
     } catch {
       await this.connection.stop();
       this.connection = this.buildConnection(false);
-      this.connection.off('quotationCreated');
-      this.connection.off('quotationStatusUpdated');
-      this.connection.on('quotationCreated', onQuotationCreated);
-      if (onQuotationStatusUpdated) {
-        this.connection.on('quotationStatusUpdated', onQuotationStatusUpdated);
+      this.connection.off('requestCreated');
+      this.connection.off('requestStatusUpdated');
+      this.connection.on('requestCreated', onRequestCreated);
+      if (onRequestStatusUpdated) {
+        this.connection.on('requestStatusUpdated', onRequestStatusUpdated);
       }
       await this.connection.start();
     }

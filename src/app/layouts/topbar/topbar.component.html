@@ -238,7 +238,7 @@
                                 <h6 class="fs-16 fw-semibold lh-base mb-0">Hey! You have no any notifications</h6>
                               </div>
                             } @else {
-                              @for (item of quotationNotifications; track item.id) {
+                              @for (item of requestNotifications; track item.id) {
                                 <div class="text-reset notification-item d-block dropdown-item">
                                   <div class="d-flex">
                                     <div class="avatar-xs me-3">
@@ -256,7 +256,7 @@
                                       }
                                     </div>
                                     <div class="flex-grow-1">
-                                      <h6 class="mt-0 mb-1 fs-13 fw-semibold">Quotation #{{ item.id }}</h6>
+                                      <h6 class="mt-0 mb-1 fs-13 fw-semibold">Request #{{ item.id }}</h6>
                                       <div class="fs-13 text-muted mb-1">{{ item.carName }}</div>
                                       <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
                                         <span><i class="mdi mdi-clock-outline"></i> {{ item.createdDate | date:'medium' }}</span>

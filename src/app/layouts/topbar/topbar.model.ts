@@ -6,15 +6,15 @@ export interface CartModel {
     price: any;
   }
 
-export interface QuotationNotificationItem {
+export interface RequestNotificationItem {
   id: number;
   carName: string;
   carImageUrl?: string | null;
   createdDate: string;
 }
 
-export interface QuotationNotificationsResponse {
+export interface RequestNotificationsResponse {
   count: number;
-  items: QuotationNotificationItem[];
+  items: RequestNotificationItem[];
 }
   

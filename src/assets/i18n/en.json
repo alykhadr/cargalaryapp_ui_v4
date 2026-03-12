@@ -423,11 +423,11 @@
         }
       }
     },
-    "QUOTATION": {
-      "TEXT": "Quotation",
+    "REQUEST": {
+      "TEXT": "Request",
       "LIST": {
-        "QUOTATIONS": "Quotations",
-        "TRACK": "Track Quotation",
+        "REQUESTS": "Requests",
+        "TRACK": "Track Request",
         "USERS": "Users"
       }
     },
@@ -469,9 +469,9 @@
       }
     }
   },
-  "QUOTATION_PAGE": {
+  "REQUEST_PAGE": {
     "CREATE": {
-      "PAGE_TITLE": "Create Quotation",
+      "PAGE_TITLE": "Create Request",
       "BACK_TO_LIST": "Back To List",
       "VEHICLE_OWNER_TYPE": "Vehicle Owner Type",
       "SELECT_TYPE": "Select type",
@@ -492,29 +492,29 @@
       "REQUIRED": "Required",
       "VALID_EMAIL": "Valid email required",
       "SAVING": "Saving...",
-      "SUBMIT": "Create Quotation"
+      "SUBMIT": "Create Request"
     },
     "TRACK": {
-      "TIMELINE_TITLE": "Track Quotation Timeline",
-      "QUOTATION_ID": "Quotation ID",
-      "ENTER_ID": "Enter quotation id",
+      "TIMELINE_TITLE": "Track Request Timeline",
+      "REQUEST_ID": "Request ID",
+      "ENTER_ID": "Enter request id",
       "TRACK_BTN": "Track",
       "TIMELINE": "Timeline",
       "STATUS_UPDATED": "Status updated",
-      "NO_TIMELINE": "No timeline records found for this quotation.",
+      "NO_TIMELINE": "No timeline records found for this request.",
       "EMPTY_TITLE": "No tracking search yet",
-      "EMPTY_DESC": "Enter quotation ID and click Track to view details."
+      "EMPTY_DESC": "Enter request ID and click Track to view details."
     },
     "LIST": {
-      "PAGE_TITLE": "Quotations",
+      "PAGE_TITLE": "Requests",
       "SEARCH_PLACEHOLDER": "Search by name, email, mobile or id...",
       "ALL_STATUS": "All Status",
       "FROM": "From",
       "TO": "To",
       "CLEAR_FILTER": "Clear Filter",
-      "CREATE_QUOTATION": "Create Quotation",
+      "CREATE_REQUEST": "Create Request",
       "ID": "ID",
-      "QUOTATION_NO": "Quotation No.",
+      "REQUEST_NO": "Request No.",
       "NAME": "Name",
       "EMAIL": "Email",
       "MOBILE": "Mobile",
@@ -530,7 +530,7 @@
       "CAR_INFO_BTN": "Car Info",
       "MORE_BTN": "More..",
       "INFO_MODAL": {
-        "TITLE": "Quotation #{{id}} Details",
+        "TITLE": "Request #{{id}} Details",
         "PAYMENT": "Payment",
         "REGION": "Region",
         "CITY": "City",

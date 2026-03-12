@@ -15,7 +15,7 @@ import { LanguageService } from '../../core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { GlobalComponent } from 'src/app/global-component';
-import { QuotationNotificationItem, QuotationNotificationsResponse } from './topbar.model';
+import { RequestNotificationItem, RequestNotificationsResponse } from './topbar.model';
 
 @Component({
     selector: 'app-topbar',
@@ -27,7 +27,7 @@ export class TopbarComponent implements OnInit {
   element: any;
   mode: string | undefined;
   @Output() mobileMenuButtonClicked = new EventEmitter();
-  quotationNotifications: QuotationNotificationItem[] = [];
+  requestNotifications: RequestNotificationItem[] = [];
   notificationCount = 0;
   isLoadingNotifications = false;
   notificationsLoadFailed = false;
@@ -53,7 +53,7 @@ export class TopbarComponent implements OnInit {
     this.countryName = selected?.text || 'العربية';
     this.flagvalue = selected?.flag || 'assets/images/flags/sa.svg';
 
-    this.loadQuotationNotifications();
+    this.loadRequestNotifications();
   }
 
   /**
@@ -298,28 +298,28 @@ export class TopbarComponent implements OnInit {
     searchInputReponsive.value = "";
   }
 
-  private loadQuotationNotifications() {
+  private loadRequestNotifications() {
     this.isLoadingNotifications = true;
     this.notificationsLoadFailed = false;
-    this.http.get<QuotationNotificationsResponse>(`${GlobalComponent.API_URL}/api/Quotations/notifications`)
+    this.http.get<RequestNotificationsResponse>(`${GlobalComponent.API_URL}/api/Requests/notifications`)
       .pipe(first())
       .subscribe({
         next: (response) => {
           this.notificationCount = response?.count ?? 0;
-          this.quotationNotifications = response?.items ?? [];
+          this.requestNotifications = response?.items ?? [];
           this.isLoadingNotifications = false;
           this.notificationsLoadFailed = false;
         },
         error: () => {
           this.notificationCount = 0;
-          this.quotationNotifications = [];
+          this.requestNotifications = [];
           this.isLoadingNotifications = false;
           this.notificationsLoadFailed = true;
         }
       });
   }
 
-  getNotificationCarImageUrl(item: QuotationNotificationItem): string | null {
+  getNotificationCarImageUrl(item: RequestNotificationItem): string | null {
     const raw = item?.carImageUrl?.trim();
     if (!raw) return null;
     if (/^https?:\/\//i.test(raw) || raw.startsWith('data:')) return raw;

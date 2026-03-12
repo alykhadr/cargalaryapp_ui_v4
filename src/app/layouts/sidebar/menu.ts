@@ -14,34 +14,34 @@ export const MENU: MenuItem[] = [
   },
   {
     id: 1989,
-    label: 'MENUITEMS.QUOTATION.TEXT',
+    label: 'MENUITEMS.REQUEST.TEXT',
     isTitle: true,
-    permission: 'quotations.view'
+    permission: 'requests.view'
   },
   {
     id: 1990,
-    label: 'MENUITEMS.QUOTATION.TEXT',
+    label: 'MENUITEMS.REQUEST.TEXT',
     icon: 'ri-file-list-3-line',
     isCollapsed: true,
-    permission: 'quotations.view',
+    permission: 'requests.view',
     subItems: [
       {
         id: 1991,
-        label: 'MENUITEMS.QUOTATION.LIST.QUOTATIONS',
-        link: '/admin/quotation/list',
-        permission: 'quotations.view'
+        label: 'MENUITEMS.REQUEST.LIST.REQUESTS',
+        link: '/admin/request/list',
+        permission: 'requests.view'
       },
       {
         id: 1993,
-        label: 'MENUITEMS.QUOTATION.LIST.TRACK',
-        link: '/admin/quotation/track',
-        permission: 'quotations.view'
+        label: 'MENUITEMS.REQUEST.LIST.TRACK',
+        link: '/admin/request/track',
+        permission: 'requests.view'
       },
       {
         id: 1994,
-        label: 'MENUITEMS.QUOTATION.LIST.USERS',
-        link: '/admin/quotation/users',
-        permission: 'quotations.view'
+        label: 'MENUITEMS.REQUEST.LIST.USERS',
+        link: '/admin/request/users',
+        permission: 'requests.view'
       }
     ]
   },

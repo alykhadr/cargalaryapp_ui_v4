@@ -41,8 +41,8 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.QUOTATION.TEXT') },
-      { label: this.translate.instant('MENUITEMS.QUOTATION.LIST.USERS'), active: true }
+      { label: this.translate.instant('MENUITEMS.REQUEST.TEXT') },
+      { label: this.translate.instant('MENUITEMS.REQUEST.LIST.USERS'), active: true }
     ];
     this.loadUsers();
     this.loadBranches();

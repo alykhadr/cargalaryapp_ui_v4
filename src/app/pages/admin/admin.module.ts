@@ -32,10 +32,10 @@ import { CarsListPageComponent } from './cars-list-page/cars-list-page.component
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { DepartmentsComponent } from './departments/departments.component';
-import { QuotationComponent } from './quotation/quotation.component';
-import { QuotationListPageComponent } from './quotation-list-page/quotation-list-page.component';
-import { QuotationCreatePageComponent } from './quotation-create-page/quotation-create-page.component';
-import { QuotationTrackPageComponent } from './quotation-track-page/quotation-track-page.component';
+import { RequestComponent } from './request/request.component';
+import { RequestListPageComponent } from './request-list-page/request-list-page.component';
+import { RequestCreatePageComponent } from './request-create-page/request-create-page.component';
+import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
 import { UsersComponent } from './users/users.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
@@ -85,10 +85,10 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CarsListPageComponent,
     EmployeeListPageComponent,
     DepartmentsComponent,
-    QuotationComponent,
-    QuotationListPageComponent,
-    QuotationCreatePageComponent,
-    QuotationTrackPageComponent,
+    RequestComponent,
+    RequestListPageComponent,
+    RequestCreatePageComponent,
+    RequestTrackPageComponent,
     UsersComponent,
     CarByIdPipe
   ],
