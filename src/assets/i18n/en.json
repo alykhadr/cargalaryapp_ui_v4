@@ -434,6 +434,15 @@
     "CARS_MANAGEMENT": {
       "TEXT": "Cars Management"
     },
+    "EMPLOYEE_MANAGEMENT": {
+      "TEXT": "Employee Management"
+    },
+    "CONTACT_INFO": {
+      "TEXT": "Contact Info"
+    },
+    "OFFERS_MENU": {
+      "TEXT": "Offers"
+    },
     "ADMIN": {
       "TEXT": "Admin",
       "LIST": {

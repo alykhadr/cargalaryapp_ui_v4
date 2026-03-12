@@ -434,6 +434,15 @@
     "CARS_MANAGEMENT": {
       "TEXT": "إدارة السيارات"
     },
+    "EMPLOYEE_MANAGEMENT": {
+      "TEXT": "إدارة الموظفين"
+    },
+    "CONTACT_INFO": {
+      "TEXT": "معلومات التواصل"
+    },
+    "OFFERS_MENU": {
+      "TEXT": "العروض"
+    },
     "ADMIN": {
       "TEXT": "ادارة الموظفين",
       "LIST": {
