@@ -86,6 +86,39 @@ export const MENU: MenuItem[] = [
     permission: 'employees.view'
   },
   {
+    id: 188,
+    label: 'MENUITEMS.ADMIN.LIST.COMPANYINFO',
+    link: '/admin/company-info',
+    icon: 'ri-information-line',
+    permission: 'companyinfo.view'
+  },
+  {
+    id: 189,
+    label: 'MENUITEMS.ADMIN.LIST.CONTACTSALES',
+    link: '/admin/contact-sales',
+    icon: 'ri-customer-service-2-line',
+    permission: 'contactsales.view'
+  },
+  {
+    id: 190,
+    label: 'MENUITEMS.ADMIN.LIST.CONTACTUS',
+    link: '/admin/contact-us',
+    icon: 'ri-contacts-line',
+    permission: 'contactus.view'
+  },
+  {
+    id: 191,
+    label: 'MENUITEMS.ADMIN.LIST.FAQ',
+    link: '/admin/faq',
+    icon: 'ri-questionnaire-line',
+    permission: 'faq.view'
+  },
+  {
+    id: 2000,
+    label: 'MENUITEMS.CARS_MANAGEMENT.TEXT',
+    isTitle: true
+  },
+  {
     id: 185,
     label: 'MENUITEMS.ADMIN.LIST.BRAND',
     link: '/admin/brands',
@@ -147,34 +180,6 @@ export const MENU: MenuItem[] = [
     link: '/admin/offers',
     icon: 'ri-price-tag-3-line',
     permission: 'offers.view'
-  },
-  {
-    id: 188,
-    label: 'MENUITEMS.ADMIN.LIST.COMPANYINFO',
-    link: '/admin/company-info',
-    icon: 'ri-information-line',
-    permission: 'companyinfo.view'
-  },
-  {
-    id: 189,
-    label: 'MENUITEMS.ADMIN.LIST.CONTACTSALES',
-    link: '/admin/contact-sales',
-    icon: 'ri-customer-service-2-line',
-    permission: 'contactsales.view'
-  },
-  {
-    id: 190,
-    label: 'MENUITEMS.ADMIN.LIST.CONTACTUS',
-    link: '/admin/contact-us',
-    icon: 'ri-contacts-line',
-    permission: 'contactus.view'
-  },
-  {
-    id: 191,
-    label: 'MENUITEMS.ADMIN.LIST.FAQ',
-    link: '/admin/faq',
-    icon: 'ri-questionnaire-line',
-    permission: 'faq.view'
   },
   {
     id: 187,

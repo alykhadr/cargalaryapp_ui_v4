@@ -431,6 +431,9 @@
         "USERS": "Users"
       }
     },
+    "CARS_MANAGEMENT": {
+      "TEXT": "Cars Management"
+    },
     "ADMIN": {
       "TEXT": "Admin",
       "LIST": {
