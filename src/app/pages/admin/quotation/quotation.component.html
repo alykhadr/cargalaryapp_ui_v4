@@ -331,6 +331,9 @@
                   </div>
                 </td>
                 <td>
+                  <button type="button" class="btn btn-sm btn-soft-primary me-1" (click)="openCarInfoModal(item)">
+                    <i class="ri-car-line align-bottom me-1"></i> {{ 'QUOTATION_PAGE.LIST.CAR_INFO_BTN' | translate }}
+                  </button>
                   <button type="button" class="btn btn-sm btn-soft-info" (click)="openMoreInfoModal(item)">
                     <i class="ri-more-2-fill align-bottom me-1"></i> {{ 'QUOTATION_PAGE.LIST.MORE_BTN' | translate }}
                   </button>
@@ -446,5 +449,50 @@
   </div>
 </div>
 <div *ngIf="showMoreInfoModal" class="modal-backdrop fade show" (click)="closeMoreInfoModal()"></div>
+
+<div *ngIf="showCarInfoModal && selectedCarForInfo" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary-subtle border-bottom">
+        <h5 class="modal-title mb-0">
+          <i class="ri-car-line me-1 text-primary"></i>
+          {{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.TITLE' | translate:{ id: selectedCarForInfo.id } }}
+        </h5>
+        <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CAR' | translate }}:</strong> {{ selectedCarForInfo.nameEn || selectedCarForInfo.nameAr || ('#' + selectedCarForInfo.id) }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MODEL' | translate }}:</strong> {{ selectedCarForInfo.modelId }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TYPE' | translate }}:</strong> {{ selectedCarForInfo.typeId }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.BRANCH' | translate }}:</strong> {{ selectedCarForInfo.branchId }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.YEAR' | translate }}:</strong> {{ selectedCarForInfo.year }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MILEAGE' | translate }}:</strong> {{ selectedCarForInfo.mileage }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.VAT' | translate }}:</strong> {{ selectedCarForInfo.vat }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CONDITION' | translate }}:</strong> {{ selectedCarForInfo.conditionId }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.SEATING_CAPACITY' | translate }}:</strong> {{ selectedCarForInfo.seatingCapacity }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.WHEEL_SIZE' | translate }}:</strong> {{ selectedCarForInfo.weelSizeInch }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.FUEL_TANK_CAPACITY' | translate }}:</strong> {{ selectedCarForInfo.fuelTankCapacityLiter }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TRIM_LEVEL' | translate }}:</strong> {{ selectedCarForInfo.trimLevel }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.VEHICLE_CLASS' | translate }}:</strong> {{ selectedCarForInfo.vehicleClass }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}:</strong> {{ selectedCarForInfo.transmisionType }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.DRIVETRAIN' | translate }}:</strong> {{ selectedCarForInfo.drivetrain }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.CYLENDERS' | translate }}:</strong> {{ selectedCarForInfo.cylenders }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.FUEL_TYPE' | translate }}:</strong> {{ selectedCarForInfo.fuelType }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.MANUFACTURE_COUNTRY' | translate }}:</strong> {{ selectedCarForInfo.manufactureCountryId }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.ENGINE_NUMBER' | translate }}:</strong> {{ selectedCarForInfo.enginNumber || '-' }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.PLATE_NUMBER_AR' | translate }}:</strong> {{ selectedCarForInfo.plateNumberAr || '-' }}</div>
+          <div class="col-md-6"><strong>{{ 'CARS_PAGE.PLATE_NUMBER_EN' | translate }}:</strong> {{ selectedCarForInfo.plateNumberEn || '-' }}</div>
+          <div class="col-md-12"><strong>{{ 'CARS_PAGE.DESCRIPTION_AR' | translate }}:</strong> {{ selectedCarForInfo.descriptionAr || '-' }}</div>
+          <div class="col-md-12"><strong>{{ 'CARS_PAGE.DESCRIPTION_EN' | translate }}:</strong> {{ selectedCarForInfo.descriptionEn || '-' }}</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="closeCarInfoModal()">{{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showCarInfoModal" class="modal-backdrop fade show" (click)="closeCarInfoModal()"></div>
 
 <app-admin-toasts aria-live="polite" aria-atomic="true"></app-admin-toasts>

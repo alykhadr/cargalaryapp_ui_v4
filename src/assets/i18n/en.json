@@ -526,12 +526,17 @@
       "CREATED": "Created",
       "CHANGE_STATUS": "Change Status",
       "CURRENT": "Current",
+      "CAR_INFO_BTN": "Car Info",
       "MORE_BTN": "More..",
       "INFO_MODAL": {
         "TITLE": "Quotation #{{id}} Details",
         "PAYMENT": "Payment",
         "REGION": "Region",
         "CITY": "City",
+        "CLOSE": "Close"
+      },
+      "CAR_INFO_MODAL": {
+        "TITLE": "Car #{{id}} Details",
         "CLOSE": "Close"
       }
     }

@@ -526,12 +526,17 @@
       "CREATED": "تاريخ الإنشاء",
       "CHANGE_STATUS": "تغيير الحالة",
       "CURRENT": "الحالي",
+      "CAR_INFO_BTN": "معلومات السيارة",
       "MORE_BTN": "المزيد..",
       "INFO_MODAL": {
         "TITLE": "تفاصيل عرض السعر رقم {{id}}",
         "PAYMENT": "الدفع",
         "REGION": "المنطقة",
         "CITY": "المدينة",
+        "CLOSE": "إغلاق"
+      },
+      "CAR_INFO_MODAL": {
+        "TITLE": "تفاصيل السيارة رقم {{id}}",
         "CLOSE": "إغلاق"
       }
     }

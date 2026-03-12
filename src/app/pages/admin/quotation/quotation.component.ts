@@ -54,6 +54,8 @@ export class QuotationComponent implements OnInit, OnDestroy {
   statusUpdatingByQuotationId = new Set<number>();
   showMoreInfoModal = false;
   selectedQuotationForMore: Quotation | null = null;
+  showCarInfoModal = false;
+  selectedCarForInfo: Car | null = null;
   private readonly notificationSoundUrl = 'assets/sounds/quotation-notification.mp3';
   private isSoundUnlocked = false;
   private soundHintShown = false;
@@ -327,6 +329,28 @@ export class QuotationComponent implements OnInit, OnDestroy {
   closeMoreInfoModal() {
     this.showMoreInfoModal = false;
     this.selectedQuotationForMore = null;
+  }
+
+  openCarInfoModal(item: Quotation) {
+    const cachedCar = this.cars.find(c => c.id === item.carId);
+    if (cachedCar) {
+      this.selectedCarForInfo = cachedCar;
+      this.showCarInfoModal = true;
+      return;
+    }
+
+    this.carService.getCarById(item.carId).pipe(first()).subscribe({
+      next: (car) => {
+        this.selectedCarForInfo = car;
+        this.showCarInfoModal = true;
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  closeCarInfoModal() {
+    this.showCarInfoModal = false;
+    this.selectedCarForInfo = null;
   }
 
   private getQuotationStatusCode(statusId?: number): string {
