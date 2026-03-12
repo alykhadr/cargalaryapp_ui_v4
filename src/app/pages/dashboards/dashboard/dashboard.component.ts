@@ -1,12 +1,16 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { ToastService } from './toast-service';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
+import { first } from 'rxjs/operators';
+import { GlobalComponent } from 'src/app/global-component';
+import { PaginationService } from 'src/app/core/services/pagination.service';
 
 import { circle, latLng, tileLayer } from 'leaflet';
 
 import { ChartType } from './dashboard.model';
-import { BestSelling, Recentelling, TopSelling, statData } from 'src/app/core/data';
+import { Recentelling, TopSelling, statData } from 'src/app/core/data';
 
 @Component({
     selector: 'app-dashboard',
@@ -23,7 +27,19 @@ export class DashboardComponent implements OnInit {
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   analyticsChart!: ChartType;
-  BestSelling: any;
+  latestCars: Array<{
+    id: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    createdAt: string;
+    isAvailable: boolean;
+    year?: number;
+    requestsCount: number;
+    totalStock: number;
+  }> = [];
+  latestCarsTotalCount = 0;
+  latestCarsPager = new PaginationService();
+  isLoadingLatestCars = false;
   TopSelling: any;
   Recentelling: any;
   SalesCategoryChart!: ChartType;
@@ -36,12 +52,14 @@ export class DashboardComponent implements OnInit {
   constructor(
     public toastService: ToastService,
     private translate: TranslateService,
-    private tokenStorageService: TokenStorageService
+    private tokenStorageService: TokenStorageService,
+    private http: HttpClient
   ) {
     var date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    this.currentDate = { from: firstDay, to: lastDay }
+    this.currentDate = { from: firstDay, to: lastDay };
+    this.latestCarsPager.pageSize = 5;
   }
 
   ngOnInit(): void {
@@ -330,10 +348,112 @@ export class DashboardComponent implements OnInit {
   * Fetches the data
   */
   private fetchData() {
-    this.BestSelling = BestSelling;
     this.TopSelling = TopSelling;
     this.Recentelling = Recentelling;
     this.statData = statData;
+    this.loadLatestCars();
+  }
+
+  get localizedLatestCars(): Array<{
+    id: number;
+    displayName: string;
+    createdAt: string;
+    isAvailable: boolean;
+    year?: number;
+    requestsCount: number;
+    totalStock: number;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.latestCars.map(item => ({
+      id: item.id,
+      displayName: isArabic
+        ? (item.nameAr || item.nameEn || `#${item.id}`)
+        : (item.nameEn || item.nameAr || `#${item.id}`),
+      createdAt: item.createdAt,
+      isAvailable: !!item.isAvailable,
+      year: item.year,
+      requestsCount: item.requestsCount ?? 0,
+      totalStock: item.totalStock ?? 0
+    }));
+  }
+
+  private loadLatestCars(): void {
+    this.isLoadingLatestCars = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          nameAr?: string | null;
+          nameEn?: string | null;
+          createdAt: string;
+          isAvailable: boolean;
+          year?: number;
+          requestsCount: number;
+          totalStock: number;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/cars-by-created-date?page=${this.latestCarsPager.page}&pageSize=${this.latestCarsPager.pageSize}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.latestCars = Array.isArray(response?.items) ? response.items : [];
+          this.latestCarsTotalCount = Number(response?.totalCount) || 0;
+          this.latestCarsPager.startIndex = this.latestCarsTotalCount > 0
+            ? (this.latestCarsPager.page - 1) * this.latestCarsPager.pageSize + 1
+            : 0;
+          this.latestCarsPager.endIndex = this.latestCarsTotalCount > 0
+            ? Math.min(this.latestCarsPager.page * this.latestCarsPager.pageSize, this.latestCarsTotalCount)
+            : 0;
+          this.isLoadingLatestCars = false;
+        },
+        error: () => {
+          this.latestCars = [];
+          this.latestCarsTotalCount = 0;
+          this.latestCarsPager.startIndex = 0;
+          this.latestCarsPager.endIndex = 0;
+          this.isLoadingLatestCars = false;
+        }
+      });
+  }
+
+  onLatestCarsPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.latestCarsPager.page;
+    this.latestCarsPager.page = resolvedPage;
+    this.loadLatestCars();
+  }
+
+  get latestCarsTotalPages(): number {
+    const pageSize = Number(this.latestCarsPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.latestCarsTotalCount / pageSize));
+  }
+
+  get latestCarsVisiblePages(): number[] {
+    const totalPages = this.latestCarsTotalPages;
+    const currentPage = Number(this.latestCarsPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToLatestCarsPage(page: number): void {
+    if (page < 1 || page > this.latestCarsTotalPages || page === this.latestCarsPager.page) {
+      return;
+    }
+
+    this.onLatestCarsPageChange(page);
   }
 
   /**

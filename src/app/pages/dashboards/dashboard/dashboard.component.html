@@ -153,50 +153,87 @@
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.BEST_SELLING_PRODUCTS' | translate }}</h4>
-                            <div class="flex-shrink-0">
-                                <div class="dropdown card-header-dropdown" ngbDropdown>
-                                    <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                                        <span class="fw-semibold text-uppercase fs-12">{{ 'DASHBOARD_PAGE.SORT_BY' | translate }}: </span><span class="text-muted">{{ 'DASHBOARD_PAGE.TODAY' | translate }}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.TODAY' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.YESTERDAY' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_7_DAYS' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_30_DAYS' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.THIS_MONTH' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.LAST_MONTH' | translate }}</a>
-                                    </div>
-                                </div>
-                            </div>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.LATEST_CARS' | translate }}</h4>
                         </div><!-- end card header -->
 
                         <div class="card-body">
                             <div class="table-responsive table-card">
-                                <app-best-selling [BestSelling]="BestSelling"></app-best-selling>
+                                <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>{{ 'COMMON.NAME' | translate }}</th>
+                                            <th>{{ 'COMMON.CREATED_AT' | translate }}</th>
+                                            <th>{{ 'DASHBOARD_PAGE.REQUESTS_COUNT' | translate }}</th>
+                                            <th>{{ 'DASHBOARD_PAGE.TOTAL_STOCK' | translate }}</th>
+                                            <th>{{ 'COMMON.STATUS' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isLoadingLatestCars) {
+                                          <tr>
+                                              <td colspan="6" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.LOADING' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else if (localizedLatestCars.length === 0) {
+                                          <tr>
+                                              <td colspan="6" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else {
+                                          @for (car of localizedLatestCars; track car.id) {
+                                            <tr>
+                                                <td>{{ car.id }}</td>
+                                                <td>
+                                                    <div class="fw-medium">{{ car.displayName }}</div>
+                                                    @if (car.year) {
+                                                      <small class="text-muted">{{ car.year }}</small>
+                                                    }
+                                                </td>
+                                                <td>{{ car.createdAt | date:'medium' }}</td>
+                                                <td>{{ car.requestsCount }}</td>
+                                                <td>{{ car.totalStock }}</td>
+                                                <td>
+                                                    <span
+                                                      class="badge"
+                                                      [ngClass]="car.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                                      {{ car.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                          }
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex">
+                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex" *ngIf="!isLoadingLatestCars">
                                 <div class="col-sm">
-                                    <div class="text-muted">{{ 'DASHBOARD_PAGE.SHOWING_RESULTS' | translate:{ shown: 4, total: 125 } }}
+                                    <div class="text-muted" *ngIf="latestCarsTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: latestCarsPager.startIndex, end: latestCarsPager.endIndex, total: latestCarsTotalCount } }}
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-auto" *ngIf="latestCarsTotalCount > latestCarsPager.pageSize">
                                     <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
-                                        <li class="page-item disabled">
-                                            <a href="javascript:void(0);" class="page-link">←</a>
+                                        <li class="page-item" [class.disabled]="latestCarsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(1)">«</a>
                                         </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">1</a>
+                                        <li class="page-item" [class.disabled]="latestCarsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(latestCarsPager.page - 1)">‹</a>
                                         </li>
-                                        <li class="page-item active">
-                                            <a href="javascript:void(0);" class="page-link">2</a>
+
+                                        @for (page of latestCarsVisiblePages; track page) {
+                                            <li class="page-item" [class.active]="page === latestCarsPager.page">
+                                                <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(page)">{{ page }}</a>
+                                            </li>
+                                        }
+
+                                        <li class="page-item" [class.disabled]="latestCarsPager.page >= latestCarsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(latestCarsPager.page + 1)">›</a>
                                         </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">3</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">→</a>
+                                        <li class="page-item" [class.disabled]="latestCarsPager.page >= latestCarsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(latestCarsTotalPages)">»</a>
                                         </li>
                                     </ul>
                                 </div>
