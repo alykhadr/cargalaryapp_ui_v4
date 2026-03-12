@@ -42,7 +42,7 @@ export class CarTypesComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.CARS_MANAGEMENT.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.CARTYPE'), active: true }
     ];
 

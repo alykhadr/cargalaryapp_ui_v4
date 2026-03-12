@@ -56,7 +56,7 @@ export class ContactUsComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.CONTACT_INFO.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.CONTACTUS'), active: true }
     ];
 

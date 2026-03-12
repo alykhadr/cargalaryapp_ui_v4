@@ -47,7 +47,7 @@ export class OffersComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.OFFERS_MENU.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.OFFER'), active: true }
     ];
 

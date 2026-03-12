@@ -64,7 +64,7 @@ export class RolesComponent {
     * BreadCrumb
     */
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.EMPLOYEE_MANAGEMENT.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.ROLE'), active: true }
     ];
 

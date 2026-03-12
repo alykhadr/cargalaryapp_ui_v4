@@ -323,7 +323,7 @@ export class CarsComponent implements OnInit, OnDestroy {
     this.currentUserBranchId = Number(this.myAuthService.currentUserValue?.branchId) || null;
 
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.CARS_MANAGEMENT.TEXT') },
       { label: this.pageTitle, active: true }
     ];
 

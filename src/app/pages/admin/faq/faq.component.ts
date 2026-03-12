@@ -43,7 +43,7 @@ export class FaqComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.CONTACT_INFO.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.FAQ'), active: true }
     ];
 

@@ -133,7 +133,7 @@ export class RequestComponent implements OnInit, OnDestroy {
     this.carInfoColorPagination.pageSize = 5;
 
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.REQUEST.TEXT') },
       { label: this.mode === 'track' ? 'Track Request' : 'Request', active: true }
     ];
 

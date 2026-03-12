@@ -54,7 +54,7 @@ export class DepartmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.breadCrumbItems = [
-      { label: this.translate.instant('MENUITEMS.ADMIN.TEXT') },
+      { label: this.translate.instant('MENUITEMS.EMPLOYEE_MANAGEMENT.TEXT') },
       { label: this.translate.instant('MENUITEMS.ADMIN.LIST.DEPARTMENT'), active: true }
     ];
 
