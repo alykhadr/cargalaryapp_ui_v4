@@ -72,6 +72,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   selectedQuotationForMore: Quotation | null = null;
   showCarInfoModal = false;
   selectedCarForInfo: Car | null = null;
+  selectedQuotationForCarInfo: Quotation | null = null;
   isCarInfoLoading = false;
   carInfoTab: 'overview' | 'colors' | 'features' | 'details' | 'gallery' = 'overview';
   carInfoColors: CarCarColor[] = [];
@@ -426,6 +427,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   openCarInfoModal(item: Quotation) {
     this.showCarInfoModal = true;
+    this.selectedQuotationForCarInfo = item;
     this.isCarInfoLoading = true;
     this.carInfoTab = 'overview';
 
@@ -476,6 +478,7 @@ export class QuotationComponent implements OnInit, OnDestroy {
   closeCarInfoModal() {
     this.showCarInfoModal = false;
     this.selectedCarForInfo = null;
+    this.selectedQuotationForCarInfo = null;
     this.isCarInfoLoading = false;
     this.carInfoColors = [];
     this.pagedCarInfoColors = [];

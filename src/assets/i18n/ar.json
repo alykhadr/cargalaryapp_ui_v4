@@ -514,6 +514,7 @@
       "CLEAR_FILTER": "مسح الفلتر",
       "CREATE_QUOTATION": "إنشاء عرض سعر",
       "ID": "الرقم",
+      "QUOTATION_NO": "رقم الطلب",
       "NAME": "الاسم",
       "EMAIL": "البريد الإلكتروني",
       "MOBILE": "الجوال",

@@ -427,7 +427,7 @@
         </h5>
         <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.INFO_MODAL.CLOSE' | translate" (click)="closeMoreInfoModal()"></button>
       </div>
-      <div class="modal-body quotation-car-info-body">
+      <div class="modal-body quotation-more-info-body">
         <div class="vstack gap-3">
           <div class="border rounded-3 p-3 bg-light-subtle">
             <div class="d-flex align-items-center gap-2 mb-1">
@@ -468,7 +468,7 @@
       <div class="modal-header bg-primary-subtle border-bottom">
         <h5 class="modal-title mb-0">
           <i class="ri-car-line me-1 text-primary"></i>
-          {{ 'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.TITLE' | translate:{ id: (selectedCarForInfo?.id || 0) } }}
+          {{ getLocalizedText(selectedCarForInfo?.nameAr, selectedCarForInfo?.nameEn) }} - {{ 'QUOTATION_PAGE.LIST.QUOTATION_NO' | translate }} #{{ selectedQuotationForCarInfo?.id || 0 }}
         </h5>
         <button type="button" class="btn-close" [attr.aria-label]="'QUOTATION_PAGE.LIST.CAR_INFO_MODAL.CLOSE' | translate" (click)="closeCarInfoModal()"></button>
       </div>

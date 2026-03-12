@@ -514,6 +514,7 @@
       "CLEAR_FILTER": "Clear Filter",
       "CREATE_QUOTATION": "Create Quotation",
       "ID": "ID",
+      "QUOTATION_NO": "Quotation No.",
       "NAME": "Name",
       "EMAIL": "Email",
       "MOBILE": "Mobile",
