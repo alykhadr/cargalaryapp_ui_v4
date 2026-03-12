@@ -124,6 +124,12 @@
                         <i class="ri-user-smile-line"></i>
                         <span class="welcome-chip-text">{{ welcomeUserText }}</span>
                     </span>
+                    @if (localizedBranchText) {
+                      <span class="branch-chip ms-2" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">
+                          <i class="ri-git-branch-line"></i>
+                          <span class="branch-chip-text">{{ localizedBranchText }}</span>
+                      </span>
+                    }
                     <span class="date-chip ms-2" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">
                         <i class="ri-calendar-line"></i>
                         <span class="date-chip-text">{{ currentDateText }}</span>

@@ -52,6 +52,34 @@
     }
   }
 
+  .branch-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42rem;
+    padding: 0.35rem 0.78rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    color: var(--vz-body-color);
+    background: rgba(var(--vz-success-rgb), 0.12);
+    border: 1px solid rgba(var(--vz-success-rgb), 0.28);
+    box-shadow: 0 3px 12px rgba(var(--vz-success-rgb), 0.08);
+
+    i {
+      font-size: 0.95rem;
+      color: rgb(var(--vz-success-rgb));
+      flex: 0 0 auto;
+    }
+  }
+
+  .branch-chip-text {
+    white-space: nowrap;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .date-chip-text {
     white-space: nowrap;
   }
@@ -70,5 +98,11 @@
 :host-context([data-bs-theme='dark']) .header-welcome-text .date-chip {
   background: rgba(var(--vz-info-rgb), 0.2);
   border-color: rgba(var(--vz-info-rgb), 0.45);
+  color: #e6edf3;
+}
+
+:host-context([data-bs-theme='dark']) .header-welcome-text .branch-chip {
+  background: rgba(var(--vz-success-rgb), 0.2);
+  border-color: rgba(var(--vz-success-rgb), 0.45);
   color: #e6edf3;
 }

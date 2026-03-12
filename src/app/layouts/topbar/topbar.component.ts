@@ -154,6 +154,14 @@ export class TopbarComponent implements OnInit {
     }).format(new Date());
   }
 
+  get localizedBranchText(): string {
+    const branchName = this.getLocalizedBranchName();
+    if (!branchName) {
+      return '';
+    }
+    return `${this.translate.instant('COMMON.BRANCH')}: ${branchName}`;
+  }
+
   private getLocalizedUserName(): string {
     const user = this.userData || {};
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
@@ -185,6 +193,33 @@ export class TopbarComponent implements OnInit {
     }
 
     return fullEn || fullAr;
+  }
+
+  private getLocalizedBranchName(): string {
+    const user = this.userData || {};
+    const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
+
+    const read = (...keys: string[]): string => {
+      for (const key of keys) {
+        const value = user?.[key];
+        if (typeof value === 'string' && value.trim()) {
+          return value.trim();
+        }
+      }
+      return '';
+    };
+
+    const branchAr = read(
+      'branchNameAr', 'BranchNameAr',
+      'branch_name_ar', 'branchAr'
+    );
+    const branchEn = read(
+      'branchNameEn', 'BranchNameEn',
+      'branch_name_en', 'branchEn',
+      'branchName', 'BranchName'
+    );
+
+    return isArabic ? (branchAr || branchEn) : (branchEn || branchAr);
   }
 
   /**
