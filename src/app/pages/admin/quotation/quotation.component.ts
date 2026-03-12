@@ -89,6 +89,14 @@ export class QuotationComponent implements OnInit, OnDestroy {
   typesCatalog: CarType[] = [];
   brandsCatalog: Brand[] = [];
   imageTypeLookups: LookupDetail[] = [];
+  conditionLookups: LookupDetail[] = [];
+  trimLevelLookups: LookupDetail[] = [];
+  vehicleClassLookups: LookupDetail[] = [];
+  transmisionTypeLookups: LookupDetail[] = [];
+  drivetrainLookups: LookupDetail[] = [];
+  fuelTypeLookups: LookupDetail[] = [];
+  manufactureCountryLookups: LookupDetail[] = [];
+  extraDetailTypeLookups: LookupDetail[] = [];
   carInfoColorPagination = new PaginationService();
   carInfoFeaturePagination = new PaginationService();
   carInfoDetailsPagination = new PaginationService();
@@ -165,9 +173,17 @@ export class QuotationComponent implements OnInit, OnDestroy {
       regions: this.lookupService.getByMasterCode('REGION').pipe(first()),
       cities: this.lookupService.getByMasterCode('CITY').pipe(first()),
       statuses: this.lookupService.getByMasterCode('QUOTATION_STATUS').pipe(first()),
-      imageTypes: this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first())
+      imageTypes: this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first()),
+      conditions: this.lookupService.getByMasterCode('CAR_CONDITION').pipe(first()),
+      trimLevels: this.lookupService.getByMasterCode('CAR_TRIM_LEVEL').pipe(first()),
+      vehicleClasses: this.lookupService.getByMasterCode('CAR_VEHICLE_CLASS').pipe(first()),
+      transmisionTypes: this.lookupService.getByMasterCode('CAR_TRANSMISION_TYPE').pipe(first()),
+      drivetrains: this.lookupService.getByMasterCode('CAR_DRIVETRAIN').pipe(first()),
+      fuelTypes: this.lookupService.getByMasterCode('CAR_FUEL_TYPE').pipe(first()),
+      countries: this.lookupService.getByMasterCode('COUNTRY').pipe(first()),
+      extraDetailTypes: this.lookupService.getByMasterCode('EXTRA_TYPE').pipe(first())
     }).subscribe({
-      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, imageTypes }) => {
+      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, imageTypes, conditions, trimLevels, vehicleClasses, transmisionTypes, drivetrains, fuelTypes, countries, extraDetailTypes }) => {
         this.cars = cars.filter(c => c.isAvailable);
         this.paymentMethodLookups = paymentMethods;
         this.vehicleOwnerTypeLookups = ownerTypes;
@@ -175,6 +191,14 @@ export class QuotationComponent implements OnInit, OnDestroy {
         this.cityLookups = cities;
         this.quotationStatusLookups = statuses;
         this.imageTypeLookups = imageTypes || [];
+        this.conditionLookups = conditions || [];
+        this.trimLevelLookups = trimLevels || [];
+        this.vehicleClassLookups = vehicleClasses || [];
+        this.transmisionTypeLookups = transmisionTypes || [];
+        this.drivetrainLookups = drivetrains || [];
+        this.fuelTypeLookups = fuelTypes || [];
+        this.manufactureCountryLookups = countries || [];
+        this.extraDetailTypeLookups = extraDetailTypes || [];
       },
       error: (error) => {
         this.isCarInfoLoading = false;
@@ -282,6 +306,13 @@ export class QuotationComponent implements OnInit, OnDestroy {
     const alternateName = preferArabic ? item.nameEn : item.nameAr;
 
     return preferredName || alternateName || item.displayName || fallback;
+  }
+
+  getLocalizedText(nameAr?: string | null, nameEn?: string | null, fallback = '-'): string {
+    const preferArabic = this.isArabicLanguage();
+    const preferred = preferArabic ? nameAr : nameEn;
+    const alternate = preferArabic ? nameEn : nameAr;
+    return preferred || alternate || fallback;
   }
 
   getQuotationStatusLabel(statusId?: number): string {
@@ -458,17 +489,35 @@ export class QuotationComponent implements OnInit, OnDestroy {
 
   getBranchLabel(branchId: number): string {
     const branch = this.branchesCatalog.find(x => x.id === branchId);
-    return branch ? `${branch.branchNameAr || '-'} / ${branch.branchNameEn || '-'}` : `#${branchId}`;
+    if (!branch) {
+      return `#${branchId}`;
+    }
+
+    return this.isArabicLanguage()
+      ? (branch.branchNameAr || branch.branchNameEn || `#${branchId}`)
+      : (branch.branchNameEn || branch.branchNameAr || `#${branchId}`);
   }
 
   getTypeLabel(typeId: number): string {
     const type = this.typesCatalog.find(x => x.id === typeId);
-    return type ? `${type.nameAr || '-'} / ${type.nameEn || '-'}` : `#${typeId}`;
+    if (!type) {
+      return `#${typeId}`;
+    }
+
+    return this.isArabicLanguage()
+      ? (type.nameAr || type.nameEn || `#${typeId}`)
+      : (type.nameEn || type.nameAr || `#${typeId}`);
   }
 
   getModelLabel(modelId: number): string {
     const model = this.modelsCatalog.find(x => x.id === modelId);
-    return model ? `${model.nameAr || '-'} / ${model.nameEn || '-'}` : `#${modelId}`;
+    if (!model) {
+      return `#${modelId}`;
+    }
+
+    return this.isArabicLanguage()
+      ? (model.nameAr || model.nameEn || `#${modelId}`)
+      : (model.nameEn || model.nameAr || `#${modelId}`);
   }
 
   getBrandLabelByModel(modelId: number): string {
@@ -478,7 +527,53 @@ export class QuotationComponent implements OnInit, OnDestroy {
     }
 
     const brand = this.brandsCatalog.find(x => x.id === model.brandId);
-    return brand ? `${brand.nameAr || '-'} / ${brand.nameEn || '-'}` : `#${model.brandId}`;
+    if (!brand) {
+      return `#${model.brandId}`;
+    }
+
+    return this.isArabicLanguage()
+      ? (brand.nameAr || brand.nameEn || `#${model.brandId}`)
+      : (brand.nameEn || brand.nameAr || `#${model.brandId}`);
+  }
+
+  getCarConditionLabel(conditionId?: number): string {
+    if (!conditionId) return '-';
+    return this.getLookupLabel(this.conditionLookups, conditionId);
+  }
+
+  getCarVehicleClassLabel(vehicleClass?: number): string {
+    if (!vehicleClass) return '-';
+    return this.getLookupLabel(this.vehicleClassLookups, vehicleClass);
+  }
+
+  getCarTrimLevelLabel(trimLevel?: number): string {
+    if (!trimLevel) return '-';
+    return this.getLookupLabel(this.trimLevelLookups, trimLevel);
+  }
+
+  getCarTransmissionLabel(transmisionType?: number): string {
+    if (!transmisionType) return '-';
+    return this.getLookupLabel(this.transmisionTypeLookups, transmisionType);
+  }
+
+  getCarDrivetrainLabel(drivetrain?: number): string {
+    if (!drivetrain) return '-';
+    return this.getLookupLabel(this.drivetrainLookups, drivetrain);
+  }
+
+  getCarFuelTypeLabel(fuelType?: number): string {
+    if (!fuelType) return '-';
+    return this.getLookupLabel(this.fuelTypeLookups, fuelType);
+  }
+
+  getCarManufactureCountryLabel(manufactureCountryId?: number): string {
+    if (!manufactureCountryId) return '-';
+    return this.getLookupLabel(this.manufactureCountryLookups, manufactureCountryId);
+  }
+
+  getCarExtraDetailsTypeLabel(typeId?: number): string {
+    if (!typeId) return '-';
+    return this.getLookupLabel(this.extraDetailTypeLookups, typeId);
   }
 
   getFeatureName(featureId: number): string {

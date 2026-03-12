@@ -513,7 +513,7 @@
               <div class="p-3 border rounded-3 bg-light-subtle">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                   <div>
-                    <h6 class="mb-1">{{ selectedCarForInfo.nameAr || '-' }} / {{ selectedCarForInfo.nameEn || '-' }}</h6>
+                    <h6 class="mb-1">{{ getLocalizedText(selectedCarForInfo.nameAr, selectedCarForInfo.nameEn) }}</h6>
                     <small class="text-muted">#{{ selectedCarForInfo.id }}</small>
                   </div>
                   <span class="badge" [ngClass]="selectedCarForInfo.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
@@ -533,7 +533,7 @@
                   <div><span class="text-muted">{{ 'CARS_PAGE.BRANCH' | translate }}:</span> <strong>{{ getBranchLabel(selectedCarForInfo.branchId) }}</strong></div>
                   <div><span class="text-muted">{{ 'CARS_PAGE.YEAR' | translate }}:</span> <strong>{{ selectedCarForInfo.year }}</strong></div>
                   <div><span class="text-muted">{{ 'CARS_PAGE.MILEAGE' | translate }}:</span> <strong>{{ selectedCarForInfo.mileage }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.CONDITION' | translate }}:</span> <strong>{{ selectedCarForInfo.conditionId }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.CONDITION' | translate }}:</span> <strong>{{ getCarConditionLabel(selectedCarForInfo.conditionId) }}</strong></div>
                 </div>
               </div>
             </div>
@@ -546,9 +546,9 @@
                   <div><span class="text-muted">{{ 'CARS_PAGE.SEATING_CAPACITY' | translate }}:</span> <strong>{{ selectedCarForInfo.seatingCapacity }}</strong></div>
                   <div><span class="text-muted">{{ 'CARS_PAGE.WHEEL_SIZE' | translate }}:</span> <strong>{{ selectedCarForInfo.weelSizeInch }}</strong></div>
                   <div><span class="text-muted">{{ 'CARS_PAGE.FUEL_TANK_CAPACITY' | translate }}:</span> <strong>{{ selectedCarForInfo.fuelTankCapacityLiter }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.TRIM_LEVEL' | translate }}:</span> <strong>{{ selectedCarForInfo.trimLevel }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.VEHICLE_CLASS' | translate }}:</span> <strong>{{ selectedCarForInfo.vehicleClass }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.MANUFACTURE_COUNTRY' | translate }}:</span> <strong>{{ selectedCarForInfo.manufactureCountryId }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.TRIM_LEVEL' | translate }}:</span> <strong>{{ getCarTrimLevelLabel(selectedCarForInfo.trimLevel) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.VEHICLE_CLASS' | translate }}:</span> <strong>{{ getCarVehicleClassLabel(selectedCarForInfo.vehicleClass) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.MANUFACTURE_COUNTRY' | translate }}:</span> <strong>{{ getCarManufactureCountryLabel(selectedCarForInfo.manufactureCountryId) }}</strong></div>
                 </div>
               </div>
             </div>
@@ -568,10 +568,10 @@
               <div class="p-3 border rounded-3 h-100">
                 <h6 class="mb-3 text-primary">{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}</h6>
                 <div class="vstack gap-2 car-info-grid">
-                  <div><span class="text-muted">{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}:</span> <strong>{{ selectedCarForInfo.transmisionType }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.DRIVETRAIN' | translate }}:</span> <strong>{{ selectedCarForInfo.drivetrain }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.TRANSMISSION_TYPE' | translate }}:</span> <strong>{{ getCarTransmissionLabel(selectedCarForInfo.transmisionType) }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.DRIVETRAIN' | translate }}:</span> <strong>{{ getCarDrivetrainLabel(selectedCarForInfo.drivetrain) }}</strong></div>
                   <div><span class="text-muted">{{ 'CARS_PAGE.CYLENDERS' | translate }}:</span> <strong>{{ selectedCarForInfo.cylenders }}</strong></div>
-                  <div><span class="text-muted">{{ 'CARS_PAGE.FUEL_TYPE' | translate }}:</span> <strong>{{ selectedCarForInfo.fuelType }}</strong></div>
+                  <div><span class="text-muted">{{ 'CARS_PAGE.FUEL_TYPE' | translate }}:</span> <strong>{{ getCarFuelTypeLabel(selectedCarForInfo.fuelType) }}</strong></div>
                 </div>
               </div>
             </div>
@@ -679,7 +679,7 @@
                 <tr *ngFor="let item of pagedCarInfoExtraDetails">
                   <td>{{ item.nameAr || '-' }}</td>
                   <td>{{ item.nameEn || '-' }}</td>
-                  <td>{{ item.carExtraDetailsType || '-' }}</td>
+                  <td>{{ getCarExtraDetailsTypeLabel(item.carExtraDetailsType) }}</td>
                   <td>
                     <span class="badge" [ngClass]="item.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
                       {{ item.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
