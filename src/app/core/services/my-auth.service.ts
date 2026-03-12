@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { User } from 'src/app/store/Authentication/auth.models';
 import { GlobalComponent } from 'src/app/global-component';
 import { TokenStorageService } from './token-storage.service';
+import { TranslateService } from '@ngx-translate/core';
 
 
 const AUTH_API = GlobalComponent.AUTH_API;
@@ -18,7 +19,11 @@ export class MyAuthService {
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient,private tokenStorageService : TokenStorageService) {
+    constructor(
+        private http: HttpClient,
+        private tokenStorageService: TokenStorageService,
+        private translate: TranslateService
+    ) {
         this.currentUserSubject = new BehaviorSubject<User>(tokenStorageService.getUser()!);
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -59,8 +64,8 @@ export class MyAuthService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = 'invalid user name or password !'; // Customize the error message as needed
-                return throwError(errorMessage);
+                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
+                return throwError(() => errorMessage);
             })
         );
     }

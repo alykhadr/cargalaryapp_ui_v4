@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { GlobalComponent } from "../../global-component";
 import { Store } from '@ngrx/store';
 import { RegisterSuccess, loginFailure, loginSuccess, logout, logoutSuccess } from 'src/app/store/Authentication/authentication.actions';
+import { TranslateService } from '@ngx-translate/core';
 
 const AUTH_API = GlobalComponent.AUTH_API;
 
@@ -28,7 +29,7 @@ export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     // public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient, private store: Store) {
+    constructor(private http: HttpClient, private store: Store, private translate: TranslateService) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')!));
         // this.currentUser = this.currentUserSubject.asObservable();
      }
@@ -55,9 +56,9 @@ export class AuthenticationService {
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = 'invalid user name or password !'; // Customize the error message as needed
+                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
                 this.store.dispatch(loginFailure({ error: errorMessage }));
-                return throwError(errorMessage);
+                return throwError(() => errorMessage);
             })
         );
     }
@@ -77,13 +78,13 @@ export class AuthenticationService {
             email,
             password
           }, httpOptions).pipe(
-              map((response: any) => {
+            map((response: any) => {
                 const user = response;
                 return user;
             }),
             catchError((error: any) => {
-                const errorMessage = 'Login failed'; // Customize the error message as needed
-                return throwError(errorMessage);
+                const errorMessage = this.translate.instant('AUTH.LOGIN.INVALID_CREDENTIALS');
+                return throwError(() => errorMessage);
             })
         );
     }
