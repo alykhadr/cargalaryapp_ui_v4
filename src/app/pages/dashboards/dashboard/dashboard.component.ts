@@ -69,6 +69,21 @@ export class DashboardComponent implements OnInit {
   latestRequestsTotalCount = 0;
   latestRequestsPager = new PaginationService();
   isLoadingLatestRequests = false;
+  requestStatusCounts = {
+    newCount: 0,
+    contactCount: 0,
+    inProgressCount: 0,
+    closedSuccessCount: 0,
+    closedLossCount: 0,
+    conversionRatio: 0
+  };
+  isLoadingRequestStatusCounts = false;
+  selectedStatusPeriod = '1m';
+  statusPeriodOptions: Array<{
+    code: string;
+    nameAr?: string | null;
+    nameEn?: string | null;
+  }> = [];
   previewImageUrl: string | null = null;
   previewImageTitle = '';
   TopSelling: any;
@@ -168,76 +183,15 @@ export class DashboardComponent implements OnInit {
  * Sales Analytics Chart
  */
   setrevenuevalue(value: any) {
-    const labels = this.getRevenueSeriesLabels();
-    if (value == 'all') {
-      this.analyticsChart.series = [{
-        name: labels.orders,
-        type: 'area',
-        data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
-      }, {
-        name: labels.earnings,
-        type: 'bar',
-        data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36, 88.51, 36.57]
-      }, {
-        name: labels.refunds,
-        type: 'line',
-        data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
-      }]
-    }
-    if (value == '1M') {
-      this.analyticsChart.series = [{
-        name: labels.orders,
-        type: 'area',
-        data: [24, 75, 16, 98, 19, 41, 52, 34, 28, 52, 63, 67]
-      }, {
-        name: labels.earnings,
-        type: 'bar',
-        data: [99.25, 28.58, 98.74, 12.87, 107.54, 94.03, 11.24, 48.57, 22.57, 42.36, 88.51, 36.57]
-      }, {
-        name: labels.refunds,
-        type: 'line',
-        data: [28, 22, 17, 27, 21, 11, 5, 9, 17, 29, 12, 15]
-      }]
-    }
-    if (value == '6M') {
-      this.analyticsChart.series = [{
-        name: labels.orders,
-        type: 'area',
-        data: [34, 75, 66, 78, 29, 41, 32, 44, 58, 52, 43, 77]
-      }, {
-        name: labels.earnings,
-        type: 'bar',
-        data: [109.25, 48.58, 38.74, 57.87, 77.54, 84.03, 31.24, 18.57, 92.57, 42.36, 48.51, 56.57]
-      }, {
-        name: labels.refunds,
-        type: 'line',
-        data: [12, 22, 17, 27, 1, 51, 5, 9, 7, 29, 12, 35]
-      }]
-    }
-    if (value == '1Y') {
-      this.analyticsChart.series = [{
-        name: labels.orders,
-        type: 'area',
-        data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
-      }, {
-        name: labels.earnings,
-        type: 'bar',
-        data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36, 88.51, 36.57]
-      }, {
-        name: labels.refunds,
-        type: 'line',
-        data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
-      }]
-    }
+    this.applyRealAnalyticsSeries();
   }
 
   private _analyticsChart(colors: any) {
-    colors = this.getChartColorsArray(colors);
-    const labels = this.getRevenueSeriesLabels();
+    const labels = this.getStatusChartLabels();
     this.analyticsChart = {
       chart: {
-        height: 370,
-        type: "line",
+        height: 320,
+        type: "bar",
         toolbar: {
           show: false,
         },
@@ -246,51 +200,22 @@ export class DashboardComponent implements OnInit {
         }
       },
       stroke: {
-        curve: "straight",
-        dashArray: [0, 0, 8],
-        width: [2, 0, 2.2],
+        width: 0
       },
-      colors: colors,
+      colors: ['#405189', '#f7b84b', '#299cdb', '#0ab39c', '#f06548'],
       series: [{
-        name: labels.orders,
-        type: 'area',
-        data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
-      }, {
-        name: labels.earnings,
+        name: this.translate.instant('COMMON.TOTAL'),
         type: 'bar',
-        data: [89.25, 98.58, 68.74, 108.87, 77.54, 84.03, 51.24, 28.57, 92.57, 42.36,
-          88.51, 36.57]
-      }, {
-        name: labels.refunds,
-        type: 'line',
-        data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
+        data: [0, 0, 0, 0, 0]
       }],
       fill: {
-        opacity: [0.1, 0.9, 1],
+        opacity: 0.9
       },
-      labels: ['01/01/2003', '02/01/2003', '03/01/2003', '04/01/2003', '05/01/2003', '06/01/2003', '07/01/2003', '08/01/2003', '09/01/2003', '10/01/2003', '11/01/2003'],
       markers: {
-        size: [0, 0, 0],
-        strokeWidth: 2,
-        hover: {
-          size: 4,
-        },
+        size: 0
       },
       xaxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
+        categories: labels,
         axisTicks: {
           show: false,
         },
@@ -302,51 +227,88 @@ export class DashboardComponent implements OnInit {
         show: true,
         xaxis: {
           lines: {
-            show: true,
+            show: false,
           },
         },
         yaxis: {
           lines: {
-            show: false,
+            show: true,
           },
         },
         padding: {
           top: 0,
-          right: -2,
-          bottom: 15,
-          left: 10,
+          right: 8,
+          bottom: 8,
+          left: 8,
         },
       },
       legend: {
-        show: true,
-        horizontalAlign: "center",
-        offsetX: 0,
-        offsetY: -5,
-        markers: {
-          width: 9,
-          height: 9,
-          radius: 6,
-        },
-        itemMargin: {
-          horizontal: 10,
-          vertical: 0,
-        },
+        show: false
       },
       plotOptions: {
         bar: {
-          columnWidth: "30%",
-          barHeight: "70%",
+          columnWidth: "45%",
+          borderRadius: 4,
+          distributed: true,
+          dataLabels: {
+            position: 'top'
+          }
         },
       },
+      dataLabels: {
+        enabled: true,
+        offsetY: -16,
+        style: {
+          fontSize: '11px'
+        },
+        formatter: (value: number) => `${Math.round(value)}`
+      },
+      yaxis: {
+        min: 0,
+        forceNiceScale: true,
+        labels: {
+          formatter: (value: number) => `${Math.round(value)}`
+        }
+      },
+      tooltip: {
+        y: {
+          formatter: (value: number) => `${Math.round(value)}`
+        }
+      }
     };
   }
 
-  private getRevenueSeriesLabels() {
-    return {
-      orders: this.translate.instant('DASHBOARD_PAGE.ORDERS'),
-      earnings: this.translate.instant('DASHBOARD_PAGE.EARNINGS'),
-      refunds: this.translate.instant('DASHBOARD_PAGE.REFUNDS')
-    };
+  private getStatusChartLabels(): string[] {
+    return [
+      this.translate.instant('DASHBOARD_PAGE.REQUEST_STATUS.NEW'),
+      this.translate.instant('DASHBOARD_PAGE.REQUEST_STATUS.CONTACT'),
+      this.translate.instant('DASHBOARD_PAGE.REQUEST_STATUS.IN_PROGRESS'),
+      this.translate.instant('DASHBOARD_PAGE.REQUEST_STATUS.CLOSED_SUCCESS'),
+      this.translate.instant('DASHBOARD_PAGE.REQUEST_STATUS.CLOSED_LOSS')
+    ];
+  }
+
+  private applyRealAnalyticsSeries() {
+    const labels = this.getStatusChartLabels();
+
+    this.analyticsChart.series = [{
+      name: this.translate.instant('COMMON.TOTAL'),
+      type: 'bar',
+      data: [
+        this.requestStatusCounts.newCount,
+        this.requestStatusCounts.contactCount,
+        this.requestStatusCounts.inProgressCount,
+        this.requestStatusCounts.closedSuccessCount,
+        this.requestStatusCounts.closedLossCount
+      ]
+    }];
+
+    if (this.analyticsChart.xaxis) {
+      this.analyticsChart.xaxis = {
+        ...this.analyticsChart.xaxis,
+        categories: labels
+      };
+    }
   }
 
   /**
@@ -385,6 +347,7 @@ export class DashboardComponent implements OnInit {
     this.loadLatestCars();
     this.loadLatestBrands();
     this.loadLatestRequests();
+    this.loadRequestStatusCounts();
   }
 
   get localizedLatestCars(): Array<{
@@ -589,6 +552,112 @@ export class DashboardComponent implements OnInit {
           this.isLoadingLatestRequests = false;
         }
       });
+  }
+
+  private loadRequestStatusCounts(): void {
+    this.isLoadingRequestStatusCounts = true;
+    this.http
+      .get<{
+        period: string;
+        periodOptions?: Array<{
+          code: string;
+          nameAr?: string | null;
+          nameEn?: string | null;
+        }>;
+        fromDate?: string | null;
+        toDate?: string | null;
+        total: number;
+        newCount: number;
+        contactCount: number;
+        inProgressCount: number;
+        closedSuccessCount: number;
+        closedLossCount: number;
+        conversionRatio: number;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/request-status-counts?period=${this.selectedStatusPeriod}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          const options = (response?.periodOptions || [])
+            .filter(x => !!x?.code)
+            .map(x => ({
+              code: x.code.toString().trim().toLowerCase(),
+              nameAr: x.nameAr,
+              nameEn: x.nameEn
+            }));
+
+          if (options.length > 0) {
+            this.statusPeriodOptions = options;
+          } else if (this.statusPeriodOptions.length === 0) {
+            this.statusPeriodOptions = [
+              { code: '1w', nameAr: '1W', nameEn: '1W' },
+              { code: '2w', nameAr: '2W', nameEn: '2W' },
+              { code: '1m', nameAr: '1M', nameEn: '1M' },
+              { code: '2m', nameAr: '2M', nameEn: '2M' },
+              { code: '3m', nameAr: '3M', nameEn: '3M' },
+              { code: '6m', nameAr: '6M', nameEn: '6M' },
+              { code: '1y', nameAr: '1Y', nameEn: '1Y' }
+            ];
+          }
+
+          const normalizedResponsePeriod = (response?.period || '').toString().trim().toLowerCase();
+          if (normalizedResponsePeriod) {
+            this.selectedStatusPeriod = normalizedResponsePeriod;
+          } else if (!this.statusPeriodOptions.some(x => x.code === this.selectedStatusPeriod)) {
+            this.selectedStatusPeriod = this.statusPeriodOptions[0]?.code || '1m';
+          }
+
+          this.requestStatusCounts = {
+            newCount: Number(response?.newCount) || 0,
+            contactCount: Number(response?.contactCount) || 0,
+            inProgressCount: Number(response?.inProgressCount) || 0,
+            closedSuccessCount: Number(response?.closedSuccessCount) || 0,
+            closedLossCount: Number(response?.closedLossCount) || 0,
+            conversionRatio: Number(response?.conversionRatio) || 0
+          };
+          this.isLoadingRequestStatusCounts = false;
+          this.applyRealAnalyticsSeries();
+        },
+        error: () => {
+          if (this.statusPeriodOptions.length === 0) {
+            this.statusPeriodOptions = [
+              { code: '1w', nameAr: '1W', nameEn: '1W' },
+              { code: '2w', nameAr: '2W', nameEn: '2W' },
+              { code: '1m', nameAr: '1M', nameEn: '1M' },
+              { code: '2m', nameAr: '2M', nameEn: '2M' },
+              { code: '3m', nameAr: '3M', nameEn: '3M' },
+              { code: '6m', nameAr: '6M', nameEn: '6M' },
+              { code: '1y', nameAr: '1Y', nameEn: '1Y' }
+            ];
+          }
+
+          this.requestStatusCounts = {
+            newCount: 0,
+            contactCount: 0,
+            inProgressCount: 0,
+            closedSuccessCount: 0,
+            closedLossCount: 0,
+            conversionRatio: 0
+          };
+          this.isLoadingRequestStatusCounts = false;
+          this.applyRealAnalyticsSeries();
+        }
+      });
+  }
+
+  onStatusPeriodChange(period: string): void {
+    const normalizedPeriod = (period || '').toString().trim().toLowerCase();
+    if (!normalizedPeriod || !this.statusPeriodOptions.some(x => x.code === normalizedPeriod)) {
+      return;
+    }
+
+    this.selectedStatusPeriod = normalizedPeriod;
+    this.loadRequestStatusCounts();
+  }
+
+  getStatusPeriodLabel(option: { code: string; nameAr?: string | null; nameEn?: string | null }): string {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    const label = isArabic ? option.nameAr : option.nameEn;
+    return (label || option.code || '').toString().trim().toUpperCase();
   }
 
   onLatestCarsPageChange(page: number | Event): void {
