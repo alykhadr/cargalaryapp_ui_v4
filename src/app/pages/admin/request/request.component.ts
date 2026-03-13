@@ -1,8 +1,9 @@
 import { Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 import { ToastService } from '../../icons/toast-service';
@@ -61,6 +62,7 @@ export class RequestComponent implements OnInit, OnDestroy {
   requests: Request[] = [];
   pagedRequests: Request[] = [];
   cars: Car[] = [];
+  availableCarColors: Array<{ colorId: number; nameAr?: string | null; nameEn?: string | null; colorCode?: string | null }> = [];
   paymentMethodLookups: LookupDetail[] = [];
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
@@ -108,6 +110,7 @@ export class RequestComponent implements OnInit, OnDestroy {
   private isSoundUnlocked = false;
   private soundHintShown = false;
   private readonly unlockSoundHandler = () => this.unlockSound();
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -144,11 +147,18 @@ export class RequestComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email, Validators.maxLength(256)]],
       mobileNo: ['', [Validators.required, Validators.maxLength(20)]],
       carId: [null, Validators.required],
+      colorId: [null, Validators.required],
       paymentMethod: [null, Validators.required],
       regionId: [null, Validators.required],
       cityId: [null, Validators.required],
       notes: ['', [Validators.maxLength(1000)]]
     });
+
+    this.form['carId'].valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((carId: number | null) => {
+        this.loadCarColorsForSelectedCar(carId);
+      });
 
     this.loadFormDependencies();
 
@@ -160,6 +170,9 @@ export class RequestComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.mode === 'list') {
       this.removeSoundUnlockListeners();
       await this.requestRealtimeService.stop();
@@ -173,6 +186,7 @@ export class RequestComponent implements OnInit, OnDestroy {
   loadFormDependencies() {
     forkJoin({
       cars: this.carService.getCars().pipe(first()),
+      colors: this.colorService.getColors().pipe(first()),
       paymentMethods: this.lookupService.getByMasterCode('PAYMENT_METHOD').pipe(first()),
       ownerTypes: this.lookupService.getByMasterCode('VEHICLE_OWNER_TYPE').pipe(first()),
       regions: this.lookupService.getByMasterCode('REGION').pipe(first()),
@@ -192,8 +206,9 @@ export class RequestComponent implements OnInit, OnDestroy {
       countries: this.lookupService.getByMasterCode('COUNTRY').pipe(first()),
       extraDetailTypes: this.lookupService.getByMasterCode('EXTRA_TYPE').pipe(first())
     }).subscribe({
-      next: ({ cars, paymentMethods, ownerTypes, regions, cities, statuses, legacyStatuses, imageTypes, conditions, trimLevels, vehicleClasses, transmisionTypes, drivetrains, fuelTypes, countries, extraDetailTypes }) => {
+      next: ({ cars, colors, paymentMethods, ownerTypes, regions, cities, statuses, legacyStatuses, imageTypes, conditions, trimLevels, vehicleClasses, transmisionTypes, drivetrains, fuelTypes, countries, extraDetailTypes }) => {
         this.cars = cars.filter(c => c.isAvailable);
+        this.colorsCatalog = colors || [];
         this.paymentMethodLookups = paymentMethods;
         this.vehicleOwnerTypeLookups = ownerTypes;
         this.regionLookups = regions;
@@ -221,6 +236,11 @@ export class RequestComponent implements OnInit, OnDestroy {
         this.fuelTypeLookups = fuelTypes || [];
         this.manufactureCountryLookups = countries || [];
         this.extraDetailTypeLookups = extraDetailTypes || [];
+
+        const selectedCarId = Number(this.form['carId'].value);
+        if (Number.isFinite(selectedCarId) && selectedCarId > 0) {
+          this.loadCarColorsForSelectedCar(selectedCarId);
+        }
       },
       error: (error) => {
         this.isCarInfoLoading = false;
@@ -287,6 +307,7 @@ export class RequestComponent implements OnInit, OnDestroy {
       email: this.form['email'].value,
       mobileNo: this.form['mobileNo'].value,
       carId: Number(this.form['carId'].value),
+      colorId: Number(this.form['colorId'].value),
       paymentMethod: Number(this.form['paymentMethod'].value),
       regionId: Number(this.form['regionId'].value),
       cityId: Number(this.form['cityId'].value),
@@ -310,6 +331,22 @@ export class RequestComponent implements OnInit, OnDestroy {
   getCarName(carId: number): string {
     const car = this.cars.find(c => c.id === carId);
     return car?.nameEn || car?.nameAr || `#${carId}`;
+  }
+
+  getRequestColorName(item: Request): string {
+    const nameFromResponse = this.getLocalizedText(item.colorNameAr, item.colorNameEn, '');
+    if (nameFromResponse) {
+      return nameFromResponse;
+    }
+
+    const color = this.colorsCatalog.find(x => x.id === item.colorId);
+    if (!color) {
+      return item.colorId ? `#${item.colorId}` : '-';
+    }
+
+    return this.isArabicLanguage()
+      ? (color.colorNameAr || color.colorNameEn || `#${item.colorId}`)
+      : (color.colorNameEn || color.colorNameAr || `#${item.colorId}`);
   }
 
   getLookupLabel(items: LookupDetail[], id: number): string {
@@ -708,6 +745,35 @@ export class RequestComponent implements OnInit, OnDestroy {
   private isArabicLanguage(): boolean {
     const lang = (this.translate.currentLang || this.translate.getDefaultLang() || '').toLowerCase();
     return lang.startsWith('ar');
+  }
+
+  private loadCarColorsForSelectedCar(carId: number | null): void {
+    const numericCarId = Number(carId);
+    this.availableCarColors = [];
+    this.form['colorId'].setValue(null);
+
+    if (!Number.isFinite(numericCarId) || numericCarId <= 0) {
+      return;
+    }
+
+    this.carCarColorService.getByCarId(numericCarId).pipe(first()).subscribe({
+      next: (carColors) => {
+        this.availableCarColors = (carColors || [])
+          .filter(x => x.isAvailable)
+          .map(x => {
+            const color = this.colorsCatalog.find(c => c.id === x.colorId);
+            return {
+              colorId: x.colorId,
+              nameAr: color?.colorNameAr || null,
+              nameEn: color?.colorNameEn || null,
+              colorCode: color?.colorCode || null
+            };
+          });
+      },
+      error: () => {
+        this.availableCarColors = [];
+      }
+    });
   }
 
   private applyFilters(resetPage = false) {

@@ -6,6 +6,9 @@ export interface Request {
   email: string;
   mobileNo: string;
   carId: number;
+  colorId: number;
+  colorNameAr?: string | null;
+  colorNameEn?: string | null;
   paymentMethod: number;
   regionId: number;
   cityId: number;
@@ -25,6 +28,7 @@ export interface CreateRequest {
   email: string;
   mobileNo: string;
   carId: number;
+  colorId: number;
   paymentMethod: number;
   regionId: number;
   cityId: number;

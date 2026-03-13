@@ -57,6 +57,27 @@
           </div>
 
           <div class="col-md-4">
+            <label class="form-label">{{ 'REQUEST_PAGE.CREATE.COLOR' | translate }} <span class="text-danger">*</span></label>
+            <ng-select
+              [items]="availableCarColors"
+              bindLabel="nameEn"
+              bindValue="colorId"
+              [searchable]="true"
+              [clearable]="true"
+              [disabled]="!form['carId'].value"
+              [placeholder]="'REQUEST_PAGE.CREATE.SEARCH_COLOR' | translate"
+              formControlName="colorId">
+              <ng-template ng-option-tmp let-item="item">
+                {{ getLocalizedText(item.nameAr, item.nameEn, '#' + item.colorId) }}
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                {{ getLocalizedText(item.nameAr, item.nameEn, '#' + item.colorId) }}
+              </ng-template>
+            </ng-select>
+            <div class="invalid-feedback d-block" *ngIf="submitted && form['colorId'].errors">{{ 'REQUEST_PAGE.CREATE.REQUIRED' | translate }}</div>
+          </div>
+
+          <div class="col-md-4">
             <label class="form-label">{{ 'REQUEST_PAGE.CREATE.PAYMENT_METHOD' | translate }} <span class="text-danger">*</span></label>
             <select class="form-select" formControlName="paymentMethod">
               <option [ngValue]="null">{{ 'REQUEST_PAGE.CREATE.SELECT_PAYMENT_METHOD' | translate }}</option>
@@ -301,6 +322,7 @@
                 <th>{{ 'REQUEST_PAGE.LIST.EMAIL' | translate }}</th>
                 <th>{{ 'REQUEST_PAGE.LIST.MOBILE' | translate }}</th>
                 <th>{{ 'REQUEST_PAGE.LIST.CAR' | translate }}</th>
+                <th>{{ 'REQUEST_PAGE.LIST.COLOR' | translate }}</th>
                 <th>{{ 'REQUEST_PAGE.LIST.OWNER_TYPE' | translate }}</th>
                 <th>{{ 'REQUEST_PAGE.LIST.CURRENT_STATUS' | translate }}</th>
                 <th>{{ 'REQUEST_PAGE.LIST.STATUS_DATE' | translate }}</th>
@@ -317,6 +339,7 @@
                 <td>{{ item.email }}</td>
                 <td>{{ item.mobileNo }}</td>
                 <td>{{ getCarName(item.carId) }}</td>
+                <td>{{ getRequestColorName(item) }}</td>
                 <td>{{ getLookupLabel(vehicleOwnerTypeLookups, item.vehicleOwnerType) }}</td>
                 <td>
                   <span [class]="getRequestStatusBadgeClass(item.currentStatus)">
