@@ -57,7 +57,8 @@ export class TopbarComponent implements OnInit {
     this.canSwitchBranch = this.accessControlService.hasRole(['Admin', 'Manager']);
 
     // Cookies wise Language set
-    this.cookieValue = (this._cookiesService.get('lang') || 'ar').toLowerCase();
+    this.cookieValue = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(this.cookieValue);
     const selected = this.listLang.find(x => x.lang === this.cookieValue) || this.listLang.find(x => x.lang === 'ar');
     this.countryName = selected?.text || 'العربية';
     this.flagvalue = selected?.flag || 'assets/images/flags/sa.svg';
@@ -185,6 +186,10 @@ export class TopbarComponent implements OnInit {
   }
 
   onBranchChanged(value: string): void {
+    const activeLang = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(activeLang);
+    this.cookieValue = activeLang;
+
     const branchId = Number(value);
     const normalized = Number.isFinite(branchId) && branchId > 0 ? branchId : null;
     this.selectedBranchId = normalized;

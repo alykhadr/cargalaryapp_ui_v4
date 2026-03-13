@@ -25,7 +25,11 @@ export class LanguageService {
   }
 
   public getCurrentLanguage(): string {
-    return (this.cookieService.get('lang') || this.translate.currentLang || 'ar').toLowerCase();
+    const cookieLang = (this.cookieService.get('lang') || '').toLowerCase();
+    const localLang = (typeof window !== 'undefined' ? (window.localStorage.getItem('lang') || '') : '').toLowerCase();
+    const sessionLang = (typeof window !== 'undefined' ? (window.sessionStorage.getItem('lang') || '') : '').toLowerCase();
+    const currentLang = (this.translate.currentLang || '').toLowerCase();
+    return cookieLang || localLang || sessionLang || currentLang || 'ar';
   }
 
   private applyLanguage(lang: string) {
@@ -35,6 +39,10 @@ export class LanguageService {
 
     this.translate.use(safeLang);
     this.cookieService.set('lang', safeLang);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('lang', safeLang);
+      window.sessionStorage.setItem('lang', safeLang);
+    }
     document.documentElement.setAttribute('lang', safeLang);
     document.documentElement.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
     if (document.body) {
