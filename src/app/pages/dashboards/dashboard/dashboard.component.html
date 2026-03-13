@@ -161,7 +161,7 @@
                                 <table class="table table-hover table-centered align-middle table-nowrap mb-0">
                                     <thead class="text-muted">
                                         <tr>
-                                            <th>#</th>
+                                            <th>{{ 'COMMON.IMAGE' | translate }}</th>
                                             <th>{{ 'COMMON.NAME' | translate }}</th>
                                             <th>{{ 'COMMON.CREATED_AT' | translate }}</th>
                                             <th>{{ 'DASHBOARD_PAGE.REQUESTS_COUNT' | translate }}</th>
@@ -185,7 +185,29 @@
                                         } @else {
                                           @for (car of localizedLatestCars; track car.id) {
                                             <tr>
-                                                <td>{{ car.id }}</td>
+                                                <td>
+                                                    <div class="latest-car-image-wrap">
+                                                        @if (getLatestCarImageUrl(car.primaryImageUrl); as carImageUrl) {
+                                                            <button
+                                                              type="button"
+                                                              class="btn btn-sm btn-light latest-car-preview-btn"
+                                                              [title]="'COMMON.VIEW' | translate"
+                                                              (click)="openImagePreview(car.primaryImageUrl, car.displayName)">
+                                                                <i class="ri-eye-line"></i>
+                                                            </button>
+                                                            <img
+                                                              [src]="carImageUrl"
+                                                              [alt]="car.displayName"
+                                                              class="rounded object-fit-cover latest-car-image"
+                                                              width="36"
+                                                              height="36" />
+                                                        } @else {
+                                                            <div class="latest-car-placeholder rounded">
+                                                                <i class="ri-car-line"></i>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     <div class="fw-medium">{{ car.displayName }}</div>
                                                     @if (car.year) {
@@ -214,7 +236,7 @@
                                     <div class="text-muted" *ngIf="latestCarsTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: latestCarsPager.startIndex, end: latestCarsPager.endIndex, total: latestCarsTotalCount } }}
                                     </div>
                                 </div>
-                                <div class="col-sm-auto" *ngIf="latestCarsTotalCount > latestCarsPager.pageSize">
+                                <div class="col-sm-auto" *ngIf="latestCarsTotalCount > 0">
                                     <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
                                         <li class="page-item" [class.disabled]="latestCarsPager.page <= 1">
                                             <a href="javascript:void(0);" class="page-link" (click)="goToLatestCarsPage(1)">«</a>
@@ -247,46 +269,86 @@
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
                             <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.TOP_SELLERS' | translate }}</h4>
-                            <div class="flex-shrink-0">
-                                <div class="dropdown card-header-dropdown" ngbDropdown>
-                                    <a class="text-reset dropdown-btn arrow-none" href="javascript: void(0);" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-                                        <span class="text-muted">{{ 'DASHBOARD_PAGE.REPORT' | translate }}<i class="mdi mdi-chevron-down ms-1"></i></span>
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.DOWNLOAD_REPORT' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.EXPORT' | translate }}</a>
-                                        <a class="dropdown-item" href="javascript: void(0);">{{ 'DASHBOARD_PAGE.IMPORT' | translate }}</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div><!-- end card header -->
 
                         <div class="card-body">
                             <div class="table-responsive table-card">
-                                <app-top-selling [TopSelling]="TopSelling"></app-top-selling>
+                                <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>{{ 'COMMON.IMAGE' | translate }}</th>
+                                            <th>{{ 'COMMON.NAME' | translate }}</th>
+                                            <th>{{ 'COMMON.CREATED_AT' | translate }}</th>
+                                            <th>{{ 'COMMON.STATUS' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isLoadingLatestBrands) {
+                                          <tr>
+                                              <td colspan="4" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.LOADING' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else if (localizedLatestBrands.length === 0) {
+                                          <tr>
+                                              <td colspan="4" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else {
+                                          @for (brand of localizedLatestBrands; track brand.id) {
+                                            <tr>
+                                                <td>
+                                                    <img
+                                                      [src]="getBrandImageUrl(brand.imageUrl)"
+                                                      [alt]="brand.displayName"
+                                                      class="rounded-circle object-fit-cover latest-brand-image"
+                                                      width="36"
+                                                      height="36" />
+                                                </td>
+                                                <td>
+                                                    <div class="fw-medium">{{ brand.displayName }}</div>
+                                                </td>
+                                                <td>{{ brand.createdAt | date:'medium' }}</td>
+                                                <td>
+                                                    <span
+                                                      class="badge"
+                                                      [ngClass]="brand.isAvailable ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                                      {{ brand.isAvailable ? ('COMMON.ACTIVE' | translate) : ('COMMON.INACTIVE' | translate) }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                          }
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex">
+                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex" *ngIf="!isLoadingLatestBrands">
                                 <div class="col-sm">
-                                    <div class="text-muted">{{ 'DASHBOARD_PAGE.SHOWING_RESULTS' | translate:{ shown: 4, total: 125 } }}
+                                    <div class="text-muted" *ngIf="latestBrandsTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: latestBrandsPager.startIndex, end: latestBrandsPager.endIndex, total: latestBrandsTotalCount } }}
                                     </div>
                                 </div>
-                                <div class="col-sm-auto">
+                                <div class="col-sm-auto" *ngIf="latestBrandsTotalCount > 0">
                                     <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
-                                        <li class="page-item disabled">
-                                            <a href="javascript:void(0);" class="page-link">←</a>
+                                        <li class="page-item" [class.disabled]="latestBrandsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestBrandsPage(1)">«</a>
                                         </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">1</a>
+                                        <li class="page-item" [class.disabled]="latestBrandsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestBrandsPage(latestBrandsPager.page - 1)">‹</a>
                                         </li>
-                                        <li class="page-item active">
-                                            <a href="javascript:void(0);" class="page-link">2</a>
+
+                                        @for (page of latestBrandsVisiblePages; track page) {
+                                            <li class="page-item" [class.active]="page === latestBrandsPager.page">
+                                                <a href="javascript:void(0);" class="page-link" (click)="goToLatestBrandsPage(page)">{{ page }}</a>
+                                            </li>
+                                        }
+
+                                        <li class="page-item" [class.disabled]="latestBrandsPager.page >= latestBrandsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestBrandsPage(latestBrandsPager.page + 1)">›</a>
                                         </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">3</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a href="javascript:void(0);" class="page-link">→</a>
+                                        <li class="page-item" [class.disabled]="latestBrandsPager.page >= latestBrandsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestBrandsPage(latestBrandsTotalPages)">»</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -326,16 +388,84 @@
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
                             <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.RECENT_ORDERS' | translate }}</h4>
-                            <div class="flex-shrink-0">
-                                <button type="button" class="btn btn-soft-info btn-sm">
-                                    <i class="ri-file-list-3-line align-middle"></i> {{ 'DASHBOARD_PAGE.GENERATE_REPORT' | translate }}
-                                </button>
-                            </div>
                         </div><!-- end card header -->
 
                         <div class="card-body">
                             <div class="table-responsive table-card">
-                                <app-recent-orders [Recentelling]="Recentelling"></app-recent-orders>
+                                <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>{{ 'REQUEST_PAGE.LIST.REQUEST_NO' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.NAME' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.EMAIL' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.MOBILE' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.CAR' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.CURRENT_STATUS' | translate }}</th>
+                                            <th>{{ 'REQUEST_PAGE.LIST.CREATED' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isLoadingLatestRequests) {
+                                          <tr>
+                                              <td colspan="7" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.LOADING' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else if (localizedLatestRequests.length === 0) {
+                                          <tr>
+                                              <td colspan="7" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else {
+                                          @for (request of localizedLatestRequests; track request.id) {
+                                            <tr>
+                                                <td>{{ request.requestNo }}</td>
+                                                <td>{{ request.name }}</td>
+                                                <td>{{ request.email }}</td>
+                                                <td>{{ request.mobileNo }}</td>
+                                                <td>{{ request.carDisplayName }}</td>
+                                                <td>
+                                                    <span [class]="getLatestRequestStatusBadgeClass(request.statusCode)">
+                                                        {{ request.statusText }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ request.createdAt | date:'medium' }}</td>
+                                            </tr>
+                                          }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex" *ngIf="!isLoadingLatestRequests">
+                                <div class="col-sm">
+                                    <div class="text-muted" *ngIf="latestRequestsTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: latestRequestsPager.startIndex, end: latestRequestsPager.endIndex, total: latestRequestsTotalCount } }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto" *ngIf="latestRequestsTotalCount > latestRequestsPager.pageSize">
+                                    <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
+                                        <li class="page-item" [class.disabled]="latestRequestsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestRequestsPage(1)">«</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="latestRequestsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestRequestsPage(latestRequestsPager.page - 1)">‹</a>
+                                        </li>
+
+                                        @for (page of latestRequestsVisiblePages; track page) {
+                                            <li class="page-item" [class.active]="page === latestRequestsPager.page">
+                                                <a href="javascript:void(0);" class="page-link" (click)="goToLatestRequestsPage(page)">{{ page }}</a>
+                                            </li>
+                                        }
+
+                                        <li class="page-item" [class.disabled]="latestRequestsPager.page >= latestRequestsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestRequestsPage(latestRequestsPager.page + 1)">›</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="latestRequestsPager.page >= latestRequestsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToLatestRequestsPage(latestRequestsTotalPages)">»</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div> <!-- .card-->
@@ -789,5 +919,21 @@
 
     </div> <!-- end col -->
 </div>
+
+@if (previewImageUrl) {
+  <div class="image-preview-backdrop" (click)="closeImagePreview()">
+    <div class="image-preview-modal card" (click)="$event.stopPropagation()">
+      <div class="image-preview-header">
+        <h6 class="mb-0 text-truncate">{{ previewImageTitle || ('COMMON.IMAGE' | translate) }}</h6>
+        <button type="button" class="btn btn-sm btn-light" (click)="closeImagePreview()">
+          {{ 'COMMON.CLOSE' | translate }}
+        </button>
+      </div>
+      <div class="image-preview-body">
+        <img [src]="previewImageUrl" [alt]="previewImageTitle || 'Car image'" />
+      </div>
+    </div>
+  </div>
+}
 
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

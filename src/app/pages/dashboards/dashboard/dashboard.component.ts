@@ -10,7 +10,7 @@ import { PaginationService } from 'src/app/core/services/pagination.service';
 import { circle, latLng, tileLayer } from 'leaflet';
 
 import { ChartType } from './dashboard.model';
-import { Recentelling, TopSelling, statData } from 'src/app/core/data';
+import { TopSelling, statData } from 'src/app/core/data';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit {
     nameEn?: string | null;
     createdAt: string;
     isAvailable: boolean;
+    primaryImageUrl?: string | null;
     year?: number;
     requestsCount: number;
     totalStock: number;
@@ -40,8 +41,37 @@ export class DashboardComponent implements OnInit {
   latestCarsTotalCount = 0;
   latestCarsPager = new PaginationService();
   isLoadingLatestCars = false;
+  latestBrands: Array<{
+    id: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    imageUrl?: string | null;
+    createdAt: string;
+    isAvailable: boolean;
+  }> = [];
+  latestBrandsTotalCount = 0;
+  latestBrandsPager = new PaginationService();
+  isLoadingLatestBrands = false;
+  latestRequests: Array<{
+    id: number;
+    name: string;
+    email: string;
+    mobileNo: string;
+    createdAt: string;
+    currentStatus: number;
+    currentStatusNameAr?: string | null;
+    currentStatusNameEn?: string | null;
+    currentStatusCode?: string | null;
+    carId: number;
+    carNameAr?: string | null;
+    carNameEn?: string | null;
+  }> = [];
+  latestRequestsTotalCount = 0;
+  latestRequestsPager = new PaginationService();
+  isLoadingLatestRequests = false;
+  previewImageUrl: string | null = null;
+  previewImageTitle = '';
   TopSelling: any;
-  Recentelling: any;
   SalesCategoryChart!: ChartType;
   statData!: any;
   currentDate: any;
@@ -60,6 +90,8 @@ export class DashboardComponent implements OnInit {
     var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
     this.currentDate = { from: firstDay, to: lastDay };
     this.latestCarsPager.pageSize = 5;
+    this.latestBrandsPager.pageSize = 5;
+    this.latestRequestsPager.pageSize = 5;
   }
 
   ngOnInit(): void {
@@ -349,9 +381,10 @@ export class DashboardComponent implements OnInit {
   */
   private fetchData() {
     this.TopSelling = TopSelling;
-    this.Recentelling = Recentelling;
     this.statData = statData;
     this.loadLatestCars();
+    this.loadLatestBrands();
+    this.loadLatestRequests();
   }
 
   get localizedLatestCars(): Array<{
@@ -359,6 +392,7 @@ export class DashboardComponent implements OnInit {
     displayName: string;
     createdAt: string;
     isAvailable: boolean;
+    primaryImageUrl?: string | null;
     year?: number;
     requestsCount: number;
     totalStock: number;
@@ -371,6 +405,7 @@ export class DashboardComponent implements OnInit {
         : (item.nameEn || item.nameAr || `#${item.id}`),
       createdAt: item.createdAt,
       isAvailable: !!item.isAvailable,
+      primaryImageUrl: item.primaryImageUrl,
       year: item.year,
       requestsCount: item.requestsCount ?? 0,
       totalStock: item.totalStock ?? 0
@@ -390,6 +425,7 @@ export class DashboardComponent implements OnInit {
           nameEn?: string | null;
           createdAt: string;
           isAvailable: boolean;
+          primaryImageUrl?: string | null;
           year?: number;
           requestsCount: number;
           totalStock: number;
@@ -418,10 +454,159 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  get localizedLatestBrands(): Array<{
+    id: number;
+    displayName: string;
+    imageUrl?: string | null;
+    createdAt: string;
+    isAvailable: boolean;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.latestBrands.map(item => ({
+      id: item.id,
+      displayName: isArabic
+        ? (item.nameAr || item.nameEn || `#${item.id}`)
+        : (item.nameEn || item.nameAr || `#${item.id}`),
+      imageUrl: item.imageUrl,
+      createdAt: item.createdAt,
+      isAvailable: !!item.isAvailable
+    }));
+  }
+
+  private loadLatestBrands(): void {
+    this.isLoadingLatestBrands = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          nameAr?: string | null;
+          nameEn?: string | null;
+          imageUrl?: string | null;
+          createdAt: string;
+          isAvailable: boolean;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/brands?page=${this.latestBrandsPager.page}&pageSize=${this.latestBrandsPager.pageSize}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.latestBrands = Array.isArray(response?.items) ? response.items : [];
+          this.latestBrandsTotalCount = Number(response?.totalCount) || 0;
+          this.latestBrandsPager.startIndex = this.latestBrandsTotalCount > 0
+            ? (this.latestBrandsPager.page - 1) * this.latestBrandsPager.pageSize + 1
+            : 0;
+          this.latestBrandsPager.endIndex = this.latestBrandsTotalCount > 0
+            ? Math.min(this.latestBrandsPager.page * this.latestBrandsPager.pageSize, this.latestBrandsTotalCount)
+            : 0;
+          this.isLoadingLatestBrands = false;
+        },
+        error: () => {
+          this.latestBrands = [];
+          this.latestBrandsTotalCount = 0;
+          this.latestBrandsPager.startIndex = 0;
+          this.latestBrandsPager.endIndex = 0;
+          this.isLoadingLatestBrands = false;
+        }
+      });
+  }
+
+  get localizedLatestRequests(): Array<{
+    id: number;
+    requestNo: string;
+    name: string;
+    email: string;
+    mobileNo: string;
+    createdAt: string;
+    statusText: string;
+    statusCode?: string | null;
+    carDisplayName: string;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.latestRequests.map(item => {
+      const statusName = isArabic
+        ? (item.currentStatusNameAr || item.currentStatusNameEn || String(item.currentStatus))
+        : (item.currentStatusNameEn || item.currentStatusNameAr || String(item.currentStatus));
+      const carDisplayName = isArabic
+        ? (item.carNameAr || item.carNameEn || `#${item.carId}`)
+        : (item.carNameEn || item.carNameAr || `#${item.carId}`);
+
+      return {
+        id: item.id,
+        requestNo: `#${item.id}`,
+        name: item.name,
+        email: item.email,
+        mobileNo: item.mobileNo,
+        createdAt: item.createdAt,
+        statusText: `${item.currentStatus} - ${statusName}`,
+        statusCode: item.currentStatusCode,
+        carDisplayName
+      };
+    });
+  }
+
+  private loadLatestRequests(): void {
+    this.isLoadingLatestRequests = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          name: string;
+          email: string;
+          mobileNo: string;
+          createdAt: string;
+          currentStatus: number;
+          currentStatusNameAr?: string | null;
+          currentStatusNameEn?: string | null;
+          currentStatusCode?: string | null;
+          carId: number;
+          carNameAr?: string | null;
+          carNameEn?: string | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/recent-requests?page=${this.latestRequestsPager.page}&pageSize=${this.latestRequestsPager.pageSize}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.latestRequests = Array.isArray(response?.items) ? response.items : [];
+          this.latestRequestsTotalCount = Number(response?.totalCount) || 0;
+          this.latestRequestsPager.startIndex = this.latestRequestsTotalCount > 0
+            ? (this.latestRequestsPager.page - 1) * this.latestRequestsPager.pageSize + 1
+            : 0;
+          this.latestRequestsPager.endIndex = this.latestRequestsTotalCount > 0
+            ? Math.min(this.latestRequestsPager.page * this.latestRequestsPager.pageSize, this.latestRequestsTotalCount)
+            : 0;
+          this.isLoadingLatestRequests = false;
+        },
+        error: () => {
+          this.latestRequests = [];
+          this.latestRequestsTotalCount = 0;
+          this.latestRequestsPager.startIndex = 0;
+          this.latestRequestsPager.endIndex = 0;
+          this.isLoadingLatestRequests = false;
+        }
+      });
+  }
+
   onLatestCarsPageChange(page: number | Event): void {
     const resolvedPage = typeof page === 'number' ? page : this.latestCarsPager.page;
     this.latestCarsPager.page = resolvedPage;
     this.loadLatestCars();
+  }
+
+  onLatestBrandsPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.latestBrandsPager.page;
+    this.latestBrandsPager.page = resolvedPage;
+    this.loadLatestBrands();
+  }
+
+  onLatestRequestsPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.latestRequestsPager.page;
+    this.latestRequestsPager.page = resolvedPage;
+    this.loadLatestRequests();
   }
 
   get latestCarsTotalPages(): number {
@@ -454,6 +639,130 @@ export class DashboardComponent implements OnInit {
     }
 
     this.onLatestCarsPageChange(page);
+  }
+
+  get latestBrandsTotalPages(): number {
+    const pageSize = Number(this.latestBrandsPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.latestBrandsTotalCount / pageSize));
+  }
+
+  get latestBrandsVisiblePages(): number[] {
+    const totalPages = this.latestBrandsTotalPages;
+    const currentPage = Number(this.latestBrandsPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToLatestBrandsPage(page: number): void {
+    if (page < 1 || page > this.latestBrandsTotalPages || page === this.latestBrandsPager.page) {
+      return;
+    }
+
+    this.onLatestBrandsPageChange(page);
+  }
+
+  get latestRequestsTotalPages(): number {
+    const pageSize = Number(this.latestRequestsPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.latestRequestsTotalCount / pageSize));
+  }
+
+  get latestRequestsVisiblePages(): number[] {
+    const totalPages = this.latestRequestsTotalPages;
+    const currentPage = Number(this.latestRequestsPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToLatestRequestsPage(page: number): void {
+    if (page < 1 || page > this.latestRequestsTotalPages || page === this.latestRequestsPager.page) {
+      return;
+    }
+
+    this.onLatestRequestsPageChange(page);
+  }
+
+  getLatestRequestStatusBadgeClass(statusCode?: string | null): string {
+    return `badge ${this.getLatestRequestStatusToneClass(statusCode)}`;
+  }
+
+  private getLatestRequestStatusToneClass(statusCode?: string | null): string {
+    switch ((statusCode || '').trim()) {
+      case '1':
+        return 'bg-primary-subtle text-primary';
+      case '2':
+        return 'bg-warning-subtle text-warning';
+      case '3':
+        return 'bg-info-subtle text-info';
+      case '4':
+        return 'bg-success-subtle text-success';
+      case '5':
+        return 'bg-danger-subtle text-danger';
+      default:
+        return 'bg-secondary-subtle text-secondary';
+    }
+  }
+
+  getLatestCarImageUrl(imageUrl?: string | null): string | null {
+    if (!imageUrl) {
+      return null;
+    }
+
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://') || imageUrl.startsWith('assets/')) {
+      return imageUrl;
+    }
+
+    return `${GlobalComponent.API_URL}/${imageUrl.replace(/^\/+/, '')}`;
+  }
+
+  openImagePreview(imageUrl?: string | null, title?: string): void {
+    const resolvedImageUrl = this.getLatestCarImageUrl(imageUrl);
+    if (!resolvedImageUrl) {
+      return;
+    }
+
+    this.previewImageUrl = resolvedImageUrl;
+    this.previewImageTitle = title || '';
+  }
+
+  closeImagePreview(): void {
+    this.previewImageUrl = null;
+    this.previewImageTitle = '';
+  }
+
+  getBrandImageUrl(imageUrl?: string | null): string {
+    if (!imageUrl) {
+      return 'assets/images/users/user-dummy-img.jpg';
+    }
+
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://') || imageUrl.startsWith('assets/')) {
+      return imageUrl;
+    }
+
+    return `${GlobalComponent.API_URL}/${imageUrl.replace(/^\/+/, '')}`;
   }
 
   /**
