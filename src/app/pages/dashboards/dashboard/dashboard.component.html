@@ -118,37 +118,44 @@
                     <!-- card -->
                     <div class="card card-height-100">
                         <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.SALES_BY_LOCATION' | translate }}</h4>
-                            <div class="flex-shrink-0">
-                                <button type="button" class="btn btn-soft-primary btn-sm">
-                                    {{ 'DASHBOARD_PAGE.EXPORT_REPORT' | translate }}
-                                </button>
-                            </div>
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.SALES_BY_BRANCHES' | translate }}</h4>
                         </div><!-- end card header -->
 
                         <!-- card body -->
                         <div class="card-body">
 
-                            <div id="sales-by-locations" leaflet style="height: 269px;" [leafletOptions]="options" [leafletLayers]="layers"></div>
+                            <div
+                              id="sales-by-locations"
+                              leaflet
+                              style="height: 269px;"
+                              [leafletOptions]="options"
+                              [leafletLayers]="layers"
+                              [leafletFitBounds]="mapFitBounds"
+                              [leafletFitBoundsOptions]="{ maxZoom: 10, padding: [20, 20] }"
+                              (leafletMapReady)="onMapReady($event)"></div>
 
                             <div class="px-2 py-2 mt-1">
-                                <p class="mb-1">Canada <span class="float-end">75%</span></p>
-                                <div class="progress mt-2" style="height: 6px;">
-                                    <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="75">
+                                @if (isLoadingBranchSales) {
+                                  <p class="text-muted mb-0">{{ 'COMMON.LOADING' | translate }}</p>
+                                } @else if (localizedBranchSales.length === 0) {
+                                  <p class="text-muted mb-0">{{ 'COMMON.NO_DATA_FOUND' | translate }}</p>
+                                } @else {
+                                  @for (branch of localizedBranchSales; track branch.branchId) {
+                                    <p class="mb-1 mt-3">
+                                      {{ branch.displayName }}
+                                      <span class="float-end">{{ branch.salesCount }} ({{ branch.percentage | number:'1.0-0' }}%)</span>
+                                    </p>
+                                    <div class="progress mt-2" style="height: 6px;">
+                                      <div
+                                        class="progress-bar progress-bar-striped bg-primary"
+                                        role="progressbar"
+                                        [style.width.%]="branch.percentage"
+                                        [attr.aria-valuenow]="branch.percentage"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"></div>
                                     </div>
-                                </div>
-
-                                <p class="mt-3 mb-1">Greenland <span class="float-end">47%</span></p>
-                                <div class="progress mt-2" style="height: 6px;">
-                                    <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 47%" aria-valuenow="47" aria-valuemin="0" aria-valuemax="47">
-                                    </div>
-                                </div>
-
-                                <p class="mt-3 mb-1">Russia <span class="float-end">82%</span></p>
-                                <div class="progress mt-2" style="height: 6px;">
-                                    <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 82%" aria-valuenow="82" aria-valuemin="0" aria-valuemax="82">
-                                    </div>
-                                </div>
+                                  }
+                                }
                             </div>
                         </div>
                         <!-- end card body -->
@@ -364,6 +371,118 @@
                             </div>
 
                         </div> <!-- .card-body-->
+                    </div> <!-- .card-->
+                </div> <!-- .col-->
+            </div> <!-- end row-->
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.FAVORITE_CARS' | translate }}</h4>
+                        </div><!-- end card header -->
+
+                        <div class="card-body">
+                            <div class="table-responsive table-card">
+                                <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>{{ 'COMMON.IMAGE' | translate }}</th>
+                                            <th>{{ 'COMMON.NAME' | translate }}</th>
+                                            <th>{{ 'DASHBOARD_PAGE.FAVORITED_BY' | translate }}</th>
+                                            <th>{{ 'COMMON.CREATED_AT' | translate }}</th>
+                                            <th>{{ 'COMMON.STATUS' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isLoadingFavoriteCars) {
+                                          <tr>
+                                              <td colspan="5" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.LOADING' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else if (localizedFavoriteCars.length === 0) {
+                                          <tr>
+                                              <td colspan="5" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else {
+                                          @for (fav of localizedFavoriteCars; track fav.carId + '-' + fav.userName) {
+                                            <tr>
+                                                <td>
+                                                    <div class="latest-car-image-wrap">
+                                                        @if (getLatestCarImageUrl(fav.primaryImageUrl); as favoriteImageUrl) {
+                                                            <button
+                                                              type="button"
+                                                              class="btn btn-sm btn-light latest-car-preview-btn"
+                                                              [title]="'COMMON.VIEW' | translate"
+                                                              (click)="openImagePreview(fav.primaryImageUrl, fav.displayCarName)">
+                                                                <i class="ri-eye-line"></i>
+                                                            </button>
+                                                            <img
+                                                              [src]="favoriteImageUrl"
+                                                              [alt]="fav.displayCarName"
+                                                              class="rounded object-fit-cover latest-car-image"
+                                                              width="36"
+                                                              height="36" />
+                                                        } @else {
+                                                            <div class="latest-car-placeholder rounded">
+                                                                <i class="ri-car-line"></i>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td>{{ fav.displayCarName }}</td>
+                                                <td>
+                                                    <div class="fw-medium">{{ fav.displayUserName }}</div>
+                                                    @if (fav.userName) {
+                                                      <small class="text-muted">{{ fav.userName }}</small>
+                                                    }
+                                                </td>
+                                                <td>{{ fav.createdAt | date:'medium' }}</td>
+                                                <td>
+                                                    <span class="badge bg-warning-subtle text-warning">
+                                                      {{ 'DASHBOARD_PAGE.FAVORITED' | translate }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                          }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex" *ngIf="!isLoadingFavoriteCars">
+                                <div class="col-sm">
+                                    <div class="text-muted" *ngIf="favoriteCarsTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: favoriteCarsPager.startIndex, end: favoriteCarsPager.endIndex, total: favoriteCarsTotalCount } }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto" *ngIf="favoriteCarsTotalCount > 0">
+                                    <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
+                                        <li class="page-item" [class.disabled]="favoriteCarsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToFavoriteCarsPage(1)">«</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="favoriteCarsPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToFavoriteCarsPage(favoriteCarsPager.page - 1)">‹</a>
+                                        </li>
+
+                                        @for (page of favoriteCarsVisiblePages; track page) {
+                                            <li class="page-item" [class.active]="page === favoriteCarsPager.page">
+                                                <a href="javascript:void(0);" class="page-link" (click)="goToFavoriteCarsPage(page)">{{ page }}</a>
+                                            </li>
+                                        }
+
+                                        <li class="page-item" [class.disabled]="favoriteCarsPager.page >= favoriteCarsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToFavoriteCarsPage(favoriteCarsPager.page + 1)">›</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="favoriteCarsPager.page >= favoriteCarsTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToFavoriteCarsPage(favoriteCarsTotalPages)">»</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div> <!-- .card-->
                 </div> <!-- .col-->
             </div> <!-- end row-->

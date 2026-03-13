@@ -7,10 +7,10 @@ import { first } from 'rxjs/operators';
 import { GlobalComponent } from 'src/app/global-component';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 
-import { circle, latLng, tileLayer } from 'leaflet';
+import { circle, circleMarker, latLng, latLngBounds, Map, tileLayer } from 'leaflet';
 
 import { ChartType } from './dashboard.model';
-import { TopSelling, statData } from 'src/app/core/data';
+import { statData } from 'src/app/core/data';
 
 @Component({
     selector: 'app-dashboard',
@@ -52,6 +52,22 @@ export class DashboardComponent implements OnInit {
   latestBrandsTotalCount = 0;
   latestBrandsPager = new PaginationService();
   isLoadingLatestBrands = false;
+  favoriteCars: Array<{
+    carId: number;
+    userId: string;
+    createdAt: string;
+    priority: number;
+    notes?: string | null;
+    carNameAr?: string | null;
+    carNameEn?: string | null;
+    userName?: string | null;
+    fullNameAr?: string | null;
+    fullNameEn?: string | null;
+    primaryImageUrl?: string | null;
+  }> = [];
+  favoriteCarsTotalCount = 0;
+  favoriteCarsPager = new PaginationService();
+  isLoadingFavoriteCars = false;
   latestRequests: Array<{
     id: number;
     name: string;
@@ -86,7 +102,18 @@ export class DashboardComponent implements OnInit {
   }> = [];
   previewImageUrl: string | null = null;
   previewImageTitle = '';
-  TopSelling: any;
+  branchSales: Array<{
+    branchId: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    salesCount: number;
+    percentage: number;
+    latitude?: number | null;
+    longitude?: number | null;
+  }> = [];
+  totalBranchSales = 0;
+  isLoadingBranchSales = false;
+  mapFitBounds: any = null;
   SalesCategoryChart!: ChartType;
   statData!: any;
   currentDate: any;
@@ -106,7 +133,8 @@ export class DashboardComponent implements OnInit {
     this.currentDate = { from: firstDay, to: lastDay };
     this.latestCarsPager.pageSize = 5;
     this.latestBrandsPager.pageSize = 5;
-    this.latestRequestsPager.pageSize = 5;
+    this.favoriteCarsPager.pageSize = 5;
+    this.latestRequestsPager.pageSize = 6;
   }
 
   ngOnInit(): void {
@@ -132,7 +160,7 @@ export class DashboardComponent implements OnInit {
 
     // Chart Color Data Get Function
     this._analyticsChart('["--vz-primary", "--vz-success", "--vz-danger"]');
-    this._SalesCategoryChart('["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]');
+    this._SalesCategoryChart();
   }
 
   get dashboardFullName(): string {
@@ -309,16 +337,17 @@ export class DashboardComponent implements OnInit {
         categories: labels
       };
     }
+
+    this.applyRealSalesCategorySeries();
   }
 
   /**
  *  Sales Category
  */
-  private _SalesCategoryChart(colors: any) {
-    colors = this.getChartColorsArray(colors);
+  private _SalesCategoryChart() {
     this.SalesCategoryChart = {
-      series: [44, 55, 41, 17, 15],
-      labels: ["Direct", "Social", "Email", "Other", "Referrals"],
+      series: [0, 0, 0, 0, 0],
+      labels: this.getStatusChartLabels(),
       chart: {
         height: 333,
         type: "donut",
@@ -334,7 +363,25 @@ export class DashboardComponent implements OnInit {
           enabled: false,
         },
       },
-      colors: colors
+      colors: ['#405189', '#f7b84b', '#299cdb', '#0ab39c', '#f06548']
+    };
+  }
+
+  private applyRealSalesCategorySeries(): void {
+    if (!this.SalesCategoryChart) {
+      return;
+    }
+
+    this.SalesCategoryChart = {
+      ...this.SalesCategoryChart,
+      labels: this.getStatusChartLabels(),
+      series: [
+        this.requestStatusCounts.newCount,
+        this.requestStatusCounts.contactCount,
+        this.requestStatusCounts.inProgressCount,
+        this.requestStatusCounts.closedSuccessCount,
+        this.requestStatusCounts.closedLossCount
+      ]
     };
   }
 
@@ -342,12 +389,13 @@ export class DashboardComponent implements OnInit {
   * Fetches the data
   */
   private fetchData() {
-    this.TopSelling = TopSelling;
     this.statData = statData;
     this.loadLatestCars();
     this.loadLatestBrands();
+    this.loadFavoriteCars();
     this.loadLatestRequests();
     this.loadRequestStatusCounts();
+    this.loadBranchSales();
   }
 
   get localizedLatestCars(): Array<{
@@ -475,6 +523,77 @@ export class DashboardComponent implements OnInit {
       });
   }
 
+  get localizedFavoriteCars(): Array<{
+    carId: number;
+    displayCarName: string;
+    displayUserName: string;
+    userName: string;
+    createdAt: string;
+    notes?: string | null;
+    priority: number;
+    primaryImageUrl?: string | null;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.favoriteCars.map(item => ({
+      carId: item.carId,
+      displayCarName: isArabic
+        ? (item.carNameAr || item.carNameEn || `#${item.carId}`)
+        : (item.carNameEn || item.carNameAr || `#${item.carId}`),
+      displayUserName: isArabic
+        ? (item.fullNameAr || item.fullNameEn || item.userName || '')
+        : (item.fullNameEn || item.fullNameAr || item.userName || ''),
+      userName: item.userName || '',
+      createdAt: item.createdAt,
+      notes: item.notes,
+      priority: Number(item.priority) || 0,
+      primaryImageUrl: item.primaryImageUrl
+    }));
+  }
+
+  private loadFavoriteCars(): void {
+    this.isLoadingFavoriteCars = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          carId: number;
+          userId: string;
+          createdAt: string;
+          priority: number;
+          notes?: string | null;
+          carNameAr?: string | null;
+          carNameEn?: string | null;
+          userName?: string | null;
+          fullNameAr?: string | null;
+          fullNameEn?: string | null;
+          primaryImageUrl?: string | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/favorite-cars?page=${this.favoriteCarsPager.page}&pageSize=${this.favoriteCarsPager.pageSize}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.favoriteCars = Array.isArray(response?.items) ? response.items : [];
+          this.favoriteCarsTotalCount = Number(response?.totalCount) || 0;
+          this.favoriteCarsPager.startIndex = this.favoriteCarsTotalCount > 0
+            ? (this.favoriteCarsPager.page - 1) * this.favoriteCarsPager.pageSize + 1
+            : 0;
+          this.favoriteCarsPager.endIndex = this.favoriteCarsTotalCount > 0
+            ? Math.min(this.favoriteCarsPager.page * this.favoriteCarsPager.pageSize, this.favoriteCarsTotalCount)
+            : 0;
+          this.isLoadingFavoriteCars = false;
+        },
+        error: () => {
+          this.favoriteCars = [];
+          this.favoriteCarsTotalCount = 0;
+          this.favoriteCarsPager.startIndex = 0;
+          this.favoriteCarsPager.endIndex = 0;
+          this.isLoadingFavoriteCars = false;
+        }
+      });
+  }
+
   get localizedLatestRequests(): Array<{
     id: number;
     requestNo: string;
@@ -507,6 +626,69 @@ export class DashboardComponent implements OnInit {
         carDisplayName
       };
     });
+  }
+
+  get localizedBranchSales(): Array<{
+    branchId: number;
+    displayName: string;
+    salesCount: number;
+    percentage: number;
+    latitude?: number | null;
+    longitude?: number | null;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.branchSales.map(item => ({
+      branchId: item.branchId,
+      displayName: isArabic
+        ? (item.nameAr || item.nameEn || `#${item.branchId}`)
+        : (item.nameEn || item.nameAr || `#${item.branchId}`),
+      salesCount: Number(item.salesCount) || 0,
+      percentage: Number(item.percentage) || 0,
+      latitude: item.latitude,
+      longitude: item.longitude
+    }));
+  }
+
+  private loadBranchSales(): void {
+    this.isLoadingBranchSales = true;
+    this.http
+      .get<{
+        totalSales: number;
+        items: Array<{
+          branchId: number;
+          nameAr?: string | null;
+          nameEn?: string | null;
+          salesCount: number;
+          percentage: number;
+          latitude?: number | null;
+          longitude?: number | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/sales-by-branches`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.totalBranchSales = Number(response?.totalSales) || 0;
+          this.branchSales = (response?.items || []).map(x => ({
+            branchId: Number(x?.branchId) || 0,
+            nameAr: x?.nameAr,
+            nameEn: x?.nameEn,
+            salesCount: Number(x?.salesCount) || 0,
+            percentage: Number(x?.percentage) || 0,
+            latitude: x?.latitude == null ? null : Number(x.latitude),
+            longitude: x?.longitude == null ? null : Number(x.longitude)
+          }));
+
+          this.rebuildBranchMapLayers();
+          this.isLoadingBranchSales = false;
+        },
+        error: () => {
+          this.totalBranchSales = 0;
+          this.branchSales = [];
+          this.layers = [];
+          this.mapFitBounds = null;
+          this.isLoadingBranchSales = false;
+        }
+      });
   }
 
   private loadLatestRequests(): void {
@@ -678,6 +860,12 @@ export class DashboardComponent implements OnInit {
     this.loadLatestRequests();
   }
 
+  onFavoriteCarsPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.favoriteCarsPager.page;
+    this.favoriteCarsPager.page = resolvedPage;
+    this.loadFavoriteCars();
+  }
+
   get latestCarsTotalPages(): number {
     const pageSize = Number(this.latestCarsPager.pageSize) || 1;
     return Math.max(1, Math.ceil(this.latestCarsTotalCount / pageSize));
@@ -713,6 +901,38 @@ export class DashboardComponent implements OnInit {
   get latestBrandsTotalPages(): number {
     const pageSize = Number(this.latestBrandsPager.pageSize) || 1;
     return Math.max(1, Math.ceil(this.latestBrandsTotalCount / pageSize));
+  }
+
+  get favoriteCarsTotalPages(): number {
+    const pageSize = Number(this.favoriteCarsPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.favoriteCarsTotalCount / pageSize));
+  }
+
+  get favoriteCarsVisiblePages(): number[] {
+    const totalPages = this.favoriteCarsTotalPages;
+    const currentPage = Number(this.favoriteCarsPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToFavoriteCarsPage(page: number): void {
+    if (page < 1 || page > this.favoriteCarsTotalPages || page === this.favoriteCarsPager.page) {
+      return;
+    }
+
+    this.onFavoriteCarsPageChange(page);
   }
 
   get latestBrandsVisiblePages(): number[] {
@@ -838,22 +1058,73 @@ export class DashboardComponent implements OnInit {
  * Sale Location Map
  */
   options = {
+    attributionControl: true,
     layers: [
-      tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        id: "mapbox/light-v9",
-        tileSize: 512,
-        zoomOffset: 0,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        subdomains: "abcd",
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       })
     ],
     zoom: 1.1,
     center: latLng(28, 1.5)
   };
-  layers = [
-    circle([41.9, 12.45], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([12.05, -61.75], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([1.3, 103.8], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-  ];
+  layers: any[] = [];
+
+  onMapReady(map: Map): void {
+    map.attributionControl.setPrefix('');
+  }
+
+  private rebuildBranchMapLayers(): void {
+    const mappedBranches = this.localizedBranchSales
+      .filter(item =>
+        item.latitude != null &&
+        item.longitude != null &&
+        Number.isFinite(item.latitude) &&
+        Number.isFinite(item.longitude))
+      .map(item => ({
+        ...item,
+        latitude: Number(item.latitude),
+        longitude: Number(item.longitude)
+      }));
+
+    if (mappedBranches.length === 0) {
+      this.layers = [];
+      this.mapFitBounds = null;
+      this.options = {
+        ...this.options,
+        zoom: 1.1,
+        center: latLng(28, 1.5)
+      };
+      return;
+    }
+
+    this.layers = mappedBranches.flatMap(item => {
+      const circleRadius = Math.max(50000, item.salesCount * 4000);
+      const areaLayer = circle([item.latitude, item.longitude], {
+        color: "#0d6efd",
+        opacity: 0.3,
+        weight: 4,
+        fillColor: "#0d6efd",
+        fillOpacity: 0.2,
+        radius: circleRadius
+      }).bindTooltip(`${item.displayName}: ${item.salesCount}`, { direction: 'top' });
+
+      const pointLayer = circleMarker([item.latitude, item.longitude], {
+        radius: 8,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: "#dc3545",
+        fillOpacity: 1
+      }).bindTooltip(`${item.displayName}`, { direction: 'top' });
+
+      return [areaLayer, pointLayer];
+    });
+
+    this.mapFitBounds = latLngBounds(
+      mappedBranches.map(item => [item.latitude, item.longitude] as [number, number])
+    );
+  }
 
   /**
  * Swiper Vertical  
