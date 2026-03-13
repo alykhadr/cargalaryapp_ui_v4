@@ -1,9 +1,10 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from './toast-service';
 import { TranslateService } from '@ngx-translate/core';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { first } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 import { GlobalComponent } from 'src/app/global-component';
 import { PaginationService } from 'src/app/core/services/pagination.service';
 
@@ -22,7 +23,7 @@ import { statData } from 'src/app/core/data';
 /**
  * Ecommerce Component
  */
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   // bread crumb items
   breadCrumbItems!: Array<{}>;
@@ -68,6 +69,17 @@ export class DashboardComponent implements OnInit {
   favoriteCarsTotalCount = 0;
   favoriteCarsPager = new PaginationService();
   isLoadingFavoriteCars = false;
+  bestSellerCars: Array<{
+    carId: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    salesCount: number;
+    lastSoldAt?: string | null;
+    primaryImageUrl?: string | null;
+  }> = [];
+  bestSellerCarsTotalCount = 0;
+  bestSellerCarsPager = new PaginationService();
+  isLoadingBestSellerCars = false;
   latestRequests: Array<{
     id: number;
     name: string;
@@ -115,9 +127,11 @@ export class DashboardComponent implements OnInit {
   isLoadingBranchSales = false;
   mapFitBounds: any = null;
   SalesCategoryChart!: ChartType;
+  bestSellerCarsChart!: ChartType;
   statData!: any;
   currentDate: any;
   userData: any;
+  private destroy$ = new Subject<void>();
   // Current Date
   // currentDate: Date = new Date();
 
@@ -134,6 +148,7 @@ export class DashboardComponent implements OnInit {
     this.latestCarsPager.pageSize = 5;
     this.latestBrandsPager.pageSize = 5;
     this.favoriteCarsPager.pageSize = 5;
+    this.bestSellerCarsPager.pageSize = 5;
     this.latestRequestsPager.pageSize = 6;
   }
 
@@ -161,6 +176,23 @@ export class DashboardComponent implements OnInit {
     // Chart Color Data Get Function
     this._analyticsChart('["--vz-primary", "--vz-success", "--vz-danger"]');
     this._SalesCategoryChart();
+    this._bestSellerCarsChart();
+
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.breadCrumbItems = [
+          { label: this.translate.instant('MENUITEMS.DASHBOARD.TEXT') },
+          { label: this.translate.instant('MENUITEMS.DASHBOARD.LIST.ECOMMERCE'), active: true }
+        ];
+        this.applyRealAnalyticsSeries();
+        this.applyBestSellerCarsChartSeries();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get dashboardFullName(): string {
@@ -367,6 +399,44 @@ export class DashboardComponent implements OnInit {
     };
   }
 
+  private _bestSellerCarsChart() {
+    this.bestSellerCarsChart = {
+      series: [],
+      labels: [],
+      chart: {
+        height: 333,
+        type: "donut",
+      },
+      legend: {
+        position: "bottom",
+      },
+      stroke: {
+        show: false
+      },
+      dataLabels: {
+        dropShadow: {
+          enabled: false,
+        },
+      },
+      colors: ['#405189', '#f7b84b', '#299cdb', '#0ab39c', '#f06548']
+    };
+  }
+
+  private applyBestSellerCarsChartSeries(): void {
+    if (!this.bestSellerCarsChart) {
+      return;
+    }
+
+    const labels = this.localizedBestSellerCars.map(x => x.displayCarName);
+    const series = this.localizedBestSellerCars.map(x => Number(x.salesCount) || 0);
+
+    this.bestSellerCarsChart = {
+      ...this.bestSellerCarsChart,
+      labels,
+      series
+    };
+  }
+
   private applyRealSalesCategorySeries(): void {
     if (!this.SalesCategoryChart) {
       return;
@@ -393,6 +463,7 @@ export class DashboardComponent implements OnInit {
     this.loadLatestCars();
     this.loadLatestBrands();
     this.loadFavoriteCars();
+    this.loadBestSellerCars();
     this.loadLatestRequests();
     this.loadRequestStatusCounts();
     this.loadBranchSales();
@@ -590,6 +661,82 @@ export class DashboardComponent implements OnInit {
           this.favoriteCarsPager.startIndex = 0;
           this.favoriteCarsPager.endIndex = 0;
           this.isLoadingFavoriteCars = false;
+        }
+      });
+  }
+
+  get localizedBestSellerCars(): Array<{
+    carId: number;
+    displayCarName: string;
+    salesCount: number;
+    lastSoldAt?: string | null;
+    primaryImageUrl?: string | null;
+  }> {
+    return this.bestSellerCars.map(item => ({
+      carId: item.carId,
+      displayCarName: (() => {
+        const nameEn = (item.nameEn || '').trim();
+        const nameAr = (item.nameAr || '').trim();
+        if (nameEn && nameAr) {
+          return nameEn === nameAr ? nameEn : `${nameEn} - ${nameAr}`;
+        }
+
+        return nameEn || nameAr || '-';
+      })(),
+      salesCount: Number(item.salesCount) || 0,
+      lastSoldAt: item.lastSoldAt,
+      primaryImageUrl: item.primaryImageUrl
+    }));
+  }
+
+  private loadBestSellerCars(): void {
+    this.isLoadingBestSellerCars = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          carId: number;
+          nameAr?: string | null;
+          nameEn?: string | null;
+          salesCount: number;
+          lastSoldAt?: string | null;
+          primaryImageUrl?: string | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/best-seller-cars?page=${this.bestSellerCarsPager.page}&pageSize=${this.bestSellerCarsPager.pageSize}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          const responseAny = response as any;
+          const rawItems = Array.isArray(responseAny?.items)
+            ? responseAny.items as any[]
+            : (Array.isArray(responseAny?.Items) ? responseAny.Items as any[] : []);
+          this.bestSellerCars = rawItems.map(item => ({
+            carId: Number(item?.carId ?? item?.CarId) || 0,
+            nameAr: item?.nameAr ?? item?.NameAr ?? item?.carNameAr ?? item?.CarNameAr ?? null,
+            nameEn: item?.nameEn ?? item?.NameEn ?? item?.carNameEn ?? item?.CarNameEn ?? null,
+            salesCount: Number(item?.salesCount ?? item?.SalesCount) || 0,
+            lastSoldAt: item?.lastSoldAt ?? item?.LastSoldAt ?? null,
+            primaryImageUrl: item?.primaryImageUrl ?? item?.PrimaryImageUrl ?? null
+          }));
+          this.bestSellerCarsTotalCount = Number((response as any)?.totalCount ?? (response as any)?.TotalCount) || 0;
+          this.bestSellerCarsPager.startIndex = this.bestSellerCarsTotalCount > 0
+            ? (this.bestSellerCarsPager.page - 1) * this.bestSellerCarsPager.pageSize + 1
+            : 0;
+          this.bestSellerCarsPager.endIndex = this.bestSellerCarsTotalCount > 0
+            ? Math.min(this.bestSellerCarsPager.page * this.bestSellerCarsPager.pageSize, this.bestSellerCarsTotalCount)
+            : 0;
+          this.applyBestSellerCarsChartSeries();
+          this.isLoadingBestSellerCars = false;
+        },
+        error: () => {
+          this.bestSellerCars = [];
+          this.bestSellerCarsTotalCount = 0;
+          this.bestSellerCarsPager.startIndex = 0;
+          this.bestSellerCarsPager.endIndex = 0;
+          this.applyBestSellerCarsChartSeries();
+          this.isLoadingBestSellerCars = false;
         }
       });
   }
@@ -866,6 +1013,12 @@ export class DashboardComponent implements OnInit {
     this.loadFavoriteCars();
   }
 
+  onBestSellerCarsPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.bestSellerCarsPager.page;
+    this.bestSellerCarsPager.page = resolvedPage;
+    this.loadBestSellerCars();
+  }
+
   get latestCarsTotalPages(): number {
     const pageSize = Number(this.latestCarsPager.pageSize) || 1;
     return Math.max(1, Math.ceil(this.latestCarsTotalCount / pageSize));
@@ -908,6 +1061,11 @@ export class DashboardComponent implements OnInit {
     return Math.max(1, Math.ceil(this.favoriteCarsTotalCount / pageSize));
   }
 
+  get bestSellerCarsTotalPages(): number {
+    const pageSize = Number(this.bestSellerCarsPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.bestSellerCarsTotalCount / pageSize));
+  }
+
   get favoriteCarsVisiblePages(): number[] {
     const totalPages = this.favoriteCarsTotalPages;
     const currentPage = Number(this.favoriteCarsPager.page) || 1;
@@ -933,6 +1091,33 @@ export class DashboardComponent implements OnInit {
     }
 
     this.onFavoriteCarsPageChange(page);
+  }
+
+  get bestSellerCarsVisiblePages(): number[] {
+    const totalPages = this.bestSellerCarsTotalPages;
+    const currentPage = Number(this.bestSellerCarsPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToBestSellerCarsPage(page: number): void {
+    if (page < 1 || page > this.bestSellerCarsTotalPages || page === this.bestSellerCarsPager.page) {
+      return;
+    }
+
+    this.onBestSellerCarsPageChange(page);
   }
 
   get latestBrandsVisiblePages(): number[] {

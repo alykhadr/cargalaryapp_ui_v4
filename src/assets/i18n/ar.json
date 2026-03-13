@@ -606,7 +606,9 @@
     "STAR_LABEL": "{{value}} نجمة",
     "INVITE_NEW_SELLER": "دعوة بائع جديد",
     "INVITE_SELLER_DESC": "قم بإحالة بائع جديد إلينا واحصل على 100 دولار لكل إحالة.",
-    "INVITE_NOW": "ادعُ الآن"
+    "INVITE_NOW": "ادعُ الآن",
+    "BEST_SELLER_CARS": "السيارات الأكثر مبيعًا",
+    "SOLD_COUNT": "عدد المبيعات"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "ابحث باسم المستخدم أو الاسم أو البريد الإلكتروني...",

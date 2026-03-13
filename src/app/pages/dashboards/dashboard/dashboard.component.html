@@ -376,7 +376,7 @@
             </div> <!-- end row-->
 
             <div class="row">
-                <div class="col-12">
+                <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
                             <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.FAVORITE_CARS' | translate }}</h4>
@@ -482,6 +482,52 @@
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                    </div> <!-- .card-->
+                </div> <!-- .col-->
+
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.BEST_SELLER_CARS' | translate }}</h4>
+                        </div><!-- end card header -->
+
+                        <div class="card-body">
+                            @if (isLoadingBestSellerCars) {
+                              <div class="text-center py-4 text-muted">
+                                  {{ 'COMMON.LOADING' | translate }}
+                              </div>
+                            } @else if (localizedBestSellerCars.length === 0) {
+                              <div class="text-center py-4 text-muted">
+                                  {{ 'COMMON.NO_DATA_FOUND' | translate }}
+                              </div>
+                            } @else {
+                              <apx-chart
+                                class="apex-charts"
+                                dir="ltr"
+                                [series]="bestSellerCarsChart.series"
+                                [labels]="bestSellerCarsChart.labels"
+                                [chart]="bestSellerCarsChart.chart"
+                                [legend]="bestSellerCarsChart.legend"
+                                [stroke]="bestSellerCarsChart.stroke"
+                                [dataLabels]="bestSellerCarsChart.dataLabels"
+                                [colors]="bestSellerCarsChart.colors">
+                              </apx-chart>
+
+                              <div class="table-responsive mt-2">
+                                <table class="table table-sm align-middle mb-0">
+                                  <tbody>
+                                    @for (car of localizedBestSellerCars; track car.carId) {
+                                      <tr>
+                                        <td class="text-muted">{{ car.displayCarName }}</td>
+                                        <td class="text-end fw-semibold">{{ car.salesCount }}</td>
+                                      </tr>
+                                    }
+                                  </tbody>
+                                </table>
+                              </div>
+                            }
+
                         </div>
                     </div> <!-- .card-->
                 </div> <!-- .col-->

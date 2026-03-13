@@ -606,7 +606,9 @@
     "STAR_LABEL": "{{value}} star",
     "INVITE_NEW_SELLER": "Invite New Seller",
     "INVITE_SELLER_DESC": "Refer a new seller to us and earn $100 per refer.",
-    "INVITE_NOW": "Invite Now"
+    "INVITE_NOW": "Invite Now",
+    "BEST_SELLER_CARS": "Best Seller Cars",
+    "SOLD_COUNT": "Sold Count"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "Search by username, name or email...",
