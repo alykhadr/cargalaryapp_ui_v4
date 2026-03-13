@@ -230,7 +230,7 @@
                                                       <small class="text-muted">{{ car.year }}</small>
                                                     }
                                                 </td>
-                                                <td>{{ car.createdAt | date:'medium' }}</td>
+                                                <td>{{ car.createdAt | date:'dd-MM-yyyy' }}</td>
                                                 <td>{{ car.requestsCount }}</td>
                                                 <td>{{ car.totalStock }}</td>
                                                 <td>
@@ -325,7 +325,7 @@
                                                 <td>
                                                     <div class="fw-medium">{{ brand.displayName }}</div>
                                                 </td>
-                                                <td>{{ brand.createdAt | date:'medium' }}</td>
+                                                <td>{{ brand.createdAt | date:'dd-MM-yyyy' }}</td>
                                                 <td>
                                                     <span
                                                       class="badge"
@@ -440,7 +440,7 @@
                                                       <small class="text-muted">{{ fav.userName }}</small>
                                                     }
                                                 </td>
-                                                <td>{{ fav.createdAt | date:'medium' }}</td>
+                                                <td>{{ fav.createdAt | date:'dd-MM-yyyy' }}</td>
                                                 <td>
                                                     <span class="badge bg-warning-subtle text-warning">
                                                       {{ 'DASHBOARD_PAGE.FAVORITED' | translate }}
@@ -604,7 +604,7 @@
                                                         {{ request.statusText }}
                                                     </span>
                                                 </td>
-                                                <td>{{ request.createdAt | date:'medium' }}</td>
+                                                <td>{{ request.createdAt | date:'dd-MM-yyyy' }}</td>
                                             </tr>
                                           }
                                         }
