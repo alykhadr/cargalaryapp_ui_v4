@@ -73,6 +73,7 @@ export interface CreateCarWithDetailsFeatureItem {
 
 export interface CreateCarWithDetailsColorItem {
   colorId: number;
+  colorStatus: number;
   stockQuantity?: number | null;
   colorImageUrl?: string;
   pricingPerColor?: number | null;

@@ -1,6 +1,13 @@
 export interface CarCarColor {
   carId: number;
   colorId: number;
+  colorNameAr?: string;
+  colorNameEn?: string;
+  colorCode?: string;
+  colorStatus: number;
+  colorStatusDetailCode?: string;
+  colorStatusNameAr?: string;
+  colorStatusNameEn?: string;
   stockQuantity?: number | null;
   colorImageUrl?: string;
   pricingPerColor?: number | null;

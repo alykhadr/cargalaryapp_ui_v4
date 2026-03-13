@@ -62,7 +62,16 @@ export class RequestComponent implements OnInit, OnDestroy {
   requests: Request[] = [];
   pagedRequests: Request[] = [];
   cars: Car[] = [];
-  availableCarColors: Array<{ colorId: number; nameAr?: string | null; nameEn?: string | null; colorCode?: string | null }> = [];
+  availableCarColors: Array<{
+    colorId: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    colorCode?: string | null;
+    colorStatus?: number;
+    colorStatusNameAr?: string | null;
+    colorStatusNameEn?: string | null;
+    colorStatusDetailCode?: string | null;
+  }> = [];
   paymentMethodLookups: LookupDetail[] = [];
   vehicleOwnerTypeLookups: LookupDetail[] = [];
   regionLookups: LookupDetail[] = [];
@@ -347,6 +356,27 @@ export class RequestComponent implements OnInit, OnDestroy {
     return this.isArabicLanguage()
       ? (color.colorNameAr || color.colorNameEn || `#${item.colorId}`)
       : (color.colorNameEn || color.colorNameAr || `#${item.colorId}`);
+  }
+
+  getRequestColorCode(item: Request): string {
+    if (item.colorCode && item.colorCode.trim()) {
+      return item.colorCode;
+    }
+
+    const color = this.colorsCatalog.find(x => x.id === item.colorId);
+    return color?.colorCode || '#d4d4d4';
+  }
+
+  getRequestColorStatusName(item: Request): string {
+    if (item.colorStatusNameAr || item.colorStatusNameEn) {
+      return this.getLocalizedText(item.colorStatusNameAr, item.colorStatusNameEn, '-');
+    }
+
+    if (item.colorStatusDetailCode) {
+      return item.colorStatusDetailCode;
+    }
+
+    return item.colorStatus ? `#${item.colorStatus}` : '-';
   }
 
   getLookupLabel(items: LookupDetail[], id: number): string {
@@ -694,6 +724,18 @@ export class RequestComponent implements OnInit, OnDestroy {
     return color?.colorCode || '#d4d4d4';
   }
 
+  getCarColorStatusLabel(item: CarCarColor): string {
+    if (item.colorStatusNameAr || item.colorStatusNameEn) {
+      return this.getLocalizedText(item.colorStatusNameAr, item.colorStatusNameEn, '-');
+    }
+
+    if (item.colorStatusDetailCode) {
+      return item.colorStatusDetailCode;
+    }
+
+    return item.colorStatus ? `#${item.colorStatus}` : '-';
+  }
+
   getImageTypeLabel(imageType?: number): string {
     if (!imageType) {
       return '-';
@@ -764,9 +806,13 @@ export class RequestComponent implements OnInit, OnDestroy {
             const color = this.colorsCatalog.find(c => c.id === x.colorId);
             return {
               colorId: x.colorId,
-              nameAr: color?.colorNameAr || null,
-              nameEn: color?.colorNameEn || null,
-              colorCode: color?.colorCode || null
+              nameAr: x.colorNameAr || color?.colorNameAr || null,
+              nameEn: x.colorNameEn || color?.colorNameEn || null,
+              colorCode: x.colorCode || color?.colorCode || null,
+              colorStatus: x.colorStatus,
+              colorStatusNameAr: x.colorStatusNameAr || null,
+              colorStatusNameEn: x.colorStatusNameEn || null,
+              colorStatusDetailCode: x.colorStatusDetailCode || null
             };
           });
       },

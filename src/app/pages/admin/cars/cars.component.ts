@@ -149,6 +149,8 @@ export class CarsComponent implements OnInit, OnDestroy {
   drivetrainLookups: LookupDetail[] = [];
   fuelTypeOptions: Array<{ value: number; label: string }> = [];
   fuelTypeLookups: LookupDetail[] = [];
+  colorStatusOptions: Array<{ id: number; detailCode: string; nameAr: string; nameEn: string; label: string }> = [];
+  colorStatusLookups: LookupDetail[] = [];
   manufactureCountryOptions: Array<{ value: number; label: string }> = [];
   manufactureCountryLookups: LookupDetail[] = [];
   showColorImagePreview = false;
@@ -215,6 +217,7 @@ export class CarsComponent implements OnInit, OnDestroy {
   pagedColors: Color[] = [];
   pendingCarColors: Array<{
     colorId: number;
+    colorStatus: number;
     stockQuantity?: number | null;
     colorImageUrl?: string;
     colorImageFile?: File;
@@ -229,6 +232,7 @@ export class CarsComponent implements OnInit, OnDestroy {
   }> = [];
   pagedPendingCarColors: Array<{
     colorId: number;
+    colorStatus: number;
     stockQuantity?: number | null;
     colorImageUrl?: string;
     colorImageFile?: File;
@@ -403,6 +407,7 @@ export class CarsComponent implements OnInit, OnDestroy {
     this.loadTransmisionTypeOptions();
     this.loadDrivetrainOptions();
     this.loadFuelTypeOptions();
+    this.loadColorStatusOptions();
     this.loadExtraDetailTypeOptions();
     this.loadImageTypeOptions();
   }
@@ -653,6 +658,55 @@ export class CarsComponent implements OnInit, OnDestroy {
     return this.fuelTypeOptions.find(item => item.value === fuelType)?.label || `#${fuelType}`;
   }
 
+  loadColorStatusOptions() {
+    this.lookupService.getByMasterCode('CAR_COLOR_STATUS').pipe(first()).subscribe({
+      next: (lookups) => {
+        this.colorStatusLookups = lookups || [];
+        this.colorStatusOptions = this.colorStatusLookups
+          .map(item => {
+            const id = Number(item?.id);
+            if (!Number.isFinite(id) || id <= 0) {
+              return null;
+            }
+
+            return {
+              id,
+              detailCode: item?.detailCode || '',
+              nameAr: item?.nameAr || '',
+              nameEn: item?.nameEn || '',
+              label: `${item?.nameAr || ''} - ${item?.nameEn || ''}`
+            };
+          })
+          .filter((item): item is { id: number; detailCode: string; nameAr: string; nameEn: string; label: string } => item !== null)
+          .sort((a, b) => a.id - b.id);
+      },
+      error: (error) => this.showError(error)
+    });
+  }
+
+  getColorStatusLabel(colorStatusId?: number | null): string {
+    if (!colorStatusId) return '-';
+    const status = this.colorStatusOptions.find(item => item?.id === colorStatusId);
+    if (!status) return `#${colorStatusId}`;
+    return this.translate.currentLang?.startsWith('ar')
+      ? (status.nameAr || status.nameEn || status.detailCode || `#${colorStatusId}`)
+      : (status.nameEn || status.nameAr || status.detailCode || `#${colorStatusId}`);
+  }
+
+  private getDefaultColorStatusId(): number {
+    if (!this.colorStatusOptions.length) {
+      return 0;
+    }
+
+    const availableStatus = this.colorStatusOptions.find(item =>
+      (item?.detailCode || '').toLowerCase() === 'available');
+    return availableStatus?.id ?? this.colorStatusOptions[0].id;
+  }
+
+  trackByColorStatusId(index: number, status?: { id: number } | null): number {
+    return status?.id ?? index;
+  }
+
   loadImageTypeOptions() {
     this.lookupService.getByMasterCode('IMAGE_TYPE').pipe(first()).subscribe({
       next: (lookups) => {
@@ -752,6 +806,7 @@ export class CarsComponent implements OnInit, OnDestroy {
       next: (carColors: CarCarColor[]) => {
         this.pendingCarColors = carColors.map((item) => ({
           colorId: item.colorId,
+          colorStatus: item.colorStatus || this.getDefaultColorStatusId(),
           stockQuantity: item.stockQuantity ?? null,
           colorImageUrl: item.colorImageUrl || '',
           colorImageFile: undefined,
@@ -1108,12 +1163,17 @@ export class CarsComponent implements OnInit, OnDestroy {
 
   onColorAssignedToggle(color: Color, checked: boolean) {
     if (checked) {
+      if (!this.colorStatusOptions.length) {
+        this.showError('Color statuses are not loaded yet. Please wait a moment and try again.');
+        return;
+      }
       if (this.isColorAssigned(color.id)) return;
 
       this.pendingCarColors = [
         ...this.pendingCarColors,
         {
           colorId: color.id,
+          colorStatus: this.getDefaultColorStatusId(),
           stockQuantity: null,
           colorImageUrl: '',
           colorImageFile: undefined,
@@ -1156,12 +1216,17 @@ export class CarsComponent implements OnInit, OnDestroy {
       this.showError('Select all colors is available in create mode only right now.');
       return;
     }
+    if (!this.colorStatusOptions.length) {
+      this.showError('Color statuses are not loaded yet. Please wait a moment and try again.');
+      return;
+    }
 
     const existingIds = new Set(this.pendingCarColors.map(c => c.colorId));
     const toAdd = this.colors
       .filter(c => !existingIds.has(c.id))
       .map(c => ({
         colorId: c.id,
+        colorStatus: this.getDefaultColorStatusId(),
         stockQuantity: null,
         colorImageUrl: '',
         colorImageFile: undefined,
@@ -1614,6 +1679,12 @@ export class CarsComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
   }
 
+  private isPendingCarColorStatusValid(item: {
+    colorStatus: number;
+  }): boolean {
+    return Number.isFinite(item.colorStatus) && item.colorStatus > 0;
+  }
+
   private isPendingCarColorStockValid(item: {
     stockQuantity?: number | null;
   }): boolean {
@@ -1710,6 +1781,7 @@ export class CarsComponent implements OnInit, OnDestroy {
 
   isPendingCarColorFieldInvalid(
     item: {
+      colorStatus: number;
       stockQuantity?: number | null;
       pricingPerColor?: number | null;
       pricePefore?: number | null;
@@ -1718,9 +1790,10 @@ export class CarsComponent implements OnInit, OnDestroy {
       colorImageUrl?: string;
       colorImageFile?: File;
     },
-    field: 'stockQuantity' | 'pricingPerColor' | 'pricePefore' | 'discount' | 'discountType' | 'colorImage'
+    field: 'colorStatus' | 'stockQuantity' | 'pricingPerColor' | 'pricePefore' | 'discount' | 'discountType' | 'colorImage'
   ): boolean {
     if (!(this.colorTabSubmitted || this.invalidTabs.has(3))) return false;
+    if (field === 'colorStatus') return !this.isPendingCarColorStatusValid(item);
     if (field === 'stockQuantity') return !this.isPendingCarColorStockValid(item);
     if (field === 'pricingPerColor') return !this.isPendingCarColorPricingValid(item);
     if (field === 'pricePefore') return !this.isPendingCarColorPriceBeforeValid(item);
@@ -2202,10 +2275,15 @@ export class CarsComponent implements OnInit, OnDestroy {
       this.showError('Color tab test data is not ready yet. Please wait for colors to load.');
       return;
     }
+    if (!this.colorStatusOptions.length) {
+      this.showError('Color statuses are not loaded yet. Please wait a moment and try again.');
+      return;
+    }
 
     const selectedColor = this.colors[0];
     const existing = this.pendingCarColors.find(c => c.colorId === selectedColor.id);
     if (existing) {
+      existing.colorStatus = existing.colorStatus || this.getDefaultColorStatusId();
       existing.stockQuantity = existing.stockQuantity ?? 5;
       existing.pricingPerColor = existing.pricingPerColor ?? 0;
       existing.pricePefore = existing.pricePefore ?? 0;
@@ -2219,6 +2297,7 @@ export class CarsComponent implements OnInit, OnDestroy {
         ...this.pendingCarColors,
         {
           colorId: selectedColor.id,
+          colorStatus: this.getDefaultColorStatusId(),
           stockQuantity: 5,
           colorImageUrl: '',
           colorImageFile: undefined,
@@ -2640,6 +2719,7 @@ export class CarsComponent implements OnInit, OnDestroy {
         })),
         carColors: this.pendingCarColors.map(c => ({
           colorId: c.colorId,
+          colorStatus: c.colorStatus,
           stockQuantity: c.stockQuantity ?? null,
           colorImageUrl: c.colorImageFile ? '' : (c.colorImageUrl || ''),
           pricingPerColor: c.pricingPerColor ?? null,
@@ -3598,6 +3678,7 @@ export class CarsComponent implements OnInit, OnDestroy {
 
   private hasInvalidPendingCarColorDetails(): boolean {
     return this.pendingCarColors.some(item =>
+      !this.isPendingCarColorStatusValid(item) ||
       !this.isPendingCarColorStockValid(item) ||
       !this.isPendingCarColorPricingValid(item) ||
       !this.isPendingCarColorDiscountValid(item) ||

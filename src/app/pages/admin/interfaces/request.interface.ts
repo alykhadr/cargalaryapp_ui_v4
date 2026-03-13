@@ -9,6 +9,11 @@ export interface Request {
   colorId: number;
   colorNameAr?: string | null;
   colorNameEn?: string | null;
+  colorCode?: string | null;
+  colorStatus?: number | null;
+  colorStatusNameAr?: string | null;
+  colorStatusNameEn?: string | null;
+  colorStatusDetailCode?: string | null;
   paymentMethod: number;
   regionId: number;
   cityId: number;

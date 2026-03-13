@@ -916,6 +916,18 @@
                             <div ngbAccordionBody>
                               <div class="row g-3">
                               <div class="col-md-3">
+                                <label class="form-label mb-1">{{ 'CARS_PAGE.COLOR_STATUS' | translate }}</label>
+                                <select class="form-select form-select-sm"
+                                  [class.is-invalid]="isPendingCarColorFieldInvalid(cc, 'colorStatus')"
+                                  [(ngModel)]="cc.colorStatus" [ngModelOptions]="{ standalone: true }">
+                                  <option [ngValue]="0">{{ 'CARS_PAGE.SELECT_COLOR_STATUS' | translate }}</option>
+                                  <option *ngFor="let status of colorStatusOptions; trackBy: trackByColorStatusId" [ngValue]="status?.id ?? 0">
+                                    {{ getColorStatusLabel(status?.id) }}
+                                  </option>
+                                </select>
+                                <div class="invalid-feedback d-block text-start" *ngIf="isPendingCarColorFieldInvalid(cc, 'colorStatus')">{{ 'CARS_PAGE.COLOR_STATUS_REQUIRED' | translate }}</div>
+                              </div>
+                              <div class="col-md-3">
                                 <label class="form-label mb-1">{{ 'CARS_PAGE.STOCK_QTY' | translate }}</label>
                                 <div class="input-group input-group-sm">
                                   <span class="input-group-text"><i class="ri-box-3-line"></i></span>

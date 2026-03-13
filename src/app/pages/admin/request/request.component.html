@@ -339,7 +339,15 @@
                 <td>{{ item.email }}</td>
                 <td>{{ item.mobileNo }}</td>
                 <td>{{ getCarName(item.carId) }}</td>
-                <td>{{ getRequestColorName(item) }}</td>
+                <td>
+                  <div class="d-inline-flex align-items-center gap-2">
+                    <span class="rounded-circle border" [style.background]="getRequestColorCode(item)" style="width:14px;height:14px;display:inline-block;"></span>
+                    <span>{{ getRequestColorName(item) }}</span>
+                  </div>
+                  <small class="text-muted" *ngIf="item.colorStatus">
+                    {{ getRequestColorStatusName(item) }}
+                  </small>
+                </td>
                 <td>{{ getLookupLabel(vehicleOwnerTypeLookups, item.vehicleOwnerType) }}</td>
                 <td>
                   <span [class]="getRequestStatusBadgeClass(item.currentStatus)">
@@ -617,6 +625,7 @@
               <thead class="table-light">
                 <tr>
                   <th>{{ 'CARS_PAGE.COLOR_NAME' | translate }}</th>
+                  <th>{{ 'CARS_PAGE.COLOR_STATUS' | translate }}</th>
                   <th>{{ 'CARS_PAGE.STOCK' | translate }}</th>
                   <th>{{ 'CARS_PAGE.PRICE' | translate }}</th>
                   <th>{{ 'CARS_PAGE.PRICE_BEFORE' | translate }}</th>
@@ -632,6 +641,11 @@
                     <span class="d-inline-flex align-items-center gap-2">
                       <span class="rounded-circle border" [style.background]="getColorCode(item.colorId)" style="width:14px;height:14px;display:inline-block;"></span>
                       <span>{{ getColorLabel(item.colorId) }}</span>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge bg-info-subtle text-info">
+                      {{ getCarColorStatusLabel(item) }}
                     </span>
                   </td>
                   <td>{{ item.stockQuantity ?? '-' }}</td>
