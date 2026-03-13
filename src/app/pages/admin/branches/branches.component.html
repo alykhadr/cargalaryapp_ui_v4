@@ -300,23 +300,33 @@
                 </div>
                 <div class="invalid-feedback">Address is required.</div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">{{ 'BRANCH_PAGE.LATITUDE' | translate }} <span class="text-danger">*</span></label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="ri-map-2-line"></i></span>
-                  <input type="text" class="form-control" placeholder="Latitude" formControlName="latitute"
-                    [ngClass]="{ 'is-invalid': submitted && form['latitute'].errors }" />
+              <div class="col-12">
+                <label class="form-label">{{ 'BRANCH_PAGE.LOCATION' | translate }} <span class="text-danger">*</span></label>
+                <div class="border rounded overflow-hidden">
+                  <div
+                    leaflet
+                    style="height: 320px;"
+                    [leafletOptions]="branchMapOptions"
+                    [leafletLayers]="branchMapLayers"
+                    (leafletClick)="onBranchMapClick($event)">
+                  </div>
                 </div>
-                <div class="invalid-feedback">Latitude is required.</div>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">{{ 'BRANCH_PAGE.LONGITUDE' | translate }} <span class="text-danger">*</span></label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="ri-map-2-line"></i></span>
-                  <input type="text" class="form-control" placeholder="Longitude" formControlName="longtute"
-                    [ngClass]="{ 'is-invalid': submitted && form['longtute'].errors }" />
+                <small class="text-muted d-block mt-2">{{ 'BRANCH_PAGE.SELECT_LOCATION_FROM_MAP' | translate }}</small>
+                <div class="row g-2 mt-1">
+                  <div class="col-md-6">
+                    <div class="form-control bg-light-subtle">
+                      {{ form['latitute'].value || '-' }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-control bg-light-subtle">
+                      {{ form['longtute'].value || '-' }}
+                    </div>
+                  </div>
                 </div>
-                <div class="invalid-feedback">Longitude is required.</div>
+                <div class="invalid-feedback d-block" *ngIf="submitted && (form['latitute'].errors || form['longtute'].errors)">
+                  {{ 'BRANCH_PAGE.LOCATION_REQUIRED' | translate }}
+                </div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">{{ 'BRANCH_PAGE.DESCRIPTION_EN' | translate }}</label>

@@ -12,6 +12,7 @@ import { ContactSalesService } from '../services/contact-sales.service';
 import { AdminEmployeeService } from '../services/admin-employee.service';
 import { getErrorMessage } from '../shared/error-message.util';
 import { TranslateService } from '@ngx-translate/core';
+import { circleMarker, latLng, Layer, LeafletMouseEvent, MapOptions, tileLayer } from 'leaflet';
 
 @Component({
   selector: 'app-branches',
@@ -20,6 +21,9 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrl: './branches.component.scss'
 })
 export class BranchesComponent {
+  private readonly defaultMapLatitude = 24.7136;
+  private readonly defaultMapLongitude = 46.6753;
+
   breadCrumbItems!: Array<{}>;
   submitted = false;
   isLoading = true;
@@ -70,6 +74,17 @@ export class BranchesComponent {
     { value: 2, label: 'WhatsApp' },
     { value: 3, label: 'Email' }
   ];
+
+  branchMapOptions: MapOptions = {
+    layers: [
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      })
+    ],
+    zoom: 10,
+    center: latLng(this.defaultMapLatitude, this.defaultMapLongitude)
+  };
+  branchMapLayers: Layer[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -397,6 +412,8 @@ export class BranchesComponent {
   openModal(content: any) {
     this.submitted = false;
     this.branchForm.reset({ isAvailable: true });
+    this.branchForm.patchValue({ latitute: '', longtute: '' });
+    this.initializeBranchMap();
     this.initWorkingDays();
     const modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     if (modelTitle) {
@@ -430,6 +447,8 @@ export class BranchesComponent {
       isAvailable: branch.isAvailable
     });
 
+    this.initializeBranchMap(branch.latitute, branch.longtute);
+
     // Load working days if available
     if (branch.branchWorkingDaysResponseDtos && branch.branchWorkingDaysResponseDtos.length > 0) {
       this.workingDays = branch.branchWorkingDaysResponseDtos.map(day => ({
@@ -448,6 +467,7 @@ export class BranchesComponent {
   closeModal() {
     this.modalService.dismissAll();
     this.branchForm.reset();
+    this.initializeBranchMap();
     this.submitted = false;
     const modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     if (modelTitle) {
@@ -457,6 +477,63 @@ export class BranchesComponent {
 
   get form() {
     return this.branchForm.controls;
+  }
+
+  onBranchMapClick(event: LeafletMouseEvent) {
+    this.setBranchLocation(event.latlng.lat, event.latlng.lng);
+  }
+
+  private initializeBranchMap(latitute?: string, longtute?: string) {
+    const parsedLat = Number(latitute);
+    const parsedLng = Number(longtute);
+    const hasValidPoint =
+      Number.isFinite(parsedLat) &&
+      Number.isFinite(parsedLng) &&
+      parsedLat >= -90 &&
+      parsedLat <= 90 &&
+      parsedLng >= -180 &&
+      parsedLng <= 180;
+
+    const centerLat = hasValidPoint ? parsedLat : this.defaultMapLatitude;
+    const centerLng = hasValidPoint ? parsedLng : this.defaultMapLongitude;
+
+    this.branchMapOptions = {
+      ...this.branchMapOptions,
+      center: latLng(centerLat, centerLng),
+      zoom: hasValidPoint ? 13 : 10
+    };
+
+    if (hasValidPoint) {
+      this.updateBranchMapMarker(centerLat, centerLng);
+    } else {
+      this.branchMapLayers = [];
+    }
+  }
+
+  private setBranchLocation(lat: number, lng: number) {
+    const latValue = lat.toFixed(6);
+    const lngValue = lng.toFixed(6);
+
+    this.branchForm.patchValue({
+      latitute: latValue,
+      longtute: lngValue
+    });
+    this.branchForm.get('latitute')?.markAsTouched();
+    this.branchForm.get('longtute')?.markAsTouched();
+
+    this.updateBranchMapMarker(lat, lng);
+  }
+
+  private updateBranchMapMarker(lat: number, lng: number) {
+    this.branchMapLayers = [
+      circleMarker([lat, lng], {
+        radius: 8,
+        color: '#0d6efd',
+        fillColor: '#0d6efd',
+        fillOpacity: 0.35,
+        weight: 2
+      })
+    ];
   }
 
   get totalBranches(): number {

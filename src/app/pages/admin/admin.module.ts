@@ -52,6 +52,7 @@ import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
+import { LeafletModule } from '@bluehalo/ngx-leaflet';
 
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
@@ -119,6 +120,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     SharedModule,
     NgxMaskDirective,
     NgxMaskPipe,
+    LeafletModule,
     AdminRoutingModule
   ],
   providers: [
