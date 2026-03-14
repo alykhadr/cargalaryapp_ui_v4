@@ -53,6 +53,7 @@ export class TopbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.userData = this.tokenStorageService.getUser();
+    this.hydrateCurrentUserProfile();
     this.element = document.documentElement;
     this.canSwitchBranch = this.accessControlService.hasRole(['Admin', 'Manager']);
 
@@ -185,6 +186,39 @@ export class TopbarComponent implements OnInit {
     return `${this.translate.instant('COMMON.BRANCH')}: ${branchName}`;
   }
 
+  private get currentUserData(): any {
+    return this.tokenStorageService.getUser() || this.userData || {};
+  }
+
+  get headerProfileImageUrl(): string {
+    const user = this.currentUserData;
+    const image = this.readUserString(
+      user,
+      'profileImageUrl',
+      'ProfileImageUrl',
+      'profile_image_url',
+      'imageUrl',
+      'ImageUrl',
+      'avatarUrl',
+      'AvatarUrl'
+    );
+
+    if (image) {
+      const version = Number(user?.profileImageVersion) || 0;
+      if (image.startsWith('http') || image.startsWith('data:')) {
+        if (version > 0 && !image.startsWith('data:')) {
+          return `${image}${image.includes('?') ? '&' : '?'}v=${version}`;
+        }
+        return image;
+      }
+      const clean = image.startsWith('/') ? image.substring(1) : image;
+      const base = `${GlobalComponent.API_URL}/${clean}`;
+      return version > 0 ? `${base}?v=${version}` : base;
+    }
+
+    return 'assets/images/users/avatar-1.jpg';
+  }
+
   onBranchChanged(value: string): void {
     const activeLang = this.languageService.getCurrentLanguage();
     this.languageService.setLanguage(activeLang);
@@ -236,26 +270,18 @@ export class TopbarComponent implements OnInit {
   }
 
   private getLocalizedUserName(): string {
-    const user = this.userData || {};
+    const user = this.currentUserData;
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
 
-    const read = (...keys: string[]): string => {
-      for (const key of keys) {
-        const value = user?.[key];
-        if (typeof value === 'string' && value.trim()) {
-          return value.trim();
-        }
-      }
-      return '';
-    };
-
     // Use localized full-name variants and API login aliases.
-    const fullAr = read(
+    const fullAr = this.readUserString(
+      user,
       'fullNameAr', 'FullNameAr',
       'fullnameAr', 'full_name_ar',
       'nameAr', 'NameAr'
     );
-    const fullEn = read(
+    const fullEn = this.readUserString(
+      user,
       'fullNameEn', 'FullNameEn',
       'fullnameEn', 'full_name_en',
       'nameEn', 'NameEn'
@@ -276,30 +302,32 @@ export class TopbarComponent implements OnInit {
       }
     }
 
-    const user = this.userData || {};
+    const user = this.currentUserData;
     const isArabic = (this.cookieValue || 'ar').toLowerCase() === 'ar';
 
-    const read = (...keys: string[]): string => {
-      for (const key of keys) {
-        const value = user?.[key];
-        if (typeof value === 'string' && value.trim()) {
-          return value.trim();
-        }
-      }
-      return '';
-    };
-
-    const branchAr = read(
+    const branchAr = this.readUserString(
+      user,
       'branchNameAr', 'BranchNameAr',
       'branch_name_ar', 'branchAr'
     );
-    const branchEn = read(
+    const branchEn = this.readUserString(
+      user,
       'branchNameEn', 'BranchNameEn',
       'branch_name_en', 'branchEn',
       'branchName', 'BranchName'
     );
 
     return isArabic ? (branchAr || branchEn) : (branchEn || branchAr);
+  }
+
+  private readUserString(user: any, ...keys: string[]): string {
+    for (const key of keys) {
+      const value = user?.[key];
+      if (typeof value === 'string' && value.trim()) {
+        return value.trim();
+      }
+    }
+    return '';
   }
 
   private loadBranches(): void {
@@ -310,6 +338,57 @@ export class TopbarComponent implements OnInit {
       },
       error: () => {
         this.branches = [];
+      }
+    });
+  }
+
+  private hydrateCurrentUserProfile(): void {
+    const authUser = this.tokenStorageService.getUser() || {};
+    const authEmployeeId = Number(authUser.employeeId);
+    const authUserId = (authUser.id || authUser.userId || '').toString().trim().toLowerCase();
+    const authUserName = (authUser.userName || authUser.username || '').toString().trim().toLowerCase();
+    const authEmail = (authUser.email || '').toString().trim().toLowerCase();
+
+    this.http.get<any[]>(`${GlobalComponent.API_URL}/api/employees`).pipe(first()).subscribe({
+      next: (employees) => {
+        const list = Array.isArray(employees) ? employees : [];
+        let employee = list.find(e => Number.isFinite(authEmployeeId) && authEmployeeId > 0 && e.employeeId === authEmployeeId) || null;
+
+        if (!employee && authUserId) {
+          employee = list.find(e => (e.id || '').toString().trim().toLowerCase() === authUserId) || null;
+        }
+
+        if (!employee && authUserName) {
+          employee = list.find(e => (e.userName || '').toString().trim().toLowerCase() === authUserName) || null;
+        }
+
+        if (!employee && authEmail) {
+          employee = list.find(e => (e.email || '').toString().trim().toLowerCase() === authEmail) || null;
+        }
+
+        if (!employee) {
+          return;
+        }
+
+        const rememberMe = window.localStorage.getItem('rememberMe') === 'true';
+        const mergedUser = {
+          ...authUser,
+          userName: employee.userName || authUser.userName,
+          email: employee.email || authUser.email,
+          nameEn: employee.nameEn || authUser.nameEn,
+          nameAr: employee.nameAr || authUser.nameAr,
+          fullNameEn: employee.fullNameEn || employee.nameEn || authUser.fullNameEn || authUser.nameEn,
+          fullNameAr: employee.fullNameAr || employee.nameAr || authUser.fullNameAr || authUser.nameAr,
+          branchId: employee.branchId ?? authUser.branchId,
+          departmentId: employee.departmentId ?? authUser.departmentId,
+          branchName: employee.branchName || authUser.branchName,
+          departmentName: employee.departmentName || authUser.departmentName,
+          profileImageUrl: employee.profileImageUrl || authUser.profileImageUrl,
+          profileImageVersion: Date.now()
+        };
+
+        this.tokenStorageService.saveUser(mergedUser, rememberMe);
+        this.userData = mergedUser;
       }
     });
   }

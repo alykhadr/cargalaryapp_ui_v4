@@ -124,7 +124,7 @@
                     <button type="button" ngbDropdownToggle class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-car fs-22'></i>
                         @if (notificationCount > 0) {
-                          <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">{{ notificationCount }}<span class="visually-hidden">unread messages</span></span>
+                          <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">{{ notificationCount }}<span class="visually-hidden">{{ 'HEADER.NOTIFICATIONS.UNREAD_MESSAGES' | translate }}</span></span>
                         }
                     </button>
                     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
@@ -132,16 +132,16 @@
                           <div class="p-3">
                             <div class="row align-items-center">
                               <div class="col">
-                                <h6 class="m-0 fs-16 fw-semibold text-white">Notifications</h6>
+                                <h6 class="m-0 fs-16 fw-semibold text-white">{{ 'HEADER.NOTIFICATIONS.TITLE' | translate }}</h6>
                               </div>
                               <div class="col-auto">
                                 @if (notificationCount > 0) {
-                                  <span class="badge bg-light-subtle text-body fs-13">{{ notificationCount }} New</span>
+                                  <span class="badge bg-light-subtle text-body fs-13">{{ 'HEADER.NOTIFICATIONS.NEW_COUNT' | translate:{ count: notificationCount } }}</span>
                                 }
                                 <button
                                   type="button"
                                   class="btn btn-sm btn-icon notification-close-btn ms-2"
-                                  aria-label="Close notifications"
+                                  [attr.aria-label]="'HEADER.NOTIFICATIONS.CLOSE' | translate"
                                   (click)="notificationsDropdown.close()">
                                   <i class="bx bx-x fs-18"></i>
                                 </button>
@@ -153,20 +153,20 @@
                         <div class="py-2 px-2">
                           <ngx-simplebar style="max-height: 300px;">
                             @if (isLoadingNotifications) {
-                              <div class="text-center py-4 text-muted">Loading...</div>
+                              <div class="text-center py-4 text-muted">{{ 'HEADER.NOTIFICATIONS.LOADING' | translate }}</div>
                             } @else if (notificationsLoadFailed) {
                               <div class="text-center py-4">
                                 <div class="mb-2">
                                   <i class="bx bx-error-circle fs-1 text-warning"></i>
                                 </div>
-                                <h6 class="fs-16 fw-semibold lh-base mb-0">Realtime notifications unavailable right now.</h6>
+                                <h6 class="fs-16 fw-semibold lh-base mb-0">{{ 'HEADER.NOTIFICATIONS.REALTIME_UNAVAILABLE' | translate }}</h6>
                               </div>
                             } @else if (notificationCount === 0) {
                               <div class="text-center py-4">
                                 <div class="mb-2">
                                   <i class="bx bx-car fs-1 text-muted"></i>
                                 </div>
-                                <h6 class="fs-16 fw-semibold lh-base mb-0">Hey! You have no any notifications</h6>
+                                <h6 class="fs-16 fw-semibold lh-base mb-0">{{ 'HEADER.NOTIFICATIONS.EMPTY' | translate }}</h6>
                               </div>
                             } @else {
                               @for (item of requestNotifications; track item.id) {
@@ -187,7 +187,7 @@
                                       }
                                     </div>
                                     <div class="flex-grow-1">
-                                      <h6 class="mt-0 mb-1 fs-13 fw-semibold">Request #{{ item.id }}</h6>
+                                      <h6 class="mt-0 mb-1 fs-13 fw-semibold">{{ 'HEADER.NOTIFICATIONS.REQUEST_LABEL' | translate:{ id: item.id } }}</h6>
                                       <div class="fs-13 text-muted mb-1">{{ item.carName }}</div>
                                       <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
                                         <span><i class="mdi mdi-clock-outline"></i> {{ item.createdDate | date:'medium' }}</span>
@@ -205,12 +205,11 @@
                 <div class="dropdown ms-sm-3 header-item topbar-user" ngbDropdown>
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
                         <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" [src]="headerProfileImageUrl" alt="Header Avatar">
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end topbar-user-menu" ngbDropdownMenu>
                         <a class="dropdown-item" routerLink="/admin/my-profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.PROFILE' | translate }}</span></a>
-                        <a class="dropdown-item" routerLink="/pages/faqs"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.HELP' | translate }}</span></a>
                         <a class="dropdown-item" href="javascript: void(0);" (click)="logout()"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ 'HEADER.USER_MENU.LOGOUT' | translate }}</span></a>
                     </div>
                 </div>

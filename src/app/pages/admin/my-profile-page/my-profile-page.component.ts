@@ -12,6 +12,7 @@ import { LookupService } from '../services/lookup.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
 import { TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
+import { GlobalComponent } from 'src/app/global-component';
 
 @Component({
   selector: 'app-my-profile-page',
@@ -36,6 +37,7 @@ export class MyProfilePageComponent implements OnInit {
   employmentStatusLookups: LookupDetail[] = [];
 
   profilePreviewUrl = '';
+  profileImageVersion = Date.now();
   selectedProfileImage?: File;
 
   form = this.fb.group({
@@ -139,7 +141,8 @@ export class MyProfilePageComponent implements OnInit {
         }
 
         this.currentEmployee = employee;
-        this.profilePreviewUrl = employee.profileImageUrl || '';
+        this.profileImageVersion = Date.now();
+        this.profilePreviewUrl = this.resolveProfileImageUrl(employee.profileImageUrl);
 
         this.form.patchValue({
           userName: employee.userName || '',
@@ -170,6 +173,7 @@ export class MyProfilePageComponent implements OnInit {
           userName: employee.userName || '',
           newPassword: ''
         });
+        this.syncAuthUser(employee);
 
         this.isLoading = false;
       },
@@ -339,6 +343,7 @@ export class MyProfilePageComponent implements OnInit {
           confirmButtonText: this.translate.instant('COMMON.OK')
         });
         this.selectedProfileImage = undefined;
+        this.profileImageVersion = Date.now();
         this.loadCurrentEmployeeProfile();
       },
       error: () => {
@@ -394,6 +399,10 @@ export class MyProfilePageComponent implements OnInit {
           this.isUpdatingCredentials = false;
           this.passwordSuccessMessage = this.translate.instant('MY_PROFILE_PAGE.SAVE_SUCCESS');
           this.f.userName.setValue(userName);
+          if (this.currentEmployee) {
+            this.currentEmployee.userName = userName;
+            this.syncAuthUser(this.currentEmployee);
+          }
           this.accountCredentialsForm.patchValue({ userName, newPassword: '' });
           this.credentialsSubmitted = false;
           return;
@@ -404,6 +413,10 @@ export class MyProfilePageComponent implements OnInit {
             this.isUpdatingCredentials = false;
             this.passwordSuccessMessage = this.translate.instant('EMPLOYEE_PAGE.PASSWORD_CHANGED_SUCCESS');
             this.f.userName.setValue(userName);
+            if (this.currentEmployee) {
+              this.currentEmployee.userName = userName;
+              this.syncAuthUser(this.currentEmployee);
+            }
             this.accountCredentialsForm.patchValue({ userName, newPassword: '' });
             this.credentialsSubmitted = false;
             this.showNewPassword = false;
@@ -461,5 +474,44 @@ export class MyProfilePageComponent implements OnInit {
     }
 
     return date.toISOString().slice(0, 10);
+  }
+
+  private resolveProfileImageUrl(rawUrl?: string | null): string {
+    const value = (rawUrl || '').trim();
+    if (!value) {
+      return '';
+    }
+
+    if (value.startsWith('data:')) {
+      return value;
+    }
+
+    const absoluteUrl = value.startsWith('http')
+      ? value
+      : `${GlobalComponent.API_URL}/${value.startsWith('/') ? value.slice(1) : value}`;
+    const separator = absoluteUrl.includes('?') ? '&' : '?';
+    return `${absoluteUrl}${separator}v=${this.profileImageVersion}`;
+  }
+
+  private syncAuthUser(employee: AdminEmployee): void {
+    const existingUser = this.tokenStorageService.getUser() || {};
+    const rememberMe = window.localStorage.getItem('rememberMe') === 'true';
+    const mergedUser = {
+      ...existingUser,
+      userName: employee.userName,
+      email: employee.email,
+      nameEn: employee.nameEn,
+      nameAr: employee.nameAr,
+      fullNameEn: employee.fullNameEn || employee.nameEn,
+      fullNameAr: employee.fullNameAr || employee.nameAr,
+      branchId: employee.branchId,
+      departmentId: employee.departmentId,
+      branchName: employee.branchName,
+      departmentName: employee.departmentName,
+      profileImageUrl: employee.profileImageUrl || existingUser.profileImageUrl,
+      profileImageVersion: this.profileImageVersion
+    };
+
+    this.tokenStorageService.saveUser(mergedUser, rememberMe);
   }
 }

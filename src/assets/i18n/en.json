@@ -1,6 +1,16 @@
 {
   "HEADER": {
     "WELCOME_USER": "Welcome,",
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "UNREAD_MESSAGES": "unread messages",
+      "NEW_COUNT": "{{count}} New",
+      "CLOSE": "Close notifications",
+      "LOADING": "Loading...",
+      "REALTIME_UNAVAILABLE": "Realtime notifications unavailable right now.",
+      "EMPTY": "Hey! You have no any notifications",
+      "REQUEST_LABEL": "Request #{{id}}"
+    },
     "USER_MENU": {
       "PROFILE": "Profile",
       "HELP": "Help",

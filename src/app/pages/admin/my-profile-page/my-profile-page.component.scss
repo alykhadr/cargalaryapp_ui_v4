@@ -4,6 +4,10 @@
   height: 7rem;
 }
 
+.profile-avatar-col {
+  padding-right: 0.75rem;
+}
+
 .user-profile-image {
   width: 7rem;
   height: 7rem;
@@ -13,13 +17,43 @@
   position: absolute;
   right: 0;
   bottom: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  transform: translate(10%, 10%);
+}
+
+.profile-photo-edit.rtl {
+  right: auto;
+  left: 0;
+  transform: translate(-10%, 10%);
+}
+
+.profile-photo-edit label {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.profile-img-file-input {
+  display: none;
 }
 
 .profile-photo-edit .avatar-title {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--vz-border-color);
 }
 
 @media (max-width: 991.98px) {
+  .profile-avatar-col {
+    padding-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
   .profile-wrapper .hstack {
     gap: 0.5rem !important;
   }

@@ -1,6 +1,16 @@
 {
   "HEADER": {
     "WELCOME_USER": "مرحبا ،",
+    "NOTIFICATIONS": {
+      "TITLE": "الإشعارات",
+      "UNREAD_MESSAGES": "رسائل غير مقروءة",
+      "NEW_COUNT": "{{count}} جديد",
+      "CLOSE": "إغلاق الإشعارات",
+      "LOADING": "جارٍ التحميل...",
+      "REALTIME_UNAVAILABLE": "إشعارات الوقت الفعلي غير متاحة حالياً.",
+      "EMPTY": "لا توجد أي إشعارات حالياً",
+      "REQUEST_LABEL": "طلب رقم {{id}}"
+    },
     "USER_MENU": {
       "PROFILE": "الملف الشخصي",
       "HELP": "مساعدة",
