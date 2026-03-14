@@ -6,7 +6,7 @@
 <div id="preloader">
   <div id="status">
     <div class="spinner-border text-primary avatar-sm" role="status">
-      <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">جاري التحميل...</span>
     </div>
   </div>
 </div>
@@ -23,14 +23,14 @@
 <!-- Theme Settings -->
 <ng-template #filtetcontent let-offcanvas>
   <div class="d-flex align-items-center bg-primary bg-gradient p-3 offcanvas-header">
-    <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
-    <button type="button" class="btn-close btn-close-white ms-auto " data-bs-dismiss="offcanvas" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+    <h5 class="m-0 me-2 text-white">مخصص المظهر</h5>
+    <button type="button" class="btn-close btn-close-white ms-auto " data-bs-dismiss="offcanvas" aria-label="إغلاق" (click)="offcanvas.dismiss('تم الإغلاق')"></button>
   </div>
   <div class="offcanvas-body p-0">
     <ngx-simplebar class="h-100">
       <div class="p-4">
-        <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Color Scheme</h6>
-        <p class="text-muted">Choose Light or Dark Scheme.</p>
+        <h6 class="mt-4 mb-0 fw-semibold text-uppercase">نمط الألوان</h6>
+        <p class="text-muted">اختر النمط الفاتح أو الداكن.</p>
         <div class="colorscheme-cardradio">
           <div class="row">
             <div class="col-4">
@@ -55,7 +55,7 @@
                   </span>
                 </label>
               </div>
-              <h5 class="fs-13 text-center mt-2">Light</h5>
+              <h5 class="fs-13 text-center mt-2">فاتح</h5>
             </div>
 
             <div class="col-4">
@@ -80,15 +80,15 @@
                   </span>
                 </label>
               </div>
-              <h5 class="fs-13 text-center mt-2">Dark</h5>
+              <h5 class="fs-13 text-center mt-2">داكن</h5>
             </div>
           </div>
         </div>
 
         @if (attribute === 'semibox') {
           <div id="sidebar-visibility">
-            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Visibility</h6>
-            <p class="text-muted">Choose show or Hidden sidebar.</p>
+            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">إظهار الشريط الجانبي</h6>
+            <p class="text-muted">اختر إظهار أو إخفاء الشريط الجانبي.</p>
             <div class="row">
               <div class="col-4">
                 <div class="form-check card-radio">
@@ -112,7 +112,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Show</h5>
+                <h5 class="fs-13 text-center mt-2">إظهار</h5>
               </div>
               <div class="col-4">
                 <div class="form-check card-radio">
@@ -128,7 +128,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Hidden</h5>
+                <h5 class="fs-13 text-center mt-2">إخفاء</h5>
               </div>
             </div>
           </div>
@@ -136,8 +136,8 @@
 
         @if (attribute === 'vertical' || attribute === 'horizontal') {
           <div id="layout-width">
-            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Layout Width</h6>
-            <p class="text-muted">Choose Fluid or Boxed layout.</p>
+            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">عرض التخطيط</h6>
+            <p class="text-muted">اختر تخطيطًا مرنًا أو محصورًا.</p>
             <div class="row">
               <div class="col-4">
                 <div class="form-check card-radio">
@@ -161,7 +161,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Fluid</h5>
+                <h5 class="fs-13 text-center mt-2">مرن</h5>
               </div>
               <div class="col-4">
                 <div class="form-check card-radio">
@@ -185,7 +185,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Boxed</h5>
+                <h5 class="fs-13 text-center mt-2">محصور</h5>
               </div>
             </div>
           </div>
@@ -193,19 +193,19 @@
 
         @if (attribute === 'vertical' || attribute === 'horizontal' || attribute === 'semibox') {
           <div id="layout-position">
-            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Layout Position</h6>
-            <p class="text-muted">Choose Fixed or Scrollable Layout Position.</p>
+            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">موضع التخطيط</h6>
+            <p class="text-muted">اختر موضعًا ثابتًا أو قابلًا للتمرير.</p>
             <div class="btn-group radio" role="group">
               <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-fixed" value="fixed" [checked]="position === 'fixed'" (change)="changePosition('fixed')">
-              <label class="btn btn-light w-sm" for="layout-position-fixed">Fixed</label>
+              <label class="btn btn-light w-sm" for="layout-position-fixed">ثابت</label>
               <input type="radio" class="btn-check" name="data-layout-position" id="layout-position-scrollable" value="scrollable" [checked]="position === 'scrollable'" (change)="changePosition('scrollable')">
-              <label class="btn btn-light w-sm ms-0" for="layout-position-scrollable">Scrollable</label>
+              <label class="btn btn-light w-sm ms-0" for="layout-position-scrollable">قابل للتمرير</label>
             </div>
           </div>
         }
 
-        <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Topbar Color</h6>
-        <p class="text-muted">Choose Light or Dark Topbar Color.</p>
+        <h6 class="mt-4 mb-0 fw-semibold text-uppercase">لون الشريط العلوي</h6>
+        <p class="text-muted">اختر لون الشريط العلوي الفاتح أو الداكن.</p>
 
         <div class="row">
           <div class="col-4">
@@ -230,7 +230,7 @@
                 </span>
               </label>
             </div>
-            <h5 class="fs-13 text-center mt-2">Light</h5>
+            <h5 class="fs-13 text-center mt-2">فاتح</h5>
           </div>
           <div class="col-4">
             <div class="form-check card-radio">
@@ -254,14 +254,14 @@
                 </span>
               </label>
             </div>
-            <h5 class="fs-13 text-center mt-2">Dark</h5>
+            <h5 class="fs-13 text-center mt-2">داكن</h5>
           </div>
         </div>
 
         @if (attribute === 'vertical' || attribute === 'semibox') {
           <div id="sidebar-size">
-            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Size</h6>
-            <p class="text-muted">Choose a size of Sidebar.</p>
+            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">حجم الشريط الجانبي</h6>
+            <p class="text-muted">اختر حجم الشريط الجانبي.</p>
             <div class="row">
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -285,7 +285,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Default</h5>
+                <h5 class="fs-13 text-center mt-2">افتراضي</h5>
               </div>
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -309,7 +309,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Compact</h5>
+                <h5 class="fs-13 text-center mt-2">مضغوط</h5>
               </div>
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -333,7 +333,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Small (Icon View)</h5>
+                <h5 class="fs-13 text-center mt-2">صغير (عرض الأيقونات)</h5>
               </div>
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -357,15 +357,15 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Small Hover View</h5>
+                <h5 class="fs-13 text-center mt-2">عرض صغير عند المرور</h5>
               </div>
             </div>
           </div>
         }
         @if (attribute === 'vertical' || attribute === 'twocolumn' || attribute === 'semibox') {
           <div id="sidebar-color">
-            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Color</h6>
-            <p class="text-muted">Choose Ligth or Dark Sidebar Color.</p>
+            <h6 class="mt-4 mb-0 fw-semibold text-uppercase">لون الشريط الجانبي</h6>
+            <p class="text-muted">اختر لون الشريط الجانبي الفاتح أو الداكن.</p>
             <div class="row">
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -389,7 +389,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Light</h5>
+                <h5 class="fs-13 text-center mt-2">فاتح</h5>
               </div>
               <div class="col-4">
                 <div class="form-check sidebar-setting card-radio">
@@ -413,7 +413,7 @@
                     </span>
                   </label>
                 </div>
-                <h5 class="fs-13 text-center mt-2">Dark</h5>
+                <h5 class="fs-13 text-center mt-2">داكن</h5>
               </div>
               <div class="col-4">
                 <button class="btn btn-link avatar-md w-100 p-0 overflow-hidden border collapsed" id="collapseBgGradient1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBgGradient" aria-expanded="false" aria-controls="collapseBgGradient" (click)="addActive('gradient')">
@@ -434,7 +434,7 @@
                     </span>
                   </span>
                 </button>
-                <h5 class="fs-13 text-center mt-2">Gradient</h5>
+                <h5 class="fs-13 text-center mt-2">متدرج</h5>
               </div>
             </div>
             <div class="collapse" id="collapseBgGradient">
@@ -466,8 +466,8 @@
               </div>
             </div>
             <div id="sidebar-img">
-              <h6 class="mt-4 mb-0 fw-semibold text-uppercase">Sidebar Images</h6>
-              <p class="text-muted">Choose a image of Sidebar.</p>
+              <h6 class="mt-4 mb-0 fw-semibold text-uppercase">صور الشريط الجانبي</h6>
+              <p class="text-muted">اختر صورة للشريط الجانبي.</p>
               <div class="d-flex gap-2 flex-wrap img-switch">
                 <div class="form-check sidebar-setting card-radio">
                   <input class="form-check-input" type="radio" name="data-sidebar-image" id="sidebarimg-none" value="none" [checked]="sidebarImage === 'none'" (change)="changeSidebarImage('none')" onchange="document.documentElement.setAttribute('data-sidebar-image', 'none')">

@@ -1,0 +1,21 @@
+.footer-phone {
+  color: var(--vz-primary);
+}
+
+.footer-phone-link {
+  color: var(--vz-primary);
+}
+
+.footer-phone-link:hover,
+.footer-phone-link:focus {
+  color: var(--vz-primary-text-emphasis);
+}
+
+.footer-whatsapp-link {
+  color: var(--vz-success);
+}
+
+.footer-whatsapp-link:hover,
+.footer-whatsapp-link:focus {
+  color: var(--vz-success-text-emphasis);
+}
