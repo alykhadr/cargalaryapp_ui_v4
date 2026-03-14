@@ -97,6 +97,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   latestRequestsTotalCount = 0;
   latestRequestsPager = new PaginationService();
   isLoadingLatestRequests = false;
+  totalUsersCount = 0;
+  isLoadingTotalUsers = false;
+  totalCardsCounterOptions = {
+    startVal: 0,
+    useEasing: true,
+    duration: 1.8,
+    decimalPlaces: 0
+  };
   productReviews: Array<{
     id: number;
     carId?: number | null;
@@ -566,6 +574,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadDashboardSalesContacts();
     this.loadDashboardActiveEmployees();
     this.loadDashboardLoggedInUsers();
+    this.loadTotalUsersCount();
   }
 
   get localizedLatestCars(): Array<{
@@ -1460,6 +1469,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.latestRequestsPager.startIndex = 0;
           this.latestRequestsPager.endIndex = 0;
           this.isLoadingLatestRequests = false;
+        }
+      });
+  }
+
+  private loadTotalUsersCount(): void {
+    this.isLoadingTotalUsers = true;
+    this.http
+      .get<Array<{ id?: string | null }>>(`${GlobalComponent.API_URL}/api/users`)
+      .pipe(first())
+      .subscribe({
+        next: (users) => {
+          this.totalUsersCount = Array.isArray(users) ? users.length : 0;
+          this.isLoadingTotalUsers = false;
+        },
+        error: () => {
+          this.totalUsersCount = 0;
+          this.isLoadingTotalUsers = false;
         }
       });
   }

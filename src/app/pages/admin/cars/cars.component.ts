@@ -96,6 +96,7 @@ export class CarsComponent implements OnInit, OnDestroy {
   selectedYearFilter?: number;
   selectedBrandId?: number;
   selectedModelId?: number;
+  selectedAvailabilityFilter: 'all' | 'active' | 'inactive' = 'all';
   carSortDirection: 'asc' | 'desc' = 'asc';
   latestRealtimeCar: Car | null = null;
   latestRealtimeAction: 'created' | 'updated' | 'deleted' = 'created';
@@ -335,10 +336,12 @@ export class CarsComponent implements OnInit, OnDestroy {
     const tabParam = this.route.snapshot.queryParamMap.get('tab');
     const parsedCarId = carIdParam ? Number(carIdParam) : NaN;
     const parsedTab = tabParam ? Number(tabParam) : NaN;
+    const availabilityParam = this.route.snapshot.queryParamMap.get('availability');
     if (Number.isFinite(parsedCarId) && parsedCarId > 0) {
       this.requestedCarIdToOpen = parsedCarId;
       this.requestedTabToOpen = Number.isFinite(parsedTab) && parsedTab >= 1 && parsedTab <= 5 ? parsedTab : 1;
     }
+    this.selectedAvailabilityFilter = this.parseAvailabilityFilter(availabilityParam);
 
     this.carForm = this.formBuilder.group({
       nameEn: ['', [Validators.required]],
@@ -1928,6 +1931,12 @@ export class CarsComponent implements OnInit, OnDestroy {
       data = data.filter(car => car.year.toString().includes(yearTerm));
     }
 
+    if (this.selectedAvailabilityFilter === 'active') {
+      data = data.filter(car => !!car.isAvailable);
+    } else if (this.selectedAvailabilityFilter === 'inactive') {
+      data = data.filter(car => !car.isAvailable);
+    }
+
     data.sort((a, b) => {
       const left = `${a.nameEn || ''} ${a.nameAr || ''}`.trim().toLowerCase();
       const right = `${b.nameEn || ''} ${b.nameAr || ''}`.trim().toLowerCase();
@@ -1970,6 +1979,7 @@ export class CarsComponent implements OnInit, OnDestroy {
     this.selectedYearFilter = undefined;
     this.selectedBrandId = undefined;
     this.selectedModelId = undefined;
+    this.selectedAvailabilityFilter = 'all';
     this.filterCarModels = this.carModels;
     this.applyFilters(true);
   }
@@ -1999,6 +2009,14 @@ export class CarsComponent implements OnInit, OnDestroy {
         this.showError(error);
       }
     });
+  }
+
+  private parseAvailabilityFilter(value: string | null): 'all' | 'active' | 'inactive' {
+    const normalized = (value || '').trim().toLowerCase();
+    if (normalized === 'active' || normalized === 'inactive') {
+      return normalized;
+    }
+    return 'all';
   }
 
   onFormBrandChange(brandValue?: number | Brand | null) {

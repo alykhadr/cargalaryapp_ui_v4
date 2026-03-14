@@ -1681,6 +1681,20 @@
               </div>
             </div>
             <div class="col-md-4">
+              <label class="form-label car-filter-label">{{ 'COMMON.STATUS' | translate }}</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text"><i class="ri-checkbox-circle-line"></i></span>
+                <select
+                  class="form-select car-filter-input"
+                  [(ngModel)]="selectedAvailabilityFilter"
+                  (ngModelChange)="applyFilters(true)">
+                  <option value="all">{{ 'COMMON.ALL' | translate }}</option>
+                  <option value="active">{{ 'COMMON.ACTIVE' | translate }}</option>
+                  <option value="inactive">{{ 'COMMON.INACTIVE' | translate }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
               <label class="form-label car-filter-label">{{ 'COMMON.NAME_EN' | translate }}</label>
               <div class="input-group input-group-sm">
                 <span class="input-group-text"><i class="ri-search-line"></i></span>

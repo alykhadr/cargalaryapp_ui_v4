@@ -146,3 +146,98 @@
   background: #0ab39c;
   flex-shrink: 0;
 }
+
+.dashboard-total-cars-card {
+  background: linear-gradient(135deg, var(--vz-primary-bg-subtle), var(--vz-info-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-primary-rgb), 0.12);
+}
+
+.dashboard-total-cars-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-primary);
+  background: rgba(var(--vz-primary-rgb), 0.15);
+  border: 1px solid rgba(var(--vz-primary-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-cars-label {
+  color: var(--vz-secondary-color);
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+
+.dashboard-total-cars-value {
+  color: var(--vz-primary-text-emphasis);
+  line-height: 1.2;
+}
+
+.dashboard-total-cars-link {
+  color: var(--vz-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.dashboard-total-cars-link:hover,
+.dashboard-total-cars-link:focus {
+  color: var(--vz-primary-text-emphasis);
+  text-decoration: underline;
+}
+
+.dashboard-total-requests-card {
+  background: linear-gradient(135deg, var(--vz-success-bg-subtle), var(--vz-warning-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-success-rgb), 0.12);
+}
+
+.dashboard-total-requests-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-success);
+  background: rgba(var(--vz-success-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-success-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-brands-card {
+  background: linear-gradient(135deg, var(--vz-info-bg-subtle), var(--vz-primary-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-info-rgb), 0.12);
+}
+
+.dashboard-total-brands-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-info);
+  background: rgba(var(--vz-info-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-info-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-users-card {
+  background: linear-gradient(135deg, var(--vz-warning-bg-subtle), var(--vz-danger-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-warning-rgb), 0.12);
+}
+
+.dashboard-total-users-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-warning-text-emphasis);
+  background: rgba(var(--vz-warning-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-warning-rgb), 0.25);
+  flex-shrink: 0;
+}

@@ -628,7 +628,15 @@
     "INVITE_SELLER_DESC": "Refer a new seller to us and earn $100 per refer.",
     "INVITE_NOW": "Invite Now",
     "BEST_SELLER_CARS": "Best Seller Cars",
-    "SOLD_COUNT": "Sold Count"
+    "SOLD_COUNT": "Sold Count",
+    "TOTAL_CARS": "Total Cars",
+    "VIEW_ACTIVE_CARS": "View Active Cars",
+    "TOTAL_REQUESTS": "Total Requests",
+    "VIEW_ALL_REQUESTS": "View All Requests",
+    "TOTAL_BRANDS": "Total Brands",
+    "VIEW_ALL_BRANDS": "View All Brands",
+    "TOTAL_USERS": "Total Users",
+    "VIEW_ALL_USERS": "View All Users"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "Search by username, name or email...",

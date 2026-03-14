@@ -628,7 +628,15 @@
     "INVITE_SELLER_DESC": "قم بإحالة بائع جديد إلينا واحصل على 100 دولار لكل إحالة.",
     "INVITE_NOW": "ادعُ الآن",
     "BEST_SELLER_CARS": "السيارات الأكثر مبيعًا",
-    "SOLD_COUNT": "عدد المبيعات"
+    "SOLD_COUNT": "عدد المبيعات",
+    "TOTAL_CARS": "إجمالي السيارات",
+    "VIEW_ACTIVE_CARS": "عرض السيارات النشطة",
+    "TOTAL_REQUESTS": "إجمالي الطلبات",
+    "VIEW_ALL_REQUESTS": "عرض كل الطلبات",
+    "TOTAL_BRANDS": "إجمالي الماركات",
+    "VIEW_ALL_BRANDS": "عرض كل الماركات",
+    "TOTAL_USERS": "إجمالي المستخدمين",
+    "VIEW_ALL_USERS": "عرض كل المستخدمين"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "ابحث باسم المستخدم أو الاسم أو البريد الإلكتروني...",
