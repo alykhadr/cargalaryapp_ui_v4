@@ -892,10 +892,9 @@
 
                     <div class="card sidebar-alert bg-light border-0 mx-4 mb-0 mt-3">
                         <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
-                                <h6 class="text-muted mb-0 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.ACTIVE_EMPLOYEES' | translate }}</h6>
+                            <div class="mb-3">
                                 <select
-                                    class="form-select form-select-sm w-auto"
+                                    class="form-select form-select-sm w-100"
                                     [ngModel]="employeeScope"
                                     (ngModelChange)="onEmployeeScopeChange($event)">
                                     <option value="branch">{{ 'DASHBOARD_PAGE.EMPLOYEE_SCOPE_BRANCH' | translate }}</option>
@@ -910,18 +909,30 @@
                             } @else if (localizedDashboardActiveEmployees.length === 0) {
                                 <div class="text-center text-muted py-3">{{ 'DASHBOARD_PAGE.NO_ACTIVE_EMPLOYEES' | translate }}</div>
                             } @else {
-                                <div class="vstack gap-2">
+                                <div class="active-employees-grid">
                                     @for (employee of localizedDashboardActiveEmployees; track employee.id) {
-                                        <div class="d-flex align-items-center gap-2 border-bottom pb-2">
-                                            <img
-                                                [src]="getOfferImageUrl(employee.profileImageUrl)"
-                                                [alt]="employee.displayName"
-                                                class="rounded-circle object-fit-cover"
-                                                width="28"
-                                                height="28" />
-                                            <div class="flex-grow-1">
-                                                <div class="fw-semibold text-truncate">{{ employee.displayName }}</div>
-                                                <small class="text-muted d-block text-truncate">{{ employee.displayDepartment }}</small>
+                                        <div class="active-employee-card">
+                                            <div class="active-employee-media">
+                                                <img
+                                                    [src]="getOfferImageUrl(employee.profileImageUrl)"
+                                                    [alt]="employee.displayName"
+                                                    class="active-employee-avatar rounded-circle object-fit-cover"
+                                                    width="40"
+                                                    height="40" />
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-light active-employee-preview-btn"
+                                                    [title]="'COMMON.PREVIEW' | translate"
+                                                    (click)="openImagePreview(getOfferImageUrl(employee.profileImageUrl), employee.displayName)">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                            </div>
+                                            <div class="active-employee-content">
+                                                <div class="fw-semibold text-truncate d-flex align-items-center gap-1">
+                                                    <span class="employee-active-dot" aria-hidden="true"></span>
+                                                    <span>{{ employee.displayName }}</span>
+                                                </div>
+                                                <span class="badge bg-secondary-subtle text-secondary text-truncate">{{ employee.displayDepartment }}</span>
                                             </div>
                                         </div>
                                     }
