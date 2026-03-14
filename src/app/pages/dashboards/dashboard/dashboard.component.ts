@@ -102,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   totalCardsCounterOptions = {
     startVal: 0,
     useEasing: true,
-    duration: 1.8,
+    duration: 3.2,
     decimalPlaces: 0
   };
   productReviews: Array<{
