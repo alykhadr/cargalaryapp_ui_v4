@@ -12,6 +12,16 @@ const INVALID_CREDENTIALS_MESSAGES = {
     en: 'Invalid user name or password',
     ar: 'اسم المستخدم أو كلمة المرور غير صحيحة'
 } as const;
+const EMPLOYEE_ONLY_LOGIN_MESSAGES = {
+    en: 'Login is allowed only for users linked to an employee record',
+    ar: 'تسجيل الدخول متاح فقط للمستخدمين المرتبطين بسجل موظف'
+} as const;
+const LOCKED_USER_LOGIN_MESSAGES = {
+    en: 'User account is locked',
+    ar: 'هذا الحساب مقفل'
+} as const;
+const NON_EMPLOYEE_LOGIN_ERROR = 'NON_EMPLOYEE_LOGIN_ERROR';
+const LOCKED_USER_LOGIN_ERROR = 'LOCKED_USER_LOGIN_ERROR';
 
 function getCurrentLanguage(): 'ar' | 'en' {
     const browserLang = (typeof navigator !== 'undefined' ? navigator.language : '').toLowerCase();
@@ -29,6 +39,40 @@ function getCurrentLanguage(): 'ar' | 'en' {
 
 function getInvalidCredentialsMessage(): string {
     return INVALID_CREDENTIALS_MESSAGES[getCurrentLanguage()];
+}
+
+function getEmployeeOnlyLoginMessage(): string {
+    return EMPLOYEE_ONLY_LOGIN_MESSAGES[getCurrentLanguage()];
+}
+
+function getLockedUserLoginMessage(): string {
+    return LOCKED_USER_LOGIN_MESSAGES[getCurrentLanguage()];
+}
+
+function extractApiErrorMessage(error: any): string {
+    const payload = error?.error;
+
+    if (typeof payload === 'string') {
+        return payload;
+    }
+
+    if (payload && typeof payload === 'object') {
+        const message = payload.message ?? payload.Message ?? payload.messageEn ?? payload.MessageEn;
+        if (typeof message === 'string') {
+            return message;
+        }
+    }
+
+    if (typeof error?.message === 'string') {
+        return error.message;
+    }
+
+    return '';
+}
+
+function isLockedAccountApiError(error: any): boolean {
+    const message = extractApiErrorMessage(error).toLowerCase();
+    return message.includes('user account is locked') || message.includes('account is locked');
 }
 
 const httpOptions = {
@@ -75,6 +119,12 @@ export class MyAuthService {
         }, httpOptions).pipe(
             map((response: User) => {
                 const user = response;
+                if (!this.hasEmployeeLink(user)) {
+                    throw new Error(NON_EMPLOYEE_LOGIN_ERROR);
+                }
+                if (this.isUserLocked(user)) {
+                    throw new Error(LOCKED_USER_LOGIN_ERROR);
+                }
                 if (user && user.token) {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     sessionStorage.setItem('toast', 'true');
@@ -84,6 +134,15 @@ export class MyAuthService {
                 return user;
             }),
             catchError((error: any) => {
+                if (error?.message === NON_EMPLOYEE_LOGIN_ERROR) {
+                    return throwError(() => getEmployeeOnlyLoginMessage());
+                }
+                if (error?.message === LOCKED_USER_LOGIN_ERROR) {
+                    return throwError(() => getLockedUserLoginMessage());
+                }
+                if (isLockedAccountApiError(error)) {
+                    return throwError(() => getLockedUserLoginMessage());
+                }
                 const errorMessage = getInvalidCredentialsMessage();
                 return throwError(() => errorMessage);
             })
@@ -112,5 +171,27 @@ export class MyAuthService {
             { userNameOrEmail, token, newPassword },
             httpOptions
         );
+    }
+
+    private hasEmployeeLink(user: User | null | undefined): boolean {
+        const employeeId = Number(user?.employeeId);
+        return Number.isFinite(employeeId) && employeeId > 0;
+    }
+
+    private isUserLocked(user: User | null | undefined): boolean {
+        if (user?.isLocked === true) {
+            return true;
+        }
+
+        if (!user?.lockoutEnd) {
+            return false;
+        }
+
+        const lockoutEnd = new Date(user.lockoutEnd);
+        if (Number.isNaN(lockoutEnd.getTime())) {
+            return false;
+        }
+
+        return lockoutEnd.getTime() > Date.now();
     }
 }
