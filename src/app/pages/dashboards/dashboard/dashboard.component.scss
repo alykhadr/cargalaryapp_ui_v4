@@ -118,6 +118,27 @@
   gap: 0.25rem;
 }
 
+.logged-user-image-wrap {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.logged-user-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.logged-user-preview-btn {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 1;
+  padding: 0.1rem 0.3rem;
+  z-index: 2;
+}
+
 .employee-active-dot {
   width: 8px;
   height: 8px;

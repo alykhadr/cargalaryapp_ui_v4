@@ -194,6 +194,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoadingDashboardActiveEmployees = false;
   employeeScope: 'branch' | 'all' = 'branch';
   employeeCanViewAllBranches = false;
+  dashboardLoggedInUsers: Array<{
+    id: string;
+    employeeId?: number | null;
+    userName?: string | null;
+    fullNameAr?: string | null;
+    fullNameEn?: string | null;
+    branchId: number;
+    branchNameAr?: string | null;
+    branchNameEn?: string | null;
+    profileImageUrl?: string | null;
+    email?: string | null;
+    mobileNo?: string | null;
+    lastLoginAt?: string | null;
+    lastActivityAt?: string | null;
+  }> = [];
+  dashboardLoggedInUsersTotalCount = 0;
+  dashboardLoggedInUsersPager = new PaginationService();
+  isLoadingDashboardLoggedInUsers = false;
+  loggedInUsersScope: 'branch' | 'all' = 'branch';
+  loggedInUsersCanViewAllBranches = false;
   totalBranchSales = 0;
   isLoadingBranchSales = false;
   mapFitBounds: any = null;
@@ -221,6 +241,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.favoriteCarsPager.pageSize = 5;
     this.bestSellerCarsPager.pageSize = 5;
     this.latestRequestsPager.pageSize = 6;
+    this.dashboardLoggedInUsersPager.pageSize = 5;
   }
 
   ngOnInit(): void {
@@ -544,6 +565,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadDashboardMemberServices();
     this.loadDashboardSalesContacts();
     this.loadDashboardActiveEmployees();
+    this.loadDashboardLoggedInUsers();
   }
 
   get localizedLatestCars(): Array<{
@@ -1082,6 +1104,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }));
   }
 
+  get localizedDashboardLoggedInUsers(): Array<{
+    id: string;
+    employeeId?: number | null;
+    profileImageUrl?: string | null;
+    displayName: string;
+    email: string;
+    mobileNo: string;
+    displayBranch: string;
+    lastActivityAt?: string | null;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.dashboardLoggedInUsers.map(item => ({
+      id: item.id,
+      employeeId: item.employeeId,
+      profileImageUrl: item.profileImageUrl,
+      displayName: isArabic
+        ? (item.fullNameAr || item.fullNameEn || item.userName || item.id)
+        : (item.fullNameEn || item.fullNameAr || item.userName || item.id),
+      email: (item.email || '').trim() || '-',
+      mobileNo: (item.mobileNo || '').trim() || '-',
+      displayBranch: isArabic
+        ? (item.branchNameAr || item.branchNameEn || '-')
+        : (item.branchNameEn || item.branchNameAr || '-'),
+      lastActivityAt: item.lastActivityAt
+    }));
+  }
+
   private loadDashboardOffers(): void {
     this.isLoadingDashboardOffers = true;
     this.http
@@ -1222,6 +1271,110 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.employeeScope = scope;
     this.loadDashboardActiveEmployees();
+  }
+
+  private loadDashboardLoggedInUsers(): void {
+    this.isLoadingDashboardLoggedInUsers = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        scope: 'branch' | 'all';
+        canViewAllBranches?: boolean;
+        onlineWithinMinutes?: number;
+        items: Array<{
+          id: string;
+          employeeId?: number | null;
+          userName?: string | null;
+          fullNameAr?: string | null;
+          fullNameEn?: string | null;
+          branchId: number;
+          branchNameAr?: string | null;
+          branchNameEn?: string | null;
+          profileImageUrl?: string | null;
+          email?: string | null;
+          mobileNo?: string | null;
+          lastLoginAt?: string | null;
+          lastActivityAt?: string | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/logged-in-users?page=${this.dashboardLoggedInUsersPager.page}&pageSize=${this.dashboardLoggedInUsersPager.pageSize}&scope=${this.loggedInUsersScope}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.dashboardLoggedInUsers = Array.isArray(response?.items) ? response.items : [];
+          this.dashboardLoggedInUsersTotalCount = Number(response?.totalCount) || 0;
+          this.dashboardLoggedInUsersPager.startIndex = this.dashboardLoggedInUsersTotalCount > 0
+            ? (this.dashboardLoggedInUsersPager.page - 1) * this.dashboardLoggedInUsersPager.pageSize + 1
+            : 0;
+          this.dashboardLoggedInUsersPager.endIndex = this.dashboardLoggedInUsersTotalCount > 0
+            ? Math.min(this.dashboardLoggedInUsersPager.page * this.dashboardLoggedInUsersPager.pageSize, this.dashboardLoggedInUsersTotalCount)
+            : 0;
+          const responseScope = ((response?.scope || '') as string).toLowerCase();
+          if (responseScope === 'all' || responseScope === 'branch') {
+            this.loggedInUsersScope = responseScope;
+          }
+          this.loggedInUsersCanViewAllBranches = response?.canViewAllBranches === true;
+          this.isLoadingDashboardLoggedInUsers = false;
+        },
+        error: () => {
+          this.dashboardLoggedInUsers = [];
+          this.dashboardLoggedInUsersTotalCount = 0;
+          this.dashboardLoggedInUsersPager.startIndex = 0;
+          this.dashboardLoggedInUsersPager.endIndex = 0;
+          this.loggedInUsersCanViewAllBranches = false;
+          this.loggedInUsersScope = 'branch';
+          this.isLoadingDashboardLoggedInUsers = false;
+        }
+      });
+  }
+
+  onLoggedInUsersScopeChange(scope: 'branch' | 'all'): void {
+    if (scope !== 'branch' && scope !== 'all') {
+      return;
+    }
+
+    this.loggedInUsersScope = scope;
+    this.dashboardLoggedInUsersPager.page = 1;
+    this.loadDashboardLoggedInUsers();
+  }
+
+  onDashboardLoggedInUsersPageChange(page: number | Event): void {
+    const resolvedPage = typeof page === 'number' ? page : this.dashboardLoggedInUsersPager.page;
+    this.dashboardLoggedInUsersPager.page = resolvedPage;
+    this.loadDashboardLoggedInUsers();
+  }
+
+  get dashboardLoggedInUsersTotalPages(): number {
+    const pageSize = Number(this.dashboardLoggedInUsersPager.pageSize) || 1;
+    return Math.max(1, Math.ceil(this.dashboardLoggedInUsersTotalCount / pageSize));
+  }
+
+  get dashboardLoggedInUsersVisiblePages(): number[] {
+    const totalPages = this.dashboardLoggedInUsersTotalPages;
+    const currentPage = Number(this.dashboardLoggedInUsersPager.page) || 1;
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  }
+
+  goToDashboardLoggedInUsersPage(page: number): void {
+    if (page < 1 || page > this.dashboardLoggedInUsersTotalPages || page === this.dashboardLoggedInUsersPager.page) {
+      return;
+    }
+
+    this.onDashboardLoggedInUsersPageChange(page);
   }
 
   private loadBranchSales(): void {

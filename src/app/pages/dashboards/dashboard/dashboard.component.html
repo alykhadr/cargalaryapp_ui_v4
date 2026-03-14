@@ -166,6 +166,121 @@
             </div>
 
             <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header align-items-center d-flex flex-wrap gap-2">
+                            <h4 class="card-title mb-0 flex-grow-1">{{ 'DASHBOARD_PAGE.LOGGED_IN_USERS' | translate }}</h4>
+                            <div class="d-flex align-items-center gap-2">
+                                <select
+                                    class="form-select form-select-sm"
+                                    [ngModel]="loggedInUsersScope"
+                                    (ngModelChange)="onLoggedInUsersScopeChange($event)">
+                                    <option value="branch">{{ 'DASHBOARD_PAGE.EMPLOYEE_SCOPE_BRANCH' | translate }}</option>
+                                    <option *ngIf="loggedInUsersCanViewAllBranches" value="all">{{ 'DASHBOARD_PAGE.EMPLOYEE_SCOPE_ALL' | translate }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive table-card">
+                                <table class="table table-hover table-centered align-middle table-nowrap mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>{{ 'COMMON.IMAGE' | translate }}</th>
+                                            <th>{{ 'COMMON.NAME' | translate }}</th>
+                                            <th>{{ 'COMMON.MOBILE' | translate }}</th>
+                                            <th>{{ 'COMMON.EMAIL' | translate }}</th>
+                                            <th>{{ 'COMMON.STATUS' | translate }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (isLoadingDashboardLoggedInUsers) {
+                                          <tr>
+                                              <td colspan="5" class="text-center py-4 text-muted">
+                                                  {{ 'COMMON.LOADING' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else if (localizedDashboardLoggedInUsers.length === 0) {
+                                          <tr>
+                                              <td colspan="5" class="text-center py-4 text-muted">
+                                                  {{ 'DASHBOARD_PAGE.NO_LOGGED_IN_USERS' | translate }}
+                                              </td>
+                                          </tr>
+                                        } @else {
+                                          @for (loggedUser of localizedDashboardLoggedInUsers; track loggedUser.id) {
+                                            <tr>
+                                                <td>
+                                                    <div class="logged-user-image-wrap">
+                                                        <img
+                                                          [src]="getOfferImageUrl(loggedUser.profileImageUrl)"
+                                                          [alt]="loggedUser.displayName"
+                                                          class="logged-user-avatar rounded-circle object-fit-cover"
+                                                          width="40"
+                                                          height="40" />
+                                                        <button
+                                                          type="button"
+                                                          class="btn btn-sm btn-light logged-user-preview-btn"
+                                                          [title]="'COMMON.PREVIEW' | translate"
+                                                          (click)="openImagePreview(getOfferImageUrl(loggedUser.profileImageUrl), loggedUser.displayName)">
+                                                            <i class="ri-eye-line"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-semibold text-truncate d-flex align-items-center gap-1">
+                                                        <span class="employee-active-dot" aria-hidden="true"></span>
+                                                        <span>{{ loggedUser.displayName }}</span>
+                                                    </div>
+                                                    <small class="text-muted d-block">{{ loggedUser.displayBranch }}</small>
+                                                    <small class="text-muted">{{ 'DASHBOARD_PAGE.LAST_ACTIVITY' | translate }}: {{ loggedUser.lastActivityAt | date:'dd-MM-yyyy HH:mm' }}</small>
+                                                </td>
+                                                <td>{{ loggedUser.mobileNo }}</td>
+                                                <td>{{ loggedUser.email }}</td>
+                                                <td>
+                                                    <span class="badge bg-success-subtle text-success">
+                                                        {{ 'COMMON.ACTIVE' | translate }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                          }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="align-items-center mt-4 pt-2 justify-content-between d-flex" *ngIf="!isLoadingDashboardLoggedInUsers">
+                                <div class="col-sm">
+                                    <div class="text-muted" *ngIf="dashboardLoggedInUsersTotalCount > 0">{{ 'COMMON.PAGINATION_SUMMARY' | translate:{ start: dashboardLoggedInUsersPager.startIndex, end: dashboardLoggedInUsersPager.endIndex, total: dashboardLoggedInUsersTotalCount } }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto" *ngIf="dashboardLoggedInUsersTotalCount > 0">
+                                    <ul class="pagination pagination-separated pagination-sm justify-content-center justify-content-sm-start mb-0">
+                                        <li class="page-item" [class.disabled]="dashboardLoggedInUsersPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToDashboardLoggedInUsersPage(1)">«</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="dashboardLoggedInUsersPager.page <= 1">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToDashboardLoggedInUsersPage(dashboardLoggedInUsersPager.page - 1)">‹</a>
+                                        </li>
+                                        @for (pageNum of dashboardLoggedInUsersVisiblePages; track pageNum) {
+                                          <li class="page-item" [class.active]="pageNum === dashboardLoggedInUsersPager.page">
+                                              <a href="javascript:void(0);" class="page-link" (click)="goToDashboardLoggedInUsersPage(pageNum)">{{ pageNum }}</a>
+                                          </li>
+                                        }
+                                        <li class="page-item" [class.disabled]="dashboardLoggedInUsersPager.page >= dashboardLoggedInUsersTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToDashboardLoggedInUsersPage(dashboardLoggedInUsersPager.page + 1)">›</a>
+                                        </li>
+                                        <li class="page-item" [class.disabled]="dashboardLoggedInUsersPager.page >= dashboardLoggedInUsersTotalPages">
+                                            <a href="javascript:void(0);" class="page-link" (click)="goToDashboardLoggedInUsersPage(dashboardLoggedInUsersTotalPages)">»</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-xl-6">
                     <div class="card">
                         <div class="card-header align-items-center d-flex">
@@ -892,6 +1007,7 @@
 
                     <div class="card sidebar-alert bg-light border-0 mx-4 mb-0 mt-3">
                         <div class="card-body">
+                            <h6 class="text-muted mb-3 text-uppercase fw-semibold">{{ 'DASHBOARD_PAGE.ON_DUTY_EMPLOYEES' | translate }}</h6>
                             <div class="mb-3">
                                 <select
                                     class="form-select form-select-sm w-100"
@@ -929,7 +1045,6 @@
                                             </div>
                                             <div class="active-employee-content">
                                                 <div class="fw-semibold text-truncate d-flex align-items-center gap-1">
-                                                    <span class="employee-active-dot" aria-hidden="true"></span>
                                                     <span>{{ employee.displayName }}</span>
                                                 </div>
                                                 <span class="badge bg-secondary-subtle text-secondary text-truncate">{{ employee.displayDepartment }}</span>
