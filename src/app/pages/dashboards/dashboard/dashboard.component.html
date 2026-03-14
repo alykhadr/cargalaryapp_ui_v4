@@ -34,17 +34,9 @@
             </div>
             <!--end row-->
 
-            <div class="row">
-                @for (stat of statData; track $index) {
-                <div class="col-xl-3 col-md-6">
-                    <app-stat [title]="stat.title" [value]="stat.value" [icon]="stat.icon" [persantage]="stat.persantage" [profit]="stat.profit" [link]="stat.link"></app-stat>
-                </div>
-                }
-            </div> <!-- end row-->
-
             <div class="row mb-3 g-3">
                 <div class="col-xxl-3 col-md-6">
-                    <div class="card dashboard-total-cars-card border-0">
+                    <div class="card dashboard-summary-card dashboard-total-cars-card border-0">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="dashboard-total-cars-icon rounded-circle">
@@ -73,7 +65,7 @@
                     </div>
                 </div>
                 <div class="col-xxl-3 col-md-6">
-                    <div class="card dashboard-total-requests-card border-0">
+                    <div class="card dashboard-summary-card dashboard-total-requests-card border-0">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="dashboard-total-requests-icon rounded-circle">
@@ -101,7 +93,7 @@
                     </div>
                 </div>
                 <div class="col-xxl-3 col-md-6">
-                    <div class="card dashboard-total-brands-card border-0">
+                    <div class="card dashboard-summary-card dashboard-total-brands-card border-0">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="dashboard-total-brands-icon rounded-circle">
@@ -129,7 +121,7 @@
                     </div>
                 </div>
                 <div class="col-xxl-3 col-md-6">
-                    <div class="card dashboard-total-users-card border-0">
+                    <div class="card dashboard-summary-card dashboard-total-users-card border-0">
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="dashboard-total-users-icon rounded-circle">
@@ -150,6 +142,121 @@
                                       class="dashboard-total-cars-link"
                                       [routerLink]="['/admin/employees']">
                                         <i class="ri-arrow-left-right-line align-middle me-1"></i>{{ 'DASHBOARD_PAGE.VIEW_ALL_USERS' | translate }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3 g-3">
+                <div class="col-xxl-3 col-md-6">
+                    <div class="card dashboard-summary-card dashboard-total-branches-card border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="dashboard-total-branches-icon rounded-circle">
+                                    <i class="ri-git-branch-line"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <p class="text-uppercase fw-semibold mb-1 dashboard-total-cars-label">{{ 'DASHBOARD_PAGE.TOTAL_BRANCHES' | translate }}</p>
+                                    <h2 class="mb-1 dashboard-total-cars-value">
+                                        @if (isLoadingTotalBranches) {
+                                          <span class="placeholder-glow">
+                                            <span class="placeholder col-3"></span>
+                                          </span>
+                                        } @else {
+                                          <span [countUp]="totalBranchesCount" class="counter-value" [options]="totalCardsCounterOptions"></span>
+                                        }
+                                    </h2>
+                                    <a
+                                      class="dashboard-total-cars-link"
+                                      [routerLink]="['/admin/branches']">
+                                        <i class="ri-arrow-left-right-line align-middle me-1"></i>{{ 'DASHBOARD_PAGE.VIEW_ALL_BRANCHES' | translate }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-3 col-md-6">
+                    <div class="card dashboard-summary-card dashboard-total-employees-card border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="dashboard-total-employees-icon rounded-circle">
+                                    <i class="ri-team-line"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <p class="text-uppercase fw-semibold mb-1 dashboard-total-cars-label">{{ 'DASHBOARD_PAGE.TOTAL_EMPLOYEES' | translate }}</p>
+                                    <h2 class="mb-1 dashboard-total-cars-value">
+                                        @if (isLoadingTotalEmployees) {
+                                          <span class="placeholder-glow">
+                                            <span class="placeholder col-3"></span>
+                                          </span>
+                                        } @else {
+                                          <span [countUp]="totalEmployeesCount" class="counter-value" [options]="totalCardsCounterOptions"></span>
+                                        }
+                                    </h2>
+                                    <a
+                                      class="dashboard-total-cars-link"
+                                      [routerLink]="['/admin/employees']">
+                                        <i class="ri-arrow-left-right-line align-middle me-1"></i>{{ 'DASHBOARD_PAGE.VIEW_ALL_EMPLOYEES' | translate }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-3 col-md-6">
+                    <div class="card dashboard-summary-card dashboard-total-offers-card border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="dashboard-total-offers-icon rounded-circle">
+                                    <i class="ri-price-tag-3-line"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <p class="text-uppercase fw-semibold mb-1 dashboard-total-cars-label">{{ 'DASHBOARD_PAGE.TOTAL_OFFERS' | translate }}</p>
+                                    <h2 class="mb-1 dashboard-total-cars-value">
+                                        @if (isLoadingDashboardOffers) {
+                                          <span class="placeholder-glow">
+                                            <span class="placeholder col-3"></span>
+                                          </span>
+                                        } @else {
+                                          <span [countUp]="totalOffersCount" class="counter-value" [options]="totalCardsCounterOptions"></span>
+                                        }
+                                    </h2>
+                                    <a
+                                      class="dashboard-total-cars-link"
+                                      [routerLink]="['/admin/offers']">
+                                        <i class="ri-arrow-left-right-line align-middle me-1"></i>{{ 'DASHBOARD_PAGE.VIEW_ALL_OFFERS' | translate }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-3 col-md-6">
+                    <div class="card dashboard-summary-card dashboard-total-departments-card border-0">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="dashboard-total-departments-icon rounded-circle">
+                                    <i class="ri-building-4-line"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <p class="text-uppercase fw-semibold mb-1 dashboard-total-cars-label">{{ 'DASHBOARD_PAGE.TOTAL_DEPARTMENTS' | translate }}</p>
+                                    <h2 class="mb-1 dashboard-total-cars-value">
+                                        @if (isLoadingTotalDepartments) {
+                                          <span class="placeholder-glow">
+                                            <span class="placeholder col-3"></span>
+                                          </span>
+                                        } @else {
+                                          <span [countUp]="totalDepartmentsCount" class="counter-value" [options]="totalCardsCounterOptions"></span>
+                                        }
+                                    </h2>
+                                    <a
+                                      class="dashboard-total-cars-link"
+                                      [routerLink]="['/admin/departments']">
+                                        <i class="ri-arrow-left-right-line align-middle me-1"></i>{{ 'DASHBOARD_PAGE.VIEW_ALL_DEPARTMENTS' | translate }}
                                     </a>
                                 </div>
                             </div>

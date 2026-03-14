@@ -152,6 +152,16 @@
   box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-primary-rgb), 0.12);
 }
 
+.dashboard-summary-card {
+  min-height: 150px;
+
+  .card-body {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+}
+
 .dashboard-total-cars-icon {
   width: 56px;
   height: 56px;
@@ -239,5 +249,77 @@
   color: var(--vz-warning-text-emphasis);
   background: rgba(var(--vz-warning-rgb), 0.16);
   border: 1px solid rgba(var(--vz-warning-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-branches-card {
+  background: linear-gradient(135deg, var(--vz-secondary-bg-subtle), var(--vz-primary-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-secondary-rgb), 0.12);
+}
+
+.dashboard-total-branches-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-secondary);
+  background: rgba(var(--vz-secondary-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-secondary-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-employees-card {
+  background: linear-gradient(135deg, var(--vz-success-bg-subtle), var(--vz-primary-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-success-rgb), 0.12);
+}
+
+.dashboard-total-employees-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-success);
+  background: rgba(var(--vz-success-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-success-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-offers-card {
+  background: linear-gradient(135deg, var(--vz-danger-bg-subtle), var(--vz-warning-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-danger-rgb), 0.12);
+}
+
+.dashboard-total-offers-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-danger);
+  background: rgba(var(--vz-danger-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-danger-rgb), 0.25);
+  flex-shrink: 0;
+}
+
+.dashboard-total-departments-card {
+  background: linear-gradient(135deg, var(--vz-info-bg-subtle), var(--vz-secondary-bg-subtle));
+  box-shadow: 0 0.35rem 1.5rem rgba(var(--vz-info-rgb), 0.12);
+}
+
+.dashboard-total-departments-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--vz-info);
+  background: rgba(var(--vz-info-rgb), 0.16);
+  border: 1px solid rgba(var(--vz-info-rgb), 0.25);
   flex-shrink: 0;
 }

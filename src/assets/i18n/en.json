@@ -636,7 +636,15 @@
     "TOTAL_BRANDS": "Total Brands",
     "VIEW_ALL_BRANDS": "View All Brands",
     "TOTAL_USERS": "Total Users",
-    "VIEW_ALL_USERS": "View All Users"
+    "VIEW_ALL_USERS": "View All Users",
+    "TOTAL_BRANCHES": "Total Branches",
+    "VIEW_ALL_BRANCHES": "View All Branches",
+    "TOTAL_EMPLOYEES": "Total Employees",
+    "VIEW_ALL_EMPLOYEES": "View All Employees",
+    "TOTAL_OFFERS": "Total Offers",
+    "VIEW_ALL_OFFERS": "View All Offers",
+    "TOTAL_DEPARTMENTS": "Total Departments",
+    "VIEW_ALL_DEPARTMENTS": "View All Departments"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "Search by username, name or email...",

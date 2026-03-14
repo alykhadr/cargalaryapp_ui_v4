@@ -99,6 +99,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoadingLatestRequests = false;
   totalUsersCount = 0;
   isLoadingTotalUsers = false;
+  totalBranchesCount = 0;
+  isLoadingTotalBranches = false;
+  totalEmployeesCount = 0;
+  isLoadingTotalEmployees = false;
+  totalOffersCount = 0;
+  totalDepartmentsCount = 0;
+  isLoadingTotalDepartments = false;
   totalCardsCounterOptions = {
     startVal: 0,
     useEasing: true,
@@ -575,6 +582,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadDashboardActiveEmployees();
     this.loadDashboardLoggedInUsers();
     this.loadTotalUsersCount();
+    this.loadTotalBranchesCount();
+    this.loadTotalEmployeesCount();
+    this.loadTotalDepartmentsCount();
   }
 
   get localizedLatestCars(): Array<{
@@ -1162,10 +1172,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.dashboardOffers = Array.isArray(response?.items) ? response.items : [];
+          this.totalOffersCount = Number(response?.totalCount) || 0;
           this.isLoadingDashboardOffers = false;
         },
         error: () => {
           this.dashboardOffers = [];
+          this.totalOffersCount = 0;
           this.isLoadingDashboardOffers = false;
         }
       });
@@ -1486,6 +1498,57 @@ export class DashboardComponent implements OnInit, OnDestroy {
         error: () => {
           this.totalUsersCount = 0;
           this.isLoadingTotalUsers = false;
+        }
+      });
+  }
+
+  private loadTotalBranchesCount(): void {
+    this.isLoadingTotalBranches = true;
+    this.http
+      .get<Array<{ id?: number | null }>>(`${GlobalComponent.API_URL}/api/branches`)
+      .pipe(first())
+      .subscribe({
+        next: (branches) => {
+          this.totalBranchesCount = Array.isArray(branches) ? branches.length : 0;
+          this.isLoadingTotalBranches = false;
+        },
+        error: () => {
+          this.totalBranchesCount = 0;
+          this.isLoadingTotalBranches = false;
+        }
+      });
+  }
+
+  private loadTotalEmployeesCount(): void {
+    this.isLoadingTotalEmployees = true;
+    this.http
+      .get<Array<{ userId?: string | null }>>(`${GlobalComponent.API_URL}/api/employees`)
+      .pipe(first())
+      .subscribe({
+        next: (employees) => {
+          this.totalEmployeesCount = Array.isArray(employees) ? employees.length : 0;
+          this.isLoadingTotalEmployees = false;
+        },
+        error: () => {
+          this.totalEmployeesCount = 0;
+          this.isLoadingTotalEmployees = false;
+        }
+      });
+  }
+
+  private loadTotalDepartmentsCount(): void {
+    this.isLoadingTotalDepartments = true;
+    this.http
+      .get<Array<{ id?: number | null }>>(`${GlobalComponent.API_URL}/api/departments`)
+      .pipe(first())
+      .subscribe({
+        next: (departments) => {
+          this.totalDepartmentsCount = Array.isArray(departments) ? departments.length : 0;
+          this.isLoadingTotalDepartments = false;
+        },
+        error: () => {
+          this.totalDepartmentsCount = 0;
+          this.isLoadingTotalDepartments = false;
         }
       });
   }

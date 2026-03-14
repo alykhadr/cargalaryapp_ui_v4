@@ -636,7 +636,15 @@
     "TOTAL_BRANDS": "إجمالي الماركات",
     "VIEW_ALL_BRANDS": "عرض كل الماركات",
     "TOTAL_USERS": "إجمالي المستخدمين",
-    "VIEW_ALL_USERS": "عرض كل المستخدمين"
+    "VIEW_ALL_USERS": "عرض كل المستخدمين",
+    "TOTAL_BRANCHES": "إجمالي الفروع",
+    "VIEW_ALL_BRANCHES": "عرض كل الفروع",
+    "TOTAL_EMPLOYEES": "إجمالي الموظفين",
+    "VIEW_ALL_EMPLOYEES": "عرض كل الموظفين",
+    "TOTAL_OFFERS": "إجمالي العروض",
+    "VIEW_ALL_OFFERS": "عرض كل العروض",
+    "TOTAL_DEPARTMENTS": "إجمالي الأقسام",
+    "VIEW_ALL_DEPARTMENTS": "عرض كل الأقسام"
   },
   "USERS_PAGE": {
     "SEARCH_PLACEHOLDER": "ابحث باسم المستخدم أو الاسم أو البريد الإلكتروني...",
