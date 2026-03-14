@@ -24,12 +24,18 @@ import { RequestCreatePageComponent } from './request-create-page/request-create
 import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
 import { UsersComponent } from './users/users.component';
 import { DepartmentsComponent } from './departments/departments.component';
+import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
 
 
 const routes: Routes = [
+  {
+    path: "my-profile",
+    component: MyProfilePageComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: "employees",
     component: EmployeeListPageComponent,

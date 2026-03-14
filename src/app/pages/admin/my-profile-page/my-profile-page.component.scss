@@ -1,0 +1,26 @@
+.profile-avatar-wrap {
+  position: relative;
+  width: 7rem;
+  height: 7rem;
+}
+
+.user-profile-image {
+  width: 7rem;
+  height: 7rem;
+}
+
+.profile-photo-edit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.profile-photo-edit .avatar-title {
+  border: 1px solid var(--vz-border-color);
+}
+
+@media (max-width: 991.98px) {
+  .profile-wrapper .hstack {
+    gap: 0.5rem !important;
+  }
+}
