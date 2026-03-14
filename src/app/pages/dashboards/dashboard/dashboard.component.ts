@@ -97,6 +97,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
   latestRequestsTotalCount = 0;
   latestRequestsPager = new PaginationService();
   isLoadingLatestRequests = false;
+  productReviews: Array<{
+    id: number;
+    carId?: number | null;
+    carNameAr?: string | null;
+    carNameEn?: string | null;
+    reviewerNameAr?: string | null;
+    reviewerNameEn?: string | null;
+    commentAr?: string | null;
+    commentEn?: string | null;
+    rateValue: number;
+    createdAt: string;
+  }> = [];
+  isLoadingProductReviews = false;
+  customerReviewSummary = {
+    totalReviews: 0,
+    averageRating: 0,
+    distribution: [
+      { star: 5, count: 0, percentage: 0 },
+      { star: 4, count: 0, percentage: 0 },
+      { star: 3, count: 0, percentage: 0 },
+      { star: 2, count: 0, percentage: 0 },
+      { star: 1, count: 0, percentage: 0 }
+    ] as Array<{ star: number; count: number; percentage: number }>
+  };
+  isLoadingCustomerReviews = false;
   requestStatusCounts = {
     newCount: 0,
     contactCount: 0,
@@ -123,6 +148,52 @@ export class DashboardComponent implements OnInit, OnDestroy {
     latitude?: number | null;
     longitude?: number | null;
   }> = [];
+  dashboardOffers: Array<{
+    id: number;
+    offerNameAr?: string | null;
+    offerNameEn?: string | null;
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+    offerImageUrl?: string | null;
+    expiredAt?: string | null;
+    createdAt: string;
+  }> = [];
+  isLoadingDashboardOffers = false;
+  dashboardMemberServices: Array<{
+    id: number;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    descriptionAr?: string | null;
+    descriptionEn?: string | null;
+    imageUrl?: string | null;
+    createdAt: string;
+  }> = [];
+  isLoadingDashboardMemberServices = false;
+  dashboardSalesContacts: Array<{
+    id: number;
+    contactValue?: string | null;
+    contactType: number;
+    typeNameAr?: string | null;
+    typeNameEn?: string | null;
+    contactIconUrl?: string | null;
+    createdAt: string;
+    branchId: number;
+  }> = [];
+  isLoadingDashboardSalesContacts = false;
+  dashboardActiveEmployees: Array<{
+    id: number;
+    userId: string;
+    branchId: number;
+    createdAt: string;
+    profileImageUrl?: string | null;
+    fullNameAr?: string | null;
+    fullNameEn?: string | null;
+    departmentNameAr?: string | null;
+    departmentNameEn?: string | null;
+  }> = [];
+  isLoadingDashboardActiveEmployees = false;
+  employeeScope: 'branch' | 'all' = 'branch';
+  employeeCanViewAllBranches = false;
   totalBranchSales = 0;
   isLoadingBranchSales = false;
   mapFitBounds: any = null;
@@ -465,8 +536,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadFavoriteCars();
     this.loadBestSellerCars();
     this.loadLatestRequests();
+    this.loadProductReviews();
+    this.loadCustomerReviewSummary();
     this.loadRequestStatusCounts();
     this.loadBranchSales();
+    this.loadDashboardOffers();
+    this.loadDashboardMemberServices();
+    this.loadDashboardSalesContacts();
+    this.loadDashboardActiveEmployees();
   }
 
   get localizedLatestCars(): Array<{
@@ -775,6 +852,139 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  get localizedProductReviews(): Array<{
+    id: number;
+    displayReviewerName: string;
+    displayCarName: string;
+    displayComment: string;
+    rateValue: number;
+    createdAt: string;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.productReviews.map(item => ({
+      id: item.id,
+      displayReviewerName: isArabic
+        ? (item.reviewerNameAr || item.reviewerNameEn || this.translate.instant('DASHBOARD_PAGE.ANONYMOUS'))
+        : (item.reviewerNameEn || item.reviewerNameAr || this.translate.instant('DASHBOARD_PAGE.ANONYMOUS')),
+      displayCarName: isArabic
+        ? (item.carNameAr || item.carNameEn || '-')
+        : (item.carNameEn || item.carNameAr || '-'),
+      displayComment: isArabic
+        ? (item.commentAr || item.commentEn || '-')
+        : (item.commentEn || item.commentAr || '-'),
+      rateValue: Number(item.rateValue) || 0,
+      createdAt: item.createdAt
+    }));
+  }
+
+  getStarIconClasses(rateValue: number): string[] {
+    const normalized = Math.max(0, Math.min(5, Number(rateValue) || 0));
+    const full = Math.floor(normalized);
+    const hasHalf = normalized - full >= 0.5;
+
+    return Array.from({ length: 5 }, (_, index) => {
+      if (index < full) {
+        return 'ri-star-fill';
+      }
+
+      if (index === full && hasHalf) {
+        return 'ri-star-half-fill';
+      }
+
+      return 'ri-star-line';
+    });
+  }
+
+  private loadProductReviews(): void {
+    this.isLoadingProductReviews = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          carId?: number | null;
+          carNameAr?: string | null;
+          carNameEn?: string | null;
+          reviewerNameAr?: string | null;
+          reviewerNameEn?: string | null;
+          commentAr?: string | null;
+          commentEn?: string | null;
+          rateValue: number;
+          createdAt: string;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/rate/product-reviews?page=1&pageSize=10`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.productReviews = Array.isArray(response?.items) ? response.items : [];
+          this.isLoadingProductReviews = false;
+        },
+        error: () => {
+          this.productReviews = [];
+          this.isLoadingProductReviews = false;
+        }
+      });
+  }
+
+  private loadCustomerReviewSummary(): void {
+    this.isLoadingCustomerReviews = true;
+    this.http
+      .get<{
+        totalReviews: number;
+        averageRating: number;
+        distribution: Array<{
+          star: number;
+          count: number;
+          percentage: number;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/rate/customer-reviews`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          const distribution = Array.isArray(response?.distribution)
+            ? response.distribution
+                .map(item => ({
+                  star: Number(item?.star) || 0,
+                  count: Number(item?.count) || 0,
+                  percentage: Number(item?.percentage) || 0
+                }))
+                .sort((a, b) => b.star - a.star)
+            : [];
+
+          this.customerReviewSummary = {
+            totalReviews: Number(response?.totalReviews) || 0,
+            averageRating: Number(response?.averageRating) || 0,
+            distribution: distribution.length > 0
+              ? distribution
+              : [
+                  { star: 5, count: 0, percentage: 0 },
+                  { star: 4, count: 0, percentage: 0 },
+                  { star: 3, count: 0, percentage: 0 },
+                  { star: 2, count: 0, percentage: 0 },
+                  { star: 1, count: 0, percentage: 0 }
+                ]
+          };
+          this.isLoadingCustomerReviews = false;
+        },
+        error: () => {
+          this.customerReviewSummary = {
+            totalReviews: 0,
+            averageRating: 0,
+            distribution: [
+              { star: 5, count: 0, percentage: 0 },
+              { star: 4, count: 0, percentage: 0 },
+              { star: 3, count: 0, percentage: 0 },
+              { star: 2, count: 0, percentage: 0 },
+              { star: 1, count: 0, percentage: 0 }
+            ]
+          };
+          this.isLoadingCustomerReviews = false;
+        }
+      });
+  }
+
   get localizedBranchSales(): Array<{
     branchId: number;
     displayName: string;
@@ -794,6 +1004,224 @@ export class DashboardComponent implements OnInit, OnDestroy {
       latitude: item.latitude,
       longitude: item.longitude
     }));
+  }
+
+  get localizedDashboardOffers(): Array<{
+    id: number;
+    displayName: string;
+    displayDescription: string;
+    offerImageUrl?: string | null;
+    expiredAt?: string | null;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.dashboardOffers.map(item => ({
+      id: item.id,
+      displayName: isArabic
+        ? (item.offerNameAr || item.offerNameEn || `#${item.id}`)
+        : (item.offerNameEn || item.offerNameAr || `#${item.id}`),
+      displayDescription: isArabic
+        ? (item.descriptionAr || item.descriptionEn || '-')
+        : (item.descriptionEn || item.descriptionAr || '-'),
+      offerImageUrl: item.offerImageUrl,
+      expiredAt: item.expiredAt
+    }));
+  }
+
+  get localizedDashboardMemberServices(): Array<{
+    id: number;
+    displayName: string;
+    imageUrl?: string | null;
+    createdAt: string;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.dashboardMemberServices.map(item => ({
+      id: item.id,
+      displayName: isArabic
+        ? (item.nameAr || item.nameEn || `#${item.id}`)
+        : (item.nameEn || item.nameAr || `#${item.id}`),
+      imageUrl: item.imageUrl,
+      createdAt: item.createdAt
+    }));
+  }
+
+  get localizedDashboardSalesContacts(): Array<{
+    id: number;
+    contactValue: string;
+    typeName: string;
+    contactIconUrl?: string | null;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.dashboardSalesContacts.map(item => ({
+      id: item.id,
+      contactValue: (item.contactValue || '').trim() || '-',
+      typeName: isArabic
+        ? (item.typeNameAr || item.typeNameEn || String(item.contactType))
+        : (item.typeNameEn || item.typeNameAr || String(item.contactType)),
+      contactIconUrl: item.contactIconUrl
+    }));
+  }
+
+  get localizedDashboardActiveEmployees(): Array<{
+    id: number;
+    profileImageUrl?: string | null;
+    displayName: string;
+    displayDepartment: string;
+    createdAt: string;
+  }> {
+    const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+    return this.dashboardActiveEmployees.map(item => ({
+      id: item.id,
+      profileImageUrl: item.profileImageUrl,
+      displayName: isArabic
+        ? (item.fullNameAr || item.fullNameEn || `#${item.id}`)
+        : (item.fullNameEn || item.fullNameAr || `#${item.id}`),
+      displayDepartment: isArabic
+        ? (item.departmentNameAr || item.departmentNameEn || '-')
+        : (item.departmentNameEn || item.departmentNameAr || '-'),
+      createdAt: item.createdAt
+    }));
+  }
+
+  private loadDashboardOffers(): void {
+    this.isLoadingDashboardOffers = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          offerNameAr?: string | null;
+          offerNameEn?: string | null;
+          descriptionAr?: string | null;
+          descriptionEn?: string | null;
+          offerImageUrl?: string | null;
+          expiredAt?: string | null;
+          createdAt: string;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/offers?page=1&pageSize=10`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.dashboardOffers = Array.isArray(response?.items) ? response.items : [];
+          this.isLoadingDashboardOffers = false;
+        },
+        error: () => {
+          this.dashboardOffers = [];
+          this.isLoadingDashboardOffers = false;
+        }
+      });
+  }
+
+  private loadDashboardMemberServices(): void {
+    this.isLoadingDashboardMemberServices = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          nameAr?: string | null;
+          nameEn?: string | null;
+          descriptionAr?: string | null;
+          descriptionEn?: string | null;
+          imageUrl?: string | null;
+          createdAt: string;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/member-services?page=1&pageSize=6`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.dashboardMemberServices = Array.isArray(response?.items) ? response.items : [];
+          this.isLoadingDashboardMemberServices = false;
+        },
+        error: () => {
+          this.dashboardMemberServices = [];
+          this.isLoadingDashboardMemberServices = false;
+        }
+      });
+  }
+
+  private loadDashboardSalesContacts(): void {
+    this.isLoadingDashboardSalesContacts = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        items: Array<{
+          id: number;
+          contactValue?: string | null;
+          contactType: number;
+          typeNameAr?: string | null;
+          typeNameEn?: string | null;
+          contactIconUrl?: string | null;
+          createdAt: string;
+          branchId: number;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/sales-contacts?page=1&pageSize=6`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.dashboardSalesContacts = Array.isArray(response?.items) ? response.items : [];
+          this.isLoadingDashboardSalesContacts = false;
+        },
+        error: () => {
+          this.dashboardSalesContacts = [];
+          this.isLoadingDashboardSalesContacts = false;
+        }
+      });
+  }
+
+  private loadDashboardActiveEmployees(): void {
+    this.isLoadingDashboardActiveEmployees = true;
+    this.http
+      .get<{
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        scope: 'branch' | 'all';
+        canViewAllBranches?: boolean;
+        items: Array<{
+          id: number;
+          userId: string;
+          branchId: number;
+          createdAt: string;
+          profileImageUrl?: string | null;
+          fullNameAr?: string | null;
+          fullNameEn?: string | null;
+          departmentNameAr?: string | null;
+          departmentNameEn?: string | null;
+        }>;
+      }>(`${GlobalComponent.API_URL}/api/dashboard/active-employees?page=1&pageSize=6&scope=${this.employeeScope}`)
+      .pipe(first())
+      .subscribe({
+        next: (response) => {
+          this.dashboardActiveEmployees = Array.isArray(response?.items) ? response.items : [];
+          const responseScope = ((response?.scope || '') as string).toLowerCase();
+          if (responseScope === 'all' || responseScope === 'branch') {
+            this.employeeScope = responseScope;
+          }
+          this.employeeCanViewAllBranches = response?.canViewAllBranches === true;
+          this.isLoadingDashboardActiveEmployees = false;
+        },
+        error: () => {
+          this.dashboardActiveEmployees = [];
+          this.employeeCanViewAllBranches = false;
+          this.employeeScope = 'branch';
+          this.isLoadingDashboardActiveEmployees = false;
+        }
+      });
+  }
+
+  onEmployeeScopeChange(scope: 'branch' | 'all'): void {
+    if (scope !== 'branch' && scope !== 'all') {
+      return;
+    }
+
+    this.employeeScope = scope;
+    this.loadDashboardActiveEmployees();
   }
 
   private loadBranchSales(): void {
@@ -1228,6 +1656,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getBrandImageUrl(imageUrl?: string | null): string {
+    if (!imageUrl) {
+      return 'assets/images/users/user-dummy-img.jpg';
+    }
+
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://') || imageUrl.startsWith('assets/')) {
+      return imageUrl;
+    }
+
+    return `${GlobalComponent.API_URL}/${imageUrl.replace(/^\/+/, '')}`;
+  }
+
+  getOfferImageUrl(imageUrl?: string | null): string {
     if (!imageUrl) {
       return 'assets/images/users/user-dummy-img.jpg';
     }
