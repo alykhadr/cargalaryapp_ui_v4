@@ -17,11 +17,6 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center mt-sm-5 mb-4 text-white-50">
-                        <div>
-                            <a href="javascript:void(0);" class="d-block w-100 auth-logo">
-                                <img *ngIf="companyLogoUrl" [src]="companyLogoUrl" alt="Company logo" class="auth-company-logo">
-                            </a>
-                        </div>
                         <p class="mt-3 fs-15 fw-medium">{{ 'AUTH.LOGIN.TAGLINE' | translate }}</p>
                     </div>
                 </div>
@@ -33,25 +28,30 @@
                     <div class="card mt-4">
 
                         <div class="card-body p-4">
-                            <div class="login-language-switcher d-flex mb-3">
-                                <div class="btn-group btn-group-sm" role="group" aria-label="Login language switcher">
-                                    <button
-                                        type="button"
-                                        class="btn btn-light d-inline-flex align-items-center gap-1"
-                                        [class.active]="selectedLanguage === 'en'"
-                                        (click)="onLanguageChange('en')">
-                                        <img src="assets/images/flags/us.svg" alt="US" width="16" height="16">
-                                        <span>English</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-light d-inline-flex align-items-center gap-1"
-                                        [class.active]="selectedLanguage === 'ar'"
-                                        (click)="onLanguageChange('ar')">
-                                        <img src="assets/images/flags/sa.svg" alt="KSA" width="16" height="16">
-                                        <span>العربية</span>
-                                    </button>
+                            <div class="login-header-row mb-3" [class.ar-layout]="selectedLanguage === 'ar'">
+                                <div class="login-language-switcher d-flex">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Login language switcher">
+                                        <button
+                                            type="button"
+                                            class="btn btn-light d-inline-flex align-items-center gap-1"
+                                            [class.active]="selectedLanguage === 'en'"
+                                            (click)="onLanguageChange('en')">
+                                            <img src="assets/images/flags/us.svg" alt="US" width="16" height="16">
+                                            <span>English</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-light d-inline-flex align-items-center gap-1"
+                                            [class.active]="selectedLanguage === 'ar'"
+                                            (click)="onLanguageChange('ar')">
+                                            <img src="assets/images/flags/sa.svg" alt="KSA" width="16" height="16">
+                                            <span>العربية</span>
+                                        </button>
+                                    </div>
                                 </div>
+                                <a href="javascript:void(0);" class="auth-logo-inline" *ngIf="companyLogoUrl">
+                                    <img [src]="companyLogoUrl" alt="Company logo" class="auth-company-logo-inline">
+                                </a>
                             </div>
                             <div class="text-center mt-2">
                                 <h5 class="text-primary">{{ 'AUTH.LOGIN.WELCOME' | translate }}</h5>
