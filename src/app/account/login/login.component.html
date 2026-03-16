@@ -55,7 +55,7 @@
                             </div>
                             <div class="text-center mt-2">
                                 <h5 class="text-primary">{{ 'AUTH.LOGIN.WELCOME' | translate }}</h5>
-                                <p class="text-muted">{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
+                                <p class="text-muted">{{ 'AUTH.LOGIN.SUBTITLE' | translate: { companyName: footerCompanyName } }}</p>
                             </div>
                             <div class="p-2 mt-4">
                                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -145,6 +145,28 @@
                     </div>
                     <!-- end card -->
 
+                    <div class="login-info-panel mt-3 text-center">
+                        <p class="mb-0 text-muted login-footer-line">
+                            <span class="footer-meta" dir="ltr">&copy; {{year}} {{ footerCompanyName }}.</span>
+                            <span class="footer-crafted" [attr.dir]="selectedLanguage === 'ar' ? 'rtl' : 'ltr'">
+                                {{ 'AUTH.LOGIN.FOOTER_TEXT' | translate }}
+                                <i class="mdi mdi-heart text-danger footer-heart" aria-hidden="true"></i>
+                                {{ 'AUTH.LOGIN.FOOTER_BY' | translate }} <span class="footer-brand">AlyTech</span>
+                            </span>
+                        </p>
+                        <div class="login-contact-actions mt-2">
+                            <a href="tel:0569221577" class="contact-chip contact-chip-phone" aria-label="Call 0569221577">
+                                <i class="ri-phone-line align-middle"></i>
+                                <span>0569221577</span>
+                            </a>
+                            <a href="https://wa.me/966569221577" target="_blank" rel="noopener noreferrer"
+                                class="contact-chip contact-chip-whatsapp" aria-label="Chat on WhatsApp">
+                                <i class="ri-whatsapp-line align-middle"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- <div class="mt-4 text-center">
                         <p class="mb-0">Don't have an account ? <a routerLink="/auth/register" class="fw-semibold text-primary text-decoration-underline"> Signup </a> </p>
                     </div> -->
@@ -157,20 +179,6 @@
     </div>
     <!-- end auth page content -->
 
-    <!-- footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; {{year}} Velzon. {{ 'AUTH.LOGIN.FOOTER_TEXT' | translate }} <i
-                                class="mdi mdi-heart text-danger"></i> {{ 'AUTH.LOGIN.FOOTER_BY' | translate }} Themesbrand</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- end Footer -->
 </div>
 <!-- end auth-page-wrapper -->
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

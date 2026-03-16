@@ -9,6 +9,7 @@ import { TokenStorageService } from 'src/app/core/services/token-storage.service
 import { User } from 'src/app/store/Authentication/auth.models';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/core/services/language.service';
+import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +34,7 @@ export class LoginComponent implements OnInit {
 
   // set the current year
   year: number = new Date().getFullYear();
+  footerCompanyName = 'Global';
   selectedLanguage = 'ar';
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router,
@@ -40,7 +42,8 @@ export class LoginComponent implements OnInit {
     private myAuthService: MyAuthService,
     private tokenStorageService: TokenStorageService,
     private translate: TranslateService,
-    private languageService: LanguageService) {
+    private languageService: LanguageService,
+    private companyInfoService: CompanyInfoService) {
     // Redirect authenticated users to requested deep link if provided.
     this.returnUrl = this.resolveReturnUrl(this.route.snapshot.queryParams['returnUrl']);
     if (this.myAuthService.currentUserValue) {
@@ -52,6 +55,7 @@ export class LoginComponent implements OnInit {
     // Default to Arabic when no previous selection exists.
     this.selectedLanguage = this.languageService.getCurrentLanguage() || 'ar';
     this.languageService.setLanguage(this.selectedLanguage);
+    this.loadCompanyName();
 
     if (this.tokenStorageService.getUser()) {
       this.router.navigateByUrl(this.returnUrl);
@@ -112,6 +116,26 @@ export class LoginComponent implements OnInit {
   onLanguageChange(lang: 'ar' | 'en') {
     this.selectedLanguage = lang;
     this.languageService.setLanguage(lang);
+    this.loadCompanyName();
+  }
+
+  private loadCompanyName(): void {
+    this.companyInfoService.getCompanyInfos().pipe(first()).subscribe({
+      next: (items) => {
+        const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
+        if (!company) {
+          return;
+        }
+
+        const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+        const nameAr = (company.companyNameAr || '').trim();
+        const nameEn = (company.companyNameEn || '').trim();
+        this.footerCompanyName = isArabic ? (nameAr || nameEn) : (nameEn || nameAr );
+      },
+      error: () => {
+        this.footerCompanyName = '';
+      }
+    });
   }
 
     /**

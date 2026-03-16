@@ -99,7 +99,7 @@
     "LOGIN": {
       "TAGLINE": "لوحة تحكم وإدارة متميزة",
       "WELCOME": "مرحباً بعودتك!",
-      "SUBTITLE": "سجّل الدخول للمتابعة إلى Velzon.",
+      "SUBTITLE": "سجّل الدخول للمتابعة إلى {{companyName}}.",
       "USERNAME": "اسم المستخدم",
       "USERNAME_PLACEHOLDER": "أدخل اسم المستخدم",
       "USERNAME_REQUIRED": "اسم المستخدم مطلوب",

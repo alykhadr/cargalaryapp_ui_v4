@@ -43,3 +43,96 @@
 [data-bs-theme="dark"] .login-language-switcher .btn-group .btn {
   color: #ced4da;
 }
+
+.login-info-panel {
+  padding: 0.9rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 8px 24px rgba(31, 42, 55, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+[data-bs-theme="dark"] .login-info-panel {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(33, 37, 41, 0.55);
+}
+
+.login-footer-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.footer-meta,
+.footer-crafted {
+  unicode-bidi: isolate;
+}
+
+.footer-crafted {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.footer-heart {
+  margin-inline: 0.1rem;
+}
+
+.footer-brand {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.login-contact-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.contact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--vz-border-color);
+  background-color: var(--vz-secondary-bg);
+  color: var(--vz-body-color);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.contact-chip i {
+  font-size: 1rem;
+}
+
+.contact-chip-phone:hover,
+.contact-chip-phone:focus {
+  border-color: rgba(var(--vz-primary-rgb), 0.35);
+  background-color: rgba(var(--vz-primary-rgb), 0.09);
+  color: var(--vz-primary);
+}
+
+.contact-chip-whatsapp:hover,
+.contact-chip-whatsapp:focus {
+  border-color: rgba(37, 211, 102, 0.45);
+  background-color: rgba(37, 211, 102, 0.12);
+  color: #1ea855;
+}
+
+@media (max-width: 576px) {
+  .login-contact-actions {
+    width: 100%;
+  }
+
+  .contact-chip {
+    min-width: 145px;
+    justify-content: center;
+  }
+}

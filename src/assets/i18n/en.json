@@ -99,7 +99,7 @@
     "LOGIN": {
       "TAGLINE": "Premium Admin & Dashboard Template",
       "WELCOME": "Welcome Back!",
-      "SUBTITLE": "Sign in to continue to Velzon.",
+      "SUBTITLE": "Sign in to continue to {{companyName}}.",
       "USERNAME": "User Name",
       "USERNAME_PLACEHOLDER": "Enter user name",
       "USERNAME_REQUIRED": "User Name is required",

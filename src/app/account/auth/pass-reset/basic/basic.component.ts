@@ -35,7 +35,7 @@ export class BasicComponent implements OnInit {
 
   // set the current year
   year: number = new Date().getFullYear();
-  footerCompanyName = 'Velzon';
+  footerCompanyName = '';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -172,10 +172,10 @@ export class BasicComponent implements OnInit {
         const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
         const nameAr = (company.companyNameAr || '').trim();
         const nameEn = (company.companyNameEn || '').trim();
-        this.footerCompanyName = isArabic ? (nameAr || nameEn || 'Velzon') : (nameEn || nameAr || 'Velzon');
+        this.footerCompanyName = isArabic ? (nameAr || nameEn || '') : (nameEn || nameAr || '');
       },
       error: () => {
-        this.footerCompanyName = 'Velzon';
+        this.footerCompanyName = '';
       }
     });
   }
