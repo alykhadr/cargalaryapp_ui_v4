@@ -71,6 +71,17 @@
       color: rgb(var(--vz-success-rgb));
       flex: 0 0 auto;
     }
+
+    .branch-logo-image {
+      width: 2rem;
+      height: 2rem;
+      object-fit: cover;
+      border-radius: 50%;
+      background-color: #fff;
+      border: 1px solid rgba(var(--vz-success-rgb), 0.3);
+      display: block;
+      flex: 0 0 auto;
+    }
   }
 
   .branch-chip-text {
@@ -123,6 +134,7 @@
       }
     }
   }
+
 }
 
 :host-context([data-bs-theme='dark']) .header-welcome-text .welcome-chip {
@@ -151,4 +163,12 @@
   background-color: rgba(var(--vz-primary-rgb), 0.2);
   border-color: rgba(var(--vz-primary-rgb), 0.45);
   color: #e6edf3;
+}
+
+.topbar-language-logo-image {
+  width: auto;
+  height: 3.2rem;
+  max-width: 10rem;
+  object-fit: contain;
+  display: block;
 }

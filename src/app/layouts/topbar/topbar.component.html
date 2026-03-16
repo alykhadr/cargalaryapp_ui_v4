@@ -40,6 +40,7 @@
                     </span>
                     @if (localizedBranchText) {
                       <span class="branch-chip ms-2" [attr.dir]="cookieValue === 'ar' ? 'rtl' : 'ltr'">
+                          <img [src]="companyLightLogoUrl" alt="Company logo" class="branch-logo-image">
                           <i class="ri-git-branch-line"></i>
                           <span class="branch-chip-text">{{ localizedBranchText }}</span>
                       </span>
@@ -85,6 +86,10 @@
             <div class="d-flex align-items-center">
 
                 <!-- Mobile header search section commented out by request -->
+
+                <div class="ms-1 header-item d-none d-md-flex align-items-center topbar-language-logo-section">
+                    <img [src]="companyLightLogoUrl" alt="Company logo" class="topbar-language-logo-image">
+                </div>
 
                 <div class="dropdown ms-1 topbar-head-dropdown header-item" ngbDropdown>
                     <button type="button" class="btn btn-topbar btn-ghost-secondary language-toggle-btn d-flex align-items-center gap-2 px-2 rounded-pill" dir="ltr" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
