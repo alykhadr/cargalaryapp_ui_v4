@@ -128,6 +128,11 @@ export class SidebarComponent implements OnInit {
       this.removeActivation(items);
     }
     this.activateParentDropdown(event.target);
+
+    // Ensure sidebar drawer closes after selecting a route on small screens.
+    if (window.innerWidth <= 767.98) {
+      this.SidebarHide();
+    }
   }
 
   initActiveMenu() {
