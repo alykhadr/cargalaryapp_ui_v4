@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { first } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
 
@@ -9,11 +9,12 @@ import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.se
     styleUrls: ['./footer.component.scss'],
     standalone: false
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent implements OnInit, OnDestroy {
 
   // set the currenr year
   year: number = new Date().getFullYear();
   footerCompanyName = 'Velzon';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private companyInfoService: CompanyInfoService,
@@ -25,7 +26,7 @@ export class FooterComponent implements OnInit {
   }
 
   private loadCompanyName(): void {
-    this.companyInfoService.getCompanyInfos().pipe(first()).subscribe({
+    this.companyInfoService.watchCompanyInfos().pipe(takeUntil(this.destroy$)).subscribe({
       next: (items) => {
         const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
         if (!company) {
@@ -43,4 +44,8 @@ export class FooterComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

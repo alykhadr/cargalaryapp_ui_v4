@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { CompanyInfo, CreateCompanyInfoRequest, UpdateCompanyInfoRequest } from '../interfaces/company-info.interface';
 import { GlobalComponent } from 'src/app/global-component';
 
@@ -9,11 +10,27 @@ import { GlobalComponent } from 'src/app/global-component';
 })
 export class CompanyInfoService {
   private apiUrl = GlobalComponent.API_URL + '/api/CompanyInformations';
+  private refreshCompanyInfos$ = new Subject<void>();
+  private companyInfos$ = this.refreshCompanyInfos$.pipe(
+    startWith(void 0),
+    switchMap(() => this.http.get<CompanyInfo[]>(this.apiUrl).pipe(
+      catchError(() => of([] as CompanyInfo[]))
+    )),
+    shareReplay(1)
+  );
 
   constructor(private http: HttpClient) {}
 
   getCompanyInfos(): Observable<CompanyInfo[]> {
     return this.http.get<CompanyInfo[]>(this.apiUrl);
+  }
+
+  watchCompanyInfos(): Observable<CompanyInfo[]> {
+    return this.companyInfos$;
+  }
+
+  refreshCompanyInfos(): void {
+    this.refreshCompanyInfos$.next();
   }
 
   getCompanyInfoById(id: number): Observable<CompanyInfo> {
@@ -35,7 +52,9 @@ export class CompanyInfoService {
     if (request.ourMissionEn) formData.append('ourMissionEn', request.ourMissionEn);
     if (request.ourGoalsAr) formData.append('ourGoalsAr', request.ourGoalsAr);
     if (request.ourGoalsEn) formData.append('ourGoalsEn', request.ourGoalsEn);
-    return this.http.post<CompanyInfo>(this.apiUrl, formData);
+    return this.http.post<CompanyInfo>(this.apiUrl, formData).pipe(
+      tap(() => this.refreshCompanyInfos())
+    );
   }
 
   updateCompanyInfo(id: number, request: UpdateCompanyInfoRequest): Observable<void> {
@@ -53,10 +72,14 @@ export class CompanyInfoService {
     if (request.ourMissionEn) formData.append('ourMissionEn', request.ourMissionEn);
     if (request.ourGoalsAr) formData.append('ourGoalsAr', request.ourGoalsAr);
     if (request.ourGoalsEn) formData.append('ourGoalsEn', request.ourGoalsEn);
-    return this.http.put<void>(`${this.apiUrl}/${id}`, formData);
+    return this.http.put<void>(`${this.apiUrl}/${id}`, formData).pipe(
+      tap(() => this.refreshCompanyInfos())
+    );
   }
 
   deleteCompanyInfo(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.refreshCompanyInfos())
+    );
   }
 }

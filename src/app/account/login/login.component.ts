@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { first } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from './toast-service';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { TokenStorageService } from 'src/app/core/services/token-storage.service';
@@ -22,7 +23,7 @@ import { GlobalComponent } from 'src/app/global-component';
 /**
  * Login Component
  */
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   // Login Form
   loginForm!: UntypedFormGroup;
@@ -38,6 +39,7 @@ export class LoginComponent implements OnInit {
   footerCompanyName = 'Global';
   companyLogoUrl = '';
   selectedLanguage = 'ar';
+  private destroy$ = new Subject<void>();
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router,
     private route: ActivatedRoute, public toastService: ToastService,
@@ -122,7 +124,7 @@ export class LoginComponent implements OnInit {
   }
 
   private loadCompanyName(): void {
-    this.companyInfoService.getCompanyInfos().pipe(first()).subscribe({
+    this.companyInfoService.watchCompanyInfos().pipe(takeUntil(this.destroy$)).subscribe({
       next: (items) => {
         const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
         if (!company) {
@@ -155,6 +157,11 @@ export class LoginComponent implements OnInit {
     const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
     const path = value.replace(/^\/+/, '');
     return base ? `${base}/${path}` : value;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
     /**

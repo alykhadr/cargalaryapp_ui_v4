@@ -1,6 +1,7 @@
-import { Component, OnInit, EventEmitter, Output, Inject, ViewChild, TemplateRef, DOCUMENT } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output, Inject, ViewChild, TemplateRef, DOCUMENT } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { first } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 
 import { EventService } from '../../core/services/event.service';
 
@@ -18,6 +19,7 @@ import { AccessControlService } from 'src/app/core/services/access-control.servi
 import { GlobalComponent } from 'src/app/global-component';
 import { RequestNotificationItem, RequestNotificationsResponse } from './topbar.model';
 import { Branch } from 'src/app/pages/admin/interfaces/branch.interface';
+import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
 
 @Component({
     selector: 'app-topbar',
@@ -25,7 +27,7 @@ import { Branch } from 'src/app/pages/admin/interfaces/branch.interface';
     styleUrls: ['./topbar.component.scss'],
     standalone: false
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   element: any;
   mode: string | undefined;
   @Output() mobileMenuButtonClicked = new EventEmitter();
@@ -42,6 +44,8 @@ export class TopbarComponent implements OnInit {
   selectedBranchId: number | null = null;
   branchSearchTerm = '';
   isDropdownOpen = false;
+  companyLightLogoUrl = 'assets/images/logo-light.png';
+  private destroy$ = new Subject<void>();
 
   constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, public languageService: LanguageService,
     public _cookiesService: CookieService, public translate: TranslateService,
@@ -49,7 +53,8 @@ export class TopbarComponent implements OnInit {
     private tokenStorageService: TokenStorageService,
     private accessControlService: AccessControlService,
     private router: Router,
-    private http: HttpClient) { }
+    private http: HttpClient,
+    private companyInfoService: CompanyInfoService) { }
 
   ngOnInit(): void {
     this.userData = this.tokenStorageService.getUser();
@@ -78,6 +83,7 @@ export class TopbarComponent implements OnInit {
     }
 
     this.loadRequestNotifications();
+    this.loadCompanyLightLogo();
   }
 
   /**
@@ -490,6 +496,33 @@ export class TopbarComponent implements OnInit {
       });
   }
 
+  private loadCompanyLightLogo(): void {
+    this.companyInfoService.watchCompanyInfos().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (items) => {
+        const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
+        const resolved = this.resolveCompanyLogoUrl(company?.logoUrl);
+        if (resolved) {
+          this.companyLightLogoUrl = resolved;
+        }
+      }
+    });
+  }
+
+  private resolveCompanyLogoUrl(url?: string): string {
+    const value = (url || '').trim();
+    if (!value) {
+      return '';
+    }
+
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:')) {
+      return value;
+    }
+
+    const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
+    const path = value.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : value;
+  }
+
   getNotificationCarImageUrl(item: RequestNotificationItem): string | null {
     const raw = item?.carImageUrl?.trim();
     if (!raw) return null;
@@ -497,5 +530,10 @@ export class TopbarComponent implements OnInit {
     const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
     const normalized = raw.replace(/^\/+/, '');
     return base ? `${base}/${normalized}` : raw;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

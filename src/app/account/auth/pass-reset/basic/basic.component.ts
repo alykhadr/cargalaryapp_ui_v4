@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { Subject, takeUntil } from 'rxjs';
 import { MyAuthService } from 'src/app/core/services/my-auth.service';
 import { getErrorMessage } from 'src/app/pages/admin/shared/error-message.util';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +21,7 @@ import { GlobalComponent } from 'src/app/global-component';
 /**
  * Pass-Reset Basic Component
  */
-export class BasicComponent implements OnInit {
+export class BasicComponent implements OnInit, OnDestroy {
 
   // Login Form
   passresetForm!: UntypedFormGroup;
@@ -38,6 +39,7 @@ export class BasicComponent implements OnInit {
   year: number = new Date().getFullYear();
   footerCompanyName = '';
   companyLogoUrl = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -164,7 +166,7 @@ export class BasicComponent implements OnInit {
   }
 
   private loadCompanyName(): void {
-    this.companyInfoService.getCompanyInfos().pipe(first()).subscribe({
+    this.companyInfoService.watchCompanyInfos().pipe(takeUntil(this.destroy$)).subscribe({
       next: (items) => {
         const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
         if (!company) {
@@ -197,6 +199,11 @@ export class BasicComponent implements OnInit {
     const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
     const path = value.replace(/^\/+/, '');
     return base ? `${base}/${path}` : value;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

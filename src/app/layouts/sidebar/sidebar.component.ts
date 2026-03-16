@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,6 +6,9 @@ import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
 import { AccessControlService } from 'src/app/core/services/access-control.service';
+import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
+import { GlobalComponent } from 'src/app/global-component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
@@ -13,18 +16,21 @@ import { AccessControlService } from 'src/app/core/services/access-control.servi
     styleUrls: ['./sidebar.component.scss'],
     standalone: false
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
 
   menu: any;
   toggle: any = true;
   menuItems: MenuItem[] = [];
+  companyLightLogoUrl = 'assets/images/logo-light.png';
+  private destroy$ = new Subject<void>();
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   constructor(
     private router: Router,
     public translate: TranslateService,
-    private accessControlService: AccessControlService
+    private accessControlService: AccessControlService,
+    private companyInfoService: CompanyInfoService
   ) {
     translate.setDefaultLang('en');
   }
@@ -32,6 +38,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     // Menu Items
     this.menuItems = this.accessControlService.filterMenuByPermission(MENU);
+    this.loadCompanyLightLogo();
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -210,5 +217,37 @@ export class SidebarComponent implements OnInit {
    */
   SidebarHide() {
     document.body.classList.remove('vertical-sidebar-enable');
+  }
+
+  private loadCompanyLightLogo(): void {
+    this.companyInfoService.watchCompanyInfos().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (items) => {
+        const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
+        const resolved = this.resolveCompanyLogoUrl(company?.logoUrl);
+        if (resolved) {
+          this.companyLightLogoUrl = resolved;
+        }
+      }
+    });
+  }
+
+  private resolveCompanyLogoUrl(url?: string): string {
+    const value = (url || '').trim();
+    if (!value) {
+      return '';
+    }
+
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:')) {
+      return value;
+    }
+
+    const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
+    const path = value.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : value;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
