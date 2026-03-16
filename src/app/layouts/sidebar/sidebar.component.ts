@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   menu: any;
   toggle: any = true;
   menuItems: MenuItem[] = [];
-  companyLightLogoUrl = 'assets/images/logo-light.png';
+  companyLightLogoUrl = '';
   private destroy$ = new Subject<void>();
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
@@ -224,11 +224,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
       next: (items) => {
         const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
         const resolved = this.resolveCompanyLogoUrl(company?.logoUrl);
-        if (resolved) {
-          this.companyLightLogoUrl = resolved;
-        }
+        this.companyLightLogoUrl = resolved || '';
       }
     });
+  }
+
+  onCompanyLogoError(): void {
+    this.companyLightLogoUrl = '';
   }
 
   private resolveCompanyLogoUrl(url?: string): string {

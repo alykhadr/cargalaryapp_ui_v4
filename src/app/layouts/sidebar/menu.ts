@@ -132,6 +132,12 @@ export const MENU: MenuItem[] = [
         label: 'MENUITEMS.ADMIN.LIST.MEMBERSERVICE',
         link: '/admin/member-services',
         permission: 'memberservices.view'
+      },
+      {
+        id: 1921,
+        label: 'MENUITEMS.ADMIN.LIST.PACKAGES',
+        link: '/admin/packages',
+        permission: 'packages.view'
       }
     ]
   },

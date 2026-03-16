@@ -5,7 +5,9 @@
     <!-- Dark Logo-->
     <a routerLink="/" class="logo logo-dark">
       <span class="logo-sm">
-        <img [src]="companyLightLogoUrl" alt="" width="34" height="34">
+        @if (companyLightLogoUrl) {
+        <img [src]="companyLightLogoUrl" (error)="onCompanyLogoError()" alt="" width="34" height="34">
+        }
       </span>
       <span class="logo-lg">
         <img src="assets/images/logo-dark.png" alt="" width="140" height="85">
@@ -14,10 +16,14 @@
     <!-- Light Logo-->
     <a routerLink="/" class="logo logo-light">
       <span class="logo-sm">
-        <img [src]="companyLightLogoUrl" alt="" width="34" height="34">
+        @if (companyLightLogoUrl) {
+        <img [src]="companyLightLogoUrl" (error)="onCompanyLogoError()" alt="" width="34" height="34">
+        }
       </span>
       <span class="logo-lg">
-        <img [src]="companyLightLogoUrl" alt="" width="140" height="85">
+        @if (companyLightLogoUrl) {
+        <img [src]="companyLightLogoUrl" (error)="onCompanyLogoError()" alt="" width="140" height="85">
+        }
       </span>
     </a>
     <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">

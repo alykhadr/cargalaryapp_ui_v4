@@ -38,6 +38,7 @@ import { RequestCreatePageComponent } from './request-create-page/request-create
 import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
 import { UsersComponent } from './users/users.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
+import { PackagesComponent } from './packages/packages.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { CountUpModule } from 'ngx-countup';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -93,6 +94,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     RequestTrackPageComponent,
     UsersComponent,
     MyProfilePageComponent,
+    PackagesComponent,
     CarByIdPipe
   ],
   imports: [

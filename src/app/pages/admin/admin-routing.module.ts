@@ -25,6 +25,7 @@ import { RequestTrackPageComponent } from './request-track-page/request-track-pa
 import { UsersComponent } from './users/users.component';
 import { DepartmentsComponent } from './departments/departments.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
+import { PackagesComponent } from './packages/packages.component';
 import { AuthGuard } from 'src/app/core/guards/auth.guard';
 import { PermissionGuard } from 'src/app/core/guards/permission.guard';
 
@@ -112,6 +113,12 @@ const routes: Routes = [
     component: FaqComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'faq.view' }
+  },
+  {
+    path: "packages",
+    component: PackagesComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'packages.view' }
   },
   {
     path: "member-services",
