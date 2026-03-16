@@ -10,6 +10,7 @@ import { User } from 'src/app/store/Authentication/auth.models';
 import { TranslateService } from '@ngx-translate/core';
 import { LanguageService } from 'src/app/core/services/language.service';
 import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
+import { GlobalComponent } from 'src/app/global-component';
 
 @Component({
   selector: 'app-login',
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
   footerCompanyName = 'Global';
+  companyLogoUrl = '';
   selectedLanguage = 'ar';
 
   constructor(private formBuilder: UntypedFormBuilder, private router: Router,
@@ -130,12 +132,29 @@ export class LoginComponent implements OnInit {
         const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
         const nameAr = (company.companyNameAr || '').trim();
         const nameEn = (company.companyNameEn || '').trim();
+        this.companyLogoUrl = this.resolveCompanyLogoUrl(company.logoUrl);
         this.footerCompanyName = isArabic ? (nameAr || nameEn) : (nameEn || nameAr );
       },
       error: () => {
+        this.companyLogoUrl = '';
         this.footerCompanyName = '';
       }
     });
+  }
+
+  private resolveCompanyLogoUrl(url?: string): string {
+    const value = (url || '').trim();
+    if (!value) {
+      return '';
+    }
+
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:')) {
+      return value;
+    }
+
+    const base = (GlobalComponent.API_URL || '').replace(/\/+$/, '');
+    const path = value.replace(/^\/+/, '');
+    return base ? `${base}/${path}` : value;
   }
 
     /**

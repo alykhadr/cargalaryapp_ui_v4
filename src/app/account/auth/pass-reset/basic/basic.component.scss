@@ -1,0 +1,89 @@
+.footer-contact-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.footer-contact-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.82rem;
+  border: 1px solid var(--vz-border-color);
+  background-color: var(--vz-secondary-bg);
+  color: var(--vz-body-color);
+  transition: all 0.2s ease;
+}
+
+.footer-contact-chip i {
+  font-size: 1rem;
+}
+
+.footer-contact-chip.phone:hover,
+.footer-contact-chip.phone:focus {
+  color: var(--vz-primary);
+  border-color: rgba(var(--vz-primary-rgb), 0.4);
+  background-color: rgba(var(--vz-primary-rgb), 0.1);
+}
+
+.footer-contact-chip.whatsapp:hover,
+.footer-contact-chip.whatsapp:focus {
+  color: #19a94f;
+  border-color: rgba(37, 211, 102, 0.45);
+  background-color: rgba(37, 211, 102, 0.13);
+}
+
+.footer .text-center {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+.footer-contact-actions {
+  margin-top: 0.2rem;
+}
+
+[dir="rtl"] .footer-contact-actions {
+  direction: rtl;
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .footer-contact-chip,
+[dir="ltr"] .footer-contact-chip {
+  direction: ltr;
+}
+
+[dir="ltr"] .footer-contact-actions {
+  margin-right: 10px;
+  margin-left: 0;
+}
+
+@media (max-width: 576px) {
+  .footer .text-center {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .footer-contact-actions {
+    gap: 0.45rem;
+  }
+
+  .footer-contact-chip {
+    min-width: 148px;
+    justify-content: center;
+  }
+}
+
+.auth-company-logo {
+  width: 220px;
+  height: 46px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  margin-inline: auto;
+}
