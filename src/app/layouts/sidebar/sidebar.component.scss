@@ -10,3 +10,10 @@
 :host .navbar-brand-box .logo-lg img {
   margin: 12px 0;
 }
+
+:host .navbar-brand-box .logo-sm img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 50%;
+}
