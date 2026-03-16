@@ -29,6 +29,9 @@
 
                         <div class="card-body p-4">
                             <div class="login-header-row mb-3" [class.ar-layout]="selectedLanguage === 'ar'">
+                                <a href="javascript:void(0);" class="auth-logo-inline" *ngIf="companyLogoUrl">
+                                    <img [src]="companyLogoUrl" alt="Company logo" class="auth-company-logo-inline">
+                                </a>
                                 <div class="login-language-switcher d-flex">
                                     <div class="btn-group btn-group-sm" role="group" aria-label="Login language switcher">
                                         <button
@@ -49,9 +52,6 @@
                                         </button>
                                     </div>
                                 </div>
-                                <a href="javascript:void(0);" class="auth-logo-inline" *ngIf="companyLogoUrl">
-                                    <img [src]="companyLogoUrl" alt="Company logo" class="auth-company-logo-inline">
-                                </a>
                             </div>
                             <div class="text-center mt-2">
                                 <h5 class="text-primary">{{ 'AUTH.LOGIN.WELCOME' | translate }}</h5>
