@@ -435,7 +435,7 @@
       }
     },
     "REQUEST": {
-      "TEXT": "Request",
+      "TEXT": "Requests",
       "LIST": {
         "REQUESTS": "Requests",
         "TRACK": "Track Request",
