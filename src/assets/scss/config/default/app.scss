@@ -279,6 +279,25 @@ File: Main Css File
     }
   }
 
+  // Fix collapsed (Small Icon View) submenu hover in RTL to match LTR behavior.
+  @media (min-width: 768px) {
+    &[data-layout="vertical"][data-sidebar-size="sm"] .navbar-menu .navbar-nav .nav-item:hover > .menu-dropdown {
+      display: block !important;
+      position: absolute;
+      right: var(--vz-vertical-menu-width-sm);
+      left: auto !important;
+      width: 200px;
+      height: auto !important;
+      z-index: 1005;
+    }
+
+    &[data-layout="vertical"][data-sidebar-size="sm"] .navbar-menu .navbar-nav .nav-sm .menu-dropdown {
+      right: 100% !important;
+      left: auto !important;
+      top: 0;
+    }
+  }
+
   // Mirror collapse arrow direction for Arabic menus.
   .navbar-menu .navbar-nav .nav-link[data-bs-toggle="collapse"]::after {
     content: "\F0141" !important;

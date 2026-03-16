@@ -154,6 +154,7 @@
         .menu-dropdown {
             top: 0;
             right: 100%;
+            left: auto;
         }
     }
 
@@ -326,6 +327,8 @@
                 .nav-sm {
                     .menu-dropdown {
                         right: 100% !important;
+                        left: auto !important;
+                        top: 0;
                     }
                 }
             }
