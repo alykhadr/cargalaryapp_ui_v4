@@ -7,6 +7,7 @@ import { getErrorMessage } from 'src/app/pages/admin/shared/error-message.util';
 import { TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { LanguageService } from 'src/app/core/services/language.service';
+import { CompanyInfoService } from 'src/app/pages/admin/services/company-info.service';
 
 @Component({
     selector: 'app-basic',
@@ -34,6 +35,7 @@ export class BasicComponent implements OnInit {
 
   // set the current year
   year: number = new Date().getFullYear();
+  footerCompanyName = 'Velzon';
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -41,12 +43,14 @@ export class BasicComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private companyInfoService: CompanyInfoService
   ) { }
 
   ngOnInit(): void {
      // Use the language selected previously on login page.
      this.languageService.setLanguage(this.languageService.getCurrentLanguage());
+     this.loadCompanyName();
 
      this.passresetForm = this.formBuilder.group({
       userNameOrEmail: ['', [Validators.required]],
@@ -155,6 +159,25 @@ export class BasicComponent implements OnInit {
 
   toggleConfirmPasswordField() {
     this.confirmFieldTextType = !this.confirmFieldTextType;
+  }
+
+  private loadCompanyName(): void {
+    this.companyInfoService.getCompanyInfos().pipe(first()).subscribe({
+      next: (items) => {
+        const company = Array.isArray(items) && items.length > 0 ? items[0] : null;
+        if (!company) {
+          return;
+        }
+
+        const isArabic = (this.translate.currentLang || 'ar').toLowerCase().startsWith('ar');
+        const nameAr = (company.companyNameAr || '').trim();
+        const nameEn = (company.companyNameEn || '').trim();
+        this.footerCompanyName = isArabic ? (nameAr || nameEn || 'Velzon') : (nameEn || nameAr || 'Velzon');
+      },
+      error: () => {
+        this.footerCompanyName = 'Velzon';
+      }
+    });
   }
 
 }
