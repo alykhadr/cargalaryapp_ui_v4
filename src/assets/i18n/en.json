@@ -584,9 +584,9 @@
       "NEW": "New",
       "CONTACT": "Contact",
       "IN_PROGRESS": "In Progress",
-      "CLOSED_SUCCESS": "Closed Success",
+      "CLOSED_SUCCESS": "Closed",
       "CLOSED_LOSS": "Closed Loss",
-      "CONVERSION_RATIO": "Conversion Ratio"
+      "CONVERSION_RATIO": "Ratio"
     },
     "PERIODS": {
       "ONE_WEEK": "1 Week",
@@ -599,7 +599,7 @@
     "ORDERS": "New",
     "EARNINGS": "Close Success",
     "REFUNDS": "Close - Loss",
-    "CONVERSION_RATIO": "Conversion Ratio",
+    "CONVERSION_RATIO": "Ratio",
     "SALES_BY_LOCATION": "Sales by Locations",
     "SALES_BY_BRANCHES": "Sales According to Branches",
     "EXPORT_REPORT": "Export Report",

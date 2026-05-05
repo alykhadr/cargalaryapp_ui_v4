@@ -166,9 +166,13 @@
 }
 
 .topbar-language-logo-image {
-  width: auto;
-  height: 3.2rem;
-  max-width: 10rem;
-  object-fit: contain;
+  width: 2.6rem;
+  height: 2.6rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--vz-primary-rgb), 0.3);
+  background-color: var(--vz-card-bg);
+  padding: 0.12rem;
+  box-shadow: 0 2px 8px rgba(var(--vz-primary-rgb), 0.14);
   display: block;
 }
