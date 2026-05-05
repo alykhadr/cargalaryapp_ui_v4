@@ -18,10 +18,12 @@ import { CarExtraDetailsComponent } from './car-extra-details/car-extra-details.
 import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
+import { CarsPrintReportPageComponent } from './cars-print-report-page/cars-print-report-page.component';
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { RequestListPageComponent } from './request-list-page/request-list-page.component';
 import { RequestCreatePageComponent } from './request-create-page/request-create-page.component';
 import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
+import { RequestPrintReportPageComponent } from './request-print-report-page/request-print-report-page.component';
 import { UsersComponent } from './users/users.component';
 import { DepartmentsComponent } from './departments/departments.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
@@ -168,6 +170,12 @@ const routes: Routes = [
     data: { permission: 'cars.view' }
   },
   {
+    path: "cars/print-report/:id",
+    component: CarsPrintReportPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'cars.view' }
+  },
+  {
     path: "cars/create",
     component: CarsCreatePageComponent,
     canActivate: [AuthGuard, PermissionGuard],
@@ -206,6 +214,12 @@ const routes: Routes = [
   {
     path: "request/list",
     component: RequestListPageComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'requests.view' }
+  },
+  {
+    path: "request/print-report/:id",
+    component: RequestPrintReportPageComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'requests.view' }
   },

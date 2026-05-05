@@ -1846,6 +1846,9 @@
                       <i class="ri-money-dollar-circle-line align-middle fs-16 me-1"></i>{{ 'CARS_PAGE.PRICE' | translate }}
                       <span class="badge bg-warning-subtle text-warning-emphasis ms-2">{{ getCarActionCountLabel(car.id, 'colors') }}</span>
                     </button>
+                    <button class="btn btn-sm btn-soft-dark" *appHasPermission="'cars.view'" [title]="'CARS_PAGE.PRINT_REPORT' | translate" (click)="openCarPrintReport(car.id)">
+                      <i class="ri-printer-line me-1"></i>{{ 'CARS_PAGE.PRINT_REPORT' | translate }}
+                    </button>
                     <div ngbDropdown class="d-inline-block" placement="start-top" container="body">
                       <button class="btn btn-sm btn-soft-secondary car-row-toggle" ngbDropdownToggle [title]="'CARS_PAGE.MORE_ACTIONS' | translate">
                         <i class="ri-more-fill"></i>

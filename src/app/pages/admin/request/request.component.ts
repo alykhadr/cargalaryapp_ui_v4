@@ -32,6 +32,7 @@ import { RequestService } from '../services/request.service';
 import { RequestRealtimeService } from '../services/request-realtime.service';
 import { ErrorMessageService } from '../shared/error-message.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-request',
@@ -138,7 +139,8 @@ export class RequestComponent implements OnInit, OnDestroy {
     private lookupService: LookupService,
     private toastService: ToastService,
     private errorMessageService: ErrorMessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -528,6 +530,16 @@ export class RequestComponent implements OnInit, OnDestroy {
   openMoreInfoModal(item: Request) {
     this.selectedRequestForMore = item;
     this.showMoreInfoModal = true;
+  }
+
+  openRequestPrintReport(requestId: number) {
+    const reportUrl = this.router.serializeUrl(
+      this.router.createUrlTree(['/admin/request/print-report', requestId], {
+        queryParams: { autoPrint: 1 }
+      })
+    );
+
+    window.open(reportUrl, '_blank', 'noopener');
   }
 
   closeMoreInfoModal() {

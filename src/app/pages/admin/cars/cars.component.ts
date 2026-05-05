@@ -2580,6 +2580,16 @@ export class CarsComponent implements OnInit, OnDestroy {
     });
   }
 
+  openCarPrintReport(carId: number) {
+    const reportUrl = this.router.serializeUrl(
+      this.router.createUrlTree(['/admin/cars/print-report', carId], {
+        queryParams: { autoPrint: 1 }
+      })
+    );
+
+    window.open(reportUrl, '_blank', 'noopener');
+  }
+
   openCarInfoModal(car: Car) {
     this.infoCar = car;
     this.showCarInfoModal = true;

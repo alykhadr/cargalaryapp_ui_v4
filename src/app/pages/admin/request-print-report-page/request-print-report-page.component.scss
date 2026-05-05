@@ -1,0 +1,296 @@
+:host {
+  display: block;
+}
+
+.request-print-report-page {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.report-sheet {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 1rem;
+}
+
+.report-hero {
+  border-bottom: 1px dashed #d7deea;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-hero {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.invoice-company {
+  flex: 1;
+  min-width: 280px;
+  border: 1px dashed #d8e2f2;
+  border-radius: 0.65rem;
+  background: #f8fbff;
+  padding: 0.75rem;
+}
+
+.company-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.company-header-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 0.4rem;
+  border: 1px solid #dde4f0;
+  object-fit: contain;
+  background: #fff;
+  padding: 0.2rem;
+}
+
+.company-header-body {
+  min-width: 0;
+}
+
+.company-header-body h6 {
+  font-weight: 700;
+}
+
+.company-lines {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.company-lines span {
+  color: #475569;
+  font-weight: 600;
+}
+
+.invoice-doc {
+  flex: 1.2;
+  min-width: 320px;
+}
+
+.invoice-doc.full-width {
+  flex: 1 1 100%;
+}
+
+.invoice-meta-grid {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.invoice-meta-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  padding: 0.45rem 0.55rem;
+}
+
+.invoice-meta-item small {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #64748b;
+  margin-bottom: 0.1rem;
+}
+
+.invoice-meta-item strong {
+  color: #0f172a;
+  font-size: 0.86rem;
+  word-break: break-word;
+}
+
+.invoice-meta-item .badge {
+  font-size: 0.74rem;
+}
+
+.report-summary {
+  margin-top: 0.25rem;
+}
+
+.summary-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.brand-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px dashed #cfe0ff;
+  background: #f4f8ff;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.55rem;
+}
+
+.brand-logo-wrap {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #d7e3f8;
+  background: #fff;
+  border-radius: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.selected-color-box {
+  border: 1px dashed #9cc6ff;
+  background: #f2f8ff;
+  border-radius: 0.5rem;
+  padding: 0.65rem;
+}
+
+.report-section {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.report-section h5 {
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.report-grid {
+  display: grid;
+  gap: 0.5rem 1rem;
+}
+
+.report-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.report-grid > div {
+  border-bottom: 1px dashed #eef2f7;
+  padding-bottom: 0.35rem;
+}
+
+.report-grid span {
+  color: #64748b;
+  display: block;
+  font-size: 0.8rem;
+}
+
+.selected-color-row {
+  background: #f2fff4;
+}
+
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (max-width: 991.98px) {
+  .summary-grid,
+  .report-grid.two-col,
+  .invoice-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .report-hero {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  @page {
+    margin: 8mm;
+  }
+
+  app-breadcrumbs,
+  .no-print {
+    display: none !important;
+  }
+
+  .request-print-report-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .report-sheet {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  .report-sheet h2 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .report-sheet h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .report-sheet h5 {
+    font-size: 0.88rem;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .report-subtitle {
+    display: none;
+  }
+
+  .report-hero {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .report-section {
+    padding: 0.55rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .summary-card {
+    padding: 0.55rem;
+  }
+
+  .report-grid,
+  .summary-grid {
+    gap: 0.2rem 0.45rem;
+  }
+
+  .report-grid span {
+    font-size: 0.72rem;
+  }
+
+  .table {
+    font-size: 11px;
+  }
+
+  .table > :not(caption) > * > * {
+    padding: 0.16rem 0.28rem;
+  }
+}

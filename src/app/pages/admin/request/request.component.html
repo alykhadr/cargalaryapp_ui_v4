@@ -379,6 +379,9 @@
                   </div>
                 </td>
                 <td>
+                  <button type="button" class="btn btn-sm btn-soft-dark me-1" (click)="openRequestPrintReport(item.id)">
+                    <i class="ri-printer-line align-bottom me-1"></i> {{ 'REQUEST_PAGE.LIST.PRINT_REPORT' | translate }}
+                  </button>
                   <button type="button" class="btn btn-sm btn-soft-primary me-1" (click)="openCarInfoModal(item)">
                     <i class="ri-car-line align-bottom me-1"></i> {{ 'REQUEST_PAGE.LIST.CAR_INFO_BTN' | translate }}
                   </button>

@@ -29,6 +29,7 @@ import { CarTypesComponent } from './car-types/car-types.component';
 import { CarsComponent } from './cars/cars.component';
 import { CarsCreatePageComponent } from './cars-create-page/cars-create-page.component';
 import { CarsListPageComponent } from './cars-list-page/cars-list-page.component';
+import { CarsPrintReportPageComponent } from './cars-print-report-page/cars-print-report-page.component';
 import { EmployeeListPageComponent } from './employee-list-page/employee-list-page.component';
 import { CarByIdPipe } from './pipes/car-by-id.pipe';
 import { DepartmentsComponent } from './departments/departments.component';
@@ -36,6 +37,7 @@ import { RequestComponent } from './request/request.component';
 import { RequestListPageComponent } from './request-list-page/request-list-page.component';
 import { RequestCreatePageComponent } from './request-create-page/request-create-page.component';
 import { RequestTrackPageComponent } from './request-track-page/request-track-page.component';
+import { RequestPrintReportPageComponent } from './request-print-report-page/request-print-report-page.component';
 import { UsersComponent } from './users/users.component';
 import { MyProfilePageComponent } from './my-profile-page/my-profile-page.component';
 import { PackagesComponent } from './packages/packages.component';
@@ -86,12 +88,14 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CarsComponent,
     CarsCreatePageComponent,
     CarsListPageComponent,
+    CarsPrintReportPageComponent,
     EmployeeListPageComponent,
     DepartmentsComponent,
     RequestComponent,
     RequestListPageComponent,
     RequestCreatePageComponent,
     RequestTrackPageComponent,
+    RequestPrintReportPageComponent,
     UsersComponent,
     MyProfilePageComponent,
     PackagesComponent,
