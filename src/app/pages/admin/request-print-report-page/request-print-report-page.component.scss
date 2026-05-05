@@ -77,6 +77,12 @@
   min-width: 320px;
 }
 
+.invoice-doc h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
 .invoice-doc.full-width {
   flex: 1 1 100%;
 }
@@ -110,12 +116,21 @@
   word-break: break-word;
 }
 
+.invoice-meta-item.car-name-meta strong {
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
 .invoice-meta-item .badge {
   font-size: 0.74rem;
 }
 
 .report-summary {
-  margin-top: 0.25rem;
+  margin-top: 0;
+}
+
+.customer-info-section {
+  margin-bottom: 0.25rem;
 }
 
 .summary-card {
@@ -178,6 +193,14 @@
   font-weight: 600;
 }
 
+.section-label-table-header {
+  display: block;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.35rem;
+  padding: 0.35rem 0.6rem;
+}
+
 .report-grid {
   display: grid;
   gap: 0.5rem 1rem;
@@ -185,6 +208,10 @@
 
 .report-grid.two-col {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.report-grid.three-col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .report-grid > div {
@@ -209,9 +236,8 @@
 }
 
 @media (max-width: 991.98px) {
-  .summary-grid,
   .report-grid.two-col,
-  .invoice-meta-grid {
+  .report-grid.three-col {
     grid-template-columns: 1fr;
   }
 
@@ -222,7 +248,7 @@
 
 @media print {
   @page {
-    margin: 8mm;
+    margin: 10mm;
   }
 
   app-breadcrumbs,
@@ -231,66 +257,80 @@
   }
 
   .request-print-report-page {
-    max-width: none;
-    margin: 0;
-    padding: 0;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .request-print-report-page,
+  .report-sheet {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .report-sheet {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    font-size: 12px;
-  }
-
-  .report-sheet h2 {
-    font-size: 1rem;
-    margin-bottom: 0.2rem !important;
-  }
-
-  .report-sheet h4 {
-    font-size: 0.95rem;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .report-sheet h5 {
-    font-size: 0.88rem;
-    margin-bottom: 0.3rem !important;
-  }
-
-  .report-subtitle {
-    display: none;
+    break-inside: avoid-page;
   }
 
   .report-hero {
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.12rem;
+    padding-bottom: 0.35rem;
   }
 
-  .report-section {
-    padding: 0.55rem;
-    margin-bottom: 0.45rem;
+  .report-hero + .report-section {
+    margin-top: 0 !important;
   }
 
-  .summary-card {
-    padding: 0.55rem;
+  .report-section,
+  .summary-card,
+  .invoice-meta-item,
+  .selected-color-box {
+    break-inside: avoid;
   }
 
-  .report-grid,
-  .summary-grid {
+  .customer-info-section {
+    margin-bottom: 0.15rem;
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+
+  .customer-info-section + .report-summary {
+    page-break-before: avoid;
+    break-before: avoid-page;
+    margin-top: 0 !important;
+  }
+
+  .report-grid.three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .car-info-section {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    padding: 0.5rem;
+  }
+
+  .car-info-section .report-grid.two-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.2rem 0.45rem;
   }
 
-  .report-grid span {
-    font-size: 0.72rem;
+  .car-info-section .report-grid > div {
+    border-bottom: none;
+    padding-bottom: 0.1rem;
   }
 
-  .table {
-    font-size: 11px;
+  .car-info-section .report-grid span {
+    font-size: 0.68rem;
+    margin-bottom: 0.02rem;
   }
 
-  .table > :not(caption) > * > * {
-    padding: 0.16rem 0.28rem;
+  .car-info-section .report-grid strong {
+    font-size: 0.76rem;
+    line-height: 1.15;
+  }
+
+  .car-info-section .mt-3 {
+    margin-top: 0.35rem !important;
+    font-size: 0.74rem;
   }
 }

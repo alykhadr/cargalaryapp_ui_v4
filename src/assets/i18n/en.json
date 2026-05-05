@@ -1469,7 +1469,7 @@
     "FEATURE": "Feature",
     "COLOR_NAME": "Color Name",
     "STOCK": "Stock",
-    "PRICE_BEFORE": "Price Before",
+    "PRICE_BEFORE": "Before Discount",
     "VAT": "VAT (%)",
     "VAT_AMOUNT": "VAT Amount",
     "DISCOUNT": "Discount",

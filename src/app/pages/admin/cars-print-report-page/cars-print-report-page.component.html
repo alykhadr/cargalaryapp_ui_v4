@@ -46,7 +46,7 @@
             <small>ID</small>
             <strong>#{{ car.id }}</strong>
           </div>
-          <div class="invoice-meta-item">
+          <div class="invoice-meta-item car-name-meta">
             <small>{{ 'CARS_PAGE.CAR' | translate }}</small>
             <strong>{{ car.nameEn || '-' }} / {{ car.nameAr || '-' }}</strong>
           </div>
@@ -99,8 +99,8 @@
       </div>
     </div>
 
-    <div class="report-section">
-      <h5>{{ 'CARS_PAGE.CAR_INFO' | translate }}</h5>
+    <div class="report-section car-info-section">
+      <h5 class="section-label-table-header">{{ 'CARS_PAGE.CAR_INFO' | translate }}</h5>
       <div class="report-grid two-col">
         <div><span>{{ 'COMMON.NAME_EN' | translate }}</span><strong>{{ car.nameEn || '-' }}</strong></div>
         <div><span>{{ 'COMMON.NAME_AR' | translate }}</span><strong>{{ car.nameAr || '-' }}</strong></div>

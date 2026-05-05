@@ -50,7 +50,7 @@
             <small>ID</small>
             <strong>#{{ car.id }}</strong>
           </div>
-          <div class="invoice-meta-item">
+          <div class="invoice-meta-item car-name-meta">
             <small>{{ 'CARS_PAGE.CAR' | translate }}</small>
             <strong>{{ car.nameEn || '-' }} / {{ car.nameAr || '-' }}</strong>
           </div>
@@ -62,9 +62,9 @@
       </div>
     </div>
 
-    <div class="report-section mb-4">
-      <h5>{{ 'REQUEST_PAGE.LIST.CUSTOMER_INFO' | translate }}</h5>
-      <div class="report-grid two-col">
+    <div class="report-section customer-info-section">
+      <h5 class="section-label-table-header">{{ 'REQUEST_PAGE.LIST.CUSTOMER_INFO' | translate }}</h5>
+      <div class="report-grid three-col">
         <div><span>{{ 'REQUEST_PAGE.LIST.NAME' | translate }}</span><strong>{{ request.name || '-' }}</strong></div>
         <div><span>{{ 'REQUEST_PAGE.LIST.EMAIL' | translate }}</span><strong>{{ request.email || '-' }}</strong></div>
         <div><span>{{ 'REQUEST_PAGE.LIST.MOBILE' | translate }}</span><strong>{{ request.mobileNo || '-' }}</strong></div>
@@ -109,8 +109,8 @@
       </div>
     </div>
 
-    <div class="report-section">
-      <h5>{{ 'CARS_PAGE.CAR_INFO' | translate }}</h5>
+    <div class="report-section car-info-section">
+      <h5 class="section-label-table-header">{{ 'CARS_PAGE.CAR_INFO' | translate }}</h5>
       <div class="report-grid two-col">
         <div><span>{{ 'COMMON.NAME_EN' | translate }}</span><strong>{{ car.nameEn || '-' }}</strong></div>
         <div><span>{{ 'COMMON.NAME_AR' | translate }}</span><strong>{{ car.nameAr || '-' }}</strong></div>

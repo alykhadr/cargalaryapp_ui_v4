@@ -75,6 +75,8 @@ export class RequestPrintReportPageComponent implements OnInit {
 
   generatedAt = new Date();
   private autoPrintHandled = false;
+  private previousDocumentTitle = '';
+  private hasTemporaryPrintTitle = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -224,6 +226,7 @@ export class RequestPrintReportPageComponent implements OnInit {
         this.isLoading = false;
 
         if (this.shouldAutoPrint()) {
+          this.removeAutoPrintQueryParam();
           this.autoPrintHandled = true;
           setTimeout(() => this.printReport(), 250);
         }
@@ -240,7 +243,11 @@ export class RequestPrintReportPageComponent implements OnInit {
   }
 
   printReport(): void {
+    this.applyPrintDocumentTitle();
+    const onAfterPrint = () => this.restoreDocumentTitle();
+    window.addEventListener('afterprint', onAfterPrint, { once: true });
     window.print();
+    setTimeout(() => this.restoreDocumentTitle(), 2000);
   }
 
   getLocalizedText(nameAr?: string | null, nameEn?: string | null, fallback = '-'): string {
@@ -428,6 +435,38 @@ export class RequestPrintReportPageComponent implements OnInit {
 
     const raw = (this.route.snapshot.queryParamMap.get('autoPrint') || '').toLowerCase();
     return raw === '1' || raw === 'true' || raw === 'yes';
+  }
+
+  private removeAutoPrintQueryParam(): void {
+    const currentUrl = new URL(window.location.href);
+    if (!currentUrl.searchParams.has('autoPrint')) {
+      return;
+    }
+
+    currentUrl.searchParams.delete('autoPrint');
+    const query = currentUrl.searchParams.toString();
+    const nextUrl = `${currentUrl.pathname}${query ? `?${query}` : ''}${currentUrl.hash}`;
+    window.history.replaceState(window.history.state, '', nextUrl);
+  }
+
+  private applyPrintDocumentTitle(): void {
+    if (!this.hasTemporaryPrintTitle) {
+      this.previousDocumentTitle = document.title;
+      this.hasTemporaryPrintTitle = true;
+    }
+
+    const reportTitle = this.translate.instant('REQUEST_PAGE.LIST.PRINT_REPORT_TITLE');
+    const carName = this.getLocalizedText(this.car?.nameAr, this.car?.nameEn, '').trim();
+    document.title = carName ? `${reportTitle} - ${carName}` : reportTitle;
+  }
+
+  private restoreDocumentTitle(): void {
+    if (!this.hasTemporaryPrintTitle) {
+      return;
+    }
+
+    document.title = this.previousDocumentTitle;
+    this.hasTemporaryPrintTitle = false;
   }
 
   private isArabicLanguage(): boolean {
