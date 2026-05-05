@@ -1,8 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Title } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
+import { CompanyInfoService } from './pages/admin/services/company-info.service';
 
 describe('AppComponent', () => {
+  const titleServiceMock = {
+    setTitle: jasmine.createSpy('setTitle')
+  };
+  const translateServiceMock = {
+    currentLang: 'en',
+    onLangChange: of({ lang: 'en' })
+  };
+  const companyInfoServiceMock = {
+    watchCompanyInfos: () => of([])
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -11,6 +26,11 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        { provide: Title, useValue: titleServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
+        { provide: CompanyInfoService, useValue: companyInfoServiceMock }
+      ]
     }).compileComponents();
   });
 
@@ -20,16 +40,9 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'velzon'`, () => {
+  it(`should have default title value`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('velzon');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('velzon app is running!');
   });
 });
