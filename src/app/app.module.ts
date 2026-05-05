@@ -22,7 +22,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 
 // Store
-import { rootReducer } from './store';
+import { metaReducers, rootReducer } from './store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
@@ -58,7 +58,7 @@ export function createTranslateLoader(http: HttpClient): any {
         BrowserModule,
         AppRoutingModule,
         LayoutsModule,
-        StoreModule.forRoot(rootReducer),
+        StoreModule.forRoot(rootReducer, { metaReducers }),
         StoreDevtoolsModule.instrument({
             maxAge: 25, // Retains last 25 states
             logOnly: environment.production, // Restrict extension to log-only mode
