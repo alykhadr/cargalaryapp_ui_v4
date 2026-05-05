@@ -166,12 +166,6 @@ export const MENU: MenuItem[] = [
         permission: 'colors.view'
       },
       {
-        id: 196,
-        label: 'MENUITEMS.ADMIN.LIST.CAREXTRADETAILS',
-        link: '/admin/car-extra-details',
-        permission: 'carextradetails.view'
-      },
-      {
         id: 197,
         label: 'MENUITEMS.ADMIN.LIST.CARTYPE',
         link: '/admin/car-types',
