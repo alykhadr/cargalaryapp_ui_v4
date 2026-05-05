@@ -212,6 +212,75 @@
   gap: 0.5rem;
 }
 
+:host-context([data-bs-theme='dark']) .car-print-report-page {
+  .report-sheet {
+    background: var(--vz-card-bg);
+    border-color: rgba(148, 163, 184, 0.32);
+    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
+    color: var(--vz-body-color);
+  }
+
+  .report-hero,
+  .report-grid > div {
+    border-color: rgba(148, 163, 184, 0.28);
+  }
+
+  .invoice-company,
+  .invoice-meta-item,
+  .summary-card,
+  .report-section,
+  .brand-logo-wrap {
+    border-color: rgba(148, 163, 184, 0.34);
+  }
+
+  .invoice-company,
+  .invoice-meta-item,
+  .summary-card,
+  .brand-logo-wrap {
+    background: rgba(15, 23, 42, 0.45);
+  }
+
+  .brand-identity {
+    background: rgba(var(--vz-primary-rgb), 0.14);
+  }
+
+  .invoice-meta-item strong,
+  .report-section h5,
+  .report-grid strong {
+    color: var(--vz-body-color);
+  }
+
+  .invoice-meta-item small,
+  .report-grid span,
+  .company-lines,
+  .company-lines span {
+    color: var(--vz-secondary-color);
+  }
+
+  .section-label-table-header {
+    background: rgba(var(--vz-primary-rgb), 0.14);
+    border-color: rgba(var(--vz-primary-rgb), 0.38);
+    color: var(--vz-body-color);
+  }
+
+  .table-light th {
+    background: rgba(30, 41, 59, 0.65);
+    color: var(--vz-body-color);
+    border-color: rgba(148, 163, 184, 0.35);
+  }
+
+  .table-bordered > :not(caption) > * > * {
+    border-color: rgba(148, 163, 184, 0.35);
+    color: var(--vz-body-color);
+  }
+
+  .badge.bg-light.text-muted {
+    background: rgba(148, 163, 184, 0.22) !important;
+    color: var(--vz-body-color) !important;
+    border-color: rgba(148, 163, 184, 0.45) !important;
+  }
+}
+
 @media (max-width: 991.98px) {
   .report-grid.two-col {
     grid-template-columns: 1fr;
@@ -244,7 +313,120 @@
   }
 
   .report-sheet {
+    color: #212529 !important;
     break-inside: avoid-page;
+  }
+
+  .report-sheet .text-muted,
+  .report-sheet .report-subtitle,
+  .report-sheet .report-grid span,
+  .report-sheet .summary-grid small,
+  .report-sheet .brand-identity small,
+  .report-sheet .invoice-meta-item small,
+  .report-sheet .company-lines,
+  .report-sheet .company-lines span,
+  .report-sheet .table thead th,
+  .report-sheet .table td small,
+  .report-sheet small.text-muted {
+    color: #6c757d !important;
+  }
+
+  .report-sheet h2,
+  .report-sheet h4,
+  .report-sheet h5,
+  .report-sheet h6,
+  .report-sheet .report-section h5,
+  .report-sheet .section-label-table-header,
+  .report-sheet .invoice-meta-item strong,
+  .report-sheet .report-grid strong,
+  .report-sheet .summary-grid strong,
+  .report-sheet .brand-identity strong,
+  .report-sheet td,
+  .report-sheet th {
+    color: #212529 !important;
+  }
+
+  :host-context([data-bs-theme='dark']) .car-print-report-page {
+    .report-sheet {
+      background: #ffffff !important;
+      border-color: #e9edf3 !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+      color: #212529 !important;
+    }
+
+    .report-hero {
+      border-bottom-color: #d7deea !important;
+    }
+
+    .report-grid > div {
+      border-bottom-color: #eef2f7 !important;
+    }
+
+    .invoice-company {
+      border-color: #d8e2f2 !important;
+      background: #f8fbff !important;
+    }
+
+    .invoice-meta-item {
+      border-color: #e2e8f0 !important;
+      background: #f8fafc !important;
+    }
+
+    .summary-card {
+      border-color: #e2e8f0 !important;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    }
+
+    .report-section {
+      border-color: #e2e8f0 !important;
+    }
+
+    .brand-identity {
+      border-color: #cfe0ff !important;
+      background: #f4f8ff !important;
+    }
+
+    .brand-logo-wrap {
+      border-color: #d7e3f8 !important;
+      background: #ffffff !important;
+    }
+
+    .section-label-table-header {
+      background: #f8f9fa !important;
+      border-color: #dee2e6 !important;
+      color: #212529 !important;
+    }
+
+    .invoice-meta-item small,
+    .report-subtitle,
+    .report-grid span,
+    .summary-grid small,
+    .brand-identity small,
+    .company-lines,
+    .company-lines span {
+      color: #6c757d !important;
+    }
+
+    .invoice-meta-item strong {
+      color: #212529 !important;
+    }
+
+    .table-light th {
+      background: #f8f9fa !important;
+      color: #212529 !important;
+      border-color: inherit !important;
+    }
+
+    .table-bordered > :not(caption) > * > * {
+      color: #212529 !important;
+      border-color: inherit !important;
+    }
+
+    .badge.bg-light.text-muted {
+      background: var(--vz-light) !important;
+      color: var(--vz-secondary-color) !important;
+      border-color: var(--vz-border-color) !important;
+    }
   }
 
   .report-section,
