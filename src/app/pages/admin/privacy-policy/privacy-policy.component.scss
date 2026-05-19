@@ -1,0 +1,17 @@
+.modal {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.privacy-preview {
+  max-width: 420px;
+  white-space: normal;
+  line-height: 1.45;
+}
+
+::ng-deep .ck-editor__editable {
+  min-height: 240px;
+}
+
+::ng-deep .ck.ck-editor {
+  width: 100%;
+}

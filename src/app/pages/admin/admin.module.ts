@@ -20,6 +20,7 @@ import { CompanyInfoComponent } from './company-info/company-info.component';
 import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FaqComponent } from './faq/faq.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { MemberServicesComponent } from './member-services/member-services.component';
 import { OffersComponent } from './offers/offers.component';
 import { ServicesComponent } from './services/services.component';
@@ -79,6 +80,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ContactSalesComponent,
     ContactUsComponent,
     FaqComponent,
+    PrivacyPolicyComponent,
     MemberServicesComponent,
     OffersComponent,
     ServicesComponent,

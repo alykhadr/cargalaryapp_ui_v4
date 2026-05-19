@@ -112,6 +112,12 @@ export const MENU: MenuItem[] = [
         label: 'MENUITEMS.ADMIN.LIST.FAQ',
         link: '/admin/faq',
         permission: 'faq.view'
+      },
+      {
+        id: 1911,
+        label: 'MENUITEMS.ADMIN.LIST.PRIVACYPOLICY',
+        link: '/admin/privacy-policy',
+        permission: 'privacypolicy.view'
       }
     ]
   },

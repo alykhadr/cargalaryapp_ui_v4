@@ -10,6 +10,7 @@ import { CompanyInfoComponent } from './company-info/company-info.component';
 import { ContactSalesComponent } from './contact-sales/contact-sales.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { FaqComponent } from './faq/faq.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { MemberServicesComponent } from './member-services/member-services.component';
 import { OffersComponent } from './offers/offers.component';
 import { ServicesComponent } from './services/services.component';
@@ -115,6 +116,12 @@ const routes: Routes = [
     component: FaqComponent,
     canActivate: [AuthGuard, PermissionGuard],
     data: { permission: 'faq.view' }
+  },
+  {
+    path: "privacy-policy",
+    component: PrivacyPolicyComponent,
+    canActivate: [AuthGuard, PermissionGuard],
+    data: { permission: 'privacypolicy.view' }
   },
   {
     path: "packages",
